@@ -12,9 +12,9 @@ import { Newsletter } from '@/components/sections/newsletter'
 import { getPersonalInfo } from '@/data/personal'
 import { getServices } from '@/data/services'
 import { getSkillCategories } from '@/data/skills'
-import { SOCIAL_LINKS } from '@/lib/constants'
+import { SOCIAL_LINKS, SEO_IMAGES } from '@/lib/constants'
 import { generatePageMetadata } from '@/lib/seo'
-import { generateServicesPageGraph, generateBreadcrumbSchema } from '@/lib/schema'
+import { generateServicesPageGraph } from '@/lib/schema'
 import { Locale } from '@/data/types'
 
 interface Props { params: Promise<{ locale: string }> }
@@ -26,8 +26,8 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
       ? 'Services – Technical SEO, Next.js & Growth'
       : 'Servicios – SEO Técnico, Next.js y Growth',
     description: locale === 'en'
-      ? 'Carlos Anaya Ruíz offers technical SEO consulting, Next.js & Firebase web development, AI automation & chatbots, and responsive dashboard design. 4+ years experience, PMP certified.'
-      : 'Carlos Anaya Ruíz ofrece consultoría en SEO técnico, desarrollo web con Next.js y Firebase, automatización con IA y chatbots, y diseño de dashboards responsivos. +4 años de experiencia, PMP certificado.',
+      ? 'Carlos Anaya Ruíz — Technical SEO consulting, Next.js & Firebase web apps, AI automation & chatbots, responsive dashboards. 4+ years, PMP certified. Hire me.'
+      : 'Carlos Anaya Ruíz — Consultoría SEO técnico, aplicaciones web Next.js y Firebase, automatización con IA y chatbots, dashboards responsivos. +4 años, certificado PMP. Contrátame.',
     path: '',
     locale: locale as Locale,
   })
@@ -69,29 +69,32 @@ function HomeContent({ locale }: { locale: Locale }) {
 
         <div className="container mx-auto px-4">
           <div className="mx-auto max-w-4xl">
-            <div className="mb-8 flex items-center gap-4">
-              <div className="relative h-16 w-16 overflow-hidden rounded-full border-2 border-primary/20 bg-muted">
+            {/* Avatar + Name */}
+            <div className="mb-8 flex items-center gap-5">
+              <div className="relative h-20 w-20 overflow-hidden rounded-full border-2 border-primary/20 bg-muted shadow-lg md:h-24 md:w-24">
                 <Image
-                  src="/images/carlos-anaya-ruiz-consultor-seo-tecnico.png"
-                  alt="Carlos Anaya Ruíz — Consultor SEO Técnico"
+                  src={SEO_IMAGES.avatar}
+                  alt={SEO_IMAGES.avatarAlt[locale]}
                   fill
                   className="object-cover"
-                  sizes="64px"
+                  sizes="(max-width: 768px) 80px, 96px"
                   priority
                 />
               </div>
               <div>
-                <h1 className="text-2xl font-bold tracking-tight md:text-3xl lg:text-4xl">
+                <h1 className="text-3xl font-bold tracking-tight md:text-4xl lg:text-5xl">
                   Carlos Anaya Ruíz
                 </h1>
-                <p className="text-lg text-primary font-medium">{t('tagline')}</p>
+                <p className="mt-1 text-lg font-medium text-primary">{t('tagline')}</p>
               </div>
             </div>
 
+            {/* Value prop */}
             <p className="mb-8 max-w-2xl text-xl leading-relaxed text-muted-foreground md:text-2xl">
               {t('subtitle')}
             </p>
 
+            {/* CTAs */}
             <div className="mb-10 flex flex-wrap gap-4">
               <Button asChild size="lg" className="gap-2 text-base">
                 <a href="#servicios">
@@ -107,14 +110,15 @@ function HomeContent({ locale }: { locale: Locale }) {
               </Button>
             </div>
 
+            {/* Social */}
             <div className="flex gap-4">
-              <a href={SOCIAL_LINKS.linkedin} target="_blank" rel="noopener noreferrer" className="rounded-full p-2 text-muted-foreground transition-colors hover:bg-accent hover:text-primary" aria-label="LinkedIn">
+              <a href={SOCIAL_LINKS.linkedin} target="_blank" rel="noopener noreferrer" className="rounded-full p-2 text-muted-foreground transition-colors hover:bg-accent hover:text-primary" aria-label="Carlos Anaya Ruíz en LinkedIn">
                 <Linkedin className="h-5 w-5" />
               </a>
-              <a href={SOCIAL_LINKS.github1} target="_blank" rel="noopener noreferrer" className="rounded-full p-2 text-muted-foreground transition-colors hover:bg-accent hover:text-primary" aria-label="GitHub">
+              <a href={SOCIAL_LINKS.github1} target="_blank" rel="noopener noreferrer" className="rounded-full p-2 text-muted-foreground transition-colors hover:bg-accent hover:text-primary" aria-label="Carlos Anaya Ruíz en GitHub">
                 <Github className="h-5 w-5" />
               </a>
-              <a href={`mailto:${SOCIAL_LINKS.email}`} className="rounded-full p-2 text-muted-foreground transition-colors hover:bg-accent hover:text-primary" aria-label="Email">
+              <a href={`mailto:${SOCIAL_LINKS.email}`} className="rounded-full p-2 text-muted-foreground transition-colors hover:bg-accent hover:text-primary" aria-label="Enviar email a Carlos Anaya Ruíz">
                 <Mail className="h-5 w-5" />
               </a>
             </div>
@@ -157,7 +161,7 @@ function HomeContent({ locale }: { locale: Locale }) {
                       </ul>
                     </div>
 
-                    <details className="mb-6 group/details">
+                    <details className="mb-6">
                       <summary className="cursor-pointer text-sm font-semibold text-primary hover:underline">
                         {ts('includes')}
                       </summary>
@@ -187,7 +191,7 @@ function HomeContent({ locale }: { locale: Locale }) {
             })}
           </div>
 
-          {/* FAQ section per service */}
+          {/* FAQ */}
           <div className="mx-auto mt-16 max-w-4xl">
             <h3 className="mb-8 text-center text-2xl font-bold">{ts('faq')}</h3>
             <div className="space-y-4">
@@ -211,7 +215,6 @@ function HomeContent({ locale }: { locale: Locale }) {
             <h2 className="text-3xl font-bold tracking-tight md:text-4xl">{ts('process')}</h2>
             <p className="mt-2 text-lg text-muted-foreground">{ts('processSubtitle')}</p>
           </div>
-
           <div className="mx-auto grid max-w-4xl gap-8 sm:grid-cols-2 lg:grid-cols-4">
             {processSteps.map((step, idx) => {
               const StepIcon = step.icon
@@ -232,7 +235,7 @@ function HomeContent({ locale }: { locale: Locale }) {
 
       <Separator />
 
-      {/* ── STACK & SPECIALTIES ──────────────────────────── */}
+      {/* ── STACK ────────────────────────────────────────── */}
       <section className="bg-muted/30 py-16 md:py-20">
         <div className="container mx-auto px-4">
           <div className="mb-12 text-center">
@@ -243,13 +246,9 @@ function HomeContent({ locale }: { locale: Locale }) {
           <div className="mx-auto grid max-w-5xl gap-6 sm:grid-cols-2 lg:grid-cols-3">
             {skillCategories.map((cat) => (
               <Card key={cat.category}>
-                <CardHeader>
-                  <CardTitle className="text-lg">{cat.label}</CardTitle>
-                </CardHeader>
+                <CardHeader><CardTitle className="text-lg">{cat.label}</CardTitle></CardHeader>
                 <CardContent className="flex flex-wrap gap-2">
-                  {cat.skills.map((skill) => (
-                    <Badge key={skill} variant="secondary">{skill}</Badge>
-                  ))}
+                  {cat.skills.map((skill) => <Badge key={skill} variant="secondary">{skill}</Badge>)}
                 </CardContent>
               </Card>
             ))}

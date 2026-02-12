@@ -1,5 +1,5 @@
 import { Metadata } from 'next'
-import { SITE_CONFIG, getSiteConfig } from './constants'
+import { SITE_CONFIG, getSiteConfig, SEO_IMAGES } from './constants'
 import { Locale } from '@/data/types'
 
 interface SEOProps {
@@ -16,6 +16,12 @@ interface SEOProps {
   locale: Locale
 }
 
+/**
+ * Generate Next.js Metadata for any page.
+ * - Title ALWAYS starts with "Carlos Anaya Ruíz | ..."
+ * - Description ALWAYS starts with "Carlos Anaya Ruíz — ..."
+ * - OG images use locale-specific variants from public/
+ */
 export function generatePageMetadata({
   title,
   description,
@@ -31,12 +37,12 @@ export function generatePageMetadata({
 }: SEOProps): Metadata {
   const config = getSiteConfig(locale)
 
-  // Title always starts with "Carlos Anaya Ruíz"
   const metaTitle = title
     ? `Carlos Anaya Ruíz | ${title}`
     : config.title
   const metaDescription = description || config.description
-  const metaImage = image || config.ogImage
+  // OG image: prefer locale-specific, fallback to provided, then default
+  const ogImage = image || (locale === 'en' ? SEO_IMAGES.ogEn : SEO_IMAGES.ogEs)
   const metaUrl = `${config.url}/${locale}${path}`
   const configKeywords = Array.isArray(config.keywords) ? config.keywords : []
   const metaKeywords = keywords ? [...configKeywords, ...keywords] : configKeywords
@@ -52,7 +58,17 @@ export function generatePageMetadata({
     publisher: config.name,
     robots: noIndex
       ? { index: false, follow: false }
-      : { index: true, follow: true, googleBot: { index: true, follow: true, 'max-video-preview': -1, 'max-image-preview': 'large' as const, 'max-snippet': -1 } },
+      : {
+          index: true,
+          follow: true,
+          googleBot: {
+            index: true,
+            follow: true,
+            'max-video-preview': -1,
+            'max-image-preview': 'large' as const,
+            'max-snippet': -1,
+          },
+        },
     alternates: {
       canonical: metaUrl,
       languages: {
@@ -63,20 +79,32 @@ export function generatePageMetadata({
     },
     openGraph: {
       type: type === 'article' ? 'article' : 'website',
-      locale: config.locale,
+      locale: config.ogLocale,
       alternateLocale: alternateLocale === 'es' ? 'es_MX' : 'en_US',
       url: metaUrl,
       title: metaTitle,
       description: metaDescription,
       siteName: config.name,
-      images: [{ url: metaImage, width: 1200, height: 630, alt: metaTitle }],
-      ...(type === 'article' && { publishedTime, modifiedTime, authors: [author || config.name] }),
+      images: [
+        {
+          url: ogImage,
+          width: 1200,
+          height: 630,
+          alt: `Carlos Anaya Ruíz — ${title || (locale === 'en' ? 'Technical SEO & Next.js' : 'SEO Técnico & Next.js')}`,
+          type: 'image/png',
+        },
+      ],
+      ...(type === 'article' && {
+        publishedTime,
+        modifiedTime,
+        authors: [author || config.name],
+      }),
     },
     twitter: {
       card: 'summary_large_image',
       title: metaTitle,
       description: metaDescription,
-      images: [metaImage],
+      images: [ogImage],
     },
   }
 }

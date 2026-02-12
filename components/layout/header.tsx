@@ -24,11 +24,11 @@ export function Header() {
   return (
     <header className="sticky top-0 z-50 w-full border-b bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60">
       <nav className="container mx-auto flex h-16 items-center justify-between px-4" aria-label="Main navigation">
+        {/* NAP: Name always exactly "Carlos Anaya Ruíz" */}
         <Link href="/" className="text-lg font-bold tracking-tight transition-colors hover:text-primary">
           Carlos Anaya Ruíz
         </Link>
 
-        {/* Desktop Nav */}
         <div className="hidden items-center gap-1 md:flex">
           {NAV_ITEMS.map((item) => (
             <Link
@@ -53,36 +53,20 @@ export function Header() {
           </Button>
         </div>
 
-        {/* Mobile Controls */}
         <div className="flex items-center gap-2 md:hidden">
           <LanguageSwitcher />
-          <Button
-            variant="ghost"
-            size="icon"
-            onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
-            aria-label={mobileMenuOpen ? t('closeMenu') : t('openMenu')}
-            aria-expanded={mobileMenuOpen}
-          >
+          <Button variant="ghost" size="icon" onClick={() => setMobileMenuOpen(!mobileMenuOpen)} aria-label={mobileMenuOpen ? t('closeMenu') : t('openMenu')} aria-expanded={mobileMenuOpen}>
             {mobileMenuOpen ? <X className="h-5 w-5" /> : <Menu className="h-5 w-5" />}
           </Button>
         </div>
       </nav>
 
-      {/* Mobile Menu */}
       {mobileMenuOpen && (
         <div className="border-t bg-background md:hidden" role="dialog" aria-label="Mobile menu">
           <div className="container mx-auto px-4 py-4">
             <div className="flex flex-col gap-2">
               {NAV_ITEMS.map((item) => (
-                <Link
-                  key={item.key}
-                  href={item.href}
-                  onClick={() => setMobileMenuOpen(false)}
-                  className={cn(
-                    'rounded-md px-3 py-2 text-sm font-medium transition-colors hover:bg-accent',
-                    pathname === item.href ? 'bg-accent text-primary' : 'text-muted-foreground'
-                  )}
-                >
+                <Link key={item.key} href={item.href} onClick={() => setMobileMenuOpen(false)} className={cn('rounded-md px-3 py-2 text-sm font-medium transition-colors hover:bg-accent', pathname === item.href ? 'bg-accent text-primary' : 'text-muted-foreground')}>
                   {t(item.key)}
                 </Link>
               ))}

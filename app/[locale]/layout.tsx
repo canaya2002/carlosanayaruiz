@@ -5,7 +5,7 @@ import { getMessages, setRequestLocale } from 'next-intl/server'
 import { notFound } from 'next/navigation'
 import { Header } from '@/components/layout/header'
 import { Footer } from '@/components/layout/footer'
-import { SITE_CONFIG, getSiteConfig } from '@/lib/constants'
+import { SITE_CONFIG, getSiteConfig, SEO_IMAGES } from '@/lib/constants'
 import { generateLayoutGraph } from '@/lib/schema'
 import { routing } from '@/i18n/routing'
 import { Locale } from '@/data/types'
@@ -37,6 +37,7 @@ export async function generateMetadata({
 }): Promise<Metadata> {
   const { locale } = await params
   const config = getSiteConfig(locale as Locale)
+  const ogImage = locale === 'en' ? SEO_IMAGES.ogEn : SEO_IMAGES.ogEs
 
   return {
     metadataBase: new URL(SITE_CONFIG.url),
@@ -50,10 +51,13 @@ export async function generateMetadata({
     creator: config.name,
     icons: {
       icon: [
-        { url: '/favicon.ico', sizes: '32x32' },
-        { url: '/images/icon-192.png', sizes: '192x192', type: 'image/png' },
+        { url: SEO_IMAGES.favicon, sizes: '32x32' },
+        { url: SEO_IMAGES.icon192, sizes: '192x192', type: 'image/png' },
+        { url: SEO_IMAGES.icon512, sizes: '512x512', type: 'image/png' },
       ],
-      apple: [{ url: '/images/apple-touch-icon.png', sizes: '180x180', type: 'image/png' }],
+      apple: [
+        { url: SEO_IMAGES.appleTouchIcon, sizes: '180x180', type: 'image/png' },
+      ],
     },
     manifest: '/manifest.json',
     alternates: {
@@ -66,23 +70,37 @@ export async function generateMetadata({
     },
     openGraph: {
       type: 'website',
-      locale: config.locale,
+      locale: config.ogLocale,
       url: `${SITE_CONFIG.url}/${locale}`,
       title: config.title,
       description: config.description,
       siteName: config.name,
-      images: [{ url: `/images/og-${locale}.png`, width: 1200, height: 630, alt: config.title, type: 'image/png' }],
+      images: [
+        {
+          url: ogImage,
+          width: 1200,
+          height: 630,
+          alt: `Carlos Anaya Ruíz — ${locale === 'en' ? 'Technical SEO Consultant & Full-Stack Engineer' : 'Consultor SEO Técnico & Ingeniero Full-Stack'}`,
+          type: 'image/png',
+        },
+      ],
     },
     twitter: {
       card: 'summary_large_image',
       title: config.title,
       description: config.description,
-      images: [`/images/og-${locale}.png`],
+      images: [ogImage],
     },
     robots: {
       index: true,
       follow: true,
-      googleBot: { index: true, follow: true, 'max-video-preview': -1, 'max-image-preview': 'large' as const, 'max-snippet': -1 },
+      googleBot: {
+        index: true,
+        follow: true,
+        'max-video-preview': -1,
+        'max-image-preview': 'large' as const,
+        'max-snippet': -1,
+      },
     },
   }
 }
@@ -106,7 +124,7 @@ export default async function LocaleLayout({
   return (
     <html lang={locale} suppressHydrationWarning>
       <head>
-        {/* Person + WebSite JSON-LD @graph */}
+        {/* Person + WebSite JSON-LD @graph — Knowledge Panel trigger */}
         <script
           type="application/ld+json"
           dangerouslySetInnerHTML={{

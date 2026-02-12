@@ -48,18 +48,17 @@ export default function ContactPage() {
         </div>
 
         <div className="grid gap-8 lg:grid-cols-3">
-          {/* Sidebar */}
           <div className="space-y-6 lg:col-span-1">
             <Card>
               <CardHeader><CardTitle className="text-lg">{t('info')}</CardTitle></CardHeader>
               <CardContent className="space-y-4">
                 <a href={`mailto:${personal.email}`} className="flex items-center gap-3 rounded-lg p-3 transition-colors hover:bg-muted">
                   <div className="flex h-10 w-10 items-center justify-center rounded-full bg-primary/10"><Mail className="h-5 w-5 text-primary" /></div>
-                  <div><p className="text-sm text-muted-foreground">{t('email')}</p><p className="font-medium text-sm">{personal.email}</p></div>
+                  <div><p className="text-sm text-muted-foreground">{t('email')}</p><p className="text-sm font-medium">{personal.email}</p></div>
                 </a>
                 <div className="flex items-center gap-3 rounded-lg p-3">
                   <div className="flex h-10 w-10 items-center justify-center rounded-full bg-primary/10"><MapPin className="h-5 w-5 text-primary" /></div>
-                  <div><p className="text-sm text-muted-foreground">{t('location')}</p><p className="font-medium text-sm">{personal.location}</p></div>
+                  <div><p className="text-sm text-muted-foreground">{t('location')}</p><p className="text-sm font-medium">{personal.location}</p></div>
                 </div>
               </CardContent>
             </Card>
@@ -83,24 +82,19 @@ export default function ContactPage() {
             </Card>
           </div>
 
-          {/* Form */}
           <Card className="lg:col-span-2">
             <CardHeader><CardTitle>{t('form')}</CardTitle></CardHeader>
             <CardContent>
               {status === 'success' ? (
                 <div className="flex flex-col items-center justify-center py-12 text-center">
-                  <div className="mb-4 flex h-16 w-16 items-center justify-center rounded-full bg-green-500/10">
-                    <CheckCircle className="h-8 w-8 text-green-600" />
-                  </div>
+                  <div className="mb-4 flex h-16 w-16 items-center justify-center rounded-full bg-green-500/10"><CheckCircle className="h-8 w-8 text-green-600" /></div>
                   <h3 className="mb-2 text-xl font-semibold">{t('sent')}</h3>
                   <p className="mb-6 text-muted-foreground">{t('thanks')}</p>
                   <Button variant="outline" onClick={() => setStatus('idle')}>{t('another')}</Button>
                 </div>
               ) : status === 'error' ? (
                 <div className="flex flex-col items-center justify-center py-12 text-center">
-                  <div className="mb-4 flex h-16 w-16 items-center justify-center rounded-full bg-red-500/10">
-                    <AlertCircle className="h-8 w-8 text-red-600" />
-                  </div>
+                  <div className="mb-4 flex h-16 w-16 items-center justify-center rounded-full bg-red-500/10"><AlertCircle className="h-8 w-8 text-red-600" /></div>
                   <h3 className="mb-2 text-xl font-semibold">{t('errorTitle')}</h3>
                   <p className="mb-6 text-muted-foreground">{t('errorDesc')}</p>
                   <Button variant="outline" onClick={() => setStatus('idle')}>{t('retry')}</Button>
@@ -126,11 +120,7 @@ export default function ContactPage() {
                     <Textarea id="message" name="message" placeholder={t('messagePh')} value={formData.message} onChange={handleChange} rows={6} required disabled={status === 'loading'} />
                   </div>
                   <Button type="submit" className="w-full gap-2 sm:w-auto" disabled={status === 'loading'}>
-                    {status === 'loading' ? (
-                      <><Loader2 className="h-4 w-4 animate-spin" />{t('sending')}</>
-                    ) : (
-                      <><Send className="h-4 w-4" />{t('send')}</>
-                    )}
+                    {status === 'loading' ? <><Loader2 className="h-4 w-4 animate-spin" />{t('sending')}</> : <><Send className="h-4 w-4" />{t('send')}</>}
                   </Button>
                 </form>
               )}

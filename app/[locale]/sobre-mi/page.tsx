@@ -14,9 +14,9 @@ import { getExperiences } from '@/data/experience'
 import { getEducation } from '@/data/education'
 import { getSkillCategories } from '@/data/skills'
 import { getAwards } from '@/data/awards'
-import { SOCIAL_LINKS } from '@/lib/constants'
+import { SOCIAL_LINKS, SEO_IMAGES } from '@/lib/constants'
 import { generatePageMetadata } from '@/lib/seo'
-import { generateBreadcrumbSchema } from '@/lib/schema'
+import { generateAboutPageGraph } from '@/lib/schema'
 import { formatShortDate } from '@/lib/utils'
 import { Locale } from '@/data/types'
 
@@ -25,10 +25,12 @@ interface Props { params: Promise<{ locale: string }> }
 export async function generateMetadata({ params }: Props): Promise<Metadata> {
   const { locale } = await params
   return generatePageMetadata({
-    title: locale === 'en' ? 'About Me – Engineer, Tech Lead & SEO Consultant' : 'Sobre Mí – Ingeniero, Líder Técnico y Consultor SEO',
+    title: locale === 'en'
+      ? 'About Me – Engineer, Tech Lead & SEO Consultant'
+      : 'Sobre Mí – Ingeniero, Líder Técnico y Consultor SEO',
     description: locale === 'en'
-      ? 'Carlos Anaya Ruíz — Computer Science Engineer, PMP certified, with 4+ years leading software projects at Amazon, Master Loyalty Group and Wan Hai Lines. Technical SEO, Next.js, Firebase, AI.'
-      : 'Carlos Anaya Ruíz — Ingeniero en Tecnologías Computacionales, certificado PMP, con +4 años liderando proyectos de software en Amazon, Master Loyalty Group y Wan Hai Lines. SEO técnico, Next.js, Firebase, IA.',
+      ? 'Carlos Anaya Ruíz — Computer Science Engineer, PMP certified, 4+ years leading software at Amazon, Master Loyalty Group & Wan Hai Lines. Technical SEO, Next.js, Firebase, AI automation.'
+      : 'Carlos Anaya Ruíz — Ingeniero en Tecnologías Computacionales, PMP certificado, +4 años liderando software en Amazon, Master Loyalty Group y Wan Hai Lines. SEO técnico, Next.js, Firebase, IA.',
     path: locale === 'en' ? '/about' : '/sobre-mi',
     locale: locale as Locale,
   })
@@ -50,29 +52,34 @@ function AboutContent({ locale }: { locale: Locale }) {
 
   return (
     <div className="container mx-auto px-4 py-12">
+      {/* JSON-LD: About WebPage + Breadcrumbs */}
       <script type="application/ld+json" dangerouslySetInnerHTML={{
-        __html: JSON.stringify(generateBreadcrumbSchema([
-          { name: locale === 'en' ? 'Home' : 'Inicio', url: '/' },
-          { name: t('title'), url: locale === 'en' ? '/about' : '/sobre-mi' },
-        ], locale)),
+        __html: JSON.stringify(generateAboutPageGraph(locale)),
       }} />
 
       <Breadcrumbs items={[{ label: t('title') }]} />
 
       <div className="mx-auto max-w-4xl">
-        {/* Header */}
+        {/* Header with SEO-optimized avatar */}
         <div className="mb-12 text-center">
           <div className="mb-6 flex justify-center">
-            <div className="relative h-32 w-32 overflow-hidden rounded-full border-2 border-primary/20 bg-muted">
-              <Image src="/images/carlos-anaya-ruiz-consultor-seo-tecnico.png" alt="Carlos Anaya Ruíz — perfil profesional" fill className="object-cover" sizes="128px" priority />
+            <div className="relative h-36 w-36 overflow-hidden rounded-full border-2 border-primary/20 bg-muted shadow-lg md:h-40 md:w-40">
+              <Image
+                src={SEO_IMAGES.avatar}
+                alt={SEO_IMAGES.avatarAlt[locale]}
+                fill
+                className="object-cover"
+                sizes="(max-width: 768px) 144px, 160px"
+                priority
+              />
             </div>
           </div>
-          <h1 className="mb-2 text-4xl font-bold tracking-tight md:text-5xl">{personal.name}</h1>
+          <h1 className="mb-2 text-4xl font-bold tracking-tight md:text-5xl">Carlos Anaya Ruíz</h1>
           <p className="text-xl text-primary">{personal.title}</p>
           <div className="mt-6 flex justify-center gap-4">
-            <a href={SOCIAL_LINKS.linkedin} target="_blank" rel="noopener noreferrer" className="rounded-full p-2 text-muted-foreground transition-colors hover:bg-accent hover:text-primary" aria-label="LinkedIn"><Linkedin className="h-5 w-5" /></a>
-            <a href={SOCIAL_LINKS.github1} target="_blank" rel="noopener noreferrer" className="rounded-full p-2 text-muted-foreground transition-colors hover:bg-accent hover:text-primary" aria-label="GitHub"><Github className="h-5 w-5" /></a>
-            <a href={`mailto:${SOCIAL_LINKS.email}`} className="rounded-full p-2 text-muted-foreground transition-colors hover:bg-accent hover:text-primary" aria-label="Email"><Mail className="h-5 w-5" /></a>
+            <a href={SOCIAL_LINKS.linkedin} target="_blank" rel="noopener noreferrer" className="rounded-full p-2 text-muted-foreground transition-colors hover:bg-accent hover:text-primary" aria-label="Carlos Anaya Ruíz en LinkedIn"><Linkedin className="h-5 w-5" /></a>
+            <a href={SOCIAL_LINKS.github1} target="_blank" rel="noopener noreferrer" className="rounded-full p-2 text-muted-foreground transition-colors hover:bg-accent hover:text-primary" aria-label="Carlos Anaya Ruíz en GitHub"><Github className="h-5 w-5" /></a>
+            <a href={`mailto:${SOCIAL_LINKS.email}`} className="rounded-full p-2 text-muted-foreground transition-colors hover:bg-accent hover:text-primary" aria-label="Email a Carlos Anaya Ruíz"><Mail className="h-5 w-5" /></a>
           </div>
         </div>
 
@@ -86,7 +93,7 @@ function AboutContent({ locale }: { locale: Locale }) {
 
         <Separator className="my-12" />
 
-        {/* Experience (E-E-A-T) */}
+        {/* Experience */}
         <section className="mb-12">
           <h2 className="mb-8 text-2xl font-bold">{t('experience')}</h2>
           <div className="space-y-6">
@@ -109,8 +116,7 @@ function AboutContent({ locale }: { locale: Locale }) {
                     <ul className="mb-4 space-y-2">
                       {exp.highlights.map((h, i) => (
                         <li key={i} className="flex items-start gap-2 text-sm text-muted-foreground">
-                          <span className="mt-1.5 h-1.5 w-1.5 shrink-0 rounded-full bg-primary" />
-                          {h}
+                          <span className="mt-1.5 h-1.5 w-1.5 shrink-0 rounded-full bg-primary" />{h}
                         </li>
                       ))}
                     </ul>
@@ -146,7 +152,7 @@ function AboutContent({ locale }: { locale: Locale }) {
 
         <Separator className="my-12" />
 
-        {/* Skills/Stack */}
+        {/* Skills */}
         <section className="mb-12">
           <h2 className="mb-6 text-2xl font-bold">{t('skills')}</h2>
           <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
@@ -209,8 +215,7 @@ function AboutContent({ locale }: { locale: Locale }) {
           <h2 className="mb-6 text-2xl font-bold">{t('certs')}</h2>
           <Button variant="outline" asChild className="gap-2">
             <a href={SOCIAL_LINKS.certsDrive} target="_blank" rel="noopener noreferrer">
-              {t('viewCerts')}
-              <ExternalLink className="h-4 w-4" />
+              {t('viewCerts')}<ExternalLink className="h-4 w-4" />
             </a>
           </Button>
         </section>
