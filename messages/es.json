@@ -1,0 +1,116 @@
+{
+  "nav": {
+    "home": "Servicios",
+    "books": "Libros",
+    "about": "Sobre Mí",
+    "contact": "Contacto",
+    "hireMe": "Contrátame",
+    "openMenu": "Abrir menú",
+    "closeMenu": "Cerrar menú"
+  },
+  "hero": {
+    "greeting": "Hola, soy",
+    "tagline": "SEO Técnico · Next.js · Firebase · IA · Dashboards",
+    "subtitle": "Ingeniero de software y consultor SEO técnico. Construyo sitios web rápidos, indexables y que convierten — con Next.js, Firebase, IA y datos estructurados.",
+    "ctaServices": "Ver servicios",
+    "ctaBooks": "Comprar libros",
+    "ctaContact": "Agendar llamada"
+  },
+  "services": {
+    "title": "Servicios",
+    "subtitle": "Soluciones de ingeniería y SEO técnico para escalar tu negocio digital",
+    "benefits": "Beneficios clave",
+    "includes": "Qué incluye",
+    "cta": "Solicitar cotización",
+    "ctaFiverr": "Contratar en Fiverr",
+    "faq": "Preguntas frecuentes",
+    "process": "Mi Proceso de Trabajo",
+    "processSubtitle": "Metodología comprobada para resultados medibles",
+    "step1Title": "Auditoría",
+    "step1Desc": "Análisis técnico profundo de tu sitio, rendimiento, SEO y oportunidades de mejora.",
+    "step2Title": "Estrategia",
+    "step2Desc": "Definición de arquitectura, prioridades y roadmap con entregables claros.",
+    "step3Title": "Implementación",
+    "step3Desc": "Desarrollo iterativo con sprints, revisiones de código y QA continuo.",
+    "step4Title": "Medición",
+    "step4Desc": "Seguimiento de métricas, Core Web Vitals, posicionamiento y conversiones."
+  },
+  "books": {
+    "title": "Libros",
+    "subtitle": "Conocimiento técnico de alto valor, destilado en formato libro",
+    "audience": "Para quién es",
+    "buy": "Comprar ahora",
+    "pages": "páginas",
+    "comingSoon": "Más libros próximamente. ¡Estoy trabajando en ello!"
+  },
+  "about": {
+    "title": "Sobre Mí",
+    "subtitle": "Ingeniero, líder técnico y consultor SEO",
+    "summary": "Resumen Profesional",
+    "experience": "Experiencia Profesional",
+    "education": "Formación Académica",
+    "skills": "Stack & Especialidades",
+    "awards": "Reconocimientos",
+    "languages": "Idiomas",
+    "certs": "Certificaciones",
+    "viewCerts": "Ver todas mis certificaciones"
+  },
+  "contact": {
+    "title": "Contacto",
+    "subtitle": "¿Tienes un proyecto en mente? Me encantaría escucharte.",
+    "info": "Información de Contacto",
+    "social": "Redes Sociales",
+    "form": "Envíame un mensaje",
+    "name": "Nombre",
+    "namePh": "Tu nombre completo",
+    "email": "Email",
+    "emailPh": "tu@email.com",
+    "subject": "Asunto",
+    "subjectPh": "¿Sobre qué quieres hablar?",
+    "message": "Mensaje",
+    "messagePh": "Cuéntame más sobre tu proyecto o idea...",
+    "send": "Enviar Mensaje",
+    "sending": "Enviando...",
+    "sent": "¡Mensaje enviado!",
+    "thanks": "Gracias por contactarme. Te responderé lo antes posible.",
+    "another": "Enviar otro mensaje",
+    "errorTitle": "Error al enviar",
+    "errorDesc": "No se pudo enviar tu mensaje. Inténtalo de nuevo.",
+    "retry": "Intentar de nuevo",
+    "location": "Ubicación",
+    "connect": "Conecta conmigo",
+    "seeProjects": "Ve mis proyectos",
+    "fiverr": "Contrátame en Fiverr"
+  },
+  "newsletter": {
+    "title": "Suscríbete al Newsletter",
+    "subtitle": "Recibe actualizaciones sobre nuevos proyectos, artículos y recursos de SEO técnico.",
+    "placeholder": "tu@email.com",
+    "subscribe": "Suscribirse",
+    "thankYou": "¡Gracias por suscribirte!",
+    "noSpam": "Sin spam. Cancela cuando quieras.",
+    "alreadySubscribed": "Ya estás suscrito.",
+    "error": "Ocurrió un error. Inténtalo de nuevo.",
+    "tryAgain": "Intentar de nuevo"
+  },
+  "footer": {
+    "description": "Carlos Anaya Ruíz — Consultor SEO técnico e ingeniero full-stack. Desarrollo aplicaciones web con Next.js y Firebase, automatización con IA y dashboards de alto rendimiento.",
+    "navigation": "Navegación",
+    "contactTitle": "Contacto",
+    "services": "Servicios",
+    "allRightsReserved": "Todos los derechos reservados."
+  },
+  "language": {
+    "switchTo": "English",
+    "current": "Español",
+    "label": "Idioma"
+  },
+  "breadcrumbs": {
+    "home": "Inicio"
+  },
+  "common": {
+    "readMore": "Leer más",
+    "viewMore": "Ver más",
+    "present": "Presente"
+  }
+}

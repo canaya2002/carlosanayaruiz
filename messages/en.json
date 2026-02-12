@@ -1,0 +1,116 @@
+{
+  "nav": {
+    "home": "Services",
+    "books": "Books",
+    "about": "About",
+    "contact": "Contact",
+    "hireMe": "Hire Me",
+    "openMenu": "Open menu",
+    "closeMenu": "Close menu"
+  },
+  "hero": {
+    "greeting": "Hi, I'm",
+    "tagline": "Technical SEO · Next.js · Firebase · AI · Dashboards",
+    "subtitle": "Software engineer & technical SEO consultant. I build fast, indexable, high-converting websites — with Next.js, Firebase, AI, and structured data.",
+    "ctaServices": "View services",
+    "ctaBooks": "Buy books",
+    "ctaContact": "Schedule a call"
+  },
+  "services": {
+    "title": "Services",
+    "subtitle": "Engineering & technical SEO solutions to scale your digital business",
+    "benefits": "Key benefits",
+    "includes": "What's included",
+    "cta": "Request a quote",
+    "ctaFiverr": "Hire on Fiverr",
+    "faq": "Frequently asked questions",
+    "process": "My Work Process",
+    "processSubtitle": "Proven methodology for measurable results",
+    "step1Title": "Audit",
+    "step1Desc": "Deep technical analysis of your site, performance, SEO, and improvement opportunities.",
+    "step2Title": "Strategy",
+    "step2Desc": "Architecture definition, priorities, and roadmap with clear deliverables.",
+    "step3Title": "Implementation",
+    "step3Desc": "Iterative development with sprints, code reviews, and continuous QA.",
+    "step4Title": "Measurement",
+    "step4Desc": "Metrics tracking, Core Web Vitals, rankings, and conversions."
+  },
+  "books": {
+    "title": "Books",
+    "subtitle": "High-value technical knowledge, distilled into book format",
+    "audience": "Who is it for",
+    "buy": "Buy now",
+    "pages": "pages",
+    "comingSoon": "More books coming soon. I'm working on it!"
+  },
+  "about": {
+    "title": "About Me",
+    "subtitle": "Engineer, tech lead & SEO consultant",
+    "summary": "Professional Summary",
+    "experience": "Professional Experience",
+    "education": "Education",
+    "skills": "Stack & Specialties",
+    "awards": "Awards & Recognition",
+    "languages": "Languages",
+    "certs": "Certifications",
+    "viewCerts": "View all my certifications"
+  },
+  "contact": {
+    "title": "Contact",
+    "subtitle": "Have a project in mind? I'd love to hear from you.",
+    "info": "Contact Information",
+    "social": "Social Media",
+    "form": "Send me a message",
+    "name": "Name",
+    "namePh": "Your full name",
+    "email": "Email",
+    "emailPh": "you@email.com",
+    "subject": "Subject",
+    "subjectPh": "What would you like to discuss?",
+    "message": "Message",
+    "messagePh": "Tell me more about your project or idea...",
+    "send": "Send Message",
+    "sending": "Sending...",
+    "sent": "Message sent!",
+    "thanks": "Thanks for reaching out. I'll respond as soon as possible.",
+    "another": "Send another message",
+    "errorTitle": "Error sending",
+    "errorDesc": "Could not send your message. Please try again.",
+    "retry": "Try again",
+    "location": "Location",
+    "connect": "Connect with me",
+    "seeProjects": "See my projects",
+    "fiverr": "Hire me on Fiverr"
+  },
+  "newsletter": {
+    "title": "Subscribe to the Newsletter",
+    "subtitle": "Get updates on new projects, articles, and technical SEO resources.",
+    "placeholder": "you@email.com",
+    "subscribe": "Subscribe",
+    "thankYou": "Thanks for subscribing!",
+    "noSpam": "No spam. Unsubscribe anytime.",
+    "alreadySubscribed": "You're already subscribed.",
+    "error": "An error occurred. Please try again.",
+    "tryAgain": "Try again"
+  },
+  "footer": {
+    "description": "Carlos Anaya Ruíz — Technical SEO consultant & full-stack engineer. I build web apps with Next.js and Firebase, AI automation, and high-performance dashboards.",
+    "navigation": "Navigation",
+    "contactTitle": "Contact",
+    "services": "Services",
+    "allRightsReserved": "All rights reserved."
+  },
+  "language": {
+    "switchTo": "Español",
+    "current": "English",
+    "label": "Language"
+  },
+  "breadcrumbs": {
+    "home": "Home"
+  },
+  "common": {
+    "readMore": "Read more",
+    "viewMore": "View more",
+    "present": "Present"
+  }
+}
