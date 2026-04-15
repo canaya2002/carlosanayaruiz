@@ -14,12 +14,14 @@ interface SEOProps {
   author?: string
   noIndex?: boolean
   locale: Locale
+  /** When true, title is used as-is without the "| Carlos Anaya Ruiz" suffix */
+  absoluteTitle?: boolean
 }
 
 /**
  * Generate Next.js Metadata for any page.
- * - Title ALWAYS starts with "Carlos Anaya Ruíz | ..."
- * - Description ALWAYS starts with "Carlos Anaya Ruíz — ..."
+ * - Title uses template "Page Title | Carlos Anaya Ruiz"
+ * - Description is unique and specific per page
  * - OG images use locale-specific variants from public/
  */
 export function generatePageMetadata({
@@ -34,23 +36,24 @@ export function generatePageMetadata({
   author,
   noIndex = false,
   locale,
+  absoluteTitle = false,
 }: SEOProps): Metadata {
   const config = getSiteConfig(locale)
 
-  const metaTitle = title
-    ? `Carlos Anaya Ruíz | ${title}`
-    : config.title
+  const metaTitle = title || config.title
   const metaDescription = description || config.description
-  // OG image: prefer locale-specific, fallback to provided, then default
-  const ogImage = image || (locale === 'en' ? SEO_IMAGES.ogEn : SEO_IMAGES.ogEs)
+  const ogImage =
+    image || (locale === 'en' ? SEO_IMAGES.ogEn : SEO_IMAGES.ogEs)
   const metaUrl = `${config.url}/${locale}${path}`
   const configKeywords = Array.isArray(config.keywords) ? config.keywords : []
-  const metaKeywords = keywords ? [...configKeywords, ...keywords] : configKeywords
+  const metaKeywords = keywords
+    ? [...configKeywords, ...keywords]
+    : configKeywords
 
   const alternateLocale = locale === 'es' ? 'en' : 'es'
 
   return {
-    title: metaTitle,
+    title: absoluteTitle ? { absolute: metaTitle } : metaTitle,
     description: metaDescription,
     keywords: metaKeywords,
     authors: [{ name: author || config.name }],
@@ -90,7 +93,7 @@ export function generatePageMetadata({
           url: ogImage,
           width: 1200,
           height: 630,
-          alt: `Carlos Anaya Ruíz — ${title || (locale === 'en' ? 'Technical SEO & Next.js' : 'SEO Técnico & Next.js')}`,
+          alt: `Carlos Anaya Ruiz — ${title || (locale === 'en' ? 'Technical SEO & Web Development' : 'SEO Técnico & Desarrollo Web')}`,
           type: 'image/png',
         },
       ],

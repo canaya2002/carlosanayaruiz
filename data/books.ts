@@ -44,12 +44,13 @@ const booksData: Record<Locale, Book[]> = {
       description: 'Una guía práctica y profunda sobre cómo implementar SEO técnico de alto nivel en aplicaciones Next.js. Cubre desde la configuración de metadatos y sitemaps hasta Schema JSON-LD avanzado, Core Web Vitals, internacionalización con hreflang y estrategias de renderizado (SSR/ISR/SSG) para máxima visibilidad en buscadores.',
       audience: 'Desarrolladores web, ingenieros frontend y consultores SEO que quieren dominar la intersección entre ingeniería de rendimiento y posicionamiento orgánico.',
       coverImage: '/images/books/seo-tecnico-nextjs-cover.png',
-      // TODO: Reemplaza con tu URL de compra real
-      purchaseUrl: 'https://carlosanayaweb.com/libros/seo-tecnico-nextjs',
-      price: '$29.99 USD',
+      // TODO: Reemplaza con tu URL de compra real cuando esté disponible
+      purchaseUrl: 'https://carlosanayaruiz.com/es/libros',
+      price: 'TBD',
       currency: 'USD',
       pages: 280,
-      publishedDate: '2025-06-01',
+      // Fecha estimada de publicación — actualizar cuando esté listo
+      publishedDate: '2026-09-01',
       tags: ['SEO Técnico', 'Next.js', 'Schema.org', 'Core Web Vitals', 'Rendimiento Web'],
     },
   ],
@@ -62,12 +63,13 @@ const booksData: Record<Locale, Book[]> = {
       description: 'A practical, in-depth guide on implementing high-level technical SEO in Next.js applications. Covers everything from metadata configuration and sitemaps to advanced Schema JSON-LD, Core Web Vitals, internationalization with hreflang, and rendering strategies (SSR/ISR/SSG) for maximum search visibility.',
       audience: 'Web developers, frontend engineers, and SEO consultants who want to master the intersection between performance engineering and organic positioning.',
       coverImage: '/images/books/seo-tecnico-nextjs-cover.png',
-      // TODO: Replace with your actual purchase URL
-      purchaseUrl: 'https://carlosanayaweb.com/books/technical-seo-nextjs',
-      price: '$29.99 USD',
+      // TODO: Replace with your actual purchase URL when available
+      purchaseUrl: 'https://carlosanayaruiz.com/en/books',
+      price: 'TBD',
       currency: 'USD',
       pages: 280,
-      publishedDate: '2025-06-01',
+      // Estimated publication date — update when ready
+      publishedDate: '2026-09-01',
       tags: ['Technical SEO', 'Next.js', 'Schema.org', 'Core Web Vitals', 'Web Performance'],
     },
   ],

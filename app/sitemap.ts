@@ -5,12 +5,17 @@ export default function sitemap(): MetadataRoute.Sitemap {
   const baseUrl = SITE_CONFIG.url
   const now = new Date()
 
-  // Define all pages with their locale-specific paths
   const pages = [
+    // Core brand pages
     { es: '', en: '', priority: 1, changeFrequency: 'weekly' as const },
-    { es: '/libros', en: '/books', priority: 0.8, changeFrequency: 'monthly' as const },
     { es: '/sobre-mi', en: '/about', priority: 0.8, changeFrequency: 'monthly' as const },
-    { es: '/contacto', en: '/contact', priority: 0.6, changeFrequency: 'yearly' as const },
+    { es: '/contacto', en: '/contact', priority: 0.7, changeFrequency: 'monthly' as const },
+    { es: '/libros', en: '/books', priority: 0.6, changeFrequency: 'monthly' as const },
+    // Service money pages — highest priority after home
+    { es: '/seo-tecnico', en: '/technical-seo', priority: 0.9, changeFrequency: 'monthly' as const },
+    { es: '/desarrollo-web', en: '/web-development', priority: 0.9, changeFrequency: 'monthly' as const },
+    { es: '/automatizacion-ia', en: '/ai-automation', priority: 0.8, changeFrequency: 'monthly' as const },
+    { es: '/dashboards', en: '/dashboards', priority: 0.8, changeFrequency: 'monthly' as const },
   ]
 
   const entries: MetadataRoute.Sitemap = []
@@ -24,8 +29,9 @@ export default function sitemap(): MetadataRoute.Sitemap {
       priority: page.priority,
       alternates: {
         languages: {
-          es: `${baseUrl}/es${page.es}`,
-          en: `${baseUrl}/en${page.en}`,
+          'es-MX': `${baseUrl}/es${page.es}`,
+          'en-US': `${baseUrl}/en${page.en}`,
+          'x-default': `${baseUrl}/es${page.es}`,
         },
       },
     })
@@ -38,8 +44,9 @@ export default function sitemap(): MetadataRoute.Sitemap {
       priority: page.priority,
       alternates: {
         languages: {
-          es: `${baseUrl}/es${page.es}`,
-          en: `${baseUrl}/en${page.en}`,
+          'es-MX': `${baseUrl}/es${page.es}`,
+          'en-US': `${baseUrl}/en${page.en}`,
+          'x-default': `${baseUrl}/es${page.es}`,
         },
       },
     })

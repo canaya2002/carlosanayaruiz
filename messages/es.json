@@ -1,7 +1,7 @@
 {
   "nav": {
-    "home": "Servicios",
-    "books": "Libros",
+    "home": "Inicio",
+    "books": "Recursos",
     "about": "Sobre Mí",
     "contact": "Contacto",
     "hireMe": "Contrátame",
@@ -10,11 +10,17 @@
   },
   "hero": {
     "greeting": "Hola, soy",
-    "tagline": "SEO Técnico · Next.js · Firebase · IA · Dashboards",
-    "subtitle": "Ingeniero de software y consultor SEO técnico. Construyo sitios web rápidos, indexables y que convierten — con Next.js, Firebase, IA y datos estructurados.",
+    "tagline": "Consultor SEO Técnico & Ingeniero Full-Stack en México",
+    "subtitle": "Ayudo a empresas y emprendedores a construir sitios web rápidos, indexables y que convierten — con ingeniería de alto rendimiento, SEO técnico real y arquitectura moderna.",
     "ctaServices": "Ver servicios",
-    "ctaBooks": "Comprar libros",
-    "ctaContact": "Agendar llamada"
+    "ctaContact": "Agendar llamada",
+    "ctaAbout": "Conoce mi trayectoria"
+  },
+  "trust": {
+    "yearsExp": "+4 años de experiencia",
+    "pmpCert": "Certificado PMP",
+    "companies": "Amazon · Master Loyalty · Wan Hai Lines",
+    "tecMty": "Tec de Monterrey"
   },
   "services": {
     "title": "Servicios",
@@ -26,6 +32,7 @@
     "faq": "Preguntas frecuentes",
     "process": "Mi Proceso de Trabajo",
     "processSubtitle": "Metodología comprobada para resultados medibles",
+    "viewAll": "Ver detalles del servicio",
     "step1Title": "Auditoría",
     "step1Desc": "Análisis técnico profundo de tu sitio, rendimiento, SEO y oportunidades de mejora.",
     "step2Title": "Estrategia",
@@ -35,13 +42,44 @@
     "step4Title": "Medición",
     "step4Desc": "Seguimiento de métricas, Core Web Vitals, posicionamiento y conversiones."
   },
+  "servicePages": {
+    "seoTecnico": {
+      "title": "Consultor SEO Técnico en México",
+      "subtitle": "Auditorías, arquitectura de información, datos estructurados y optimización de rendimiento para que Google entienda, indexe y posicione tu sitio.",
+      "ctaMain": "Solicitar auditoría SEO",
+      "ctaSecondary": "Agendar llamada"
+    },
+    "desarrolloWeb": {
+      "title": "Desarrollo Web con Next.js y Firebase",
+      "subtitle": "Aplicaciones web modernas, rápidas y optimizadas para SEO — desde landing pages hasta plataformas SaaS completas.",
+      "ctaMain": "Cotizar proyecto web",
+      "ctaSecondary": "Ver proceso de trabajo"
+    },
+    "automatizacionIA": {
+      "title": "Automatización con IA y Chatbots para Empresas",
+      "subtitle": "Chatbots inteligentes, flujos automatizados e integración de LLMs para reducir costos operativos y mejorar la experiencia del cliente.",
+      "ctaMain": "Explorar automatización",
+      "ctaSecondary": "Agendar consulta"
+    },
+    "dashboards": {
+      "title": "Dashboards y Analytics Empresariales",
+      "subtitle": "Dashboards interactivos y responsivos que transforman datos en decisiones — conectados a tus fuentes de datos en tiempo real.",
+      "ctaMain": "Cotizar dashboard",
+      "ctaSecondary": "Ver ejemplos"
+    }
+  },
   "books": {
-    "title": "Libros",
-    "subtitle": "Conocimiento técnico de alto valor, destilado en formato libro",
+    "title": "Recursos Técnicos",
+    "subtitle": "Conocimiento técnico de alto valor en SEO, desarrollo web y arquitectura moderna",
     "audience": "Para quién es",
     "buy": "Comprar ahora",
     "pages": "páginas",
-    "comingSoon": "Más libros próximamente. ¡Estoy trabajando en ello!"
+    "comingSoon": "Más recursos próximamente. ¡Estoy trabajando en ello!",
+    "upcoming": "Próximamente",
+    "upcomingDesc": "Este libro está en desarrollo activo. Suscríbete al newsletter para ser el primero en saber cuando esté disponible.",
+    "notifyMe": "Notifícame cuando esté listo",
+    "freeResources": "Recursos Gratuitos",
+    "freeResourcesDesc": "Mientras tanto, puedes explorar estos recursos que he publicado:"
   },
   "about": {
     "title": "Sobre Mí",
@@ -53,7 +91,10 @@
     "awards": "Reconocimientos",
     "languages": "Idiomas",
     "certs": "Certificaciones",
-    "viewCerts": "Ver todas mis certificaciones"
+    "viewCerts": "Ver todas mis certificaciones",
+    "philosophy": "Mi Enfoque de Trabajo",
+    "philosophyDesc": "Combino ingeniería de alto rendimiento con estrategia SEO técnica. No construyo sitios web bonitos que nadie encuentra — construyo productos digitales que se posicionan, convierten y escalan.",
+    "servicesLink": "Descubre lo que puedo hacer por tu proyecto"
   },
   "contact": {
     "title": "Contacto",
@@ -80,7 +121,10 @@
     "location": "Ubicación",
     "connect": "Conecta conmigo",
     "seeProjects": "Ve mis proyectos",
-    "fiverr": "Contrátame en Fiverr"
+    "fiverr": "Contrátame en Fiverr",
+    "projectTypes": "Tipos de Proyecto",
+    "projectTypesDesc": "Trabajo en proyectos de SEO técnico, desarrollo web, automatización con IA y dashboards. Desde auditorías puntuales hasta proyectos de 2-3 meses.",
+    "responseTime": "Tiempo de respuesta: 24-48 horas hábiles"
   },
   "newsletter": {
     "title": "Suscríbete al Newsletter",
@@ -94,10 +138,14 @@
     "tryAgain": "Intentar de nuevo"
   },
   "footer": {
-    "description": "Carlos Anaya Ruíz — Consultor SEO técnico e ingeniero full-stack. Desarrollo aplicaciones web con Next.js y Firebase, automatización con IA y dashboards de alto rendimiento.",
+    "description": "Carlos Anaya Ruiz — Consultor SEO técnico e ingeniero full-stack en México. Desarrollo aplicaciones web con Next.js y Firebase, automatización con IA y dashboards de alto rendimiento.",
     "navigation": "Navegación",
     "contactTitle": "Contacto",
     "services": "Servicios",
+    "seoTecnico": "SEO Técnico",
+    "desarrolloWeb": "Desarrollo Web",
+    "automatizacionIA": "Automatización IA",
+    "dashboardsLabel": "Dashboards",
     "allRightsReserved": "Todos los derechos reservados."
   },
   "language": {
@@ -111,6 +159,9 @@
   "common": {
     "readMore": "Leer más",
     "viewMore": "Ver más",
-    "present": "Presente"
+    "present": "Presente",
+    "backToHome": "Volver al inicio",
+    "learnMore": "Saber más",
+    "relatedServices": "Servicios Relacionados"
   }
 }

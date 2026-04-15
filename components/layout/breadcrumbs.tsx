@@ -4,7 +4,15 @@ import { useTranslations } from 'next-intl'
 
 export interface BreadcrumbItem {
   label: string
-  href?: '/' | '/libros' | '/sobre-mi' | '/contacto'
+  href?:
+    | '/'
+    | '/libros'
+    | '/sobre-mi'
+    | '/contacto'
+    | '/seo-tecnico'
+    | '/desarrollo-web'
+    | '/automatizacion-ia'
+    | '/dashboards'
 }
 
 interface BreadcrumbsProps {

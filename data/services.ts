@@ -1,4 +1,4 @@
-import { Globe, Bot, BarChart3, type LucideIcon } from 'lucide-react'
+import { Search, Globe, Bot, BarChart3, type LucideIcon } from 'lucide-react'
 import { Locale } from './types'
 
 export interface Service {
@@ -15,6 +15,41 @@ export interface Service {
 
 const servicesData: Record<Locale, Service[]> = {
   es: [
+    {
+      id: 'seo-tecnico',
+      slug: 'seo-tecnico',
+      title: 'Consultoría SEO Técnica',
+      headline: 'Auditorías, datos estructurados, Core Web Vitals y arquitectura de información',
+      description: 'Consultoría SEO técnico en México. Audito, optimizo y arquitecto sitios web para buscadores: datos estructurados (Schema.org/JSON-LD), Core Web Vitals, indexación, hreflang, arquitectura de información y estrategia de rendimiento.',
+      benefits: [
+        'Auditoría SEO técnica completa con hallazgos priorizados y plan de acción',
+        'Implementación de Schema.org / JSON-LD validado contra Google Rich Results',
+        'Optimización de Core Web Vitals (LCP, INP, CLS) y rendimiento web',
+      ],
+      includes: [
+        'Auditoría SEO técnica completa con hallazgos priorizados',
+        'Implementación y validación de Schema.org / JSON-LD',
+        'Optimización de Core Web Vitals (LCP, INP, CLS)',
+        'Revisión de arquitectura de información y estructura de URLs',
+        'Estrategia de indexación: sitemap, robots, canonical, hreflang',
+        'Auditoría y optimización de enlazado interno',
+      ],
+      icon: Search,
+      faq: [
+        {
+          question: '¿Qué incluye una auditoría de SEO técnico?',
+          answer: 'Un análisis completo de la arquitectura de tu sitio, estado de indexación, datos estructurados, Core Web Vitals, enlazado interno, canonicals, hreflang, robots/sitemap y renderizado. Recibes un reporte priorizado con correcciones específicas e impacto esperado.',
+        },
+        {
+          question: '¿Cuánto tiempo tarda en verse el impacto de mejoras de SEO técnico?',
+          answer: 'Las correcciones técnicas (indexación, schema, CWV) típicamente muestran impacto en 2-8 semanas después de que Google recrawlea. Cambios estructurales como arquitectura de información pueden tomar 2-4 meses en reflejarse completamente en rankings.',
+        },
+        {
+          question: '¿Puedes manejar migraciones SEO?',
+          answer: 'Sí. Manejo migraciones desde WordPress, Angular, React SPAs y otros frameworks hacia Next.js. El proceso incluye auditoría pre-migración, mapeo de URLs, redirecciones 301, migración de schema y validación post-migración para preservar rankings orgánicos.',
+        },
+      ],
+    },
     {
       id: 'nextjs-firebase',
       slug: 'aplicaciones-web-nextjs-firebase',
@@ -122,6 +157,41 @@ const servicesData: Record<Locale, Service[]> = {
     },
   ],
   en: [
+    {
+      id: 'seo-tecnico',
+      slug: 'technical-seo',
+      title: 'Technical SEO Consulting',
+      headline: 'Audits, structured data, Core Web Vitals, and information architecture',
+      description: 'Technical SEO consulting in Mexico. I audit, optimize, and architect websites for search engines: structured data (Schema.org/JSON-LD), Core Web Vitals, indexation, hreflang, information architecture, and performance strategy.',
+      benefits: [
+        'Full technical SEO audit with prioritized findings and action plan',
+        'Schema.org / JSON-LD implementation validated against Google Rich Results',
+        'Core Web Vitals optimization (LCP, INP, CLS) and web performance',
+      ],
+      includes: [
+        'Full technical SEO audit with prioritized findings',
+        'Schema.org / JSON-LD implementation and validation',
+        'Core Web Vitals optimization (LCP, INP, CLS)',
+        'Information architecture and URL structure review',
+        'Indexation strategy: sitemap, robots, canonical, hreflang',
+        'Internal linking audit and optimization',
+      ],
+      icon: Search,
+      faq: [
+        {
+          question: 'What does a technical SEO audit include?',
+          answer: 'A full analysis of your site architecture, indexation status, structured data, Core Web Vitals, internal linking, canonical tags, hreflang, robots/sitemap, and rendering. You get a prioritized report with specific fixes and expected impact.',
+        },
+        {
+          question: 'How long before I see results from technical SEO improvements?',
+          answer: 'Technical fixes (indexation, schema, CWV) typically show impact in 2-8 weeks after Google recrawls. Structural changes like information architecture may take 2-4 months to fully reflect in rankings.',
+        },
+        {
+          question: 'Can you handle SEO migrations?',
+          answer: 'Yes. I handle migrations from WordPress, Angular, React SPAs, and other frameworks to Next.js. The process includes pre-migration audit, URL mapping, 301 redirects, schema migration, and post-migration validation to preserve organic rankings.',
+        },
+      ],
+    },
     {
       id: 'nextjs-firebase',
       slug: 'modern-web-apps-nextjs-firebase',

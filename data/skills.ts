@@ -9,6 +9,11 @@ export interface SkillCategory {
 const skillsData: Record<Locale, SkillCategory[]> = {
   es: [
     {
+      category: 'seo-performance',
+      label: 'SEO Técnico & Rendimiento Web',
+      skills: ['Schema.org/JSON-LD', 'Core Web Vitals', 'Google Search Console', 'Lighthouse', 'Screaming Frog', 'hreflang/i18n', 'Sitemap/Robots', 'Arquitectura de Información'],
+    },
+    {
       category: 'languages-backend',
       label: 'Lenguajes & Backend',
       skills: ['Python', 'Go', 'Rust', 'C#/.NET', 'Java', 'TypeScript', 'Node.js', 'Django', 'FastAPI'],
@@ -40,6 +45,11 @@ const skillsData: Record<Locale, SkillCategory[]> = {
     },
   ],
   en: [
+    {
+      category: 'seo-performance',
+      label: 'Technical SEO & Web Performance',
+      skills: ['Schema.org/JSON-LD', 'Core Web Vitals', 'Google Search Console', 'Lighthouse', 'Screaming Frog', 'hreflang/i18n', 'Sitemap/Robots', 'Information Architecture'],
+    },
     {
       category: 'languages-backend',
       label: 'Languages & Backend',

@@ -43,7 +43,7 @@ export async function generateMetadata({
     metadataBase: new URL(SITE_CONFIG.url),
     title: {
       default: config.title,
-      template: `%s | Carlos Anaya Ruíz`,
+      template: `%s | Carlos Anaya Ruiz`,
     },
     description: config.description,
     keywords: config.keywords,
@@ -80,7 +80,7 @@ export async function generateMetadata({
           url: ogImage,
           width: 1200,
           height: 630,
-          alt: `Carlos Anaya Ruíz — ${locale === 'en' ? 'Technical SEO Consultant & Full-Stack Engineer' : 'Consultor SEO Técnico & Ingeniero Full-Stack'}`,
+          alt: `Carlos Anaya Ruiz — ${locale === 'en' ? 'Technical SEO Consultant & Full-Stack Engineer' : 'Consultor SEO Técnico & Ingeniero Full-Stack'}`,
           type: 'image/png',
         },
       ],

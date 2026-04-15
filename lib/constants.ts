@@ -1,8 +1,8 @@
 import { Locale } from '@/data/types'
 
 export const SITE_CONFIG = {
-  name: 'Carlos Anaya Ruíz',
-  url: 'https://carlosanayaweb.com',
+  name: 'Carlos Anaya Ruiz',
+  url: 'https://carlosanayaruiz.com',
   locales: ['es', 'en'] as const,
   defaultLocale: 'es' as const,
 } as const
@@ -29,8 +29,8 @@ export const SEO_IMAGES = {
   avatar: '/carlos-anaya-ruiz-software.png',
   /** Alt text per locale — MUST include full name naturally */
   avatarAlt: {
-    es: 'Carlos Anaya Ruíz — Consultor SEO Técnico y desarrollador full-stack profesional',
-    en: 'Carlos Anaya Ruíz — Technical SEO Consultant and professional full-stack developer',
+    es: 'Carlos Anaya Ruiz — Consultor SEO técnico y desarrollador full-stack en Ciudad de México',
+    en: 'Carlos Anaya Ruiz — Technical SEO consultant and full-stack developer in Mexico City',
   } as Record<Locale, string>,
   ogDefault: '/og-default.png',
   ogEs: '/og-es.png',
@@ -47,23 +47,57 @@ export function getSiteConfig(locale: Locale) {
     { title: string; description: string; ogLocale: string; keywords: string[] }
   > = {
     es: {
-      title: 'Carlos Anaya Ruíz | Consultor SEO Técnico, Next.js y Growth Digital',
-      description: 'Carlos Anaya Ruíz — Consultor SEO técnico e ingeniero full-stack. Desarrollo aplicaciones web con Next.js y Firebase, automatización con IA y dashboards de alto rendimiento. +4 años de experiencia, certificado PMP.',
+      title: 'Carlos Anaya Ruiz — Consultor SEO Técnico & Desarrollador Full-Stack en México',
+      description:
+        'Carlos Anaya Ruiz — Consultor SEO técnico, ingeniero full-stack y arquitecto de producto digital en México. Desarrollo web con Next.js y Firebase, automatización con IA, dashboards empresariales. +4 años de experiencia, certificado PMP. Amazon, Tec de Monterrey.',
       ogLocale: 'es_MX',
       keywords: [
-        'Carlos Anaya Ruíz', 'SEO técnico', 'consultor SEO', 'Next.js',
-        'Firebase', 'desarrollo web', 'automatización IA', 'chatbots',
-        'dashboards', 'TypeScript', 'React', 'PMP', 'México',
+        'Carlos Anaya Ruiz',
+        'Carlos Anaya',
+        'consultor SEO técnico',
+        'consultor SEO técnico México',
+        'SEO técnico Next.js',
+        'consultor web México',
+        'desarrollo web Next.js',
+        'desarrollo web México',
+        'ingeniero full-stack México',
+        'desarrollador de software',
+        'automatización IA empresas',
+        'chatbots inteligentes',
+        'dashboards empresariales',
+        'Firebase',
+        'TypeScript',
+        'React',
+        'arquitectura web',
+        'Core Web Vitals',
+        'PMP certificado',
       ],
     },
     en: {
-      title: 'Carlos Anaya Ruíz | Technical SEO Consultant, Next.js & Digital Growth',
-      description: 'Carlos Anaya Ruíz — Technical SEO consultant & full-stack engineer. I build web apps with Next.js and Firebase, AI automation, and high-performance dashboards. 4+ years experience, PMP certified.',
+      title: 'Carlos Anaya Ruiz — Technical SEO Consultant & Full-Stack Developer in Mexico',
+      description:
+        'Carlos Anaya Ruiz — Technical SEO consultant, full-stack engineer & digital product architect in Mexico. Web development with Next.js & Firebase, AI automation, enterprise dashboards. 4+ years experience, PMP certified. Amazon, Tec de Monterrey.',
       ogLocale: 'en_US',
       keywords: [
-        'Carlos Anaya Ruíz', 'technical SEO', 'SEO consultant', 'Next.js',
-        'Firebase', 'web development', 'AI automation', 'chatbots',
-        'dashboards', 'TypeScript', 'React', 'PMP', 'Mexico',
+        'Carlos Anaya Ruiz',
+        'Carlos Anaya',
+        'technical SEO consultant',
+        'technical SEO consultant Mexico',
+        'technical SEO Next.js',
+        'web consultant Mexico',
+        'Next.js web development',
+        'web development Mexico',
+        'full-stack engineer Mexico',
+        'software developer',
+        'AI automation business',
+        'intelligent chatbots',
+        'enterprise dashboards',
+        'Firebase',
+        'TypeScript',
+        'React',
+        'web architecture',
+        'Core Web Vitals',
+        'PMP certified',
       ],
     },
   }
@@ -78,5 +112,6 @@ export const SOCIAL_LINKS = {
   email: 'carlosaremployment@hotmail.com',
   phone: '+525544167974',
   fiverr: 'https://es.fiverr.com/s/995D62d',
-  certsDrive: 'https://drive.google.com/drive/folders/1wanG6pMmIIlwEir_5bZv4bbMYOQlxuHz?usp=sharing',
+  certsDrive:
+    'https://drive.google.com/drive/folders/1wanG6pMmIIlwEir_5bZv4bbMYOQlxuHz?usp=sharing',
 } as const

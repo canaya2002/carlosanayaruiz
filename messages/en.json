@@ -1,7 +1,7 @@
 {
   "nav": {
-    "home": "Services",
-    "books": "Books",
+    "home": "Home",
+    "books": "Resources",
     "about": "About",
     "contact": "Contact",
     "hireMe": "Hire Me",
@@ -10,11 +10,17 @@
   },
   "hero": {
     "greeting": "Hi, I'm",
-    "tagline": "Technical SEO · Next.js · Firebase · AI · Dashboards",
-    "subtitle": "Software engineer & technical SEO consultant. I build fast, indexable, high-converting websites — with Next.js, Firebase, AI, and structured data.",
+    "tagline": "Technical SEO Consultant & Full-Stack Engineer in Mexico",
+    "subtitle": "I help businesses and founders build fast, indexable, high-converting websites — with high-performance engineering, real technical SEO, and modern architecture.",
     "ctaServices": "View services",
-    "ctaBooks": "Buy books",
-    "ctaContact": "Schedule a call"
+    "ctaContact": "Schedule a call",
+    "ctaAbout": "See my background"
+  },
+  "trust": {
+    "yearsExp": "4+ years of experience",
+    "pmpCert": "PMP Certified",
+    "companies": "Amazon · Master Loyalty · Wan Hai Lines",
+    "tecMty": "Tec de Monterrey"
   },
   "services": {
     "title": "Services",
@@ -26,6 +32,7 @@
     "faq": "Frequently asked questions",
     "process": "My Work Process",
     "processSubtitle": "Proven methodology for measurable results",
+    "viewAll": "View service details",
     "step1Title": "Audit",
     "step1Desc": "Deep technical analysis of your site, performance, SEO, and improvement opportunities.",
     "step2Title": "Strategy",
@@ -35,13 +42,44 @@
     "step4Title": "Measurement",
     "step4Desc": "Metrics tracking, Core Web Vitals, rankings, and conversions."
   },
+  "servicePages": {
+    "seoTecnico": {
+      "title": "Technical SEO Consultant in Mexico",
+      "subtitle": "Audits, information architecture, structured data, and performance optimization so Google understands, indexes, and ranks your site.",
+      "ctaMain": "Request SEO audit",
+      "ctaSecondary": "Schedule a call"
+    },
+    "desarrolloWeb": {
+      "title": "Web Development with Next.js & Firebase",
+      "subtitle": "Modern, fast, SEO-optimized web applications — from landing pages to full SaaS platforms.",
+      "ctaMain": "Get a project quote",
+      "ctaSecondary": "See work process"
+    },
+    "automatizacionIA": {
+      "title": "AI Automation & Chatbots for Business",
+      "subtitle": "Intelligent chatbots, automated workflows, and LLM integration to reduce operational costs and improve customer experience.",
+      "ctaMain": "Explore automation",
+      "ctaSecondary": "Schedule consultation"
+    },
+    "dashboards": {
+      "title": "Enterprise Dashboards & Analytics",
+      "subtitle": "Interactive, responsive dashboards that turn data into decisions — connected to your data sources in real time.",
+      "ctaMain": "Get a dashboard quote",
+      "ctaSecondary": "See examples"
+    }
+  },
   "books": {
-    "title": "Books",
-    "subtitle": "High-value technical knowledge, distilled into book format",
+    "title": "Technical Resources",
+    "subtitle": "High-value technical knowledge in SEO, web development, and modern architecture",
     "audience": "Who is it for",
     "buy": "Buy now",
     "pages": "pages",
-    "comingSoon": "More books coming soon. I'm working on it!"
+    "comingSoon": "More resources coming soon. I'm working on it!",
+    "upcoming": "Coming Soon",
+    "upcomingDesc": "This book is in active development. Subscribe to the newsletter to be the first to know when it's available.",
+    "notifyMe": "Notify me when it's ready",
+    "freeResources": "Free Resources",
+    "freeResourcesDesc": "In the meantime, you can explore these published resources:"
   },
   "about": {
     "title": "About Me",
@@ -53,7 +91,10 @@
     "awards": "Awards & Recognition",
     "languages": "Languages",
     "certs": "Certifications",
-    "viewCerts": "View all my certifications"
+    "viewCerts": "View all my certifications",
+    "philosophy": "My Work Philosophy",
+    "philosophyDesc": "I combine high-performance engineering with technical SEO strategy. I don't build pretty websites nobody finds — I build digital products that rank, convert, and scale.",
+    "servicesLink": "See what I can do for your project"
   },
   "contact": {
     "title": "Contact",
@@ -80,7 +121,10 @@
     "location": "Location",
     "connect": "Connect with me",
     "seeProjects": "See my projects",
-    "fiverr": "Hire me on Fiverr"
+    "fiverr": "Hire me on Fiverr",
+    "projectTypes": "Project Types",
+    "projectTypesDesc": "I work on technical SEO, web development, AI automation, and dashboard projects. From one-off audits to 2-3 month engagements.",
+    "responseTime": "Response time: 24-48 business hours"
   },
   "newsletter": {
     "title": "Subscribe to the Newsletter",
@@ -94,10 +138,14 @@
     "tryAgain": "Try again"
   },
   "footer": {
-    "description": "Carlos Anaya Ruíz — Technical SEO consultant & full-stack engineer. I build web apps with Next.js and Firebase, AI automation, and high-performance dashboards.",
+    "description": "Carlos Anaya Ruiz — Technical SEO consultant & full-stack engineer in Mexico. I build web apps with Next.js and Firebase, AI automation, and high-performance dashboards.",
     "navigation": "Navigation",
     "contactTitle": "Contact",
     "services": "Services",
+    "seoTecnico": "Technical SEO",
+    "desarrolloWeb": "Web Development",
+    "automatizacionIA": "AI Automation",
+    "dashboardsLabel": "Dashboards",
     "allRightsReserved": "All rights reserved."
   },
   "language": {
@@ -111,6 +159,9 @@
   "common": {
     "readMore": "Read more",
     "viewMore": "View more",
-    "present": "Present"
+    "present": "Present",
+    "backToHome": "Back to home",
+    "learnMore": "Learn more",
+    "relatedServices": "Related Services"
   }
 }
