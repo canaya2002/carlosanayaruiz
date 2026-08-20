@@ -4,7 +4,25 @@ export const SITE_CONFIG = {
   name: 'Carlos Anaya Ruiz',
   /** Legal/trading name used for the practice, distinct from the person. */
   businessName: 'Carlos Anaya Ruiz — Consultoría SEO Técnico & Desarrollo Web',
-  url: 'https://carlosanayaruiz.com',
+  /**
+   * ⚠ HOST CANÓNICO. Tiene que ser el host que REALMENTE sirve 200.
+   *
+   * Vercel tiene el apex (carlosanayaruiz.com) redirigiendo a www con un 307,
+   * así que www es el que sirve. Cuando esta constante apuntaba al apex, cada
+   * canonical, cada hreflang, los 22 <loc> del sitemap y los @id del grafo
+   * JSON-LD apuntaban a URLs que redirigen — un sitemap lleno de 3xx y
+   * canonicals que obligan a Google a seguir un salto para decidir por su
+   * cuenta cuál es la URL buena.
+   *
+   * Si algún día se prefiere el apex como canónico (más corto y coincide con
+   * la marca), hay que hacer DOS cosas juntas: invertir la redirección en la
+   * configuración de dominios de Vercel (www -> apex, permanente 308) y
+   * cambiar esta constante. Cambiar solo una reintroduce el mismo defecto al
+   * revés.
+   */
+  url: 'https://www.carlosanayaruiz.com',
+  /** Host sin protocolo ni www, para mostrar en tarjetas y pies. */
+  displayHost: 'carlosanayaruiz.com',
   locales: ['es', 'en'] as const,
   defaultLocale: 'es' as const,
   /** First publication of the site. Used as datePublished; never "today". */

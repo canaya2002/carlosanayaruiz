@@ -1,7 +1,7 @@
 import { ImageResponse } from 'next/og'
 import { readFile } from 'node:fs/promises'
 import path from 'node:path'
-import { PALETTE_HEX } from '@/lib/constants'
+import { PALETTE_HEX, SITE_CONFIG } from '@/lib/constants'
 import { Locale } from '@/data/types'
 
 /**
@@ -196,7 +196,7 @@ export async function renderOgCard({
             <div
               style={{ display: 'flex', fontSize: 19, color: C.inkMuted }}
             >
-              carlosanayaruiz.com
+              {SITE_CONFIG.displayHost}
             </div>
           </div>
 
