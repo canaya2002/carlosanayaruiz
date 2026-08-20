@@ -104,11 +104,11 @@ export const PALETTE_HEX = {
     surface: '#ffffff',
     ink: '#16203a',
     inkMuted: '#56618a',
-    hairline: '#e6eaf4',
+    hairline: '#e3ebf5',
     brand: '#2563eb',
     brandStrong: '#1d4ed8',
-    violet: '#7c3aed',
-    violetStrong: '#6d28d9',
+    sky: '#0ea5e9',
+    skyInk: '#0369a1',
     /**
      * Fondo de píldora. Sólo se usa como superficie (nunca como texto), así
      * que no declara piso de contraste propio: lo que se apoya encima es
@@ -116,10 +116,12 @@ export const PALETTE_HEX = {
      */
     brandWash: '#eef3fe',
     /**
-     * ⚠ Solo decorativo. Mide 2.4:1 sobre fondo claro: sirve como stop de
-     * gradiente o resplandor, nunca como texto ni borde con significado.
+     * ⚠ Solo decorativos. Medidos sobre fondo claro: sky 2.70:1 y
+     * cyan 1.76:1. Sirven como stop de gradiente o resplandor, nunca como
+     * texto ni borde con significado. Para cian legible: cyanInk (5.2:1).
      */
-    cyan: '#06b6d4',
+    cyan: '#22d3ee',
+    cyanInk: '#0e7490',
   },
   /**
    * No hay entrada `dark`. El modo oscuro fue eliminado del sitio; dejar aquí
@@ -189,6 +191,10 @@ export const ROUTES = {
   sobreMi: { es: '/sobre-mi', en: '/about' },
   contacto: { es: '/contacto', en: '/contact' },
   libros: { es: '/libros', en: '/books' },
+  proyectos: { es: '/proyectos', en: '/projects' },
+  premios: { es: '/premios', en: '/awards' },
+  certificaciones: { es: '/certificaciones', en: '/certifications' },
+  cv: { es: '/cv', en: '/cv' },
   privacidad: { es: '/privacidad', en: '/privacy' },
   terminos: { es: '/terminos', en: '/terms' },
 } as const

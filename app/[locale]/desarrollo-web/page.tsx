@@ -147,7 +147,7 @@ export default async function DesarrolloWebPage({ params }: Props) {
                 tarjeta de este servicio en la home. */}
             <div className="enter-scale flex items-center gap-4">
               <span
-                className="grad-fill inline-flex size-14 shrink-0 items-center justify-center rounded-2xl shadow-glow-brand"
+                className="grad-deco inline-flex size-14 shrink-0 items-center justify-center rounded-2xl text-white shadow-glow-brand"
                 aria-hidden="true"
               >
                 <Icon className="size-7" />
@@ -215,7 +215,7 @@ export default async function DesarrolloWebPage({ params }: Props) {
       </section>
 
       {/* ══ QUÉ CONSTRUYO ═════════════════════════════════════════ */}
-      <section className="border-y border-hairline bg-ground-tint">
+      <section className="defer-paint border-y border-hairline bg-ground-tint">
         <div className="mx-auto w-full max-w-6xl px-5 py-20 sm:px-8 sm:py-24">
           <div className="reveal max-w-2xl">
             <p className="eyebrow">{ts('benefits')}</p>
@@ -230,7 +230,7 @@ export default async function DesarrolloWebPage({ params }: Props) {
             {service.benefits.map((benefit) => (
               <li key={benefit} className="card card-hover p-6">
                 <span
-                  className="grad-fill block h-1 w-12 rounded-full"
+                  className="grad-deco block h-1 w-12 rounded-full"
                   aria-hidden="true"
                 />
                 <p className="mt-5 text-ink">{benefit}</p>
@@ -239,7 +239,7 @@ export default async function DesarrolloWebPage({ params }: Props) {
           </ul>
 
           {/* Resultados, no características: qué es medible diferente después. */}
-          <div className="reveal card mt-12 p-6 sm:p-8">
+          <div className="glass glass-spec reveal mt-12 p-6 sm:p-8">
             <h3 className="text-d3 text-ink">
               {en ? 'What is different afterwards' : 'Qué cambia después'}
             </h3>
@@ -247,7 +247,7 @@ export default async function DesarrolloWebPage({ params }: Props) {
               {service.outcomes.map((outcome) => (
                 <li key={outcome} className="flex gap-3 text-ink-muted">
                   <Check
-                    className="mt-1 size-4 shrink-0 text-violet"
+                    className="mt-1 size-4 shrink-0 text-sky-ink"
                     aria-hidden="true"
                   />
                   <span>{outcome}</span>
@@ -259,7 +259,7 @@ export default async function DesarrolloWebPage({ params }: Props) {
       </section>
 
       {/* ══ CÓMO CORRE EL PROYECTO ════════════════════════════════ */}
-      <section className="mx-auto w-full max-w-6xl px-5 py-20 sm:px-8 sm:py-24">
+      <section className="defer-paint mx-auto w-full max-w-6xl px-5 py-20 sm:px-8 sm:py-24">
         <div className="reveal max-w-2xl">
           <p className="eyebrow">{ts('process')}</p>
           <h2 className="mt-5 text-d1 text-ink">
@@ -299,7 +299,7 @@ export default async function DesarrolloWebPage({ params }: Props) {
           tarjeta, el mismo ancho, el mismo tamaño de tipo y el mismo ritmo que
           la primera — una limitación degradada visualmente deja de ser una
           limitación. */}
-      <section className="border-y border-hairline bg-ground-tint">
+      <section className="defer-paint border-y border-hairline bg-ground-tint">
         <div className="mx-auto w-full max-w-6xl px-5 py-20 sm:px-8 sm:py-24">
           <div className="reveal max-w-2xl">
             <p className="eyebrow">{en ? 'Fit' : 'Encaje'}</p>
@@ -327,7 +327,7 @@ export default async function DesarrolloWebPage({ params }: Props) {
                     className="flex gap-3 border-t border-hairline py-4 text-ink-muted first:border-t-0 first:pt-0"
                   >
                     <Check
-                      className="mt-1 size-4 shrink-0 text-violet"
+                      className="mt-1 size-4 shrink-0 text-sky-ink"
                       aria-hidden="true"
                     />
                     <span>{item}</span>
@@ -362,7 +362,7 @@ export default async function DesarrolloWebPage({ params }: Props) {
       </section>
 
       {/* ══ ENTREGABLES COMPLETOS ═════════════════════════════════ */}
-      <section className="mx-auto w-full max-w-6xl px-5 py-20 sm:px-8 sm:py-24">
+      <section className="defer-paint mx-auto w-full max-w-6xl px-5 py-20 sm:px-8 sm:py-24">
         <div className="reveal max-w-2xl">
           <p className="eyebrow">{ts('includes')}</p>
           <h2 className="mt-5 text-d1 text-ink">{t('deliverablesTitle')}</h2>
@@ -383,7 +383,7 @@ export default async function DesarrolloWebPage({ params }: Props) {
               className="flex gap-3 border-t border-hairline py-4 text-ink-muted first:border-t-0 sm:[&:nth-child(2)]:border-t-0"
             >
               <Check
-                className="mt-1 size-4 shrink-0 text-violet"
+                className="mt-1 size-4 shrink-0 text-sky-ink"
                 aria-hidden="true"
               />
               <span>{item}</span>
@@ -393,7 +393,7 @@ export default async function DesarrolloWebPage({ params }: Props) {
       </section>
 
       {/* ══ STACK ═════════════════════════════════════════════════ */}
-      <section className="border-y border-hairline bg-ground-tint">
+      <section className="defer-paint border-y border-hairline bg-ground-tint">
         <div className="mx-auto w-full max-w-6xl px-5 py-14 sm:px-8 sm:py-16">
           <div className="reveal max-w-2xl">
             <p className="eyebrow">{t('toolsTitle')}</p>
@@ -422,7 +422,7 @@ export default async function DesarrolloWebPage({ params }: Props) {
       </section>
 
       {/* ══ FAQ ═══════════════════════════════════════════════════ */}
-      <section className="mx-auto w-full max-w-6xl px-5 py-20 sm:px-8 sm:py-24">
+      <section className="defer-paint mx-auto w-full max-w-6xl px-5 py-20 sm:px-8 sm:py-24">
         <div className="grid gap-12 lg:grid-cols-[minmax(0,22rem)_minmax(0,1fr)] lg:gap-20">
           <div className="reveal">
             <p className="eyebrow">FAQ</p>
@@ -436,7 +436,7 @@ export default async function DesarrolloWebPage({ params }: Props) {
 
           {/* <details> nativo: las respuestas están en el HTML del servidor,
               que es exactamente lo que declara el markup FAQPage de arriba. */}
-          <div className="reveal rounded-2xl border border-hairline bg-surface px-5 shadow-lift-1 sm:px-7">
+          <div className="glass glass-spec reveal px-5 sm:px-7">
             {service.faq.map((faq) => (
               <Disclosure
                 key={faq.question}
@@ -449,7 +449,7 @@ export default async function DesarrolloWebPage({ params }: Props) {
       </section>
 
       {/* ══ SERVICIOS RELACIONADOS ════════════════════════════════ */}
-      <section className="border-t border-hairline bg-ground-tint">
+      <section className="defer-paint border-t border-hairline bg-ground-tint">
         <div className="mx-auto w-full max-w-6xl px-5 py-20 sm:px-8 sm:py-24">
           <div className="reveal max-w-2xl">
             <p className="eyebrow">{ts('eyebrow')}</p>
@@ -471,7 +471,7 @@ export default async function DesarrolloWebPage({ params }: Props) {
                     className="card card-hover group flex h-full flex-col p-6 sm:p-7"
                   >
                     <span
-                      className="grad-fill inline-flex size-12 items-center justify-center rounded-xl shadow-glow-brand"
+                      className="grad-deco inline-flex size-12 items-center justify-center rounded-xl text-white shadow-glow-brand"
                       aria-hidden="true"
                     >
                       <RelatedIcon className="size-6" />
@@ -513,8 +513,8 @@ export default async function DesarrolloWebPage({ params }: Props) {
       </section>
 
       {/* ══ CTA FINAL ═════════════════════════════════════════════ */}
-      <section className="mx-auto w-full max-w-6xl px-5 py-20 sm:px-8 sm:py-24">
-        <div className="grad-animate reveal-scale relative overflow-hidden rounded-3xl px-6 py-14 shadow-lift-3 sm:px-12 sm:py-20">
+      <section className="defer-paint mx-auto w-full max-w-6xl px-5 py-20 sm:px-8 sm:py-24">
+        <div className="grad-drift reveal-scale rounded-3xl px-6 py-14 shadow-lift-3 sm:px-12 sm:py-20">
           <div className="relative max-w-2xl">
             <h2 className="text-d1 text-white">
               {en

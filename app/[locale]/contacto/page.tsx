@@ -242,7 +242,7 @@ export default async function ContactPage({ params }: Props) {
             aria-labelledby="contact-direct"
             className="reveal flex flex-col gap-6"
           >
-            <div className="card p-6 sm:p-7">
+            <div className="glass glass-spec p-6 sm:p-7">
               <h2 id="contact-direct" className="text-d3 text-ink">
                 {t('info')}
               </h2>
@@ -254,7 +254,7 @@ export default async function ContactPage({ params }: Props) {
                 <div className="border-b border-hairline pb-5">
                   <dt className="flex items-center gap-2.5 text-sm font-semibold text-ink">
                     <span
-                      className="grad-fill inline-flex size-8 items-center justify-center rounded-lg"
+                      className="grad-deco inline-flex size-8 items-center justify-center rounded-lg text-white"
                       aria-hidden="true"
                     >
                       <Mail className="size-4" />
@@ -274,7 +274,7 @@ export default async function ContactPage({ params }: Props) {
                 <div className="border-b border-hairline pb-5">
                   <dt className="flex items-center gap-2.5 text-sm font-semibold text-ink">
                     <span
-                      className="grad-fill inline-flex size-8 items-center justify-center rounded-lg"
+                      className="grad-deco inline-flex size-8 items-center justify-center rounded-lg text-white"
                       aria-hidden="true"
                     >
                       <Phone className="size-4" />
@@ -295,7 +295,7 @@ export default async function ContactPage({ params }: Props) {
                 <div className="border-b border-hairline pb-5">
                   <dt className="flex items-center gap-2.5 text-sm font-semibold text-ink">
                     <span
-                      className="grad-fill inline-flex size-8 items-center justify-center rounded-lg"
+                      className="grad-deco inline-flex size-8 items-center justify-center rounded-lg text-white"
                       aria-hidden="true"
                     >
                       <MapPin className="size-4" />
@@ -317,7 +317,7 @@ export default async function ContactPage({ params }: Props) {
                 <div>
                   <dt className="flex items-center gap-2.5 text-sm font-semibold text-ink">
                     <span
-                      className="grad-fill inline-flex size-8 items-center justify-center rounded-lg"
+                      className="grad-deco inline-flex size-8 items-center justify-center rounded-lg text-white"
                       aria-hidden="true"
                     >
                       <Clock className="size-4" />
@@ -359,7 +359,7 @@ export default async function ContactPage({ params }: Props) {
                       </span>
                     </span>
                     <ArrowUpRight
-                      className="size-4 shrink-0 text-violet transition-transform duration-300 group-hover:-translate-y-0.5 group-hover:translate-x-0.5"
+                      className="size-4 shrink-0 text-sky-ink transition-transform duration-300 group-hover:-translate-y-0.5 group-hover:translate-x-0.5"
                       aria-hidden="true"
                     />
                   </a>
@@ -378,7 +378,7 @@ export default async function ContactPage({ params }: Props) {
                       </span>
                     </span>
                     <ArrowUpRight
-                      className="size-4 shrink-0 text-violet transition-transform duration-300 group-hover:-translate-y-0.5 group-hover:translate-x-0.5"
+                      className="size-4 shrink-0 text-sky-ink transition-transform duration-300 group-hover:-translate-y-0.5 group-hover:translate-x-0.5"
                       aria-hidden="true"
                     />
                   </a>
@@ -397,7 +397,7 @@ export default async function ContactPage({ params }: Props) {
                       </span>
                     </span>
                     <ArrowUpRight
-                      className="size-4 shrink-0 text-violet transition-transform duration-300 group-hover:-translate-y-0.5 group-hover:translate-x-0.5"
+                      className="size-4 shrink-0 text-sky-ink transition-transform duration-300 group-hover:-translate-y-0.5 group-hover:translate-x-0.5"
                       aria-hidden="true"
                     />
                   </a>
@@ -409,7 +409,7 @@ export default async function ContactPage({ params }: Props) {
       </section>
 
       {/* ══ QUÉ PASA DESPUÉS + ALCANCE ════════════════════════════ */}
-      <section className="border-y border-hairline bg-ground-tint">
+      <section className="defer-paint border-y border-hairline bg-ground-tint">
         <div className="mx-auto w-full max-w-6xl px-5 py-20 sm:px-8 sm:py-24">
           <div className="grid gap-14 lg:grid-cols-[minmax(0,1fr)_minmax(0,22rem)] lg:gap-16">
             <div>
@@ -458,7 +458,7 @@ export default async function ContactPage({ params }: Props) {
                       >
                         <span className="flex items-center gap-3">
                           <Icon
-                            className="size-4 shrink-0 text-violet"
+                            className="size-4 shrink-0 text-sky-ink"
                             aria-hidden="true"
                           />
                           <span className="font-medium text-ink transition-colors group-hover:text-brand-strong">
@@ -480,7 +480,7 @@ export default async function ContactPage({ params }: Props) {
       </section>
 
       {/* ══ FAQ ═══════════════════════════════════════════════════ */}
-      <section className="mx-auto w-full max-w-6xl px-5 py-20 sm:px-8 sm:py-24">
+      <section className="defer-paint mx-auto w-full max-w-6xl px-5 py-20 sm:px-8 sm:py-24">
         <div className="grid gap-12 lg:grid-cols-[minmax(0,22rem)_minmax(0,1fr)] lg:gap-20">
           <div className="reveal">
             <p className="eyebrow">

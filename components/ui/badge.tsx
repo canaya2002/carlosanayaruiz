@@ -5,6 +5,10 @@ import { cn } from '@/lib/utils'
 /**
  * Badge — una etiqueta, no un control. Renderiza un <span>, no lleva anillo de
  * foco ni estado hover. Si tiene que ser clicable es un Button o un Link.
+ *
+ * Ningún variant usa el gradiente decorativo (`--grad`): una etiqueta es texto,
+ * y sobre los stops `--sky` / `--cyan` el texto blanco mide 2.77:1 y 1.68:1.
+ * El variant `gradient` usa `.grad-fill`, cuyos stops pasan 5.3:1 contra blanco.
  */
 const badgeVariants = cva(
   [
@@ -18,13 +22,15 @@ const badgeVariants = cva(
         default: 'bg-brand-wash text-brand-strong',
         neutral: 'bg-ground-tint text-ink-muted',
         outline: 'border-hairline-strong text-ink-muted',
-        // `.grad-fill` ya trae el gradiente firma y el texto blanco; `text-white`
-        // queda como respaldo explícito si algún día la clase cambia.
+        // `.grad-fill` ya trae el gradiente de relleno y el texto blanco;
+        // `text-white` queda como respaldo explícito si algún día la clase
+        // cambia. Aquí sí se usa la clase y no el token: un badge nunca se
+        // invierte, así que no hace falta que un consumidor pueda apagarla.
         gradient: 'grad-fill text-white',
-        // Alias heredado: llegó a llamarse `accent` cuando el acento era un
-        // token propio. Hoy el acento es el violeta. No lo uses en código
-        // nuevo — elige `default` o `gradient`.
-        accent: 'bg-violet-wash text-violet-strong',
+        // El acento secundario del sistema nuevo. Sustituye al variant `accent`
+        // del sistema violeta, que ya no existe. `--sky` a secas es decorativo
+        // (2.70:1): el texto va con `--sky-ink`, que mide 5.8:1.
+        sky: 'bg-sky-wash text-sky-ink',
       },
     },
     defaultVariants: {

@@ -154,7 +154,7 @@ export default async function SeoTecnicoPage({ params }: Props) {
                 es la primera señal de en qué página está el lector. */}
             <div className="flex flex-wrap items-center gap-4">
               <span
-                className="grad-fill enter-scale inline-flex size-14 items-center justify-center rounded-2xl shadow-glow-brand sm:size-16"
+                className="grad-deco enter-scale inline-flex size-14 items-center justify-center rounded-2xl text-white shadow-glow-brand sm:size-16"
                 aria-hidden="true"
               >
                 <Icon className="size-7 sm:size-8" />
@@ -225,7 +225,7 @@ export default async function SeoTecnicoPage({ params }: Props) {
       </section>
 
       {/* ══ QUÉ ENTREGO ═══════════════════════════════════════════ */}
-      <section className="border-y border-hairline bg-ground-tint">
+      <section className="defer-paint border-y border-hairline bg-ground-tint">
         <div className="mx-auto w-full max-w-6xl px-5 py-20 sm:px-8 sm:py-24">
           <div className="reveal max-w-2xl">
             <p className="eyebrow">{en ? 'Scope' : 'Alcance'}</p>
@@ -237,7 +237,7 @@ export default async function SeoTecnicoPage({ params }: Props) {
             {service.benefits.map((benefit) => (
               <li key={benefit} className="card card-hover p-6">
                 <span
-                  className="grad-fill block h-1 w-12 rounded-full"
+                  className="grad-deco block h-1 w-12 rounded-full"
                   aria-hidden="true"
                 />
                 <p className="mt-5 text-ink-muted">{benefit}</p>
@@ -255,7 +255,7 @@ export default async function SeoTecnicoPage({ params }: Props) {
               {service.outcomes.map((outcome) => (
                 <li key={outcome} className="flex gap-3.5">
                   <Check
-                    className="mt-1 size-4 shrink-0 text-violet"
+                    className="mt-1 size-4 shrink-0 text-sky-ink"
                     aria-hidden="true"
                   />
                   <span className="text-ink-muted">{outcome}</span>
@@ -267,7 +267,7 @@ export default async function SeoTecnicoPage({ params }: Props) {
       </section>
 
       {/* ══ PROCESO ═══════════════════════════════════════════════ */}
-      <section className="mx-auto w-full max-w-6xl px-5 py-20 sm:px-8 sm:py-24">
+      <section className="defer-paint mx-auto w-full max-w-6xl px-5 py-20 sm:px-8 sm:py-24">
         <div className="reveal max-w-2xl">
           <p className="eyebrow">{en ? 'Process' : 'Proceso'}</p>
           <h2 className="mt-5 text-d1 text-ink">
@@ -299,7 +299,7 @@ export default async function SeoTecnicoPage({ params }: Props) {
           Mismo ancho y mismo peso tipográfico a propósito. Las limitaciones
           son el diferenciador, así que reciben el mismo espacio que el
           argumento de venta y no se suavizan. */}
-      <section className="border-y border-hairline bg-ground-tint">
+      <section className="defer-paint border-y border-hairline bg-ground-tint">
         <div className="mx-auto w-full max-w-6xl px-5 py-20 sm:px-8 sm:py-24">
           <div className="reveal-stagger grid gap-6 lg:grid-cols-2">
             <div className="card p-6 sm:p-8">
@@ -314,7 +314,7 @@ export default async function SeoTecnicoPage({ params }: Props) {
                     className="flex gap-3.5 border-b border-hairline py-4 last:border-0 last:pb-0"
                   >
                     <Check
-                      className="mt-1 size-4 shrink-0 text-violet"
+                      className="mt-1 size-4 shrink-0 text-sky-ink"
                       aria-hidden="true"
                     />
                     <span className="text-ink-muted">{item}</span>
@@ -356,7 +356,7 @@ export default async function SeoTecnicoPage({ params }: Props) {
       </section>
 
       {/* ══ ENTREGABLES + HERRAMIENTAS ════════════════════════════ */}
-      <section className="mx-auto w-full max-w-6xl px-5 py-20 sm:px-8 sm:py-24">
+      <section className="defer-paint mx-auto w-full max-w-6xl px-5 py-20 sm:px-8 sm:py-24">
         <div className="grid gap-12 lg:grid-cols-[minmax(0,22rem)_minmax(0,1fr)] lg:gap-20">
           <div className="reveal">
             <p className="eyebrow">{en ? 'Deliverables' : 'Entregables'}</p>
@@ -368,14 +368,14 @@ export default async function SeoTecnicoPage({ params }: Props) {
             </p>
           </div>
 
-          <ul className="reveal card px-6 py-2 sm:px-8">
+          <ul className="glass glass-spec reveal px-6 py-2 sm:px-8">
             {service.includes.map((item) => (
               <li
                 key={item}
                 className="flex gap-4 border-b border-hairline py-5 last:border-0"
               >
                 <Check
-                  className="mt-1 size-4 shrink-0 text-violet"
+                  className="mt-1 size-4 shrink-0 text-sky-ink"
                   aria-hidden="true"
                 />
                 <span className="text-ink-muted">{item}</span>
@@ -402,7 +402,7 @@ export default async function SeoTecnicoPage({ params }: Props) {
       </section>
 
       {/* ══ FAQ ═══════════════════════════════════════════════════ */}
-      <section className="border-y border-hairline bg-ground-tint">
+      <section className="defer-paint border-y border-hairline bg-ground-tint">
         <div className="mx-auto w-full max-w-6xl px-5 py-20 sm:px-8 sm:py-24">
           <div className="grid gap-12 lg:grid-cols-[minmax(0,22rem)_minmax(0,1fr)] lg:gap-20">
             <div className="reveal">
@@ -412,7 +412,7 @@ export default async function SeoTecnicoPage({ params }: Props) {
 
             {/* Se renderiza del mismo arreglo con el que se construye el nodo
                 FAQPage, así la respuesta visible y la del markup son una. */}
-            <div className="reveal rounded-2xl border border-hairline bg-surface px-5 shadow-lift-1 sm:px-7">
+            <div className="glass glass-spec reveal px-5 sm:px-7">
               {service.faq.map((faq) => (
                 <Disclosure
                   key={faq.question}
@@ -426,7 +426,7 @@ export default async function SeoTecnicoPage({ params }: Props) {
       </section>
 
       {/* ══ SERVICIOS RELACIONADOS ════════════════════════════════ */}
-      <section className="mx-auto w-full max-w-6xl px-5 py-20 sm:px-8 sm:py-24">
+      <section className="defer-paint mx-auto w-full max-w-6xl px-5 py-20 sm:px-8 sm:py-24">
         <div className="reveal max-w-2xl">
           <p className="eyebrow">{en ? 'Services' : 'Servicios'}</p>
           <h2 className="mt-5 text-d1 text-ink">{t('relatedTitle')}</h2>
@@ -466,7 +466,7 @@ export default async function SeoTecnicoPage({ params }: Props) {
           {en ? 'Or compare ' : 'O compara '}
           <Link
             href="/servicios"
-            className="font-semibold text-brand-strong underline underline-offset-4 transition-colors hover:text-violet-strong"
+            className="font-semibold text-brand-strong underline underline-offset-4 transition-colors hover:text-sky-ink"
           >
             {en
               ? 'the four services side by side'
@@ -479,8 +479,8 @@ export default async function SeoTecnicoPage({ params }: Props) {
       </section>
 
       {/* ══ CTA FINAL ═════════════════════════════════════════════ */}
-      <section className="mx-auto w-full max-w-6xl px-5 pb-20 pt-4 sm:px-8 sm:pb-24 sm:pt-6">
-        <div className="grad-animate reveal-scale relative overflow-hidden rounded-3xl px-6 py-14 shadow-lift-3 sm:px-12 sm:py-20">
+      <section className="defer-paint mx-auto w-full max-w-6xl px-5 pb-20 pt-4 sm:px-8 sm:pb-24 sm:pt-6">
+        <div className="grad-drift reveal-scale rounded-3xl px-6 py-14 shadow-lift-3 sm:px-12 sm:py-20">
           <div className="relative max-w-2xl">
             <h2 className="text-d1 text-white">
               {en

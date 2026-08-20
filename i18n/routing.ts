@@ -47,6 +47,14 @@ export const routing = defineRouting({
     '/contacto': { es: '/contacto', en: '/contact' },
     '/libros': { es: '/libros', en: '/books' },
 
+    // Trayectoria: proyectos (con su ruta dinamica por empresa), premios,
+    // certificaciones y CV.
+    '/proyectos': { es: '/proyectos', en: '/projects' },
+    '/proyectos/[slug]': { es: '/proyectos/[slug]', en: '/projects/[slug]' },
+    '/premios': { es: '/premios', en: '/awards' },
+    '/certificaciones': { es: '/certificaciones', en: '/certifications' },
+    '/cv': { es: '/cv', en: '/cv' },
+
     // Legal
     '/privacidad': { es: '/privacidad', en: '/privacy' },
     '/terminos': { es: '/terminos', en: '/terms' },
@@ -55,3 +63,13 @@ export const routing = defineRouting({
 
 export type Locale = (typeof routing.locales)[number]
 export type Pathname = keyof typeof routing.pathnames
+
+/**
+ * Rutas SIN parámetros dinámicos.
+ *
+ * Es lo que aceptan los breadcrumbs y cualquier sitio que reciba una ruta
+ * como string suelto: `/proyectos/[slug]` necesita un objeto con `params`,
+ * así que dejarla entrar en esos tipos hace que el error aparezca en el sitio
+ * de llamada y no aquí, que es donde se entiende.
+ */
+export type StaticPathname = Exclude<Pathname, `${string}[${string}`>

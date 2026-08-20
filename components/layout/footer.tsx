@@ -2,7 +2,7 @@ import { getLocale, getTranslations } from 'next-intl/server'
 import { Link } from '@/i18n/navigation'
 import { ArrowUpRight, Github, Linkedin, Mail, MapPin, Phone } from 'lucide-react'
 import { NAP, SOCIAL_LINKS } from '@/lib/constants'
-import type { Pathname } from '@/i18n/routing'
+import type { StaticPathname } from '@/i18n/routing'
 
 /**
  * Pie de página del sitio.
@@ -18,7 +18,12 @@ import type { Pathname } from '@/i18n/routing'
  */
 
 interface FooterLink {
-  href: Pathname
+  /**
+   * StaticPathname y no Pathname: '/proyectos/[slug]' necesita un objeto con
+   * `params`, así que dejarlo entrar aquí haría que el error apareciera en el
+   * href y no en la tabla, que es donde se entiende.
+   */
+  href: StaticPathname
   label: string
 }
 
@@ -41,9 +46,20 @@ export async function Footer() {
     { href: '/dashboards', label: t('dashboardsLabel') },
   ]
 
+  /**
+   * Las cuatro rutas de trayectoria van aquí, no en una quinta columna: el pie
+   * es la única superficie que comparten todas las URLs, así que es el enlace
+   * interno más barato que existe hacia páginas que todavía no tienen enlaces
+   * entrantes. Quedan agrupadas entre "Sobre mí" y "Recursos" porque es el
+   * mismo bloque de prueba: quién soy, qué he hecho, qué publico.
+   */
   const navigation: readonly FooterLink[] = [
     { href: '/', label: tn('home') },
     { href: '/sobre-mi', label: tn('about') },
+    { href: '/proyectos', label: tn('projects') },
+    { href: '/premios', label: tn('awards') },
+    { href: '/certificaciones', label: tn('certifications') },
+    { href: '/cv', label: tn('cv') },
     { href: '/libros', label: tn('books') },
     { href: '/contacto', label: tn('contact') },
   ]
@@ -169,53 +185,75 @@ export async function Footer() {
             </ul>
           </div>
 
-          {/* ══ NAP ════════════════════════════════════════════════ */}
-          <div>
-            <FooterHeading>{t('contactTitle')}</FooterHeading>
+          {/* ══ NAP ════════════════════════════════════════════════
+              El único panel de cristal del pie, y por eso mismo el que se lee
+              primero: es el bloque que la gente viene a buscar. Las otras dos
+              columnas son listas de enlaces y van sin fondo — doce superficies
+              con backdrop-filter costarían el triple por verse peor.
 
-            {/* <address> para que los datos de contacto estén marcados como datos
-                de contacto y no como un párrafo suelto. `not-italic` porque el
-                estilo por defecto del navegador los pone en cursiva. */}
-            <address className="mt-5 space-y-1 text-sm not-italic">
-              <p className="font-semibold text-ink">{NAP.name}</p>
-              <p>
-                <a
-                  href={`mailto:${NAP.email}`}
-                  className={`${linkClass} gap-2`}
-                >
-                  <Mail className="size-4 shrink-0 text-violet" aria-hidden="true" />
-                  {/* El correo no tiene espacios, así que su min-content es la
-                      cadena completa y desbordaba la columna del pie por más
-                      que la rejilla usara minmax(0,1fr). `min-w-0` deja que el
-                      item flex encoja y `anywhere` permite el corte. */}
-                  <span className="min-w-0 [overflow-wrap:anywhere]">
-                    {NAP.email}
-                  </span>
-                </a>
-              </p>
-              <p>
-                {/* Forma legible para las personas, E.164 en el href para que
-                    marque el teléfono. */}
-                <a
-                  href={`tel:${NAP.phone}`}
-                  className={`${linkClass} gap-2`}
-                  data-numeric=""
-                >
-                  <Phone className="size-4 shrink-0 text-violet" aria-hidden="true" />
-                  {NAP.phoneDisplay}
-                </a>
-              </p>
-              <p className="flex min-h-10 items-center gap-2 text-ink-muted">
-                <MapPin className="size-4 shrink-0 text-violet" aria-hidden="true" />
-                {cityLine}
-              </p>
-              {/* El punto que late es el mismo indicador de disponibilidad de la
-                  portada; aquí acompaña al tiempo de respuesta. */}
-              <p className="flex items-center gap-2.5 pt-1 text-ink-subtle">
-                <span className="ping" aria-hidden="true" />
-                {tc('responseTime')}
-              </p>
-            </address>
+              No anida cristal: el header es la otra superficie de cristal del
+              sitio y está en el otro extremo del documento.
+
+              `relative` en el contenido porque el reflejo de `.glass-spec` es un
+              ::before absoluto y solo los hijos posicionados se pintan encima:
+              sin eso, un blanco al 50% caería sobre el nombre y el correo. */}
+          <div className="glass glass-spec p-4 sm:p-5">
+            <div className="relative">
+              <FooterHeading>{t('contactTitle')}</FooterHeading>
+
+              {/* <address> para que los datos de contacto estén marcados como datos
+                  de contacto y no como un párrafo suelto. `not-italic` porque el
+                  estilo por defecto del navegador los pone en cursiva. */}
+              <address className="mt-5 space-y-1 text-sm not-italic">
+                <p className="font-semibold text-ink">{NAP.name}</p>
+                <p>
+                  <a
+                    href={`mailto:${NAP.email}`}
+                    className={`${linkClass} gap-2`}
+                  >
+                    <Mail
+                      className="size-4 shrink-0 text-sky-ink"
+                      aria-hidden="true"
+                    />
+                    {/* El correo no tiene espacios, así que su min-content es la
+                        cadena completa y desbordaba la columna del pie por más
+                        que la rejilla usara minmax(0,1fr). `min-w-0` deja que el
+                        item flex encoja y `anywhere` permite el corte. */}
+                    <span className="min-w-0 [overflow-wrap:anywhere]">
+                      {NAP.email}
+                    </span>
+                  </a>
+                </p>
+                <p>
+                  {/* Forma legible para las personas, E.164 en el href para que
+                      marque el teléfono. */}
+                  <a
+                    href={`tel:${NAP.phone}`}
+                    className={`${linkClass} gap-2`}
+                    data-numeric=""
+                  >
+                    <Phone
+                      className="size-4 shrink-0 text-sky-ink"
+                      aria-hidden="true"
+                    />
+                    {NAP.phoneDisplay}
+                  </a>
+                </p>
+                <p className="flex min-h-10 items-center gap-2 text-ink-muted">
+                  <MapPin
+                    className="size-4 shrink-0 text-sky-ink"
+                    aria-hidden="true"
+                  />
+                  {cityLine}
+                </p>
+                {/* El punto que late es el mismo indicador de disponibilidad de la
+                    portada; aquí acompaña al tiempo de respuesta. */}
+                <p className="flex items-center gap-2.5 pt-1 text-ink-subtle">
+                  <span className="ping" aria-hidden="true" />
+                  {tc('responseTime')}
+                </p>
+              </address>
+            </div>
           </div>
         </div>
 

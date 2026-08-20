@@ -2,12 +2,24 @@ import type { Metadata } from 'next'
 import Image from 'next/image'
 import { setRequestLocale, getTranslations } from 'next-intl/server'
 import { Link } from '@/i18n/navigation'
-import { ArrowRight, ArrowUpRight, Check, Sparkles } from 'lucide-react'
+import type { StaticPathname } from '@/i18n/routing'
+import {
+  ArrowRight,
+  ArrowUpRight,
+  BadgeCheck,
+  Check,
+  FileText,
+  FolderKanban,
+  Sparkles,
+  Trophy,
+  type LucideIcon,
+} from 'lucide-react'
 import { Button } from '@/components/ui/button'
 import { Badge } from '@/components/ui/badge'
 import { Disclosure } from '@/components/ui/disclosure'
 import { Counter } from '@/components/motion/counter'
 import { PointerGlow } from '@/components/motion/pointer-glow'
+import { ProjectCover } from '@/components/map/project-cover'
 import { getServices, servicePath } from '@/data/services'
 import { getSiteFaq } from '@/data/faq'
 import { getSkillCategories } from '@/data/skills'
@@ -48,6 +60,7 @@ export default async function HomePage({ params }: Props) {
   const tt = await getTranslations('trust')
   const ts = await getTranslations('services')
   const ta = await getTranslations('audience')
+  const tr = await getTranslations('trayectoria')
 
   const services = getServices(locale)
   const faqs = getSiteFaq(locale)
@@ -64,6 +77,40 @@ export default async function HomePage({ params }: Props) {
     { title: ta('startups.title'), desc: ta('startups.desc') },
     { title: ta('agencies.title'), desc: ta('agencies.desc') },
     { title: ta('established.title'), desc: ta('established.desc') },
+  ]
+
+  // Las tres páginas secundarias de trayectoria. Proyectos no está aquí: es la
+  // protagonista de la sección y se escribe aparte, con su propio panel.
+  // El tipo es `StaticPathname` — rutas sin parámetros —, así que enlazar aquí
+  // una ruta dinámica falla en compilación y no en render.
+  const trackRecord: {
+    href: StaticPathname
+    icon: LucideIcon
+    title: string
+    desc: string
+    cta: string
+  }[] = [
+    {
+      href: '/premios',
+      icon: Trophy,
+      title: tr('awards.title'),
+      desc: tr('awards.desc'),
+      cta: tr('awards.cta'),
+    },
+    {
+      href: '/certificaciones',
+      icon: BadgeCheck,
+      title: tr('certifications.title'),
+      desc: tr('certifications.desc'),
+      cta: tr('certifications.cta'),
+    },
+    {
+      href: '/cv',
+      icon: FileText,
+      title: tr('cv.title'),
+      desc: tr('cv.desc'),
+      cta: tr('cv.cta'),
+    },
   ]
 
   const metrics = [
@@ -145,10 +192,16 @@ export default async function HomePage({ params }: Props) {
                 absoluta, así que al animarse no desplaza nada (cero CLS). */}
             <div className="enter-scale step-2 order-first lg:order-none">
               <div className="relative mx-auto w-fit">
+                {/* Dos capas a propósito: `.grad-drift` fija
+                    `position: relative` y ganaría a la utilidad `absolute`
+                    (está fuera de @layer), así que el posicionamiento vive en
+                    el envoltorio y el gradiente que se desplaza vive dentro. */}
                 <div
-                  className="grad-animate absolute -inset-2 rounded-[2rem] opacity-90"
+                  className="absolute -inset-2 opacity-90"
                   aria-hidden="true"
-                />
+                >
+                  <div className="grad-drift size-full rounded-[2rem]" />
+                </div>
                 <div className="relative size-32 overflow-hidden rounded-3xl border-2 border-surface bg-ground-tint shadow-lift-3 sm:size-40 lg:size-52">
                   <Image
                     src={SEO_IMAGES.avatar}
@@ -219,7 +272,7 @@ export default async function HomePage({ params }: Props) {
                   className="card card-hover group flex flex-col p-6 sm:p-7"
                 >
                   <span
-                    className="grad-fill inline-flex size-12 items-center justify-center rounded-xl shadow-glow-brand"
+                    className="grad-deco inline-flex size-12 items-center justify-center rounded-xl text-white shadow-glow-brand"
                     aria-hidden="true"
                   >
                     <Icon className="size-6" />
@@ -239,7 +292,7 @@ export default async function HomePage({ params }: Props) {
                         className="flex gap-2.5 text-sm text-ink-muted"
                       >
                         <Check
-                          className="mt-0.5 size-4 shrink-0 text-violet"
+                          className="mt-0.5 size-4 shrink-0 text-sky-ink"
                           aria-hidden="true"
                         />
                         <span>{outcome}</span>
@@ -271,7 +324,7 @@ export default async function HomePage({ params }: Props) {
       </section>
 
       {/* ══ PROCESO ═══════════════════════════════════════════════ */}
-      <section className="mx-auto w-full max-w-6xl px-5 py-20 sm:px-8 sm:py-24">
+      <section className="defer-paint mx-auto w-full max-w-6xl px-5 py-20 sm:px-8 sm:py-24">
         <div className="reveal max-w-2xl">
           <p className="eyebrow">{ts('process')}</p>
           <h2 className="mt-5 text-d1 text-ink">{ts('processSubtitle')}</h2>
@@ -296,7 +349,7 @@ export default async function HomePage({ params }: Props) {
       </section>
 
       {/* ══ CON QUIÉN TRABAJO ═════════════════════════════════════ */}
-      <section className="border-y border-hairline bg-ground-tint">
+      <section className="defer-paint border-y border-hairline bg-ground-tint">
         <div className="mx-auto w-full max-w-6xl px-5 py-20 sm:px-8 sm:py-24">
           <div className="reveal max-w-2xl">
             <p className="eyebrow">{ta('title')}</p>
@@ -307,7 +360,7 @@ export default async function HomePage({ params }: Props) {
             {audiences.map((item) => (
               <div key={item.title} className="card card-hover p-6">
                 <span
-                  className="grad-fill block h-1 w-12 rounded-full"
+                  className="grad-deco block h-1 w-12 rounded-full"
                   aria-hidden="true"
                 />
                 <h3 className="mt-5 text-d3 text-ink">{item.title}</h3>
@@ -320,8 +373,101 @@ export default async function HomePage({ params }: Props) {
         </div>
       </section>
 
+      {/* ══ TRAYECTORIA ═══════════════════════════════════════════
+          Las cuatro páginas donde se puede verificar lo que el resto del
+          sitio afirma. La malla decorativa va detrás a propósito: es lo que
+          el panel de cristal desenfoca, y sin nada detrás el cristal no se
+          lee como cristal.                                            */}
+      <section className="defer-paint relative isolate overflow-hidden border-b border-hairline">
+        <div className="mesh" aria-hidden="true" />
+
+        <div className="mx-auto w-full max-w-6xl px-5 py-20 sm:px-8 sm:py-24">
+          <div className="reveal max-w-2xl">
+            <p className="eyebrow">{tr('eyebrow')}</p>
+            <h2 className="mt-5 text-d1 text-ink">{tr('title')}</h2>
+            <p className="mt-4 text-lead text-ink-muted">{tr('subtitle')}</p>
+          </div>
+
+          <div className="mt-14 grid gap-6 lg:grid-cols-3">
+            {/* Proyectos es la protagonista: ancho completo, cristal y portada
+                generada por código. Es el único panel de cristal de la
+                sección — `backdrop-filter` es el efecto más caro del sistema
+                y las otras tres van en `.card`, que es opaca. */}
+            <Link
+              href="/proyectos"
+              className="glass glass-spec reveal-scale group grid lg:col-span-3 sm:grid-cols-[minmax(0,1.1fr)_minmax(0,1fr)]"
+            >
+              <div className="flex flex-col p-7 sm:p-9">
+                <span
+                  className="grad-deco inline-flex size-12 items-center justify-center rounded-xl text-white shadow-glow-brand"
+                  aria-hidden="true"
+                >
+                  <FolderKanban className="size-6" />
+                </span>
+
+                <h3 className="mt-5 text-d2 text-ink transition-colors group-hover:text-brand-strong">
+                  {tr('projects.title')}
+                </h3>
+                <p className="mt-3 max-w-[48ch] text-ink-muted">
+                  {tr('projects.desc')}
+                </p>
+
+                <span className="mt-7 inline-flex items-center gap-1.5 text-sm font-semibold text-brand-strong">
+                  {tr('projects.cta')}
+                  <ArrowUpRight
+                    className="size-4 transition-transform duration-300 group-hover:-translate-y-1 group-hover:translate-x-1"
+                    aria-hidden="true"
+                  />
+                </span>
+              </div>
+
+              {/* Portada determinista por semilla: no hay capturas reales
+                  todavía y una foto de banco sería peor que un patrón. */}
+              <ProjectCover
+                seed="proyectos"
+                label={tr('projects.coverLabel')}
+                className="min-h-52 sm:min-h-full"
+              />
+            </Link>
+
+            {trackRecord.map((item) => {
+              const Icon = item.icon
+              return (
+                <Link
+                  key={item.href}
+                  href={item.href}
+                  className="card card-hover group flex flex-col p-6 sm:p-7"
+                >
+                  <span
+                    className="grad-deco inline-flex size-11 items-center justify-center rounded-xl text-white shadow-glow-brand"
+                    aria-hidden="true"
+                  >
+                    <Icon className="size-5" />
+                  </span>
+
+                  <h3 className="mt-5 text-d3 text-ink transition-colors group-hover:text-brand-strong">
+                    {item.title}
+                  </h3>
+                  <p className="mt-2 flex-1 text-sm leading-relaxed text-ink-muted">
+                    {item.desc}
+                  </p>
+
+                  <span className="mt-6 inline-flex items-center gap-1.5 text-sm font-semibold text-brand-strong">
+                    {item.cta}
+                    <ArrowUpRight
+                      className="size-4 transition-transform duration-300 group-hover:-translate-y-1 group-hover:translate-x-1"
+                      aria-hidden="true"
+                    />
+                  </span>
+                </Link>
+              )
+            })}
+          </div>
+        </div>
+      </section>
+
       {/* ══ STACK ═════════════════════════════════════════════════ */}
-      <section className="mx-auto w-full max-w-6xl px-5 py-20 sm:px-8 sm:py-24">
+      <section className="defer-paint mx-auto w-full max-w-6xl px-5 py-20 sm:px-8 sm:py-24">
         <div className="reveal max-w-2xl">
           <p className="eyebrow">Stack</p>
           <h2 className="mt-5 text-d1 text-ink">
@@ -348,7 +494,7 @@ export default async function HomePage({ params }: Props) {
       </section>
 
       {/* ══ FAQ ═══════════════════════════════════════════════════ */}
-      <section className="border-t border-hairline bg-ground-tint">
+      <section className="defer-paint border-t border-hairline bg-ground-tint">
         <div className="mx-auto w-full max-w-6xl px-5 py-20 sm:px-8 sm:py-24">
           <div className="grid gap-12 lg:grid-cols-[minmax(0,22rem)_minmax(0,1fr)] lg:gap-20">
             <div className="reveal">
@@ -359,7 +505,7 @@ export default async function HomePage({ params }: Props) {
             {/* Solo preguntas sobre cómo se trabaja. Las técnicas viven en la
                 página del servicio al que pertenecen, así ninguna consulta se
                 responde desde dos URLs distintas. */}
-            <div className="reveal rounded-2xl border border-hairline bg-surface px-5 shadow-lift-1 sm:px-7">
+            <div className="glass glass-spec reveal px-5 sm:px-7">
               {faqs.map((faq) => (
                 <Disclosure
                   key={faq.question}
@@ -373,8 +519,8 @@ export default async function HomePage({ params }: Props) {
       </section>
 
       {/* ══ CTA FINAL ═════════════════════════════════════════════ */}
-      <section className="mx-auto w-full max-w-6xl px-5 py-20 sm:px-8 sm:py-24">
-        <div className="grad-animate reveal-scale relative overflow-hidden rounded-3xl px-6 py-14 shadow-lift-3 sm:px-12 sm:py-20">
+      <section className="defer-paint mx-auto w-full max-w-6xl px-5 py-20 sm:px-8 sm:py-24">
+        <div className="grad-drift reveal-scale rounded-3xl px-6 py-14 shadow-lift-3 sm:px-12 sm:py-20">
           <div className="relative max-w-2xl">
             <h2 className="text-d1 text-white">
               {en

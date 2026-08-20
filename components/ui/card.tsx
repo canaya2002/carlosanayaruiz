@@ -9,6 +9,12 @@ import { cn } from '@/lib/utils'
  * home escribiéndola a mano. Aquí no se repite en utilidades para que exista una
  * sola definición.
  *
+ * ── CARD O GLASSPANEL ──
+ * Card es OPACA y no cuesta nada, así que es la opción por defecto y la única
+ * válida en rejillas densas: doce tarjetas de certificación son doce Card.
+ * `<GlassPanel>` es para el panel protagonista y aislado, porque su
+ * `backdrop-filter` es el efecto más caro del sistema. Cuando dudes, Card.
+ *
  * La elevación al pasar el mouse es opt-in: `className="card-hover"`. Esa clase
  * anima `transform` + `box-shadow` (nunca `margin` ni `top`), así que elevar una
  * tarjeta no provoca CLS.

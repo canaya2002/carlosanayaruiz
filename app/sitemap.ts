@@ -74,6 +74,10 @@ const PAGE_META: Record<RouteKey, SitemapMeta> = {
   sobreMi: { changeFrequency: 'monthly', priority: 0.7 },
   contacto: { changeFrequency: 'yearly', priority: 0.7 },
   libros: { changeFrequency: 'monthly', priority: 0.6 },
+  proyectos: { changeFrequency: 'monthly', priority: 0.9 },
+  premios: { changeFrequency: 'yearly', priority: 0.6 },
+  certificaciones: { changeFrequency: 'yearly', priority: 0.6 },
+  cv: { changeFrequency: 'monthly', priority: 0.7 },
 
   // Legal. Indexable (they are part of a trustworthy business footprint)
   // but they should never outrank anything.

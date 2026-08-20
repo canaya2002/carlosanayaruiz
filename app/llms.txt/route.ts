@@ -59,6 +59,10 @@ const ROUTE_LABELS: Record<RouteKey, { es: string; en: string }> = {
   sobreMi: { es: 'Sobre mí / perfil', en: 'About / profile' },
   contacto: { es: 'Contacto', en: 'Contact' },
   libros: { es: 'Recursos técnicos', en: 'Technical resources' },
+  proyectos: { es: 'Proyectos y empresas', en: 'Projects and companies' },
+  premios: { es: 'Premios y reconocimientos', en: 'Awards and recognition' },
+  certificaciones: { es: 'Certificaciones', en: 'Certifications' },
+  cv: { es: 'CV completo', en: 'Full CV' },
   privacidad: { es: 'Aviso de privacidad', en: 'Privacy notice' },
   terminos: { es: 'Términos de uso', en: 'Terms of use' },
 }

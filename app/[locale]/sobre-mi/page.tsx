@@ -264,10 +264,16 @@ export default async function AboutPage({ params }: Props) {
                 carga en diferido. */}
             <div className="enter-scale step-2 order-first lg:order-none">
               <div className="relative mx-auto w-fit">
+                {/* Dos capas a propósito: `.grad-drift` fija
+                    `position: relative` y ganaría a la utilidad `absolute`
+                    (está fuera de @layer), así que el posicionamiento vive en
+                    el envoltorio y el gradiente que se desplaza vive dentro. */}
                 <div
-                  className="grad-animate absolute -inset-2 rounded-[2rem] opacity-90"
+                  className="absolute -inset-2 opacity-90"
                   aria-hidden="true"
-                />
+                >
+                  <div className="grad-drift size-full rounded-[2rem]" />
+                </div>
                 <div className="relative size-32 overflow-hidden rounded-3xl border-2 border-surface bg-ground-tint shadow-lift-3 sm:size-40 lg:size-56">
                   <Image
                     src={SEO_IMAGES.avatar}
@@ -288,7 +294,7 @@ export default async function AboutPage({ params }: Props) {
               return (
                 <div key={fact.term} className="card card-hover p-5">
                   <span
-                    className="grad-fill inline-flex size-10 items-center justify-center rounded-xl shadow-glow-brand"
+                    className="grad-deco inline-flex size-10 items-center justify-center rounded-xl text-white shadow-glow-brand"
                     aria-hidden="true"
                   >
                     <Icon className="size-5" />
@@ -314,12 +320,17 @@ export default async function AboutPage({ params }: Props) {
             <h2 className="mt-5 text-d1 text-ink">{t('summary')}</h2>
           </div>
 
-          {/* El texto largo toma su medida y su ritmo de la clase, no de
-              utilidades párrafo por párrafo. */}
-          <div className="reveal prose-rich mt-8">
-            {personal.summary.split('\n\n').map((paragraph) => (
-              <p key={paragraph.slice(0, 32)}>{paragraph}</p>
-            ))}
+          {/* El resumen es el contenido protagonista de la página, así que es
+              el único panel de cristal que lleva: `backdrop-filter` es el
+              efecto más caro del sistema y las rejillas de abajo van en
+              `.card`, que es opaca. El texto largo toma su medida y su ritmo
+              de `.prose-rich`, no de utilidades párrafo por párrafo. */}
+          <div className="glass glass-spec reveal mt-8 p-6 sm:p-9">
+            <div className="prose-rich">
+              {personal.summary.split('\n\n').map((paragraph) => (
+                <p key={paragraph.slice(0, 32)}>{paragraph}</p>
+              ))}
+            </div>
           </div>
 
           {/* Las cifras cuentan al entrar en pantalla, pero el valor final ya
@@ -340,7 +351,7 @@ export default async function AboutPage({ params }: Props) {
       {/* ══ EXPERIENCIA ═══════════════════════════════════════════ */}
       <section
         id="experiencia"
-        className="mx-auto w-full max-w-6xl px-5 py-20 sm:px-8 sm:py-24"
+        className="defer-paint mx-auto w-full max-w-6xl px-5 py-20 sm:px-8 sm:py-24"
       >
         <div className="reveal max-w-2xl">
           <p className="eyebrow">{en ? 'Track record' : 'Trayectoria'}</p>
@@ -363,10 +374,10 @@ export default async function AboutPage({ params }: Props) {
               className="relative grid grid-cols-[1.5rem_minmax(0,1fr)] gap-x-4 sm:grid-cols-[2rem_minmax(0,1fr)] sm:gap-x-6"
             >
               <div className="relative" aria-hidden="true">
-                <span className="grad-fill absolute left-1/2 top-7 size-3.5 -translate-x-1/2 rounded-full shadow-glow-brand" />
+                <span className="grad-deco absolute left-1/2 top-7 size-3.5 -translate-x-1/2 rounded-full shadow-glow-brand" />
                 {/* El conector solo baja si hay una entrada siguiente. */}
                 {index < experiences.length - 1 ? (
-                  <span className="grad-fill absolute -bottom-[3.25rem] left-1/2 top-12 w-0.5 -translate-x-1/2 rounded-full opacity-40" />
+                  <span className="grad-deco absolute -bottom-[3.25rem] left-1/2 top-12 w-0.5 -translate-x-1/2 rounded-full opacity-40" />
                 ) : null}
               </div>
 
@@ -412,7 +423,7 @@ export default async function AboutPage({ params }: Props) {
                         className="flex gap-2.5 text-sm leading-relaxed text-ink-muted"
                       >
                         <Check
-                          className="mt-0.5 size-4 shrink-0 text-violet"
+                          className="mt-0.5 size-4 shrink-0 text-sky-ink"
                           aria-hidden="true"
                         />
                         <span>{highlight}</span>
@@ -439,7 +450,7 @@ export default async function AboutPage({ params }: Props) {
       {/* ══ FORMACIÓN + CERTIFICACIONES ═══════════════════════════ */}
       <section
         id="credenciales"
-        className="border-y border-hairline bg-ground-tint"
+        className="defer-paint border-y border-hairline bg-ground-tint"
       >
         <div className="mx-auto w-full max-w-6xl px-5 py-20 sm:px-8 sm:py-24">
           <div className="reveal max-w-2xl">
@@ -484,7 +495,7 @@ export default async function AboutPage({ params }: Props) {
               {credentials.map((credential) => (
                 <li key={credential.id} className="card card-hover p-6">
                   <span
-                    className="grad-fill inline-flex size-10 items-center justify-center rounded-xl shadow-glow-brand"
+                    className="grad-deco inline-flex size-10 items-center justify-center rounded-xl text-white shadow-glow-brand"
                     aria-hidden="true"
                   >
                     <BadgeCheck className="size-5" />
@@ -531,7 +542,7 @@ export default async function AboutPage({ params }: Props) {
       {/* ══ STACK + IDIOMAS ═══════════════════════════════════════ */}
       <section
         id="stack"
-        className="mx-auto w-full max-w-6xl px-5 py-20 sm:px-8 sm:py-24"
+        className="defer-paint mx-auto w-full max-w-6xl px-5 py-20 sm:px-8 sm:py-24"
       >
         <div className="reveal max-w-2xl">
           <p className="eyebrow">Stack</p>
@@ -581,7 +592,7 @@ export default async function AboutPage({ params }: Props) {
                     aria-hidden="true"
                   >
                     <div
-                      className="grad-fill h-full rounded-full"
+                      className="grad-deco h-full rounded-full"
                       style={{ width: `${language.proficiency}%` }}
                     />
                   </div>
@@ -598,7 +609,7 @@ export default async function AboutPage({ params }: Props) {
       {/* ══ RECONOCIMIENTOS ═══════════════════════════════════════ */}
       <section
         id="reconocimientos"
-        className="border-y border-hairline bg-ground-tint"
+        className="defer-paint border-y border-hairline bg-ground-tint"
       >
         <div className="mx-auto w-full max-w-6xl px-5 py-20 sm:px-8 sm:py-24">
           <div className="reveal max-w-2xl">
@@ -645,7 +656,7 @@ export default async function AboutPage({ params }: Props) {
                 {award.impact ? (
                   <p className="mt-4 flex gap-2.5 text-sm text-ink-muted">
                     <Check
-                      className="mt-0.5 size-4 shrink-0 text-violet"
+                      className="mt-0.5 size-4 shrink-0 text-sky-ink"
                       aria-hidden="true"
                     />
                     <span>{award.impact}</span>
@@ -658,8 +669,8 @@ export default async function AboutPage({ params }: Props) {
       </section>
 
       {/* ══ CIERRE ════════════════════════════════════════════════ */}
-      <section className="mx-auto w-full max-w-6xl px-5 py-20 sm:px-8 sm:py-24">
-        <div className="grad-animate reveal-scale relative overflow-hidden rounded-3xl px-6 py-14 shadow-lift-3 sm:px-12 sm:py-20">
+      <section className="defer-paint mx-auto w-full max-w-6xl px-5 py-20 sm:px-8 sm:py-24">
+        <div className="grad-drift reveal-scale rounded-3xl px-6 py-14 shadow-lift-3 sm:px-12 sm:py-20">
           <div className="relative max-w-2xl">
             <h2 className="text-d1 text-white">{t('philosophy')}</h2>
             <p className="mt-5 text-lead text-white/85">

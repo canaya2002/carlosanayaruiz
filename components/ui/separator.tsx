@@ -21,7 +21,8 @@ export interface SeparatorProps extends React.HTMLAttributes<HTMLDivElement> {
  *
  * Usa `--hairline`, el token decorativo: un divisor con `border-control` se ve
  * pesado. Si el divisor tiene que verse, la alternativa del sistema es una barra
- * corta con gradiente: `<span className="grad-fill block h-1 w-12 rounded-full" />`.
+ * corta con el gradiente decorativo:
+ * `<span className="grad-deco block h-1 w-12 rounded-full" aria-hidden="true" />`.
  */
 const Separator = React.forwardRef<HTMLDivElement, SeparatorProps>(
   ({ className, orientation = 'horizontal', decorative = true, ...props }, ref) => (

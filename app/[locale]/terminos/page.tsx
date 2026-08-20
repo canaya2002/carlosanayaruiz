@@ -714,7 +714,7 @@ export default async function TermsPage({ params }: Props) {
       </section>
 
       {/* ══ CIERRE ═════════════════════════════════════════════════ */}
-      <section className="border-t border-hairline bg-ground-tint">
+      <section className="defer-paint border-t border-hairline bg-ground-tint">
         <div className="mx-auto w-full max-w-6xl px-5 py-14 sm:px-8 sm:py-16">
           <div className="reveal max-w-3xl">
             <h2 className="text-d2 text-ink">

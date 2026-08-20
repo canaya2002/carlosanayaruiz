@@ -51,6 +51,25 @@ async function loadFonts() {
  */
 const C = PALETTE_HEX.light
 
+/**
+ * Cristal simulado.
+ *
+ * Satori no implementa `backdrop-filter`, así que no hay forma de desenfocar
+ * lo que queda detrás de un panel. Lo que sí se puede hacer es la otra mitad
+ * del efecto: un blanco translúcido con un borde blanco más claro encima del
+ * gradiente. Es exactamente lo que hace `.glass` en app/globals.css, y estos
+ * dos valores son sus tokens --glass-bg y --glass-border escritos a la mano
+ * porque Satori tampoco resuelve `var()`.
+ *
+ * Medido en el CSS: tinta sobre un panel blanco al 62% encima del azul del
+ * gradiente da 9.6:1. Texto BLANCO sobre ese mismo panel da 1.68:1 — así que
+ * lo que se apoye aquí va en `C.ink`, nunca en blanco.
+ */
+const GLASS = {
+  bg: 'rgba(255, 255, 255, 0.62)',
+  border: 'rgba(255, 255, 255, 0.72)',
+} as const
+
 export interface OgCardProps {
   /** Titular. Se reduce por pasos si es largo para no desbordar. */
   title: string
@@ -83,9 +102,12 @@ function Mark({ size = 56 }: { size?: number }) {
         width: size,
         height: size,
         borderRadius: size * 0.28,
-        // El gradiente firma. En Satori hay que escribirlo completo: no
-        // resuelve `var()`.
-        backgroundImage: `linear-gradient(135deg, ${C.brand} 0%, ${C.violet} 55%, ${C.cyan} 100%)`,
+        // El gradiente firma, escrito completo porque Satori no resuelve
+        // `var()`. Espejo de --grad-fill, NO del gradiente vivo: las tres
+        // barras blancas son el contenido de la marca y sobre --sky medirían
+        // 2.77:1. Con estos stops pasan 5.3:1, y además coincide con el chip
+        // "CA" del header, que también usa .grad-fill.
+        backgroundImage: `linear-gradient(135deg, ${C.brandStrong} 0%, ${C.skyInk} 58%, ${C.cyanInk} 100%)`,
         flexDirection: 'column',
         justifyContent: 'center',
         alignItems: 'flex-start',
@@ -136,7 +158,7 @@ export async function renderOgCard({
             width: 760,
             height: 760,
             borderRadius: 760,
-            background: `radial-gradient(circle at 50% 50%, ${C.violet}33 0%, ${C.cyan}1f 42%, ${C.ground}00 70%)`,
+            background: `radial-gradient(circle at 50% 50%, ${C.sky}33 0%, ${C.cyan}1f 42%, ${C.ground}00 70%)`,
           }}
         />
         <div
@@ -152,12 +174,13 @@ export async function renderOgCard({
           }}
         />
 
-        {/* Barra superior con el gradiente completo */}
+        {/* Barra superior. Aquí sí va el gradiente vivo (espejo de --grad):
+            son doce píxeles decorativos y no lleva texto encima. */}
         <div
           style={{
             display: 'flex',
             height: 12,
-            backgroundImage: `linear-gradient(90deg, ${C.brand} 0%, ${C.violet} 52%, ${C.cyan} 100%)`,
+            backgroundImage: `linear-gradient(90deg, ${C.brand} 0%, ${C.sky} 52%, ${C.cyan} 100%)`,
           }}
         />
 
@@ -221,7 +244,7 @@ export async function renderOgCard({
                     width: 9,
                     height: 9,
                     borderRadius: 9,
-                    backgroundImage: `linear-gradient(135deg, ${C.brand}, ${C.violet})`,
+                    backgroundImage: `linear-gradient(135deg, ${C.brand}, ${C.cyan})`,
                   }}
                 />
                 <div
@@ -270,7 +293,10 @@ export async function renderOgCard({
             )}
           </div>
 
-          {/* Credenciales */}
+          {/* Credenciales. Son los chips que caen encima del blob inferior
+              izquierdo, así que van de cristal: blanco translúcido con borde
+              blanco, la traducción de .glass a lo que Satori sí sabe pintar.
+              El texto es tinta, nunca blanco. */}
           <div style={{ display: 'flex', alignItems: 'center', gap: 12 }}>
             {facts.slice(0, 3).map((fact) => (
               <div
@@ -280,8 +306,8 @@ export async function renderOgCard({
                   alignItems: 'center',
                   padding: '11px 21px',
                   borderRadius: 999,
-                  background: C.surface,
-                  border: `1px solid ${C.hairline}`,
+                  background: GLASS.bg,
+                  border: `1px solid ${GLASS.border}`,
                   fontSize: 21,
                   fontWeight: 600,
                   color: C.ink,

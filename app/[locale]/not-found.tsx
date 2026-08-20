@@ -12,7 +12,7 @@ import {
 } from 'lucide-react'
 import { Button } from '@/components/ui/button'
 import { NAP } from '@/lib/constants'
-import type { Pathname } from '@/i18n/routing'
+import type { StaticPathname } from '@/i18n/routing'
 
 /**
  * ════════════════════════════════════════════════════════════════
@@ -77,7 +77,7 @@ export default async function NotFound() {
    * conflicto de merge en el catálogo de copy.
    */
   const exits: {
-    href: Pathname
+    href: StaticPathname
     label: string
     hint: string
     icon: LucideIcon
@@ -201,7 +201,7 @@ export default async function NotFound() {
                     className="card card-hover group flex h-full flex-col p-6"
                   >
                     <span
-                      className="grad-fill inline-flex size-12 items-center justify-center rounded-xl shadow-glow-brand"
+                      className="grad-deco inline-flex size-12 items-center justify-center rounded-xl text-white shadow-glow-brand"
                       aria-hidden="true"
                     >
                       <Icon className="size-6" />

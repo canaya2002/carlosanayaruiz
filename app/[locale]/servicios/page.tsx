@@ -1,7 +1,7 @@
 import type { Metadata } from 'next'
 import { setRequestLocale, getTranslations } from 'next-intl/server'
 import { Link } from '@/i18n/navigation'
-import type { Pathname } from '@/i18n/routing'
+import type { StaticPathname } from '@/i18n/routing'
 import { ArrowRight, ArrowUpRight, Check, Sparkles } from 'lucide-react'
 import { Breadcrumbs } from '@/components/layout/breadcrumbs'
 import { Button } from '@/components/ui/button'
@@ -112,8 +112,9 @@ export default async function ServicesHubPage({ params }: Props) {
             </p>
 
             {/* El título es una sola palabra, así que el gradiente cae sobre
-                todo el h1. `.grad-text` se detiene en violeta (5.6:1), nunca
-                toca el stop cian, y conserva `color` como respaldo real. */}
+                todo el h1. `.grad-text` se detiene en azul cielo oscuro
+                (5.7:1), nunca toca el stop cian —que mide 1.76:1—, y conserva
+                `color` como respaldo real. */}
             <h1 className="enter-blur step-1 mt-6 text-d1 text-ink">
               <span className="grad-text">{th('title')}</span>
             </h1>
@@ -163,7 +164,7 @@ export default async function ServicesHubPage({ params }: Props) {
               esto va antes del detalle y no después. Va como un solo panel
               elevado con filas divididas: cuatro tarjetas aquí competirían con
               las cuatro tarjetas reales de la sección siguiente. */}
-          <dl className="reveal mt-12 overflow-hidden rounded-2xl border border-hairline bg-surface shadow-lift-1">
+          <dl className="glass glass-spec reveal mt-12">
             {services.map((service) => (
               <div
                 key={service.id}
@@ -176,7 +177,7 @@ export default async function ServicesHubPage({ params }: Props) {
                       alrededor del <dt>. El nombre accesible sigue siendo solo
                       el título del servicio. */}
                   <Link
-                    href={servicePath(service, locale) as Pathname}
+                    href={servicePath(service, locale) as StaticPathname}
                     className="inline-flex items-center gap-1.5 text-sm font-semibold text-brand-strong before:absolute before:inset-0"
                   >
                     {service.title}
@@ -199,7 +200,7 @@ export default async function ServicesHubPage({ params }: Props) {
       </section>
 
       {/* ══ LOS CUATRO SERVICIOS ══════════════════════════════════ */}
-      <section className="mx-auto w-full max-w-6xl px-5 py-20 sm:px-8 sm:py-24">
+      <section className="defer-paint mx-auto w-full max-w-6xl px-5 py-20 sm:px-8 sm:py-24">
         <div className="reveal max-w-2xl">
           <p className="eyebrow">
             {en ? 'What each one covers' : 'Qué incluye cada uno'}
@@ -215,7 +216,7 @@ export default async function ServicesHubPage({ params }: Props) {
         <ol className="reveal-stagger mt-14 grid gap-6">
           {services.map((service, index) => {
             const Icon = service.icon
-            const href = servicePath(service, locale) as Pathname
+            const href = servicePath(service, locale) as StaticPathname
 
             return (
               <li
@@ -227,7 +228,7 @@ export default async function ServicesHubPage({ params }: Props) {
                   <div>
                     <div className="flex items-center gap-4">
                       <span
-                        className="grad-fill inline-flex size-12 items-center justify-center rounded-xl shadow-glow-brand"
+                        className="grad-deco inline-flex size-12 items-center justify-center rounded-xl text-white shadow-glow-brand"
                         aria-hidden="true"
                       >
                         <Icon className="size-6" />
@@ -283,7 +284,7 @@ export default async function ServicesHubPage({ params }: Props) {
                               className="flex gap-2.5 text-sm text-ink-muted"
                             >
                               <Check
-                                className="mt-0.5 size-4 shrink-0 text-violet"
+                                className="mt-0.5 size-4 shrink-0 text-sky-ink"
                                 aria-hidden="true"
                               />
                               <span>{outcome}</span>
@@ -310,7 +311,7 @@ export default async function ServicesHubPage({ params }: Props) {
                               className="flex gap-2.5 text-sm text-ink-muted"
                             >
                               <span
-                                className="grad-fill mt-2 size-1.5 shrink-0 rounded-full"
+                                className="grad-deco mt-2 size-1.5 shrink-0 rounded-full"
                                 aria-hidden="true"
                               />
                               <span>{item}</span>
@@ -332,7 +333,7 @@ export default async function ServicesHubPage({ params }: Props) {
                               className="flex gap-2.5 text-sm text-ink-muted"
                             >
                               <span
-                                className="grad-fill mt-2 size-1.5 shrink-0 rounded-full"
+                                className="grad-deco mt-2 size-1.5 shrink-0 rounded-full"
                                 aria-hidden="true"
                               />
                               <span>{item}</span>
@@ -353,8 +354,8 @@ export default async function ServicesHubPage({ params }: Props) {
           El mismo bloque de gradiente que cierra la home: encima el texto va
           blanco y el botón se invierte a superficie con texto de marca — un
           relleno de marca sobre el gradiente desaparecería.            */}
-      <section className="mx-auto w-full max-w-6xl px-5 pb-20 sm:px-8 sm:pb-24">
-        <div className="grad-animate reveal-scale relative overflow-hidden rounded-3xl px-6 py-14 shadow-lift-3 sm:px-12 sm:py-20">
+      <section className="defer-paint mx-auto w-full max-w-6xl px-5 pb-20 sm:px-8 sm:pb-24">
+        <div className="grad-drift reveal-scale rounded-3xl px-6 py-14 shadow-lift-3 sm:px-12 sm:py-20">
           <div className="relative max-w-2xl">
             <h2 className="text-d1 text-white">
               {en

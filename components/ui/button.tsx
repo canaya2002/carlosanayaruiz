@@ -13,15 +13,24 @@ import { cn } from '@/lib/utils'
  * 44px. `sm` e `icon` son para cromo denso de escritorio (header, enlaces en
  * línea) y aun así pasan el mínimo de 24px de WCAG 2.2 AA.
  *
- * Por qué el relleno del variant `default` lee `--grad` como utilidad arbitraria
- * y no usa la clase `.grad-fill`: `.grad-fill` está escrita fuera de toda
- * `@layer` en globals.css, así que gana a cualquier utilidad de Tailwind y
- * ningún consumidor podría volver a invertir el botón. Como utilidad sí se
- * puede: sobre un bloque con gradiente el botón se invierte con
- * `className="bg-none bg-surface text-brand-strong"` — `bg-none` es lo que apaga
- * la imagen, y tailwind-merge además descarta el gradiente porque las dos
- * clases pertenecen al mismo grupo. El gradiente sigue definido en un solo
- * lugar: el token `--grad`.
+ * ── QUÉ GRADIENTE LLEVA EL VARIANT `default`, Y POR QUÉ ──
+ * Lleva `--grad-fill`, el gradiente de RELLENO CON TEXTO BLANCO. No lleva
+ * `--grad`, el decorativo. Está medido: `--grad` pasa por `--sky` y `--cyan`, y
+ * el texto blanco sobre esos dos stops mide 2.77:1 y 1.68:1. Un botón es texto,
+ * así que ahí sería ilegible. Todos los stops de `--grad-fill` pasan 5.3:1
+ * contra blanco.
+ *
+ * ── POR QUÉ SE LEE EL TOKEN Y NO LA CLASE `.grad-fill` ──
+ * `.grad-fill` está escrita fuera de toda `@layer` en globals.css, así que gana
+ * a cualquier utilidad de Tailwind — y encima fija el color del texto en blanco.
+ * Con la clase puesta aquí, ningún consumidor podría volver a invertir el botón:
+ * `bg-none` y `text-brand-strong` perderían, y el botón invertido de las ocho
+ * bandas de CTA del sitio se quedaría con el gradiente encima, indistinguible de
+ * su propia banda. Como utilidad arbitraria sí se puede invertir:
+ *   className="bg-none bg-surface text-brand-strong"
+ * `bg-none` es lo que apaga la imagen, y tailwind-merge además descarta el
+ * gradiente porque las dos clases pertenecen al mismo grupo. El gradiente sigue
+ * definido en un solo lugar: el token `--grad-fill`.
  *
  * La elevación de hover se anima con `translate`, no con `transform`: en
  * Tailwind v4 las utilidades `translate-*` escriben la propiedad individual
@@ -52,11 +61,11 @@ const buttonVariants = cva(
   {
     variants: {
       variant: {
-        // El botón principal del sitio: gradiente firma, texto blanco y un
+        // El botón principal del sitio: gradiente de relleno, texto blanco y un
         // resplandor que solo aparece al pasar el mouse (quien lo quiera fijo
         // pasa `shadow-glow-brand` por className, como hace la home).
         default:
-          'bg-[image:var(--grad)] text-white hover:opacity-95 hover:shadow-glow-brand',
+          'bg-[image:var(--grad-fill)] text-white hover:opacity-95 hover:shadow-glow-brand',
         outline:
           // border-control, no border-hairline: el borde de un botón es el
           // límite de un componente de UI y debe cumplir WCAG 1.4.11 (3:1),
@@ -65,7 +74,10 @@ const buttonVariants = cva(
         ghost: 'text-ink-muted hover:bg-ground-tint hover:text-ink',
         // Un enlace no se levanta: sería un salto de línea de texto.
         link: 'text-brand-strong underline-offset-4 hover:translate-y-0 hover:underline',
-        subtle: 'bg-brand-wash text-brand-strong hover:bg-violet-wash',
+        // El hover pasa del lavado de marca al lavado de cielo — los dos son
+        // fondos, no texto, y `text-brand-strong` (6.5:1 sobre blanco) sigue
+        // legible sobre ambos.
+        subtle: 'bg-brand-wash text-brand-strong hover:bg-sky-wash',
       },
       size: {
         sm: 'h-9 px-3.5 text-sm',

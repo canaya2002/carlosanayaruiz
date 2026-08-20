@@ -48,14 +48,16 @@ export function Disclosure({
         <span>{question}</span>
         {/* El chevron va en una píldora de marca para que el punto de clic se
             vea. Rota con `rotate`, la propiedad individual que escriben las
-            utilidades de Tailwind v4 — de ahí que la transición la nombre. */}
+            utilidades de Tailwind v4 — de ahí que la transición la nombre.
+            El hover pasa del lavado de marca al de cielo: los dos son fondos,
+            nunca texto, y `text-brand-strong` (6.5:1) sigue legible en ambos. */}
         <span
           aria-hidden="true"
           className={cn(
             'grid size-7 shrink-0 place-items-center rounded-full',
             'bg-brand-wash text-brand-strong',
             'transition-[rotate,background-color,color] duration-300 ease-out-soft',
-            'group-hover:bg-violet-wash group-open:rotate-180'
+            'group-hover:bg-sky-wash group-open:rotate-180'
           )}
         >
           <svg

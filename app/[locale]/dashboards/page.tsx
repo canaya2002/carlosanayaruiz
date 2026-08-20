@@ -153,7 +153,7 @@ export default async function DashboardsPage({ params }: Props) {
             {/* El ícono del registro del servicio, en grande: es la única
                 imagen de la página y dice de qué se trata antes del título. */}
             <span
-              className="grad-fill enter-scale inline-flex size-14 items-center justify-center rounded-2xl shadow-glow-brand"
+              className="grad-deco enter-scale inline-flex size-14 items-center justify-center rounded-2xl text-white shadow-glow-brand"
               aria-hidden="true"
             >
               <Icon className="size-7" />
@@ -227,7 +227,7 @@ export default async function DashboardsPage({ params }: Props) {
       </section>
 
       {/* ══ QUÉ CONSTRUYO ═════════════════════════════════════════ */}
-      <section className="border-y border-hairline bg-ground-tint">
+      <section className="defer-paint border-y border-hairline bg-ground-tint">
         <div className="mx-auto w-full max-w-6xl px-5 py-20 sm:px-8 sm:py-24">
           <div className="reveal max-w-2xl">
             <p className="eyebrow">{en ? 'Scope' : 'Alcance'}</p>
@@ -240,7 +240,7 @@ export default async function DashboardsPage({ params }: Props) {
             {service.benefits.map((benefit) => (
               <div key={benefit} className="card card-hover p-6 sm:p-7">
                 <span
-                  className="grad-fill block h-1 w-12 rounded-full"
+                  className="grad-deco block h-1 w-12 rounded-full"
                   aria-hidden="true"
                 />
                 <p className="mt-5 text-ink">{benefit}</p>
@@ -250,7 +250,7 @@ export default async function DashboardsPage({ params }: Props) {
 
           {/* Sabor de resultado: qué es distinto después. Mismo registro, otra
               pregunta — separados para que ninguno se lea como relleno. */}
-          <div className="reveal mt-12 rounded-2xl border border-hairline bg-surface p-6 shadow-lift-1 sm:p-8">
+          <div className="glass glass-spec reveal mt-12 p-6 sm:p-8">
             <h3 className="text-d3 text-ink">
               {en ? 'What changes for your team' : 'Qué cambia para tu equipo'}
             </h3>
@@ -258,7 +258,7 @@ export default async function DashboardsPage({ params }: Props) {
               {service.outcomes.map((outcome) => (
                 <li key={outcome} className="flex gap-3 text-ink-muted">
                   <Check
-                    className="mt-1 size-4 shrink-0 text-violet"
+                    className="mt-1 size-4 shrink-0 text-sky-ink"
                     aria-hidden="true"
                   />
                   <span>{outcome}</span>
@@ -270,7 +270,7 @@ export default async function DashboardsPage({ params }: Props) {
       </section>
 
       {/* ══ CÓMO TRABAJAMOS ═══════════════════════════════════════ */}
-      <section className="mx-auto w-full max-w-6xl px-5 py-20 sm:px-8 sm:py-24">
+      <section className="defer-paint mx-auto w-full max-w-6xl px-5 py-20 sm:px-8 sm:py-24">
         <div className="reveal max-w-2xl">
           <p className="eyebrow">{en ? 'Process' : 'Proceso'}</p>
           <h2 className="mt-5 text-d1 text-ink">
@@ -305,7 +305,7 @@ export default async function DashboardsPage({ params }: Props) {
       </section>
 
       {/* ══ ENCAJE — Y EL OPUESTO HONESTO ═════════════════════════ */}
-      <section className="border-y border-hairline bg-ground-tint">
+      <section className="defer-paint border-y border-hairline bg-ground-tint">
         <div className="mx-auto w-full max-w-6xl px-5 py-20 sm:px-8 sm:py-24">
           <div className="reveal max-w-2xl">
             <p className="eyebrow">{en ? 'Fit' : 'Encaje'}</p>
@@ -329,7 +329,7 @@ export default async function DashboardsPage({ params }: Props) {
                 {service.forWhom.map((item) => (
                   <li key={item} className="flex gap-3 text-ink-muted">
                     <Check
-                      className="mt-1 size-4 shrink-0 text-violet"
+                      className="mt-1 size-4 shrink-0 text-sky-ink"
                       aria-hidden="true"
                     />
                     <span>{item}</span>
@@ -360,7 +360,7 @@ export default async function DashboardsPage({ params }: Props) {
       </section>
 
       {/* ══ ENTREGABLES + STACK ═══════════════════════════════════ */}
-      <section id="entregables" className="scroll-mt-24">
+      <section id="entregables" className="defer-paint scroll-mt-24">
         <div className="mx-auto w-full max-w-6xl px-5 py-20 sm:px-8 sm:py-24">
           <div className="reveal max-w-2xl">
             <p className="eyebrow">{en ? 'Deliverables' : 'Entregables'}</p>
@@ -371,7 +371,7 @@ export default async function DashboardsPage({ params }: Props) {
             {service.includes.map((item) => (
               <li key={item} className="card card-hover flex gap-3.5 p-5">
                 <Check
-                  className="mt-0.5 size-5 shrink-0 text-violet"
+                  className="mt-0.5 size-5 shrink-0 text-sky-ink"
                   aria-hidden="true"
                 />
                 <span className="text-ink">{item}</span>
@@ -410,7 +410,7 @@ export default async function DashboardsPage({ params }: Props) {
       </section>
 
       {/* ══ FAQ ═══════════════════════════════════════════════════ */}
-      <section className="border-y border-hairline bg-ground-tint">
+      <section className="defer-paint border-y border-hairline bg-ground-tint">
         <div className="mx-auto w-full max-w-6xl px-5 py-20 sm:px-8 sm:py-24">
           <div className="grid gap-12 lg:grid-cols-[minmax(0,22rem)_minmax(0,1fr)] lg:gap-20">
             <div className="reveal">
@@ -421,7 +421,7 @@ export default async function DashboardsPage({ params }: Props) {
             {/* Estas preguntas y respuestas son exactamente las que emite el
                 nodo FAQPage de arriba — el markup nunca puede decir algo que
                 la página no dice. */}
-            <div className="reveal rounded-2xl border border-hairline bg-surface px-5 shadow-lift-1 sm:px-7">
+            <div className="glass glass-spec reveal px-5 sm:px-7">
               {service.faq.map((faq) => (
                 <Disclosure
                   key={faq.question}
@@ -435,7 +435,7 @@ export default async function DashboardsPage({ params }: Props) {
       </section>
 
       {/* ══ SERVICIOS RELACIONADOS ════════════════════════════════ */}
-      <section className="mx-auto w-full max-w-6xl px-5 py-20 sm:px-8 sm:py-24">
+      <section className="defer-paint mx-auto w-full max-w-6xl px-5 py-20 sm:px-8 sm:py-24">
         <div className="reveal max-w-2xl">
           <p className="eyebrow">{tn('services')}</p>
           <h2 className="mt-5 text-d1 text-ink">{t('relatedTitle')}</h2>
@@ -451,7 +451,7 @@ export default async function DashboardsPage({ params }: Props) {
                 className="card card-hover group flex flex-col p-6 sm:p-7"
               >
                 <span
-                  className="grad-fill inline-flex size-12 items-center justify-center rounded-xl shadow-glow-brand"
+                  className="grad-deco inline-flex size-12 items-center justify-center rounded-xl text-white shadow-glow-brand"
                   aria-hidden="true"
                 >
                   <SiblingIcon className="size-6" />
@@ -481,7 +481,7 @@ export default async function DashboardsPage({ params }: Props) {
             className="card card-hover group flex flex-col p-6 sm:p-7"
           >
             <span
-              className="grad-fill inline-flex size-12 items-center justify-center rounded-xl shadow-glow-brand"
+              className="grad-deco inline-flex size-12 items-center justify-center rounded-xl text-white shadow-glow-brand"
               aria-hidden="true"
             >
               <LayoutGrid className="size-6" />
@@ -510,8 +510,8 @@ export default async function DashboardsPage({ params }: Props) {
       </section>
 
       {/* ══ CTA FINAL ═════════════════════════════════════════════ */}
-      <section className="mx-auto w-full max-w-6xl px-5 pb-20 sm:px-8 sm:pb-24">
-        <div className="grad-animate reveal-scale relative overflow-hidden rounded-3xl px-6 py-14 shadow-lift-3 sm:px-12 sm:py-20">
+      <section className="defer-paint mx-auto w-full max-w-6xl px-5 pb-20 sm:px-8 sm:pb-24">
+        <div className="grad-drift reveal-scale rounded-3xl px-6 py-14 shadow-lift-3 sm:px-12 sm:py-20">
           <div className="relative max-w-2xl">
             <h2 className="text-d1 text-white">
               {en

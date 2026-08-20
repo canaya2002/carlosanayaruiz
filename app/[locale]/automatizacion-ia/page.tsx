@@ -19,7 +19,7 @@ import {
   generateServicePageGraph,
   type BreadcrumbItem as SchemaCrumb,
 } from '@/lib/schema'
-import type { Pathname } from '@/i18n/routing'
+import type { StaticPathname } from '@/i18n/routing'
 import { Locale } from '@/data/types'
 
 interface Props {
@@ -182,7 +182,7 @@ export default async function AiAutomationPage({ params }: Props) {
                 resplandor. Decorativa: el h1 ya nombra el servicio. */}
             <div className="enter-scale step-2 order-first lg:order-none">
               <span
-                className="grad-fill flex size-20 items-center justify-center rounded-3xl shadow-glow-brand sm:size-24 lg:size-28"
+                className="grad-deco flex size-20 items-center justify-center rounded-3xl text-white shadow-glow-brand sm:size-24 lg:size-28"
                 aria-hidden="true"
               >
                 <Icon className="size-9 lg:size-12" />
@@ -230,7 +230,7 @@ export default async function AiAutomationPage({ params }: Props) {
       </section>
 
       {/* ══ QUÉ ENTREGO ════════════════════════════════════════════ */}
-      <section className="mx-auto w-full max-w-6xl px-5 py-20 sm:px-8 sm:py-24">
+      <section className="defer-paint mx-auto w-full max-w-6xl px-5 py-20 sm:px-8 sm:py-24">
         <div className="reveal max-w-2xl">
           <p className="eyebrow">{en ? 'Scope' : 'Alcance'}</p>
           <h2 className="mt-5 text-d1 text-ink">{t('whatTitle')}</h2>
@@ -241,7 +241,7 @@ export default async function AiAutomationPage({ params }: Props) {
           {service.benefits.map((benefit) => (
             <li key={benefit} className="card card-hover p-6 sm:p-7">
               <span
-                className="grad-fill inline-flex size-12 items-center justify-center rounded-xl shadow-glow-brand"
+                className="grad-deco inline-flex size-12 items-center justify-center rounded-xl text-white shadow-glow-brand"
                 aria-hidden="true"
               >
                 <Check className="size-6" />
@@ -263,7 +263,7 @@ export default async function AiAutomationPage({ params }: Props) {
             {service.outcomes.map((outcome) => (
               <li key={outcome} className="card p-6">
                 <span
-                  className="grad-fill block h-1 w-12 rounded-full"
+                  className="grad-deco block h-1 w-12 rounded-full"
                   aria-hidden="true"
                 />
                 <p className="mt-5 text-ink-muted">{outcome}</p>
@@ -274,7 +274,7 @@ export default async function AiAutomationPage({ params }: Props) {
       </section>
 
       {/* ══ CÓMO CORRE EL TRABAJO ══════════════════════════════════ */}
-      <section className="border-y border-hairline bg-ground-tint">
+      <section className="defer-paint border-y border-hairline bg-ground-tint">
         <div className="mx-auto w-full max-w-6xl px-5 py-20 sm:px-8 sm:py-24">
           <div className="reveal max-w-2xl">
             <p className="eyebrow">{en ? 'Process' : 'Proceso'}</p>
@@ -308,7 +308,7 @@ export default async function AiAutomationPage({ params }: Props) {
       </section>
 
       {/* ══ ENCAJE / NO ENCAJE ═════════════════════════════════════ */}
-      <section className="mx-auto w-full max-w-6xl px-5 py-20 sm:px-8 sm:py-24">
+      <section className="defer-paint mx-auto w-full max-w-6xl px-5 py-20 sm:px-8 sm:py-24">
         <div className="reveal max-w-2xl">
           <p className="eyebrow">{en ? 'Fit' : 'Encaje'}</p>
           <h2 className="mt-5 text-d1 text-ink">
@@ -321,7 +321,7 @@ export default async function AiAutomationPage({ params }: Props) {
         <div className="reveal-stagger mt-14 grid gap-6 md:grid-cols-2 md:gap-8">
           <div className="card p-6 sm:p-8">
             <span
-              className="grad-fill block h-1 w-12 rounded-full"
+              className="grad-deco block h-1 w-12 rounded-full"
               aria-hidden="true"
             />
             <h3 className="mt-5 text-d3 text-ink">
@@ -331,7 +331,7 @@ export default async function AiAutomationPage({ params }: Props) {
               {service.forWhom.map((item) => (
                 <li key={item} className="flex gap-3 text-ink-muted">
                   <Check
-                    className="mt-1 size-4 shrink-0 text-violet"
+                    className="mt-1 size-4 shrink-0 text-sky-ink"
                     aria-hidden="true"
                   />
                   <span>{item}</span>
@@ -368,7 +368,7 @@ export default async function AiAutomationPage({ params }: Props) {
       </section>
 
       {/* ══ ENTREGABLES ════════════════════════════════════════════ */}
-      <section className="border-y border-hairline bg-ground-tint">
+      <section className="defer-paint border-y border-hairline bg-ground-tint">
         <div className="mx-auto w-full max-w-6xl px-5 py-20 sm:px-8 sm:py-24">
           <div className="reveal max-w-2xl">
             <p className="eyebrow">{en ? 'Deliverables' : 'Entregables'}</p>
@@ -377,7 +377,7 @@ export default async function AiAutomationPage({ params }: Props) {
 
           {/* `.prose-rich` ya trae la viñeta de gradiente y la medida de línea,
               así que la lista no necesita íconos propios. */}
-          <div className="reveal mt-12 max-w-3xl rounded-2xl border border-hairline bg-surface p-6 shadow-lift-1 sm:p-9">
+          <div className="glass glass-spec reveal mt-12 max-w-3xl p-6 sm:p-9">
             <div className="prose-rich">
               <ul>
                 {service.includes.map((item) => (
@@ -390,7 +390,7 @@ export default async function AiAutomationPage({ params }: Props) {
       </section>
 
       {/* ══ STACK ══════════════════════════════════════════════════ */}
-      <section className="mx-auto w-full max-w-6xl px-5 py-20 sm:px-8 sm:py-24">
+      <section className="defer-paint mx-auto w-full max-w-6xl px-5 py-20 sm:px-8 sm:py-24">
         <div className="reveal max-w-2xl">
           <p className="eyebrow">Stack</p>
           <h2 className="mt-5 text-d1 text-ink">{t('toolsTitle')}</h2>
@@ -415,7 +415,7 @@ export default async function AiAutomationPage({ params }: Props) {
       </section>
 
       {/* ══ FAQ ════════════════════════════════════════════════════ */}
-      <section className="border-t border-hairline bg-ground-tint">
+      <section className="defer-paint border-t border-hairline bg-ground-tint">
         <div className="mx-auto w-full max-w-6xl px-5 py-20 sm:px-8 sm:py-24">
           <div className="grid gap-12 lg:grid-cols-[minmax(0,22rem)_minmax(0,1fr)] lg:gap-20">
             <div className="reveal">
@@ -431,7 +431,7 @@ export default async function AiAutomationPage({ params }: Props) {
             {/* Se renderiza desde service.faq, que es también lo que emite el
                 markup FAQPage de arriba — el texto visible y los datos
                 estructurados son los mismos strings. */}
-            <div className="reveal rounded-2xl border border-hairline bg-surface px-5 shadow-lift-1 sm:px-7">
+            <div className="glass glass-spec reveal px-5 sm:px-7">
               {service.faq.map((faq) => (
                 <Disclosure
                   key={faq.question}
@@ -445,7 +445,7 @@ export default async function AiAutomationPage({ params }: Props) {
       </section>
 
       {/* ══ RELACIONADOS ═══════════════════════════════════════════ */}
-      <section className="mx-auto w-full max-w-6xl px-5 py-20 sm:px-8 sm:py-24">
+      <section className="defer-paint mx-auto w-full max-w-6xl px-5 py-20 sm:px-8 sm:py-24">
         <div className="reveal max-w-2xl">
           <p className="eyebrow">{en ? 'Keep reading' : 'Sigue leyendo'}</p>
           <h2 className="mt-5 text-d1 text-ink">{t('relatedTitle')}</h2>
@@ -457,11 +457,11 @@ export default async function AiAutomationPage({ params }: Props) {
             return (
               <li key={item.id}>
                 <Link
-                  href={servicePath(item, locale) as Pathname}
+                  href={servicePath(item, locale) as StaticPathname}
                   className="card card-hover group flex h-full flex-col p-6 sm:p-7"
                 >
                   <span
-                    className="grad-fill inline-flex size-12 items-center justify-center rounded-xl shadow-glow-brand"
+                    className="grad-deco inline-flex size-12 items-center justify-center rounded-xl text-white shadow-glow-brand"
                     aria-hidden="true"
                   >
                     <RelatedIcon className="size-6" />
@@ -509,8 +509,8 @@ export default async function AiAutomationPage({ params }: Props) {
       </section>
 
       {/* ══ CTA FINAL ══════════════════════════════════════════════ */}
-      <section className="mx-auto w-full max-w-6xl px-5 pb-20 sm:px-8 sm:pb-24">
-        <div className="grad-animate reveal-scale relative overflow-hidden rounded-3xl px-6 py-14 shadow-lift-3 sm:px-12 sm:py-20">
+      <section className="defer-paint mx-auto w-full max-w-6xl px-5 pb-20 sm:px-8 sm:pb-24">
+        <div className="grad-drift reveal-scale rounded-3xl px-6 py-14 shadow-lift-3 sm:px-12 sm:py-20">
           <div className="relative max-w-2xl">
             <h2 className="text-d1 text-white">{t('ctaMain')}</h2>
             <p className="mt-5 text-lead text-white/85">

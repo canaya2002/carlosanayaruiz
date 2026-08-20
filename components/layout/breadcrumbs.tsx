@@ -2,7 +2,7 @@ import { getTranslations } from 'next-intl/server'
 import { Link } from '@/i18n/navigation'
 import { ChevronRight, Home } from 'lucide-react'
 import { cn } from '@/lib/utils'
-import type { Pathname } from '@/i18n/routing'
+import type { StaticPathname } from '@/i18n/routing'
 
 export interface BreadcrumbItem {
   label: string
@@ -10,7 +10,7 @@ export interface BreadcrumbItem {
    * Pathname interno (en español) de la tabla de rutas — el segmento localizado
    * lo resuelve `Link`. Se omite en el último item, que es la página actual.
    */
-  href?: Pathname
+  href?: StaticPathname
 }
 
 export interface BreadcrumbsProps {

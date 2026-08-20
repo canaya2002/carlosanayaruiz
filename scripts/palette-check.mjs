@@ -81,10 +81,11 @@ const MIRROR = {
   hairline: 'hairline',
   brand: 'brand',
   brandStrong: 'brand-strong',
-  violet: 'violet',
-  violetStrong: 'violet-strong',
   brandWash: 'brand-wash',
+  sky: 'sky',
+  skyInk: 'sky-ink',
   cyan: 'cyan',
+  cyanInk: 'cyan-ink',
 }
 
 /**
@@ -102,18 +103,26 @@ const FLOORS = [
   { token: 'ink-subtle', against: 'ground-tint', min: 4.5, use: 'texto sobre banda' },
   { token: 'brand', against: 'ground', min: 4.5, use: 'enlaces' },
   { token: 'brand-strong', against: 'ground', min: 4.5, use: 'enlaces hover' },
-  { token: 'violet', against: 'ground', min: 4.5, use: 'texto de acento' },
+  { token: 'sky-ink', against: 'ground', min: 4.5, use: 'texto cielo legible' },
+  { token: 'cyan-ink', against: 'ground', min: 4.5, use: 'texto cian legible' },
   { token: 'control', against: 'surface', min: 3.0, use: 'borde de input (1.4.11)' },
   { token: 'control', against: 'ground', min: 3.0, use: 'borde de input (1.4.11)' },
-  { token: 'cyan', against: 'ground', min: 0, use: 'SOLO decorativo — no usar como texto' },
+  // Piso 0 a propósito: documentados como decorativos puros. Quedan
+  // listados para que nadie los confunda con colores de texto.
+  { token: 'sky', against: 'ground', min: 0, use: 'SOLO decorativo (2.7:1)' },
+  { token: 'cyan', against: 'ground', min: 0, use: 'SOLO decorativo (1.8:1)' },
 ]
 
 /** Texto blanco sobre rellenos de botón. */
+// Los stops del gradiente de RELLENO (--grad-fill). Todos llevan texto
+// blanco encima, así que todos tienen que pasar 4.5:1. El gradiente
+// decorativo (--grad) NO va aquí porque nunca lleva texto: sus stops sky
+// y cyan darían 2.77:1 y 1.68:1 contra blanco.
 const ON_FILL = [
   { token: 'brand', min: 4.5 },
   { token: 'brand-strong', min: 4.5 },
-  { token: 'violet', min: 4.5 },
-  { token: 'violet-strong', min: 4.5 },
+  { token: 'sky-ink', min: 4.5 },
+  { token: 'cyan-ink', min: 4.5 },
 ]
 
 /* ── ejecución ───────────────────────────────────────────────────── */

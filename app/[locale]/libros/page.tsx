@@ -18,7 +18,7 @@ import { getBooks, isAvailable } from '@/data/books'
 import { NAP } from '@/lib/constants'
 import { generatePageMetadata } from '@/lib/seo'
 import { generateBooksPageGraph } from '@/lib/schema'
-import type { Pathname } from '@/i18n/routing'
+import type { StaticPathname } from '@/i18n/routing'
 import { Locale } from '@/data/types'
 
 interface Props {
@@ -65,7 +65,7 @@ export default async function BooksPage({ params }: Props) {
   const resources: {
     title: string
     desc: string
-    href: Pathname
+    href: StaticPathname
     icon: LucideIcon
   }[] = [
     {
@@ -140,7 +140,7 @@ export default async function BooksPage({ params }: Props) {
             </h1>
 
             <span
-              className="grad-fill enter step-1 mt-7 block h-1 w-12 rounded-full"
+              className="grad-deco enter step-1 mt-7 block h-1 w-12 rounded-full"
               aria-hidden="true"
             />
 
@@ -198,7 +198,7 @@ export default async function BooksPage({ params }: Props) {
               <li key={book.id}>
                 <article className="card p-6 sm:p-8">
                   <span
-                    className="grad-fill block h-1 w-12 rounded-full"
+                    className="grad-deco block h-1 w-12 rounded-full"
                     aria-hidden="true"
                   />
 
@@ -272,7 +272,7 @@ export default async function BooksPage({ params }: Props) {
                       </time>
                     </div>
                   ) : (
-                    <div className="mt-8 rounded-xl bg-violet-wash p-5 sm:p-6">
+                    <div className="mt-8 rounded-xl bg-sky-wash p-5 sm:p-6">
                       <p className="max-w-[68ch] text-ink-muted">
                         {t('upcomingDesc')}
                       </p>
@@ -321,7 +321,7 @@ export default async function BooksPage({ params }: Props) {
       </section>
 
       {/* ══ YA PÚBLICO Y GRATIS ════════════════════════════════════ */}
-      <section className="mx-auto w-full max-w-6xl px-5 py-20 sm:px-8 sm:py-24">
+      <section className="defer-paint mx-auto w-full max-w-6xl px-5 py-20 sm:px-8 sm:py-24">
         <div className="reveal max-w-2xl">
           <p className="eyebrow">{en ? 'Meanwhile' : 'Mientras tanto'}</p>
           <h2 className="mt-5 text-d1 text-ink">{t('freeResources')}</h2>
@@ -340,7 +340,7 @@ export default async function BooksPage({ params }: Props) {
                 className="card card-hover group flex flex-col p-6"
               >
                 <span
-                  className="grad-fill inline-flex size-12 items-center justify-center rounded-xl shadow-glow-brand"
+                  className="grad-deco inline-flex size-12 items-center justify-center rounded-xl text-white shadow-glow-brand"
                   aria-hidden="true"
                 >
                   <Icon className="size-6" />
@@ -369,8 +369,8 @@ export default async function BooksPage({ params }: Props) {
       {/* ══ CTA FINAL ══════════════════════════════════════════════
           Ocupa el lugar de la banda del newsletter, que fue borrada: hace el
           mismo trabajo — avisarte cuando salga — sin base de datos detrás. */}
-      <section className="mx-auto w-full max-w-6xl px-5 pb-20 sm:px-8 sm:pb-24">
-        <div className="grad-animate reveal-scale relative overflow-hidden rounded-3xl px-6 py-14 shadow-lift-3 sm:px-12 sm:py-20">
+      <section className="defer-paint mx-auto w-full max-w-6xl px-5 pb-20 sm:px-8 sm:pb-24">
+        <div className="grad-drift reveal-scale rounded-3xl px-6 py-14 shadow-lift-3 sm:px-12 sm:py-20">
           <div className="relative max-w-2xl">
             <h2 className="text-d1 text-white">
               {en
