@@ -6,7 +6,11 @@ import { ArrowRight, ArrowUpRight, Check, LayoutGrid, X } from 'lucide-react'
 import { Breadcrumbs } from '@/components/layout/breadcrumbs'
 import { Button } from '@/components/ui/button'
 import { Badge } from '@/components/ui/badge'
+import { Carousel } from '@/components/ui/carousel'
 import { Disclosure } from '@/components/ui/disclosure'
+import { ImageSlot } from '@/components/ui/image-slot'
+import { PointerGlow } from '@/components/motion/pointer-glow'
+import { Tilt3D } from '@/components/motion/tilt-3d'
 import { getServiceById } from '@/data/services'
 import { NAP } from '@/lib/constants'
 import { generatePageMetadata } from '@/lib/seo'
@@ -36,6 +40,51 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
   })
 }
 
+/**
+ * ════════════════════════════════════════════════════════════════
+ * CAPAS DE FONDO — el conjunto que hace visible el cristal
+ *
+ * Aurora + grano + cuadrícula, siempre juntas. El cristal solo existe si hay
+ * algo saturado detrás que difuminar: sobre un fondo casi blanco un panel
+ * translúcido se ve exactamente igual que un panel blanco, y ese fue el motivo
+ * real por el que el efecto parecía no estar puesto.
+ *
+ * Los cuatro <i> son obligatorios — cada uno es un campo de color distinto
+ * (azul de marca, cian, cielo y un brillo blanco para que la mezcla no se vea
+ * plana). Todos se mueven con `transform`, así que cuestan cero recálculos de
+ * estilo mientras el navegador los pueda componer.
+ *
+ * ── CUÁNTAS CABEN, MEDIDO ──
+ * Tres secciones con aurora por página, y ni una más. Con cinco se agota el
+ * presupuesto de capas compuestas de la página, el navegador devuelve las
+ * animaciones al hilo principal y TODA animación en bucle empieza a costar un
+ * recálculo de estilo por frame: 180 en 3 s en reposo contra un presupuesto de
+ * 20. Aquí las tres son las que llevan cristal encima: la cabecera, el alcance
+ * y el FAQ. Las demás bandas ponen su color con `.grad-soft` o `bg-ground-tint`,
+ * que no se animan y no cuestan capa.
+ * Verifica: node scripts/perf-probe.mjs http://localhost:3000/es/dashboards
+ *
+ * `glow` monta el resplandor que sigue al puntero, solo en la cabecera: cada
+ * instancia añade un listener de `pointermove` y una lectura de geometría por
+ * frame.
+ * ════════════════════════════════════════════════════════════════
+ */
+function Backdrop({ glow = false }: { glow?: boolean }) {
+  return (
+    <>
+      <div className="aurora" aria-hidden="true">
+        <i />
+        <i />
+        <i />
+        <i />
+      </div>
+      <div className="grain" aria-hidden="true" />
+      <div className="grid-fade" aria-hidden="true" />
+      {glow ? <PointerGlow /> : null}
+    </>
+  )
+}
+
 export default async function DashboardsPage({ params }: Props) {
   const { locale: rawLocale } = await params
   setRequestLocale(rawLocale)
@@ -50,7 +99,10 @@ export default async function DashboardsPage({ params }: Props) {
 
   const t = await getTranslations('servicePages.dashboards')
   const tn = await getTranslations('nav')
+  const tb = await getTranslations('breadcrumbs')
   const ts = await getTranslations('services')
+  const tl = await getTranslations('a11y')
+  const tu = await getTranslations('common')
 
   const Icon = service.icon
 
@@ -71,7 +123,7 @@ export default async function DashboardsPage({ params }: Props) {
   // mismas etiquetas.
   const crumb = 'Dashboards'
   const schemaTrail: BreadcrumbItem[] = [
-    { name: en ? 'Home' : 'Inicio', route: 'home' },
+    { name: tb('home'), route: 'home' },
     { name: tn('services'), route: 'services' },
     { name: crumb, route: 'dashboards' },
   ]
@@ -132,68 +184,167 @@ export default async function DashboardsPage({ params }: Props) {
       />
 
       {/* ══ CABECERA ══════════════════════════════════════════════
-          Dos capas decorativas en -z-10, ninguna captura eventos: la malla
-          animada y la cuadrícula que se desvanece. El resplandor del puntero
-          se queda solo en la home — aquí la primera banda es corta y no
-          alcanzaría a leerse.                                            */}
+          Aurora, grano, cuadrícula y resplandor de puntero, las cuatro en
+          -z-10 dentro de un contenedor `relative isolate overflow-hidden` y
+          ninguna capturando eventos.                                     */}
       <section className="relative isolate overflow-hidden border-b border-hairline">
-        <div className="mesh" aria-hidden="true" />
-        <div className="grid-fade" aria-hidden="true" />
+        <Backdrop glow />
 
-        <div className="mx-auto w-full max-w-6xl px-5 py-14 sm:px-8 sm:py-16">
+        <div className="mx-auto w-full max-w-6xl px-5 pb-20 pt-12 sm:px-8 sm:pb-24 sm:pt-16">
           <Breadcrumbs
+            className="enter"
             items={[
               { label: tn('services'), href: '/servicios' },
               { label: crumb },
             ]}
-            className="mb-10 sm:mb-12"
           />
 
-          <div className="max-w-3xl">
-            {/* El ícono del registro del servicio, en grande: es la única
-                imagen de la página y dice de qué se trata antes del título. */}
-            <span
-              className="grad-deco enter-scale inline-flex size-14 items-center justify-center rounded-2xl text-white shadow-glow-brand"
-              aria-hidden="true"
-            >
-              <Icon className="size-7" />
-            </span>
+          <div className="mt-10 grid gap-12 lg:grid-cols-[minmax(0,1fr)_minmax(0,24rem)] lg:items-center lg:gap-16">
+            <div className="max-w-2xl">
+              {/* El ícono del registro del servicio, en grande: dice de qué se
+                  trata antes del título.
 
-            <p className="eyebrow enter-scale step-1 mt-7">
-              {en ? 'Service · Mexico City' : 'Servicio · Ciudad de México'}
-            </p>
+                  El `.float` va sobre un elemento con `background-image`, NUNCA
+                  sobre un panel de cristal: mover algo con `backdrop-filter`
+                  obliga a rerasterizar el desenfoque en cada frame. */}
+              <div className="flex flex-wrap items-center gap-4">
+                <span
+                  className="grad-deco float enter-scale inline-flex size-16 shrink-0 items-center justify-center rounded-3xl text-white shadow-glow-brand sm:size-20"
+                  aria-hidden="true"
+                >
+                  <Icon className="size-8 sm:size-10" />
+                </span>
+                <p className="eyebrow enter-scale step-1">
+                  {en ? 'Service · Mexico City' : 'Servicio · Ciudad de México'}
+                </p>
+              </div>
 
-            <h1 className="enter-blur step-2 mt-6 text-d1 text-ink">
-              {titleHead}
-              <span className="grad-text">{titleAccent}</span>
-            </h1>
+              <h1 className="enter-blur step-2 mt-7 text-d1 text-ink">
+                {titleHead}
+                <span className="grad-text">{titleAccent}</span>
+              </h1>
 
-            <p className="enter step-3 mt-7 text-lead text-ink-muted">
-              {t('subtitle')}
-            </p>
+              {/* ── POR QUÉ EL LEAD VA DENTRO DE CRISTAL ──
+                  Medido: sobre la aurora `text-ink-muted` cae a 3.83:1 y
+                  `text-ink-subtle` a 3.23:1, y ninguno pasa. Dentro de
+                  `.glass-strong` el muted mide 5.1 y el subtle 4.54, y los dos
+                  sí. De ahí que el panel sea `strong` y no el de 62%, donde el
+                  subtle se queda en 4.30. */}
+              <div className="glass glass-strong glass-spec enter step-3 mt-8 p-6 sm:p-7">
+                <p className="text-lead text-ink-muted">{t('subtitle')}</p>
 
-            <div className="enter step-4 mt-9 flex flex-wrap items-center gap-3">
-              <Button asChild size="lg" className="sheen shadow-glow-brand">
-                <Link href="/contacto">
-                  {t('ctaMain')}
-                  <ArrowRight className="size-4" aria-hidden="true" />
-                </Link>
-              </Button>
-              {/* Anchor normal: un fragmento de la misma página no es un
-                  pathname enrutado. */}
-              <Button asChild size="lg" variant="outline">
-                <a href="#entregables">
-                  {en ? 'See what you get' : 'Ver qué recibes'}
-                </a>
-              </Button>
+                <div className="mt-7 flex flex-wrap items-center gap-3">
+                  <Button asChild size="lg" className="sheen shadow-glow-brand">
+                    <Link href="/contacto">
+                      {t('ctaMain')}
+                      <ArrowRight className="size-4" aria-hidden="true" />
+                    </Link>
+                  </Button>
+                  {/* Anchor normal y no `Link`: un fragmento de la misma página
+                      no es un pathname enrutado. `outline` y no `glass` porque
+                      este botón vive DENTRO de un panel de cristal. */}
+                  <Button asChild size="lg" variant="outline">
+                    <a href="#entregables">
+                      {en ? 'See what you get' : 'Ver qué recibes'}
+                    </a>
+                  </Button>
+                </div>
+
+                <p className="mt-6 flex items-center gap-2.5 text-sm text-ink-subtle">
+                  <span className="ping" aria-hidden="true" />
+                  {en
+                    ? `Remote consulting from ${NAP.localityEn}.`
+                    : `Consultoría remota desde ${NAP.locality}.`}
+                </p>
+              </div>
             </div>
 
-            <p className="enter step-5 mt-6 flex items-center gap-2.5 text-sm text-ink-subtle">
-              <span className="ping" aria-hidden="true" />
-              {en
-                ? 'Remote consulting from Mexico City.'
-                : 'Consultoría remota desde Ciudad de México.'}
-            </p>
+            {/* ── COMPOSICIÓN EN TRES PLANOS ──
+                `.scene` (la perspectiva) y `.stack-3d` (el reparto en
+                profundidad al pasar el mouse) van en el MISMO elemento: la
+                perspectiva solo alcanza a los hijos DIRECTOS, así que con el
+                stack en un div interno las tres capas se aplanarían.
+
+                `preserve-3d` es lo que hace que el navegador ordene por z real
+                y no por orden en el DOM, y las clases `.depth-*` dan la
+                separación en reposo.
+
+                El hueco de imagen es HERMANO de los paneles de cristal, nunca
+                hijo: su etiqueta es a su vez un panel de cristal y anidar
+                `backdrop-filter` está prohibido. */}
+            <div className="enter-scale step-4">
+              <div className="relative mx-auto w-full max-w-[24rem]">
+                <div
+                  className="absolute -inset-5 opacity-60"
+                  aria-hidden="true"
+                >
+                  <div className="grad-drift float-slow size-full rounded-[3rem]" />
+                </div>
+
+                <div className="scene stack-3d relative aspect-[5/6] [transform-style:preserve-3d]">
+                  {/* Plano 1 — el resumen de resultados, en cristal. Dos de los
+                      cuatro: el listado completo vive en la sección de alcance. */}
+                  <div className="depth-3 absolute bottom-0 left-0 z-30 w-[86%]">
+                    <div className="glass glass-strong glass-spec p-5">
+                      <p className="text-xs font-bold uppercase tracking-wider text-brand-strong">
+                        {en ? 'What changes' : 'Qué cambia'}
+                      </p>
+                      <ul className="mt-3 space-y-2.5">
+                        {service.outcomes.slice(0, 2).map((outcome) => (
+                          <li
+                            key={outcome}
+                            className="flex gap-2.5 text-sm text-ink"
+                          >
+                            <Check
+                              className="mt-0.5 size-4 shrink-0 text-sky-ink"
+                              aria-hidden="true"
+                            />
+                            <span>{outcome}</span>
+                          </li>
+                        ))}
+                      </ul>
+                    </div>
+                  </div>
+
+                  {/* Plano 2 — la baldosa de gradiente. Blanco sobre
+                      `--grad-fill` es el único uso legal de blanco del sistema:
+                      todos sus stops pasan 5.3:1. Los hijos van `relative`
+                      porque `.grad-drift` mueve un ::before en -z-10. */}
+                  <div className="depth-2 absolute right-[4%] top-[34%] z-20 w-[40%]">
+                    <div className="grad-drift rounded-2xl p-5 shadow-lift-3">
+                      <p
+                        className="relative font-display text-4xl font-bold leading-none text-white"
+                        data-numeric=""
+                      >
+                        {String(service.process.length).padStart(2, '0')}
+                      </p>
+                      <p className="relative mt-2 text-xs font-semibold uppercase tracking-wider text-white/85">
+                        {en ? 'stages' : 'etapas'}
+                      </p>
+                    </div>
+                  </div>
+
+                  {/* Plano 3 — el hueco del ejemplo. Es el MISMO archivo que
+                      referencia la fila de este servicio en /servicios: un
+                      asset, dos usos. */}
+                  <div className="depth-1 absolute right-0 top-0 z-10 w-[88%]">
+                    <ImageSlot
+                      path={`/servicios/${service.id}.png`}
+                      alt={
+                        en
+                          ? `Example of the ${service.title} service`
+                          : `Ejemplo del servicio ${service.title}`
+                      }
+                      hint={en ? 'Service example' : 'Ejemplo del servicio'}
+                      width={1200}
+                      height={750}
+                      sizes="(min-width: 1024px) 340px, 80vw"
+                      className="aspect-[16/10] rounded-2xl shadow-lift-3"
+                    />
+                  </div>
+                </div>
+              </div>
+            </div>
           </div>
         </div>
       </section>
@@ -226,27 +377,65 @@ export default async function DashboardsPage({ params }: Props) {
         </div>
       </section>
 
-      {/* ══ QUÉ CONSTRUYO ═════════════════════════════════════════ */}
-      <section className="defer-paint border-y border-hairline bg-ground-tint">
+      {/* ══ QUÉ CONSTRUYO ═════════════════════════════════════════
+          Las tarjetas de alcance van en CARRUSEL y con inclinación que sigue
+          al puntero. El desplazamiento y el imán son nativos (`scroll-snap`):
+          si el JS del componente no corre el riel sigue funcionando, y las
+          tarjetas completas están en el HTML del servidor.                */}
+      <section className="relative isolate overflow-hidden border-y border-hairline">
+        <Backdrop />
+
         <div className="mx-auto w-full max-w-6xl px-5 py-20 sm:px-8 sm:py-24">
           <div className="reveal max-w-2xl">
             <p className="eyebrow">{en ? 'Scope' : 'Alcance'}</p>
             <h2 className="mt-5 text-d1 text-ink">{t('whatTitle')}</h2>
-            <p className="mt-4 text-lead text-ink-muted">{service.headline}</p>
+            <div className="glass glass-strong glass-spec mt-6 px-5 py-4">
+              <p className="text-lead text-ink-muted">{service.headline}</p>
+            </div>
           </div>
 
-          {/* Sabor de característica: qué contiene el trabajo. */}
-          <div className="reveal-stagger mt-14 grid gap-6 md:grid-cols-3">
-            {service.benefits.map((benefit) => (
-              <div key={benefit} className="card card-hover p-6 sm:p-7">
-                <span
-                  className="grad-deco block h-1 w-12 rounded-full"
-                  aria-hidden="true"
-                />
-                <p className="mt-5 text-ink">{benefit}</p>
-              </div>
+          <Carousel
+            label={tl('scopeRail')}
+            prevLabel={tl('prevSlide')}
+            nextLabel={tl('nextSlide')}
+            className="mt-12"
+          >
+            {service.benefits.map((benefit, index) => (
+              /* `.scene` ya vive en el riel del carrusel, así que todas las
+                 tarjetas comparten un mismo punto de fuga — que es lo que
+                 separa un 3D creíble de varias tarjetas girando cada una por su
+                 cuenta. */
+              <Tilt3D key={benefit} className="w-[19rem] sm:w-[23rem]">
+                <div className="relative flex h-full flex-col p-6 sm:p-7 [transform-style:preserve-3d]">
+                  {/* La placa de cristal es el PLANO DE FONDO, no el
+                      contenedor: `.glass` lleva `contain: paint`, que aplana el
+                      3D, así que con el contenido dentro las clases `.depth-*`
+                      no levantarían nada. */}
+                  <span className="absolute inset-0" aria-hidden="true">
+                    <span className="glass glass-spec block size-full" />
+                  </span>
+
+                  {/* Número en `.grad-fill` y no en `.grad-deco`: aquí hay texto
+                      encima, y el gradiente decorativo pasa por `--sky` y
+                      `--cyan`, donde el blanco mide 2.77:1 y 1.68:1. Todos los
+                      stops de `--grad-fill` pasan 5.3:1. */}
+                  <span
+                    className="grad-fill depth-2 inline-flex size-12 items-center justify-center rounded-xl font-display text-lg font-bold shadow-glow-brand"
+                    data-numeric=""
+                    aria-hidden="true"
+                  >
+                    {String(index + 1).padStart(2, '0')}
+                  </span>
+
+                  <p className="depth-1 mt-5 flex-1 text-ink">{benefit}</p>
+                </div>
+              </Tilt3D>
             ))}
-          </div>
+          </Carousel>
+
+          {/* `text-ink` y no `text-ink-subtle`: va directo sobre la aurora, y
+              ahí solo la tinta plena (10.2:1) pasa contraste. */}
+          <p className="reveal mt-6 text-sm text-ink">{tu('dragHint')}</p>
 
           {/* Sabor de resultado: qué es distinto después. Mismo registro, otra
               pregunta — separados para que ninguno se lea como relleno. */}
@@ -269,10 +458,18 @@ export default async function DashboardsPage({ params }: Props) {
         </div>
       </section>
 
-      {/* ══ CÓMO TRABAJAMOS ═══════════════════════════════════════ */}
+      {/* ══ CÓMO TRABAJAMOS ═══════════════════════════════════════
+          Secuencial, así que el número manda. `.scene` en la lista y
+          `.tilt-hover` en cada elemento: la perspectiva alcanza solo a los
+          hijos directos, y compartirla es lo que da un punto de fuga común.
+
+          El `.reveal-3d` va en la tarjeta INTERIOR, no en el <li>: una
+          animación con `fill: both` se queda dueña del `transform` de su
+          elemento para siempre, así que en el mismo nodo que `.tilt-hover`
+          mataría la inclinación al pasar el mouse.                        */}
       <section className="defer-paint mx-auto w-full max-w-6xl px-5 py-20 sm:px-8 sm:py-24">
         <div className="reveal max-w-2xl">
-          <p className="eyebrow">{en ? 'Process' : 'Proceso'}</p>
+          <p className="eyebrow">{ts('process')}</p>
           <h2 className="mt-5 text-d1 text-ink">
             {en ? 'How it works' : 'Cómo trabajamos'}
           </h2>
@@ -283,28 +480,70 @@ export default async function DashboardsPage({ params }: Props) {
           </p>
         </div>
 
-        {/* Contenido secuencial: el número lleva el gradiente y hace de ancla
-            visual, como en la home. Dos columnas y no cuatro porque aquí cada
-            etapa trae una descripción completa. */}
-        <ol className="reveal-stagger mt-14 grid gap-x-12 gap-y-12 sm:grid-cols-2">
-          {service.process.map((step, index) => (
-            <li key={step.title}>
-              <span
-                className="grad-text font-display text-5xl font-bold leading-none"
-                data-numeric=""
-              >
-                {String(index + 1).padStart(2, '0')}
-              </span>
-              <h3 className="mt-4 text-d3 text-ink">{step.title}</h3>
-              <p className="mt-3 max-w-[58ch] text-sm leading-relaxed text-ink-muted">
-                {step.description}
-              </p>
-            </li>
-          ))}
-        </ol>
+        <div className="relative mt-14">
+          {/* Hilo de conexión con el gradiente de marca. Va detrás de las
+              tarjetas —que son opacas—, así que solo se ve en los huecos entre
+              una y otra: las etapas quedan encadenadas sin dibujar flechas. */}
+          <span
+            className="grad-deco absolute left-[11%] right-[11%] top-12 hidden h-0.5 rounded-full opacity-70 lg:block"
+            aria-hidden="true"
+          />
+
+          <ol className="scene grid gap-8 sm:grid-cols-2 lg:grid-cols-4">
+            {service.process.map((step, index) => (
+              <li key={step.title} className="tilt-hover rounded-xl">
+                <div className="card reveal-3d flex h-full flex-col p-6">
+                  <span
+                    className="grad-text font-display text-5xl font-bold leading-none"
+                    data-numeric=""
+                  >
+                    {String(index + 1).padStart(2, '0')}
+                  </span>
+                  <h3 className="mt-4 text-d3 text-ink">{step.title}</h3>
+                  <p className="mt-3 flex-1 text-sm leading-relaxed text-ink-muted">
+                    {step.description}
+                  </p>
+
+                  {/* Un hueco de imagen POR FASE: esta página tenía uno solo en
+                      toda su extensión y era la que menos imágenes mostraba de
+                      todo el sitio.
+
+                      Va DENTRO de la tarjeta `.card`, que es opaca, así que la
+                      etiqueta del hueco —que es `.glass-strong`— no queda
+                      cristal sobre cristal.
+
+                      `.depth-1` la manda al plano de atrás de la tarjeta
+                      inclinada, para que la captura se lea como algo que está
+                      debajo del texto y no pegado encima. El `flex-1` que
+                      acaba de ganar el párrafo es lo que deja las cuatro
+                      capturas alineadas al pie aunque las descripciones midan
+                      distinto. */}
+                  <ImageSlot
+                    path={`/servicios/${service.id}/fase-${index + 1}.png`}
+                    alt={
+                      en
+                        ? `Screenshot of the phase: ${step.title}`
+                        : `Captura de la fase: ${step.title}`
+                    }
+                    hint={en ? `Phase ${index + 1}` : `Fase ${index + 1}`}
+                    width={1200}
+                    height={750}
+                    sizes="(min-width: 1024px) 260px, (min-width: 640px) 44vw, 88vw"
+                    className="depth-1 mt-6 aspect-[16/10] w-full rounded-xl shadow-lift-2"
+                  />
+                </div>
+              </li>
+            ))}
+          </ol>
+        </div>
       </section>
 
-      {/* ══ ENCAJE — Y EL OPUESTO HONESTO ═════════════════════════ */}
+      {/* ══ ENCAJE — Y EL OPUESTO HONESTO ═════════════════════════
+          Las dos columnas pesan igual: misma tarjeta, mismo tamaño de título,
+          misma medida, mismo movimiento. La lista de "no encaja" es la razón
+          por la que la otra es creíble, así que nunca va más chica, más gris,
+          más abajo ni escondida tras un clic. Lo que las distingue es la FORMA
+          del ícono, no el color: el estado nunca se comunica solo con color. */}
       <section className="defer-paint border-y border-hairline bg-ground-tint">
         <div className="mx-auto w-full max-w-6xl px-5 py-20 sm:px-8 sm:py-24">
           <div className="reveal max-w-2xl">
@@ -316,92 +555,123 @@ export default async function DashboardsPage({ params }: Props) {
             </h2>
           </div>
 
-          {/* Las dos columnas pesan igual: misma tarjeta, mismo tamaño de
-              título, misma medida. La lista de "no encaja" es la razón por la
-              que la otra es creíble, así que nunca va más chica, más gris ni
-              más abajo que su contraparte. */}
-          <div className="reveal-stagger mt-14 grid gap-6 md:grid-cols-2">
-            <div className="card p-6 sm:p-8">
-              <h3 className="text-d3 text-ink">
-                {en ? 'A good fit' : 'Encaja bien'}
-              </h3>
-              <ul className="mt-6 space-y-4">
-                {service.forWhom.map((item) => (
-                  <li key={item} className="flex gap-3 text-ink-muted">
-                    <Check
-                      className="mt-1 size-4 shrink-0 text-sky-ink"
-                      aria-hidden="true"
-                    />
-                    <span>{item}</span>
-                  </li>
-                ))}
-              </ul>
+          <div className="scene mt-14 grid gap-6 md:grid-cols-2">
+            <div className="lift rounded-xl">
+              <div className="card reveal-3d h-full p-6 sm:p-8">
+                <span
+                  className="grad-deco block h-1 w-12 rounded-full"
+                  aria-hidden="true"
+                />
+                <h3 className="mt-5 text-d3 text-ink">
+                  {en ? 'A good fit' : 'Encaja bien'}
+                </h3>
+                <ul className="mt-6 space-y-4">
+                  {service.forWhom.map((item) => (
+                    <li key={item} className="flex gap-3 text-ink-muted">
+                      <Check
+                        className="mt-1 size-4 shrink-0 text-sky-ink"
+                        aria-hidden="true"
+                      />
+                      <span>{item}</span>
+                    </li>
+                  ))}
+                </ul>
+              </div>
             </div>
 
-            <div className="card p-6 sm:p-8">
-              <h3 className="text-d3 text-ink">
-                {en ? 'Not a good fit' : 'No encaja'}
-              </h3>
-              <ul className="mt-6 space-y-4">
-                {service.notFor.map((item) => (
-                  <li key={item} className="flex gap-3 text-ink-muted">
-                    {/* La forma distingue las dos listas, no solo el color. */}
-                    <X
-                      className="mt-1 size-4 shrink-0 text-ink-muted"
-                      aria-hidden="true"
-                    />
-                    <span>{item}</span>
-                  </li>
-                ))}
-              </ul>
+            <div className="lift rounded-xl">
+              <div className="card reveal-3d h-full p-6 sm:p-8">
+                <span
+                  className="block h-1 w-12 rounded-full bg-ink-subtle"
+                  aria-hidden="true"
+                />
+                <h3 className="mt-5 text-d3 text-ink">
+                  {en ? 'Not a good fit' : 'No encaja'}
+                </h3>
+                <ul className="mt-6 space-y-4">
+                  {service.notFor.map((item) => (
+                    <li key={item} className="flex gap-3 text-ink-muted">
+                      <X
+                        className="mt-1 size-4 shrink-0 text-ink-subtle"
+                        aria-hidden="true"
+                      />
+                      <span>{item}</span>
+                    </li>
+                  ))}
+                </ul>
+              </div>
             </div>
           </div>
         </div>
       </section>
 
-      {/* ══ ENTREGABLES + STACK ═══════════════════════════════════ */}
-      <section id="entregables" className="defer-paint scroll-mt-24">
+      {/* ══ ENTREGABLES + STACK ═══════════════════════════════════
+          El color de la banda lo pone `.grad-soft`, un `background-image` fijo,
+          y no una aurora: el presupuesto de capas compuestas de la página ya
+          está gastado en tres secciones. Sobre ese gradiente el cristal SÍ se
+          lee —hay color detrás que difuminar— y no cuesta ningún frame porque
+          no se anima.                                                     */}
+      <section
+        id="entregables"
+        className="defer-paint grad-soft scroll-mt-24 border-b border-hairline"
+      >
         <div className="mx-auto w-full max-w-6xl px-5 py-20 sm:px-8 sm:py-24">
           <div className="reveal max-w-2xl">
-            <p className="eyebrow">{en ? 'Deliverables' : 'Entregables'}</p>
+            <p className="eyebrow">{ts('includes')}</p>
             <h2 className="mt-5 text-d1 text-ink">{t('deliverablesTitle')}</h2>
           </div>
 
-          <ul className="reveal-stagger mt-12 grid gap-4 sm:grid-cols-2">
+          {/* Un solo panel de cristal con filas divididas, y no una tarjeta por
+              entregable: `backdrop-filter` es lo más caro del sistema y las
+              filas ya se separan con su propia línea. El divisor se apaga en la
+              primera fila de cada columna para que ninguna línea quede colgando
+              del borde superior del panel. */}
+          <ul className="glass glass-spec reveal mt-12 grid gap-x-10 px-6 py-2 sm:grid-cols-2 sm:px-8">
             {service.includes.map((item) => (
-              <li key={item} className="card card-hover flex gap-3.5 p-5">
+              <li
+                key={item}
+                className="flex gap-3.5 border-t border-hairline py-4 first:border-t-0 sm:[&:nth-child(2)]:border-t-0"
+              >
                 <Check
-                  className="mt-0.5 size-5 shrink-0 text-sky-ink"
+                  className="mt-1 size-4 shrink-0 text-sky-ink"
                   aria-hidden="true"
                 />
-                <span className="text-ink">{item}</span>
+                <span className="text-ink-muted">{item}</span>
               </li>
             ))}
           </ul>
 
           {/* Sección menor dentro de la misma banda: el stack es una nota al
               pie de los entregables, no algo que merezca su propio color. */}
-          <div className="reveal mt-16 sm:mt-20">
-            <h3 className="text-d3 text-ink">{t('toolsTitle')}</h3>
+          <div className="reveal mt-16 border-t border-hairline pt-12 sm:mt-20">
+            <p className="eyebrow">Stack</p>
+            <h2 className="mt-5 text-d3 text-ink">{t('toolsTitle')}</h2>
             <p className="mt-3 max-w-[68ch] text-ink-muted">
               {en
                 ? 'Chosen per project, not by default. A single-source dashboard does not need a BI platform behind it.'
                 : 'Se eligen por proyecto, no por costumbre. Un dashboard de una sola fuente no necesita una plataforma de BI detrás.'}
             </p>
 
-            <dl className="reveal-stagger mt-10 grid gap-5 sm:grid-cols-2 lg:grid-cols-4">
+            {/* Tarjetas OPACAS y no de cristal, aunque haya color detrás: son
+                las únicas de esta banda que se inclinan en 3D, y girar un
+                elemento con `backdrop-filter` obliga a rerasterizar el
+                desenfoque en cada frame de la transición. El cristal de la
+                banda ya lo pone el panel de entregables, que se queda quieto. */}
+            <dl className="scene mt-10 grid gap-5 sm:grid-cols-2 lg:grid-cols-4">
               {toolGroups.map((group) => (
-                <div key={group.label} className="card p-5">
-                  <dt className="text-sm font-bold tracking-wide text-ink">
-                    {group.label}
-                  </dt>
-                  <dd className="mt-3 flex flex-wrap gap-1.5">
-                    {group.tools.map((tool) => (
-                      <Badge key={tool} variant="neutral">
-                        {tool}
-                      </Badge>
-                    ))}
-                  </dd>
+                <div key={group.label} className="tilt-hover rounded-xl">
+                  <div className="card h-full p-5">
+                    <dt className="text-sm font-bold tracking-wide text-ink">
+                      {group.label}
+                    </dt>
+                    <dd className="mt-3 flex flex-wrap gap-1.5">
+                      {group.tools.map((tool) => (
+                        <Badge key={tool} variant="neutral">
+                          {tool}
+                        </Badge>
+                      ))}
+                    </dd>
+                  </div>
                 </div>
               ))}
             </dl>
@@ -409,8 +679,13 @@ export default async function DashboardsPage({ params }: Props) {
         </div>
       </section>
 
-      {/* ══ FAQ ═══════════════════════════════════════════════════ */}
-      <section className="defer-paint border-y border-hairline bg-ground-tint">
+      {/* ══ FAQ ═══════════════════════════════════════════════════
+          Tercera y última sección con aurora de la página: es la que sostiene
+          el panel de cristal más grande, y sin algo saturado detrás ese panel
+          se vería como un rectángulo blanco.                              */}
+      <section className="defer-paint relative isolate overflow-hidden border-b border-hairline">
+        <Backdrop />
+
         <div className="mx-auto w-full max-w-6xl px-5 py-20 sm:px-8 sm:py-24">
           <div className="grid gap-12 lg:grid-cols-[minmax(0,22rem)_minmax(0,1fr)] lg:gap-20">
             <div className="reveal">
@@ -419,12 +694,14 @@ export default async function DashboardsPage({ params }: Props) {
             </div>
 
             {/* Estas preguntas y respuestas son exactamente las que emite el
-                nodo FAQPage de arriba — el markup nunca puede decir algo que
-                la página no dice. */}
+                nodo FAQPage de arriba — el markup nunca puede decir algo que la
+                página no dice. El `name` compartido da el acordeón exclusivo
+                —abrir una cierra la anterior— de forma nativa, sin JS. */}
             <div className="glass glass-spec reveal px-5 sm:px-7">
               {service.faq.map((faq) => (
                 <Disclosure
                   key={faq.question}
+                  name="faq-dashboards"
                   question={faq.question}
                   answer={faq.answer}
                 />
@@ -441,75 +718,81 @@ export default async function DashboardsPage({ params }: Props) {
           <h2 className="mt-5 text-d1 text-ink">{t('relatedTitle')}</h2>
         </div>
 
-        <div className="reveal-stagger mt-14 grid gap-6 md:grid-cols-3">
+        <ul className="scene mt-14 grid gap-6 md:grid-cols-3">
           {siblings.map(({ service: sibling, href }) => {
             const SiblingIcon = sibling.icon
             return (
-              <Link
-                key={sibling.id}
-                href={href}
-                className="card card-hover group flex flex-col p-6 sm:p-7"
-              >
-                <span
-                  className="grad-deco inline-flex size-12 items-center justify-center rounded-xl text-white shadow-glow-brand"
-                  aria-hidden="true"
+              <li key={sibling.id} className="tilt-hover rounded-xl">
+                <Link
+                  href={href}
+                  className="card reveal-3d group flex h-full flex-col p-6 sm:p-7"
                 >
-                  <SiblingIcon className="size-6" />
-                </span>
-
-                <h3 className="mt-5 text-d3 text-ink transition-colors group-hover:text-brand-strong">
-                  {sibling.title}
-                </h3>
-                <p className="mt-2 flex-1 text-sm text-ink-muted">
-                  {sibling.headline}
-                </p>
-
-                <span className="mt-6 inline-flex items-center gap-1.5 text-sm font-semibold text-brand-strong">
-                  {ts('viewService')}
-                  <ArrowUpRight
-                    className="size-4 transition-transform duration-300 group-hover:-translate-y-1 group-hover:translate-x-1"
+                  <span
+                    className="grad-deco inline-flex size-12 items-center justify-center rounded-xl text-white shadow-glow-brand"
                     aria-hidden="true"
-                  />
-                </span>
-              </Link>
+                  >
+                    <SiblingIcon className="size-6" />
+                  </span>
+
+                  <h3 className="mt-5 text-d3 text-ink transition-colors duration-300 group-hover:text-brand-strong">
+                    {sibling.title}
+                  </h3>
+                  <p className="mt-2 flex-1 text-sm text-ink-muted">
+                    {sibling.headline}
+                  </p>
+
+                  <span className="mt-6 inline-flex items-center gap-1.5 text-sm font-semibold text-brand-strong">
+                    {ts('viewService')}
+                    <ArrowUpRight
+                      className="size-4 transition-transform duration-300 group-hover:-translate-y-1 group-hover:translate-x-1"
+                      aria-hidden="true"
+                    />
+                  </span>
+                </Link>
+              </li>
             )
           })}
 
           {/* El hub, con texto de enlace que dice qué hay del otro lado. */}
-          <Link
-            href="/servicios"
-            className="card card-hover group flex flex-col p-6 sm:p-7"
-          >
-            <span
-              className="grad-deco inline-flex size-12 items-center justify-center rounded-xl text-white shadow-glow-brand"
-              aria-hidden="true"
+          <li className="tilt-hover rounded-xl">
+            <Link
+              href="/servicios"
+              className="card reveal-3d group flex h-full flex-col p-6 sm:p-7"
             >
-              <LayoutGrid className="size-6" />
-            </span>
-
-            <h3 className="mt-5 text-d3 text-ink transition-colors group-hover:text-brand-strong">
-              {en
-                ? 'All four services, side by side'
-                : 'Los cuatro servicios, uno al lado del otro'}
-            </h3>
-            <p className="mt-2 flex-1 text-sm text-ink-muted">
-              {en
-                ? 'Technical SEO, web development, AI automation and dashboards — with what each one is and is not for.'
-                : 'SEO técnico, desarrollo web, automatización con IA y dashboards — con lo que cada uno sí y no resuelve.'}
-            </p>
-
-            <span className="mt-6 inline-flex items-center gap-1.5 text-sm font-semibold text-brand-strong">
-              {ts('allServices')}
-              <ArrowUpRight
-                className="size-4 transition-transform duration-300 group-hover:-translate-y-1 group-hover:translate-x-1"
+              <span
+                className="grad-deco inline-flex size-12 items-center justify-center rounded-xl text-white shadow-glow-brand"
                 aria-hidden="true"
-              />
-            </span>
-          </Link>
-        </div>
+              >
+                <LayoutGrid className="size-6" />
+              </span>
+
+              <h3 className="mt-5 text-d3 text-ink transition-colors duration-300 group-hover:text-brand-strong">
+                {en
+                  ? 'All four services, side by side'
+                  : 'Los cuatro servicios, uno al lado del otro'}
+              </h3>
+              <p className="mt-2 flex-1 text-sm text-ink-muted">
+                {en
+                  ? 'Technical SEO, web development, AI automation and dashboards — with what each one is and is not for.'
+                  : 'SEO técnico, desarrollo web, automatización con IA y dashboards — con lo que cada uno sí y no resuelve.'}
+              </p>
+
+              <span className="mt-6 inline-flex items-center gap-1.5 text-sm font-semibold text-brand-strong">
+                {ts('allServices')}
+                <ArrowUpRight
+                  className="size-4 transition-transform duration-300 group-hover:-translate-y-1 group-hover:translate-x-1"
+                  aria-hidden="true"
+                />
+              </span>
+            </Link>
+          </li>
+        </ul>
       </section>
 
-      {/* ══ CTA FINAL ═════════════════════════════════════════════ */}
+      {/* ══ CTA FINAL ═════════════════════════════════════════════
+          `.grad-drift` desplaza una capa al 200% con `transform` en vez de
+          animar `background-position`, que repintaría el bloque completo en
+          cada frame. Mismo efecto, costo cero.                          */}
       <section className="defer-paint mx-auto w-full max-w-6xl px-5 pb-20 sm:px-8 sm:pb-24">
         <div className="grad-drift reveal-scale rounded-3xl px-6 py-14 shadow-lift-3 sm:px-12 sm:py-20">
           <div className="relative max-w-2xl">

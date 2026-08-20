@@ -1,4 +1,5 @@
 import type { Metadata } from 'next'
+import type { ReactNode } from 'react'
 import { setRequestLocale, getTranslations } from 'next-intl/server'
 import { Link } from '@/i18n/navigation'
 import {
@@ -15,10 +16,13 @@ import {
 import { Breadcrumbs } from '@/components/layout/breadcrumbs'
 import { Button } from '@/components/ui/button'
 import { Badge, type BadgeProps } from '@/components/ui/badge'
+import { Carousel } from '@/components/ui/carousel'
 import { GlassPanel } from '@/components/ui/glass-panel'
+import { ImageSlot } from '@/components/ui/image-slot'
 import { Metric } from '@/components/ui/metric'
 import { Counter } from '@/components/motion/counter'
-import { ProjectCover } from '@/components/map/project-cover'
+import { PointerGlow } from '@/components/motion/pointer-glow'
+import { Tilt3D } from '@/components/motion/tilt-3d'
 import { getAwards, type AwardId, type AwardKind } from '@/data/awards'
 import { getCompanyBySlug } from '@/data/companies'
 import { NAP, routeUrl } from '@/lib/constants'
@@ -54,6 +58,43 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
 }
 
 /**
+ * ════════════════════════════════════════════════════════════════
+ * CAPAS DE FONDO — el conjunto que hace visible el cristal
+ *
+ * Aurora + grano + cuadrícula, y opcionalmente el resplandor del puntero. Van
+ * juntas porque son inseparables: el cristal solo existe si hay algo saturado
+ * detrás que difuminar, y sobre un fondo casi blanco un panel translúcido se ve
+ * exactamente igual que un panel blanco. Los cuatro <i> son obligatorios —
+ * cada uno es un campo de color distinto.
+ *
+ * ── CUÁNTAS CABEN, MEDIDO ──
+ * Tres secciones con aurora por página y ni una más. Con cinco se agota el
+ * presupuesto de capas compuestas, el navegador devuelve las animaciones al
+ * hilo principal y TODA animación en bucle empieza a costar un recálculo de
+ * estilo por frame: 180 en 3 s en reposo contra un presupuesto de 20.
+ * Aquí las tres son las que llevan cristal encima: la cabecera, el carrusel y
+ * el listado. Las demás secciones ponen su color con un gradiente fijo
+ * (`.grad-soft`), que no se anima y no cuesta capa.
+ * Verifica: node scripts/perf-probe.mjs http://localhost:3000/es/premios
+ * ════════════════════════════════════════════════════════════════
+ */
+function Backdrop({ glow = false }: { glow?: boolean }) {
+  return (
+    <>
+      <div className="aurora" aria-hidden="true">
+        <i />
+        <i />
+        <i />
+        <i />
+      </div>
+      <div className="grain" aria-hidden="true" />
+      <div className="grid-fade" aria-hidden="true" />
+      {glow ? <PointerGlow /> : null}
+    </>
+  )
+}
+
+/**
  * Qué tipo de cosa es cada entrada, en icono y en etiqueta.
  *
  * El campo `kind` de data/awards.ts existe justamente para esto: un
@@ -63,6 +104,8 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
  *
  * El variant `gradient` (relleno `.grad-fill`, texto blanco a 5.3:1) se reserva
  * para la competencia, que es la única entrada que sí fue un primer lugar.
+ * Ninguno es el variant `glass`: estos badges viven DENTRO de paneles de
+ * cristal, y cristal sobre cristal difumina dos veces.
  */
 const KIND_META: Record<
   AwardKind,
@@ -87,12 +130,15 @@ const PROJECT_SLUG_BY_AWARD: Partial<Record<AwardId, string>> = {
 }
 
 /**
- * Etiqueta corta para la portada generada: la parte del título antes del guion.
- * Sale del propio dato ("AuraScope – Monitoreo…" → "AuraScope"), así que no hay
- * una segunda lista de nombres que pueda quedar desincronizada.
+ * Ruta del archivo de imagen de cada premio, derivada del id.
+ *
+ * Hoy ninguna existe, y eso es exactamente lo que el hueco anuncia en pantalla:
+ * `<ImageSlot>` dibuja un patrón y escribe encima la ruta que le falta. El día
+ * que el archivo se copie a public/premios/, se le pasa `filled` y el hueco pasa
+ * a ser la foto sin tocar nada más.
  */
-function coverLabel(title: string): string {
-  return title.split(/\s[–-]\s/)[0]!.trim()
+function awardImagePath(id: AwardId): string {
+  return `/premios/${id}.png`
 }
 
 export default async function AwardsPage({ params }: Props) {
@@ -103,6 +149,8 @@ export default async function AwardsPage({ params }: Props) {
   const en = locale === 'en'
 
   const t = await getTranslations('premios')
+  const tl = await getTranslations('a11y')
+  const tu = await getTranslations('common')
 
   const awards = getAwards(locale)
 
@@ -119,6 +167,41 @@ export default async function AwardsPage({ params }: Props) {
     competition: t('kindCompetition'),
     certification: t('kindCertification'),
   }
+
+  /**
+   * Las tres cifras de la cabecera, las tres derivadas del arreglo. El año del
+   * más reciente no cuenta desde cero: un contador subiendo hasta 2024 se lee
+   * como una cifra, no como una fecha.
+   *
+   * `float` alterna entre las dos duraciones que existen (6 s y 9 s) para que
+   * las tarjetas nunca respiren en fase: una fila flotando en sincronía es
+   * justo lo que delata el truco.
+   */
+  const headerMetrics: {
+    value: ReactNode
+    label: string
+    hint?: string
+    float: string
+  }[] = [
+    {
+      value: <Counter value={awards.length} />,
+      label: t('metricsTotalLabel'),
+      hint: t('metricsTotalHint'),
+      float: 'float',
+    },
+    {
+      value: latestYear,
+      label: t('metricsLatestLabel'),
+      hint: latest?.organization,
+      float: 'float-slow',
+    },
+    {
+      value: <Counter value={organizations} />,
+      label: t('metricsOrgsLabel'),
+      hint: t('metricsOrgsHint'),
+      float: 'float',
+    },
+  ]
 
   /** Las dos páginas donde se sigue verificando lo mismo por otra vía. */
   const moreLinks: {
@@ -187,12 +270,11 @@ export default async function AwardsPage({ params }: Props) {
       />
 
       {/* ══ CABECERA ═══════════════════════════════════════════════
-          Malla animada y cuadrícula que se desvanece: decorativas las dos,
-          en -z-10 dentro de un contenedor `relative isolate` y sin
-          capturar eventos. La malla anima solo `transform`.            */}
+          Aurora, grano, cuadrícula y el resplandor del puntero: cuatro capas
+          decorativas, todas en -z-10 dentro de un contenedor `relative isolate
+          overflow-hidden` y ninguna capturando eventos.                  */}
       <section className="relative isolate overflow-hidden border-b border-hairline">
-        <div className="mesh" aria-hidden="true" />
-        <div className="grid-fade" aria-hidden="true" />
+        <Backdrop glow />
 
         <div className="mx-auto w-full max-w-6xl px-5 py-14 sm:px-8 sm:py-16">
           <Breadcrumbs items={[{ label: t('crumb') }]} />
@@ -204,7 +286,9 @@ export default async function AwardsPage({ params }: Props) {
             </p>
 
             {/* El gradiente cae solo sobre la segunda mitad del h1: un título
-                completo recortado pierde legibilidad. */}
+                completo recortado pierde legibilidad. `text-ink` tampoco es
+                decorativo aquí — es el único color de texto que aguanta ir
+                DIRECTO sobre la aurora (10.2:1). */}
             <h1 className="enter-blur step-1 mt-6 text-d1 text-ink">
               {t('h1Lead')}
               <span className="grad-text">{t('h1Accent')}</span>
@@ -215,53 +299,139 @@ export default async function AwardsPage({ params }: Props) {
               aria-hidden="true"
             />
 
-            <p className="enter step-2 mt-7 text-lead text-ink-muted">
-              {t('lead')}
-            </p>
+            {/* ── POR QUÉ EL LEAD VA DENTRO DE CRISTAL ──
+                Medido: sobre la aurora `text-ink-muted` cae a 3.83:1 y
+                `text-ink-subtle` a 3.23:1, y ninguno pasa. Dentro de
+                `.glass-strong` suben a 5.1 y 4.54. De ahí que el panel sea
+                `strong` y no el cristal por defecto, donde el subtle se queda en
+                4.30 — y aquí dentro hay un `ink-subtle`. */}
+            <GlassPanel strong className="enter step-2 mt-7 p-6 sm:p-7">
+              <p className="text-lead text-ink-muted">{t('lead')}</p>
 
-            {/* La nota que evita el inflado: la página dice en voz alta que las
-                tres entradas son cosas distintas antes de listarlas. */}
-            <p className="enter step-3 mt-5 max-w-[68ch] text-ink-muted">
-              {t('honesty')}
-            </p>
+              {/* La nota que evita el inflado: la página dice en voz alta que
+                  las tres entradas son cosas distintas antes de listarlas. */}
+              <p className="mt-5 max-w-[68ch] text-sm text-ink-subtle">
+                {t('honesty')}
+              </p>
+            </GlassPanel>
           </div>
 
-          {/* Tres cifras, las tres derivadas del arreglo. El año del más
-              reciente no cuenta desde cero: un contador subiendo hasta 2024 se
-              lee como una cifra, no como una fecha. */}
-          <div className="enter step-4 mt-12 grid gap-4 sm:grid-cols-3">
-            <div className="card p-5">
-              <Metric
-                value={<Counter value={awards.length} />}
-                label={t('metricsTotalLabel')}
-                hint={t('metricsTotalHint')}
-              />
-            </div>
-            <div className="card p-5">
-              <Metric
-                value={latestYear}
-                label={t('metricsLatestLabel')}
-                hint={latest?.organization}
-              />
-            </div>
-            <div className="card p-5">
-              <Metric
-                value={<Counter value={organizations} />}
-                label={t('metricsOrgsLabel')}
-                hint={t('metricsOrgsHint')}
-              />
-            </div>
+          {/* ── LAS TRES CIFRAS, FLOTANDO EN CRISTAL ──
+              El `.float` va en el CONTENIDO, no en el panel de cristal. Mover un
+              elemento con `backdrop-filter` obliga a rerasterizar el desenfoque
+              en cada frame: es la misma trampa que `filter: blur()` sobre algo
+              que se mueve. El panel se queda quieto; respira lo de dentro. */}
+          <dl
+            aria-label={t('metricsTotalLabel')}
+            className="enter step-4 mt-12 grid gap-4 sm:grid-cols-3"
+          >
+            {headerMetrics.map((metric) => (
+              <GlassPanel key={metric.label} strong className="p-5">
+                <dt className="sr-only">{metric.label}</dt>
+                <dd className={metric.float}>
+                  <Metric
+                    value={metric.value}
+                    label={metric.label}
+                    hint={metric.hint}
+                  />
+                </dd>
+              </GlassPanel>
+            ))}
+          </dl>
+        </div>
+      </section>
+
+      {/* ══ CARRUSEL ═══════════════════════════════════════════════
+          Los mismos tres registros en tarjetas, para verlos de un tirón antes
+          de leerlos. El desplazamiento y el imán son nativos (`scroll-snap`):
+          si el JS del componente no corre el carrusel sigue funcionando, y las
+          tres tarjetas completas están en el HTML del servidor, así que un
+          crawler las lee todas.                                          */}
+      <section className="relative isolate overflow-hidden border-b border-hairline bg-ground-tint">
+        <Backdrop />
+
+        <div className="mx-auto w-full max-w-6xl px-5 py-20 sm:px-8 sm:py-24">
+          <div className="reveal max-w-2xl">
+            <p className="eyebrow">{t('railEyebrow')}</p>
+            <h2 className="mt-5 text-d1 text-ink">{t('railTitle')}</h2>
           </div>
+
+          <Carousel
+            label={tl('awardsRail')}
+            prevLabel={tl('prevSlide')}
+            nextLabel={tl('nextSlide')}
+            className="mt-10"
+          >
+            {sorted.map((award) => {
+              const meta = KIND_META[award.kind]
+              const KindIcon = meta.icon
+
+              return (
+                /* La inclinación sigue al puntero. `.scene` ya está en el riel
+                   del carrusel, así que las tres tarjetas comparten un mismo
+                   punto de fuga — que es lo que separa un 3D creíble de tres
+                   tarjetas girando cada una por su cuenta.
+
+                   El hueco de imagen va COMO HERMANO del panel de cristal y no
+                   dentro: la etiqueta del hueco es a su vez un panel de cristal,
+                   y anidar `backdrop-filter` difumina dos veces, cuesta el doble
+                   y se ve peor. Los dos planos llevan `.depth-*` distintos, así
+                   que dentro de la tarjeta inclinada la imagen flota por delante
+                   del texto. Las clases van en los hijos DIRECTOS de `.tilt`:
+                   `.glass` lleva `contain: paint`, que aplana el 3D de lo que
+                   tenga dentro. */
+                <Tilt3D key={award.id} className="w-[19rem] sm:w-[23rem]">
+                  <article className="flex h-full flex-col gap-3">
+                    <ImageSlot
+                      path={awardImagePath(award.id)}
+                      alt={t('photoAlt', { title: award.title })}
+                      hint="Foto del reconocimiento"
+                      width={1200}
+                      height={750}
+                      sizes="(min-width: 640px) 23rem, 19rem"
+                      className="depth-2 aspect-[16/10] rounded-2xl shadow-lift-3"
+                    />
+
+                    <GlassPanel
+                      strong
+                      className="depth-1 flex flex-1 flex-col p-5"
+                    >
+                      <Badge variant={meta.variant} className="self-start">
+                        <KindIcon className="size-3" aria-hidden="true" />
+                        {kindLabel[award.kind]}
+                      </Badge>
+
+                      <h3 className="mt-4 text-d3 text-ink">{award.title}</h3>
+
+                      <p className="mt-2 flex-1 text-sm text-ink-muted">
+                        {award.organization}
+                      </p>
+
+                      <p className="mt-4 text-xs text-ink-subtle">
+                        <time dateTime={award.date} data-numeric="">
+                          {formatShortDate(award.date, locale)}
+                        </time>
+                      </p>
+                    </GlassPanel>
+                  </article>
+                </Tilt3D>
+              )
+            })}
+          </Carousel>
+
+          {/* `text-ink` y no `ink-subtle`: esta línea va directa sobre la
+              aurora, sin cristal de por medio. */}
+          <p className="mt-2 text-sm text-ink">{tu('dragHint')}</p>
         </div>
       </section>
 
       {/* ══ LOS RECONOCIMIENTOS, UNO POR UNO ═══════════════════════
-          La malla vuelve aquí a propósito: es lo que el panel de cristal
-          desenfoca, y sin nada detrás el cristal no se lee como cristal.
-          Esta sección NO lleva `.defer-paint`: es el contenido principal y
-          arranca dentro de la primera pantalla.                        */}
-      <section className="relative isolate overflow-hidden bg-ground-tint">
-        <div className="mesh" aria-hidden="true" />
+          La aurora vuelve aquí a propósito: es lo que los paneles de cristal
+          desenfocan, y sin nada saturado detrás el cristal no se lee como
+          cristal. Esta sección NO lleva `.defer-paint`: es el contenido
+          principal de la página.                                         */}
+      <section className="relative isolate overflow-hidden border-b border-hairline">
+        <Backdrop glow />
 
         <div className="mx-auto w-full max-w-6xl px-5 py-20 sm:px-8 sm:py-24">
           <div className="reveal max-w-2xl">
@@ -269,15 +439,23 @@ export default async function AwardsPage({ params }: Props) {
             <h2 className="mt-5 text-d1 text-ink">{t('listTitle')}</h2>
           </div>
 
-          <ol className="mt-14 grid gap-8">
+          {/* `.scene` (la perspectiva) va en la lista y la rotación en cada
+              tarjeta, para que las tres compartan punto de fuga.
+
+              El `[transform-style:preserve-3d]` del <li> no es adorno: la
+              perspectiva de `.scene` solo alcanza a los hijos DIRECTOS, así que
+              sin él el <li> aplanaría el 3D de la tarjeta que lleva dentro.
+
+              El `.reveal` va en el <li> y NO en el mismo nodo que `.tilt`: una
+              animación con `fill: both` se queda dueña del `transform` de su
+              elemento para siempre, así que ahí mataría la inclinación. */}
+          <ol className="scene mt-14 grid gap-12">
             {sorted.map((award, index) => {
               const meta = KIND_META[award.kind]
               const KindIcon = meta.icon
 
-              // Solo el más reciente lleva cristal. `backdrop-filter` es el
-              // efecto más caro del sistema: tres paneles de vidrio en columna
-              // costarían tres rasterizaciones del fondo. Los otros dos van en
-              // `.card`, que es opaca y no cuesta nada.
+              // El más reciente es el único con borde de gradiente y con
+              // `priority` en su imagen: es el candidato a LCP de la sección.
               const featured = index === 0
 
               // El proyecto correspondiente, si existe. La certificación no
@@ -287,127 +465,127 @@ export default async function AwardsPage({ params }: Props) {
                 ? getCompanyBySlug(locale, projectSlug)
                 : undefined
 
-              // La portada alterna de lado para que tres tarjetas grandes no se
+              // La imagen alterna de lado para que tres piezas grandes no se
               // lean como una lista. En el DOM el texto va siempre primero: la
-              // alternancia es puro `order` y no cambia el orden de lectura.
-              const coverOrder = index % 2 === 1 ? 'sm:order-first' : ''
-
-              const body = (
-                <div className="flex flex-col p-6 sm:p-8">
-                  <div className="flex flex-wrap items-center gap-2">
-                    <Badge variant={meta.variant}>
-                      <KindIcon className="size-3" aria-hidden="true" />
-                      {kindLabel[award.kind]}
-                    </Badge>
-                    {featured ? (
-                      <Badge variant="outline">{t('featured')}</Badge>
-                    ) : null}
-                  </div>
-
-                  <h3 className="mt-5 text-d2 text-ink">{award.title}</h3>
-
-                  <dl className="mt-5 flex flex-wrap gap-x-6 gap-y-2 text-sm">
-                    <div className="flex items-center gap-2">
-                      <dt className="sr-only">{t('awardedBy')}</dt>
-                      <Building2
-                        className="size-4 shrink-0 text-sky-ink"
-                        aria-hidden="true"
-                      />
-                      <dd className="font-semibold text-ink">
-                        {award.organization}
-                      </dd>
-                    </div>
-                    <div className="flex items-center gap-2">
-                      <dt className="sr-only">{t('dateLabel')}</dt>
-                      <CalendarDays
-                        className="size-4 shrink-0 text-sky-ink"
-                        aria-hidden="true"
-                      />
-                      <dd className="text-ink-muted">
-                        <time dateTime={award.date} data-numeric="">
-                          {formatShortDate(award.date, locale)}
-                        </time>
-                      </dd>
-                    </div>
-                  </dl>
-
-                  <p className="mt-5 max-w-[62ch] text-ink-muted">
-                    {award.description}
-                  </p>
-
-                  {/* `impact` se imprime TAL CUAL viene del archivo de datos.
-                      El de LogiRoute dice "Reducción proyectada del 15%": la
-                      palabra "proyectada" es lo que hace honesta la frase,
-                      porque fue una estimación del modelo y no una medición en
-                      operación. Nada aquí la reescribe ni la recorta.
-                      Panel opaco (`bg-surface-alt`), no un segundo cristal:
-                      cristal sobre cristal se desenfoca dos veces. */}
-                  {award.impact ? (
-                    <div className="mt-6 rounded-xl border border-hairline bg-surface-alt p-5">
-                      <p className="text-xs font-bold uppercase tracking-wide text-ink-subtle">
-                        {t('resultLabel')}
-                      </p>
-                      <p className="mt-2 max-w-[62ch] text-ink-muted">
-                        {award.impact}
-                      </p>
-                    </div>
-                  ) : null}
-
-                  {/* Enlazado interno real: la página del proyecto que ganó
-                      esto. Ruta dinámica, así que va como objeto con `params`
-                      — un string suelto no compila. */}
-                  {project ? (
-                    <div className="mt-7">
-                      <Link
-                        href={{
-                          pathname: '/proyectos/[slug]',
-                          params: { slug: project.slug },
-                        }}
-                        className="group inline-flex items-center gap-1.5 text-sm font-semibold text-brand-strong"
-                      >
-                        {t('viewProject')}: {project.name}
-                        <ArrowUpRight
-                          className="size-4 transition-transform duration-300 group-hover:-translate-y-1 group-hover:translate-x-1"
-                          aria-hidden="true"
-                        />
-                      </Link>
-                    </div>
-                  ) : null}
-                </div>
-              )
-
-              /* Portada generada por código, determinista por el id del premio.
-                 No hay fotos reales de ninguno de los tres, y una imagen de
-                 banco de un trofeo genérico sería peor que un patrón: fingiría
-                 documentar algo. Si algún día se agrega `image` al dato, se
-                 muestra el archivo y el patrón desaparece. */
-              const cover = (
-                <ProjectCover
-                  seed={award.id}
-                  label={coverLabel(award.title)}
-                  shot={award.image}
-                  shotAlt={award.image ? award.title : undefined}
-                  priority={featured}
-                  className={`min-h-56 sm:min-h-full ${coverOrder}`}
-                />
-              )
+              // alternancia es puro `order`, así que no cambia el orden de
+              // lectura ni el del teclado. La columna del texto se queda con la
+              // fracción ancha en los dos casos.
+              const flipped = index % 2 === 1
+              const columns = flipped
+                ? 'sm:grid-cols-[minmax(0,1fr)_minmax(0,1.05fr)]'
+                : 'sm:grid-cols-[minmax(0,1.05fr)_minmax(0,1fr)]'
 
               return (
-                <li key={award.id}>
-                  {featured ? (
+                <li
+                  key={award.id}
+                  className="reveal [transform-style:preserve-3d]"
+                >
+                  <Tilt3D max={5} className={`grid gap-4 ${columns}`}>
                     <GlassPanel
                       as="article"
-                      className="reveal-scale grid sm:grid-cols-[minmax(0,1.05fr)_minmax(0,1fr)]"
+                      strong
+                      rim={featured}
+                      className={`depth-1 flex flex-col p-6 sm:p-8 ${
+                        flipped ? 'sm:order-last' : ''
+                      }`}
                     >
-                      {body}
-                      {cover}
+                      <div className="flex flex-wrap items-center gap-2">
+                        <Badge variant={meta.variant}>
+                          <KindIcon className="size-3" aria-hidden="true" />
+                          {kindLabel[award.kind]}
+                        </Badge>
+                        {featured ? (
+                          <Badge variant="outline">{t('featured')}</Badge>
+                        ) : null}
+                      </div>
+
+                      <h3 className="mt-5 text-d2 text-ink">{award.title}</h3>
+
+                      <dl className="mt-5 flex flex-wrap gap-x-6 gap-y-2 text-sm">
+                        <div className="flex items-center gap-2">
+                          <dt className="sr-only">{t('awardedBy')}</dt>
+                          <Building2
+                            className="size-4 shrink-0 text-sky-ink"
+                            aria-hidden="true"
+                          />
+                          <dd className="font-semibold text-ink">
+                            {award.organization}
+                          </dd>
+                        </div>
+                        <div className="flex items-center gap-2">
+                          <dt className="sr-only">{t('dateLabel')}</dt>
+                          <CalendarDays
+                            className="size-4 shrink-0 text-sky-ink"
+                            aria-hidden="true"
+                          />
+                          <dd className="text-ink-muted">
+                            <time dateTime={award.date} data-numeric="">
+                              {formatShortDate(award.date, locale)}
+                            </time>
+                          </dd>
+                        </div>
+                      </dl>
+
+                      <p className="mt-5 max-w-[62ch] text-ink-muted">
+                        {award.description}
+                      </p>
+
+                      {/* `impact` se imprime TAL CUAL viene del archivo de
+                          datos. El de LogiRoute dice "Reducción proyectada del
+                          15%": la palabra "proyectada" es lo que hace honesta la
+                          frase, porque fue una estimación del modelo y no una
+                          medición en operación. Nada aquí la reescribe ni la
+                          recorta.
+                          Panel opaco (`bg-surface-alt`), no un segundo cristal:
+                          cristal sobre cristal se desenfoca dos veces. */}
+                      {award.impact ? (
+                        <div className="mt-6 rounded-xl border border-hairline bg-surface-alt p-5">
+                          <p className="text-xs font-bold uppercase tracking-wide text-ink-subtle">
+                            {t('resultLabel')}
+                          </p>
+                          <p className="mt-2 max-w-[62ch] text-ink-muted">
+                            {award.impact}
+                          </p>
+                        </div>
+                      ) : null}
+
+                      {/* Enlazado interno real: la página del proyecto que ganó
+                          esto. Ruta dinámica, así que va como objeto con
+                          `params` — un string suelto no compila. */}
+                      {project ? (
+                        <div className="mt-7">
+                          <Link
+                            href={{
+                              pathname: '/proyectos/[slug]',
+                              params: { slug: project.slug },
+                            }}
+                            className="press group inline-flex items-center gap-1.5 text-sm font-semibold text-brand-strong"
+                          >
+                            {t('viewProject')}: {project.name}
+                            <ArrowUpRight
+                              className="size-4 transition-transform duration-300 group-hover:-translate-y-1 group-hover:translate-x-1"
+                              aria-hidden="true"
+                            />
+                          </Link>
+                        </div>
+                      ) : null}
                     </GlassPanel>
-                  ) : (
-                    <article className="card reveal grid overflow-hidden sm:grid-cols-2">
-                      {body}
-                      {cover}
-                    </article>
-                  )}
+
+                    {/* El hueco de imagen: el patrón determinista más la RUTA
+                        EXACTA del archivo que le toca, escrita en pantalla. Va
+                        fuera del panel de cristal porque su etiqueta es a su vez
+                        un panel de cristal. */}
+                    <ImageSlot
+                      path={awardImagePath(award.id)}
+                      alt={t('photoAlt', { title: award.title })}
+                      hint="Foto del reconocimiento"
+                      width={1200}
+                      height={750}
+                      priority={featured}
+                      sizes="(min-width: 640px) 45vw, 100vw"
+                      className="depth-2 min-h-64 rounded-2xl shadow-lift-3 sm:min-h-full"
+                    />
+                  </Tilt3D>
                 </li>
               )
             })}
@@ -415,8 +593,13 @@ export default async function AwardsPage({ params }: Props) {
         </div>
       </section>
 
-      {/* ══ DÓNDE SEGUIR VERIFICANDO ═══════════════════════════════ */}
-      <section className="defer-paint border-y border-hairline">
+      {/* ══ DÓNDE SEGUIR VERIFICANDO ═══════════════════════════════
+          Cristal sobre `.grad-soft` y no sobre aurora, y esto está MEDIDO: el
+          presupuesto de capas compuestas de una página es finito, y pasando de
+          tres auroras el navegador devuelve las animaciones al hilo principal.
+          Aquí el color detrás del cristal lo pone un `background-image` fijo,
+          que no cuesta ningún frame porque no se anima.                   */}
+      <section className="defer-paint grad-soft border-b border-hairline">
         <div className="mx-auto w-full max-w-6xl px-5 py-20 sm:px-8 sm:py-24">
           <div className="reveal max-w-2xl">
             <p className="eyebrow">{t('moreEyebrow')}</p>
@@ -424,14 +607,14 @@ export default async function AwardsPage({ params }: Props) {
             <p className="mt-4 text-lead text-ink-muted">{t('moreLead')}</p>
           </div>
 
-          <div className="reveal-stagger mt-14 grid gap-6 md:grid-cols-2">
+          <div className="scene mt-14 grid gap-6 md:grid-cols-2">
             {moreLinks.map((item) => {
               const Icon = item.icon
               return (
                 <Link
                   key={item.href}
                   href={item.href}
-                  className="card card-hover group flex flex-col p-6 sm:p-7"
+                  className="glass glass-spec lift press sheen group flex flex-col p-6 sm:p-7"
                 >
                   <span
                     className="grad-deco inline-flex size-12 items-center justify-center rounded-xl text-white shadow-glow-brand"
@@ -440,7 +623,7 @@ export default async function AwardsPage({ params }: Props) {
                     <Icon className="size-6" />
                   </span>
 
-                  <h3 className="mt-5 text-d3 text-ink transition-colors group-hover:text-brand-strong">
+                  <h3 className="mt-5 text-d3 text-ink transition-colors duration-300 group-hover:text-brand-strong">
                     {item.title}
                   </h3>
                   <p className="mt-2 flex-1 text-sm leading-relaxed text-ink-muted">
@@ -461,7 +644,10 @@ export default async function AwardsPage({ params }: Props) {
         </div>
       </section>
 
-      {/* ══ CTA FINAL ══════════════════════════════════════════════ */}
+      {/* ══ CTA FINAL ══════════════════════════════════════════════
+          `.grad-drift` desplaza una capa al 200% con `transform` en vez de
+          animar `background-position`, que repintaría el bloque completo en
+          cada frame. Mismo efecto, costo cero.                           */}
       <section className="defer-paint mx-auto w-full max-w-6xl px-5 py-20 sm:px-8 sm:py-24">
         <div className="grad-drift reveal-scale rounded-3xl px-6 py-14 shadow-lift-3 sm:px-12 sm:py-20">
           <div className="relative max-w-2xl">

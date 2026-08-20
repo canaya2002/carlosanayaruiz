@@ -16,13 +16,23 @@
     "menu": "Menú"
   },
   "a11y": {
+    "experienceRail": "Carrusel de experiencia",
     "skipToContent": "Saltar al contenido",
     "mainNav": "Navegación principal",
     "mobileMenu": "Menú móvil",
     "openSubmenu": "abrir submenú",
     "breadcrumb": "Ruta de navegación",
     "socialLinks": "Perfiles y redes",
-    "changeLanguage": "Cambiar idioma"
+    "changeLanguage": "Cambiar idioma",
+    "prevSlide": "Anterior",
+    "nextSlide": "Siguiente",
+    "servicesRail": "Carrusel de servicios",
+    "stackRail": "Carrusel del stack técnico",
+    "scopeRail": "Carrusel de alcance del servicio",
+    "projectsRail": "Carrusel de proyectos",
+    "galleryRail": "Carrusel de capturas",
+    "awardsRail": "Carrusel de premios y reconocimientos",
+    "certsRail": "Carrusel de certificaciones"
   },
   "language": {
     "switchTo": "English",
@@ -43,7 +53,9 @@
     "ctaServices": "Ver servicios",
     "ctaContact": "Agendar una llamada",
     "ctaAbout": "Conoce mi trayectoria",
-    "headlineAccent": "y ChatGPT te cite."
+    "headlineAccent": "y ChatGPT te cite.",
+    "shotAlt": "Captura de un panel de Core Web Vitals",
+    "credentialsLabel": "Credenciales verificables"
   },
   "trust": {
     "yearsExp": "+4 años de experiencia",
@@ -51,7 +63,17 @@
     "tecMty": "Tec de Monterrey",
     "companies": "Amazon · Master Loyalty Group · Wan Hai Lines",
     "companiesLabel": "Experiencia previa",
-    "engineerLabel": "Ingeniero en Tecnologías Computacionales"
+    "engineerLabel": "Ingeniero en Tecnologías Computacionales",
+    "logoAlt": "Logo de {company}",
+    "metrics": {
+      "yearsLabel": "Años de experiencia",
+      "certifiedLabel": "Certificado",
+      "pmpIssuer": "Project Management Institute",
+      "toeflLabel": "TOEFL iBT",
+      "toeflHint": "Inglés C1",
+      "cityLabel": "Ciudad de México",
+      "cityHint": "Remoto a todo el mundo"
+    }
   },
   "audience": {
     "title": "Con quién trabajo",
@@ -77,7 +99,8 @@
       "title": "Proyectos y empresas",
       "desc": "Los puestos que he tenido y los proyectos que construí por mi cuenta, cada uno con su propia página: qué se hizo, con qué stack y en qué periodo.",
       "cta": "Ver los proyectos",
-      "coverLabel": "Proyectos"
+      "coverLabel": "Proyectos",
+      "coverAlt": "Portada de la sección de proyectos"
     },
     "awards": {
       "title": "Premios",
@@ -108,7 +131,12 @@
     "stackLabel": "Stack",
     "periodLabel": "Periodo",
     "ctaTitle": "¿Quieres que el siguiente proyecto de esta lista sea el tuyo?",
-    "ctaLead": "Cuéntame qué estás construyendo o qué se rompió. Respondo en 24 a 48 horas hábiles con una primera lectura de por dónde empezaría."
+    "ctaLead": "Cuéntame qué estás construyendo o qué se rompió. Respondo en 24 a 48 horas hábiles con una primera lectura de por dónde empezaría.",
+    "railNote": "Arrastra el carril o usa las flechas. Cada tarjeta abre la página completa del proyecto, con lo que hice y el stack que se usó de verdad.",
+    "coverAlt": "Portada del proyecto {name}",
+    "statEntries": "Registros en total",
+    "statCountries": "Países",
+    "statOwn": "Proyectos propios"
   },
   "services": {
     "eyebrow": "Servicios",
@@ -196,6 +224,9 @@
     }
   },
   "about": {
+    "workingImageAlt": "Carlos Anaya Ruiz trabajando",
+    "setupImageAlt": "Espacio de trabajo de Carlos Anaya Ruiz",
+    "awardImageAlt": "Imagen del reconocimiento {title}",
     "title": "Sobre mí",
     "subtitle": "Ingeniero en tecnologías computacionales. Consultor SEO técnico. Certificado PMP.",
     "lead": "Estudié Ingeniería en Tecnologías Computacionales en el Tec de Monterrey, con especialización en inteligencia artificial avanzada para ciencia de datos. Cuatro años después hago una mezcla poco común: escribo el código y también respondo por el tráfico orgánico que ese código produce.",
@@ -288,6 +319,8 @@
     "orTry": "O prueba con:"
   },
   "cv": {
+    "certImageAlt": "Documento de la certificación {name}",
+    "awardImageAlt": "Imagen del reconocimiento {title}",
     "title": "CV",
     "eyebrow": "Curriculum vitae",
     "lead": "La trayectoria completa en una sola página: formación, los tres puestos que he tenido con lo que hice en cada uno, certificaciones, premios, stack e idiomas. Todo sale de los mismos datos que el resto del sitio, así que ninguna versión se queda vieja.",
@@ -352,7 +385,9 @@
     "backToAll": "Todos los proyectos",
     "ctaTitle": "¿Tienes algo parecido entre manos?",
     "ctaLead": "Cuéntame qué está pasando con tu sitio y te digo en qué se parece a esto, qué se puede medir y por dónde empezaría.",
-    "ctaButton": "Hablemos del tuyo"
+    "ctaButton": "Hablemos del tuyo",
+    "galleryLead": "Tres posiciones fijas por proyecto: la captura principal, un detalle y el resultado. Mientras el archivo no exista, el hueco dice la ruta exacta donde va.",
+    "logoAlt": "Logo de {name}"
   },
   "common": {
     "readMore": "Leer más",
@@ -361,7 +396,8 @@
     "backToHome": "Volver al inicio",
     "learnMore": "Saber más",
     "relatedServices": "Servicios relacionados",
-    "required": "obligatorio"
+    "required": "obligatorio",
+    "dragHint": "Arrastra o usa las flechas"
   },
   "premios": {
     "crumb": "Premios",
@@ -397,7 +433,10 @@
     "cvCta": "Ver el CV",
     "ctaTitle": "¿Te sirve alguien que documenta lo que afirma?",
     "ctaLead": "Cuéntame el sitio y qué cambió. Respondo en 24 a 48 horas hábiles con una primera lectura de lo que probablemente está pasando.",
-    "ctaButton": "Escríbeme"
+    "ctaButton": "Escríbeme",
+    "railEyebrow": "De un vistazo",
+    "railTitle": "Los tres, en tarjetas",
+    "photoAlt": "Foto del reconocimiento: {title}"
   },
   "certificaciones": {
     "title": "Certificaciones",
@@ -436,6 +475,20 @@
     "moreTitle": "Lo demás que se puede revisar",
     "ctaTitle": "¿Te falta algún documento?",
     "ctaLead": "Si necesitas una credencial que no está en la carpeta —una constancia, una verificación directa con el emisor— pídemela y te la mando.",
-    "ctaCta": "Escríbeme"
+    "ctaCta": "Escríbeme",
+    "diplomaAlt": "Diploma de {name}",
+    "folderShotAlt": "Captura de la carpeta de certificados en Google Drive",
+    "cefrLabel": "Nivel MCER"
+  },
+  "stack": {
+    "eyebrow": "Stack",
+    "title": "Con qué construyo",
+    "subtitle": "Las herramientas con las que trabajo, agrupadas por frente. Arrastra para ver todas las categorías."
+  },
+  "homeCta": {
+    "title": "Cuéntame por dónde se está fugando el tráfico.",
+    "lead": "Descríbeme el sitio y qué cambió. Respondo en 24 a 48 horas hábiles con una primera lectura de lo que probablemente está pasando.",
+    "alsoOn": "También en",
+    "and": "y"
   }
 }

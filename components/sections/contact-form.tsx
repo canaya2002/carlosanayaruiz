@@ -3,11 +3,12 @@
 import { useState } from 'react'
 import { useTranslations } from 'next-intl'
 import { Link } from '@/i18n/navigation'
-import { Check, Copy, Mail, Send } from 'lucide-react'
+import { Check, Copy, Mail, MailOpen, Send } from 'lucide-react'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 import { Textarea } from '@/components/ui/textarea'
 import { Field } from '@/components/ui/field'
+import { GlassPanel } from '@/components/ui/glass-panel'
 import { NAP } from '@/lib/constants'
 
 /**
@@ -31,6 +32,25 @@ import { NAP } from '@/lib/constants'
  * Si algún día se quiere recepción real, el cambio es un endpoint (Resend,
  * Formspree, una Route Handler) en `onSubmit` — nada más de este archivo
  * cambia, y el CSP necesitaría ese host concreto en `connect-src`.
+ *
+ * ── LA CAPA VISUAL, Y LO QUE NO SE NEGOCIA ──
+ * El panel es <GlassPanel strong rim>: cristal líquido con el borde recorrido
+ * por el gradiente de marca, porque este es el panel protagonista de la página
+ * de contacto. Tres decisiones dentro de eso están medidas y no son estéticas:
+ *
+ *   1. `strong` (74% en vez de 62%) es OBLIGATORIO aquí. <Field> renderiza el
+ *      asterisco de "requerido" y su `hint` en `text-ink-subtle`, que sobre el
+ *      cristal por defecto mide 4.30:1 y NO pasa; sobre `.glass-strong` mide
+ *      4.54 y sí. Quitar `strong` rompe el contraste sin que nada lo anuncie.
+ *   2. `rim` sin `strong` volvería a bajar el relleno al 62%: `.glass-rim`
+ *      pinta el panel con una `background-image` cuya primera capa fija
+ *      `--glass-bg`, y una imagen se dibuja ENCIMA del `background-color`.
+ *      <GlassPanel> ya corrige esa combinación por dentro; por eso el panel se
+ *      arma con el componente y no con las clases a mano.
+ *   3. Los controles y el bloque de respaldo NO son cristal. Cristal sobre
+ *      cristal difumina dos veces, cuesta el doble y se ve peor: los inputs son
+ *      `bg-surface`, el bloque de abajo es `bg-surface-alt` y el botón
+ *      secundario es `variant="outline"`, nunca el variant `glass`.
  * ════════════════════════════════════════════════════════════════
  */
 
@@ -111,11 +131,25 @@ export function ContactForm() {
   }
 
   return (
-    <div className="card grad-border p-6 sm:p-8">
-      <h2 className="text-d3 text-ink">{t('form')}</h2>
+    <GlassPanel strong rim className="p-6 sm:p-8">
+      <div className="flex flex-wrap items-center justify-between gap-4">
+        <h2 className="text-d2 text-ink">{t('form')}</h2>
 
-      {/* Lo que va a pasar, dicho antes de hacer clic. */}
-      <p className="mt-3 text-sm leading-relaxed text-ink-muted">
+        {/* El icono anuncia lo mismo que el párrafo de abajo: lo que se abre es
+            un correo. Es decorativo (`aria-hidden`) porque el texto ya lo dice;
+            si no lo dijera, esto sería información escondida en un dibujo. */}
+        <span
+          className="grad-deco inline-flex size-11 items-center justify-center rounded-xl text-white shadow-glow-brand"
+          aria-hidden="true"
+        >
+          <MailOpen className="size-5" />
+        </span>
+      </div>
+
+      {/* ⚠ LO QUE VA A PASAR, DICHO ANTES DEL CLIC. No se quita ni se suaviza:
+          es la diferencia entre un formulario honesto y uno que finge enviar.
+          `bg-surface-alt` y no otro panel de cristal — ver la nota de arriba. */}
+      <p className="mt-4 rounded-xl bg-surface-alt p-4 text-sm leading-relaxed text-ink-muted">
         {t('mailtoNote')}
       </p>
 
@@ -183,11 +217,14 @@ export function ContactForm() {
               aria-describedby={consentError ? 'consent-error' : undefined}
               className="mt-1 size-4 shrink-0 rounded border-control text-brand accent-brand"
             />
-            <label htmlFor="consent" className="text-sm leading-relaxed text-ink-muted">
+            <label
+              htmlFor="consent"
+              className="text-sm leading-relaxed text-ink-muted"
+            >
               {t('consent')}{' '}
               <Link
                 href="/privacidad"
-                className="text-brand-strong underline underline-offset-4"
+                className="font-semibold text-brand-strong underline underline-offset-4"
               >
                 {t('consentLink')}
               </Link>
@@ -202,14 +239,19 @@ export function ContactForm() {
           </p>
         </div>
 
+        {/* El botón trae `.press` desde su propia base: baja de escala con
+            `--ease-press`, que es casi instantánea a propósito. `.sheen` le
+            suma el barrido especular al pasar el mouse. */}
         <Button type="submit" size="lg" className="sheen w-full sm:w-auto">
           <Send className="size-4" aria-hidden="true" />
           {t('send')}
         </Button>
       </form>
 
-      {/* Salida alterna para quien no tiene cliente de correo configurado. */}
-      <div className="mt-8 border-t border-hairline pt-6">
+      {/* Salida alterna para quien no tiene cliente de correo configurado. Es
+          la mitad del contrato del `mailto:`: si el borrador no abre, el correo
+          sigue estando a un clic. */}
+      <div className="mt-8 rounded-xl bg-surface-alt p-5">
         <p className="text-sm font-semibold text-ink">{t('noMailClient')}</p>
         <div className="mt-3 flex flex-wrap items-center gap-3">
           <Button variant="outline" onClick={copyEmail} type="button">
@@ -220,9 +262,16 @@ export function ContactForm() {
             )}
             {copied ? t('copied') : t('copyEmail')}
           </Button>
+          {/* `[overflow-wrap:anywhere]` porque un correo es un token sin
+              espacios: su `min-content` es su ancho completo, y aquí hay tres
+              capas de padding por encima (px-5 del contenedor, p-6 del panel de
+              cristal, p-5 de este bloque). A 360px el margen es de unos pocos
+              píxeles, y el desbordamiento no se vería como barra de scroll sino
+              como contenido recortado en silencio.
+              Verifica: npm run check:overflow */}
           <a
             href={`mailto:${NAP.email}`}
-            className="inline-flex items-center gap-2 text-sm font-medium text-brand-strong underline underline-offset-4"
+            className="press inline-flex min-h-11 items-center gap-2 rounded-lg px-2 text-sm font-semibold text-brand-strong underline underline-offset-4 [overflow-wrap:anywhere] hover:bg-surface hover:shadow-lift-1"
           >
             <Mail className="size-4" aria-hidden="true" />
             {NAP.email}
@@ -233,6 +282,6 @@ export function ContactForm() {
           {copied ? t('copied') : ''}
         </p>
       </div>
-    </div>
+    </GlassPanel>
   )
 }

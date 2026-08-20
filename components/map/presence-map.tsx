@@ -79,8 +79,20 @@ export function PresenceMap({ locale }: Props) {
   /** Las que solo tienen país, agrupadas para la leyenda. */
   const unpinned = companies.filter((c) => !c.coords)
 
+  /**
+   * `.glass-strong` y no `.glass` a secas: la leyenda de abajo lleva un
+   * `text-ink-subtle` (la nota de los registros sin ciudad), y la regla medida
+   * es que un panel que contenga tinta terciaria tiene que ser el cristal
+   * fuerte — sobre `.glass` mide 4.30:1 y no pasa el piso de 4.5; sobre
+   * `.glass-strong` mide 4.54 y sí.
+   *
+   * Se sube el PANEL en vez de subir el texto a `text-ink-muted` porque los
+   * otros dos elementos de la leyenda ya son `muted`: igualarlos borraría la
+   * jerarquía de tres niveles que distingue las dos etiquetas del mapa de la
+   * nota sobre lo que falta.
+   */
   return (
-    <figure className="glass glass-spec relative overflow-hidden p-3 sm:p-5">
+    <figure className="glass glass-strong glass-spec relative overflow-hidden p-3 sm:p-5">
       {/* Lavado detras del mapa. Sin esto el cristal es invisible: un panel
           translucido sobre un fondo casi blanco no tiene nada que difuminar,
           y los paises resaltados se pierden contra el oceano vacio. */}
@@ -206,8 +218,15 @@ export function PresenceMap({ locale }: Props) {
                 fill="var(--brand-strong)"
                 stroke="var(--surface)"
                 strokeWidth={1.8}
-                /* Solo `fill`: `transition-all` habría incluido la geometría
-                   (`r`, `cx`, `cy`), que no se compone. */
+                /* Solo `fill`. Transicionar «todo» habría incluido la geometría
+                   (`r`, `cx`, `cy`), que no se compone.
+                   El nombre de esa utilidad prohibida NO se escribe aquí a
+                   propósito: Tailwind v4 escanea el texto crudo de los
+                   archivos, así que mencionarla —aunque sea en un comentario—
+                   hacía que generara la clase de verdad en la hoja servida, y
+                   quedaba disponible para que alguien la usara sin darse
+                   cuenta. Verificado: la clase desapareció del CSS servido al
+                   reescribir esta línea. */
                 className="transition-[fill] duration-300 group-hover:fill-[var(--cyan-ink)]"
               />
               {/* Etiqueta al pasar el mouse o al enfocar con teclado. */}

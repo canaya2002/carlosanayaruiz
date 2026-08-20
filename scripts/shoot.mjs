@@ -36,7 +36,8 @@ async function cdp(ws, id, method, params) {
       const msg = JSON.parse(event.data)
       if (msg.id !== id) return
       ws.removeEventListener('message', onMessage)
-      msg.error ? reject(new Error(JSON.stringify(msg.error))) : resolve(msg.result)
+      if (msg.error) reject(new Error(JSON.stringify(msg.error)))
+      else resolve(msg.result)
     }
     ws.addEventListener('message', onMessage)
     ws.send(JSON.stringify({ id, method, params }))

@@ -1,6 +1,6 @@
 'use client'
 
-import { useCallback, useEffect, useRef, useState } from 'react'
+import { useCallback, useEffect, useMemo, useRef, useState } from 'react'
 import { useTranslations } from 'next-intl'
 import { Link, usePathname } from '@/i18n/navigation'
 import {
@@ -105,9 +105,42 @@ const TRAJECTORY_HREFS: readonly Pathname[] = TRAJECTORY_ITEMS.map(
 /**
  * Fila de navegación de escritorio: 44px de alto, así cada objetivo cumple el
  * piso táctil. `group` habilita el subrayado de gradiente que entra en hover.
+ *
+ * ── POR QUÉ LLEVA `.press` Y NO `transition-colors` ──
+ * `.press` está escrita FUERA de toda `@layer` en globals.css, así que su
+ * `transition` le gana a cualquier utilidad de Tailwind (que viven en
+ * `@layer utilities`). Poner las dos dejaría `transition-colors` como clase
+ * muerta y confundiría al siguiente que lea esto. `.press` ya anima
+ * `background-color` y `transform`, que es lo que se mueve aquí: el color del
+ * texto cambia de golpe a propósito — un control tiene que responder antes de
+ * que el dedo se levante, y el subrayado de gradiente es el que hace la
+ * transición visible.
+ */
+/**
+ * `whitespace-nowrap` es obligatorio aquí.
+ *
+ * Con dos desplegables, cinco enlaces, el selector de idioma y el CTA, la barra
+ * va justa incluso a 1280px, y sin esto "Sobre mí" se partía en dos líneas y
+ * descuadraba toda la fila. Es el mismo problema que el del botón principal pero
+ * al revés: ahí `nowrap` sobraba porque una etiqueta larga en español inflaba su
+ * contenedor; aquí falta porque el ancho lo manda la barra, no la etiqueta.
+ */
+/**
+ * `px-2.5` y no `px-3`: son 4px menos por enlace, y con seis enlaces son 24px
+ * que la fila necesitaba. Medido a 1440px con px-3, la fila pedia 1094px dentro
+ * de un contenedor de 1088 (max-w-6xl menos px-8) y algo se comprimia siempre.
+ * Con px-2.5 pide 1070 y quedan 18px de holgura, que es lo que absorbe una
+ * etiqueta mas larga al traducir sin volver a romper la fila.
+ *
+ * `whitespace-nowrap` es obligatorio aqui: sin el, la fila no desborda — parte
+ * "Sobre mi" en dos lineas y la barra crece de alto, que se ve peor y no lo
+ * reporta ningun chequeo de desborde horizontal.
+ *
+ * Si hace falta un septimo enlace, no se aprieta mas: se mueve a un grupo
+ * desplegable. Verifica con: npm run check:overflow
  */
 const NAV_LINK =
-  'group relative inline-flex h-11 items-center px-3 text-sm transition-colors'
+  'group press relative inline-flex h-11 items-center whitespace-nowrap rounded-xl px-2.5 text-sm hover:bg-brand-wash/70'
 
 interface GroupLink {
   href: StaticPathname
@@ -189,8 +222,38 @@ export function Header() {
     },
   ]
 
-  /** Identidad estable: es dependencia de los efectos de cada desplegable. */
-  const closeGroups = useCallback(() => setOpenGroup(null), [])
+  /**
+   * Cerrar es POR GRUPO, nunca global. Identidad estable porque es dependencia
+   * de los efectos de cada desplegable.
+   *
+   * ── EL FALLO QUE ESTO ARREGLA (MEDIDO, NO SUPUESTO) ──
+   * `NavDropdown` cierra con 220 ms de retardo al salir el puntero; el retardo
+   * existe porque sin él el hueco de 1 px entre la etiqueta y el panel cierra
+   * el menú justo cuando el puntero va hacia él.
+   *
+   * Con un `onClose` compartido que hacía `setOpenGroup(null)` a secas, barrer
+   * el puntero de "Servicios" a "Trayectoria" abría Trayectoria al instante y
+   * 220 ms después el temporizador de Servicios —ya obsoleto— la cerraba. El
+   * menú parpadeaba y se sentía roto: exactamente la queja del dueño.
+   *
+   * Medido con scripts/nav-test.mjs: a los 120 ms del barrido Trayectoria tenía
+   * `aria-expanded="true"` y 4 enlaces visibles; a los 620 ms estaba cerrada.
+   *
+   * Comparando contra el grupo que quedó abierto, un cierre atrasado solo puede
+   * cerrar lo que él mismo abrió. Se declaran los dos de antemano en lugar de
+   * generarlos en el render porque una función nueva por render reinstalaría los
+   * escuchas de Escape y de clic-fuera en cada pasada.
+   */
+  const closeGroup = useMemo(
+    () =>
+      ({
+        services: () =>
+          setOpenGroup((current) => (current === 'services' ? null : current)),
+        trajectory: () =>
+          setOpenGroup((current) => (current === 'trajectory' ? null : current)),
+      }) satisfies Record<GroupId, () => void>,
+    []
+  )
 
   const closeMenu = useCallback((returnFocus: boolean) => {
     setMenuOpen(false)
@@ -301,16 +364,28 @@ export function Header() {
     // del header. Y `.glass` está escrita fuera de toda `@layer`, así que
     // ninguna utilidad podría revertir ninguna de las dos.
     //
-    // El blur va a la mitad en móvil y completo desde sm, igual que hace
-    // --glass-blur: ahí el fill-rate es la mitad y el efecto se nota igual. Si
-    // el navegador no soporta backdrop-filter se queda `bg-surface/92`, casi
+    // El desenfoque y la saturación se leen de los TOKENS, no de una escala de
+    // utilidades: `--glass-blur` y `--glass-sat` ya bajan a 16px/150% por
+    // debajo de 640px en globals.css, donde el fill-rate es la mitad. Así la
+    // barra usa exactamente el mismo cristal que el resto del sistema y hay un
+    // solo lugar donde ajustarlo.
+    //
+    // Si el navegador no soporta backdrop-filter se queda `bg-surface/92`, casi
     // opaco, en lugar de un panel translúcido sin desenfoque detrás — que es
     // donde el texto dejaría de leerse.
+    //
+    // El borde luminoso son dos cosas juntas: el borde de 1px en
+    // `--glass-border` (blanco al 75%) y el reflejo interior superior del
+    // box-shadow. Ese reflejo es lo que hace que el canto de arriba se vea
+    // pulido en lugar de cortado, y va como sombra en línea porque necesita
+    // acompañar a `--lift-2` en la misma declaración.
     <header
       className={cn(
-        'glass-spec sticky top-0 z-50 border-b border-hairline shadow-lift-1',
-        'bg-surface/92 backdrop-blur-md backdrop-saturate-150 sm:backdrop-blur-xl',
-        'supports-[backdrop-filter]:bg-[color:var(--glass-bg-strong)]'
+        'glass-spec sticky top-0 z-50 border-b border-hairline',
+        'bg-surface/92 backdrop-blur-[var(--glass-blur)] backdrop-saturate-[var(--glass-sat)]',
+        'supports-[backdrop-filter]:bg-[color:var(--glass-bg-strong)]',
+        'supports-[backdrop-filter]:border-[color:var(--glass-border)]',
+        'shadow-[inset_0_1px_0_0_var(--glass-highlight),var(--lift-2)]'
       )}
     >
       {/* La línea de gradiente del borde inferior. Dos píxeles que hacen que el
@@ -321,6 +396,21 @@ export function Header() {
         className="grad-fill pointer-events-none absolute inset-x-0 bottom-0 h-0.5 opacity-80"
       />
 
+      {/* Un segundo velo de gradiente, muy tenue, sobre el ancho de la barra. No
+          es lo mismo que el reflejo de `.glass-spec`: aquel es una banda
+          diagonal blanca y este es color de marca. Juntos son lo que separa
+          "translúcido" de "cristal teñido".
+
+          Va acotado al alto de la fila (`h-16 sm:h-18`, el mismo de abajo) y no
+          a `inset-0`: el panel móvil es hijo de este header, así que con el menú
+          abierto un velo a inset-0 se extendería por debajo de él. No se vería
+          —el panel es opaco y se pinta encima— pero sería una capa pintando un
+          área que no le toca. */}
+      <span
+        aria-hidden="true"
+        className="grad-soft pointer-events-none absolute inset-x-0 top-0 h-16 opacity-40 sm:h-18"
+      />
+
       {/* `relative` no es decorativo: el reflejo especular de `.glass-spec` es un
           ::before absoluto, y solo los hijos posicionados se pintan encima de
           él. Sin esto, un blanco al 50% caería sobre el wordmark. */}
@@ -328,24 +418,58 @@ export function Header() {
         <div className="flex h-16 items-center justify-between gap-3 sm:h-18 sm:gap-4">
           {/* ══ WORDMARK ═══════════════════════════════════════════
               La marca es un cuadro con el gradiente firma y las iniciales.
-              Al hover solo escala: transform, cero riesgo de CLS. */}
+              Al hover escala y gira unos grados: nada de eso toca el layout, así
+              que el CLS no se mueve. El barrido especular (`.sheen`) vive en el cuadro y
+              no en el enlace completo porque `.sheen:hover::after` se dispara
+              con el hover del propio elemento — sobre el enlace entero barrería
+              también el nombre. */}
           <Link
             href="/"
-            className="group inline-flex h-11 items-center gap-2.5 text-ink"
+            className="group press inline-flex h-11 items-center gap-2.5 rounded-2xl pr-1.5 text-ink"
           >
             <span
               aria-hidden="true"
-              className="grad-fill grid size-8 place-items-center rounded-xl font-display text-[0.8125rem] font-bold shadow-glow-brand transition-transform duration-300 group-hover:scale-110 sm:size-9 sm:text-sm"
+              // `rotate` y `scale`, no `transform`: en Tailwind v4 las
+              // utilidades `rotate-*` y `scale-*` escriben esas propiedades
+              // individuales, y una `transition-property` que dijera
+              // `transform` no animaría ninguna de las dos.
+              className="sheen grad-fill grid size-8 place-items-center rounded-xl font-display text-[0.8125rem] font-bold shadow-glow-brand transition-[rotate,scale,box-shadow] duration-300 group-hover:-rotate-6 group-hover:scale-110 group-hover:shadow-glow-cyan sm:size-9 sm:text-sm"
             >
               CA
             </span>
-            <span className="font-display text-lg font-bold tracking-tight transition-colors group-hover:text-brand-strong sm:text-xl">
+            {/* `text-base` en el ancho mas estrecho y `text-xl` desde sm.
+                A 360px la fila tiene 320px utiles y con text-lg pedia 336:
+                el nombre medía 157px y el grupo de controles 119, mas 12 de
+                gap. El sobrante no producia scroll horizontal — se comia el
+                px-5 del contenedor y dejaba la hamburguesa a 4px del borde
+                en vez de 20, que es peor porque ningun chequeo de desborde
+                lo ve. Con text-base el nombre mide 139 y sobran 9px. */}
+            <span className="whitespace-nowrap font-display text-base font-bold tracking-tight transition-colors group-hover:text-brand-strong sm:text-xl">
               Carlos Anaya Ruiz
             </span>
           </Link>
 
-          {/* ══ NAV DE ESCRITORIO ══════════════════════════════════ */}
-          <nav aria-label={ta('mainNav')} className="hidden items-center lg:flex">
+          {/* ══ NAV DE ESCRITORIO ══════════════════════════════════
+              El nav va dentro de un control segmentado: borde luminoso, tinte
+              translúcido y reflejo interior. Es un color translúcido, NO otro
+              `backdrop-filter` — anidar desenfoque sobre desenfoque cuesta el
+              doble y se ve peor, y el de la barra ya está difuminando la aurora
+              de la página que hay detrás. */}
+          <nav
+            aria-label={ta('mainNav')}
+            className={cn(
+              // El nav conmuta en xl, NO en lg, y tiene que coincidir con el
+              // `xl:hidden` de la hamburguesa: si difieren, entre 1024 y 1279px
+              // se dibujan LOS DOS. Medido a 1024px con ambos visibles:
+              // marca 227 + nav 582 + controles 306 + gaps = 1178px dentro de
+              // una fila de 960 → 154px de desborde en todas las páginas.
+              // El nav pide ~1139px de contenido, así que no cabe en lg (1024)
+              // aunque los dos no chocaran; el primer ancho donde entra es xl.
+              'hidden items-center rounded-2xl px-1 xl:flex',
+              'border border-[color:var(--glass-border)] bg-[color:var(--glass-bg-tint)]',
+              'shadow-[inset_0_1px_0_0_var(--glass-highlight)]'
+            )}
+          >
             <Link
               href="/"
               aria-current={isCurrent('/') ? 'page' : undefined}
@@ -366,7 +490,7 @@ export function Header() {
                 group={group}
                 open={openGroup === group.id}
                 onOpen={() => setOpenGroup(group.id)}
-                onClose={closeGroups}
+                onClose={closeGroup[group.id]}
                 isCurrent={isCurrent}
                 submenuLabel={ta('openSubmenu')}
               />
@@ -395,10 +519,18 @@ export function Header() {
             <LanguageSwitcher />
 
             {/* El clic de mayor intención se queda en el dominio. Fiverr es un
-                enlace de pie de página, nada más. */}
+                enlace de pie de página, nada más.
+
+                No lleva `.press`: el botón ya trae su propia
+                `transition-property` y la clase, al estar sin capa, se la
+                comería entera — el levantamiento de hover pasaría a ser
+                instantáneo. El hundido al pulsar se consigue con `scale`, que
+                es una propiedad distinta de `translate` y compone con ella;
+                `tailwind-merge` sustituye la lista de transición del botón por
+                esta, que la incluye. */}
             <Button
               asChild
-              className="sheen hidden shadow-glow-brand sm:inline-flex"
+              className="sheen hidden shadow-glow-brand transition-[translate,scale,background-color,border-color,color,box-shadow,opacity] active:scale-[0.97] sm:inline-flex"
             >
               <Link href="/contacto">
                 {t('hireMe')}
@@ -414,7 +546,7 @@ export function Header() {
               aria-controls={MOBILE_PANEL_ID}
               aria-label={menuOpen ? t('closeMenu') : t('openMenu')}
               className={cn(
-                'inline-flex size-11 items-center justify-center rounded-xl text-ink-muted transition-colors hover:bg-brand-wash hover:text-brand-strong lg:hidden',
+                'press inline-flex size-11 items-center justify-center rounded-xl border border-[color:var(--glass-border)] bg-[color:var(--glass-bg-tint)] text-ink-muted hover:bg-brand-wash hover:text-brand-strong xl:hidden',
                 menuOpen && 'bg-brand-wash text-brand-strong'
               )}
             >
@@ -434,16 +566,41 @@ export function Header() {
 
           Opaco y `relative` por lo mismo que el panel de escritorio: cuelga del
           header de cristal, así que ni se desenfoca otra vez ni se deja pintar
-          por debajo del reflejo especular. */}
+          por debajo del reflejo especular.
+
+          Tampoco lleva aurora, y eso está medido, no es pereza: los renglones
+          del menú son `text-ink-muted`, que sobre el campo azul de la aurora a
+          plena intensidad cae a 3.66:1. La textura la da la cuadrícula que se
+          desvanece, que es tinta al 4.5% y no mueve el contraste. */}
       <div
         ref={menuPanelRef}
         id={MOBILE_PANEL_ID}
         hidden={!menuOpen}
-        className="relative max-h-[calc(100dvh-4rem)] overflow-y-auto border-t border-hairline bg-ground shadow-lift-2 lg:hidden"
+        className="relative isolate max-h-[calc(100dvh-4rem)] overflow-y-auto border-t border-[color:var(--glass-border)] bg-ground shadow-lift-4 xl:hidden"
       >
+        {/* La cuadrícula no lleva una línea de gradiente encima: la del borde
+            inferior del header cae exactamente sobre este borde superior, así
+            que una segunda sería la misma línea dos veces. */}
+        <div className="grid-fade" aria-hidden="true" />
+
+        {/* Entrada con resorte (`.enter-scale`, que corre sobre --ease-spring) y
+            NO `.enter-3d` como el panel de escritorio. La diferencia no es de
+            gusto: este panel es un contenedor con `overflow-y: auto`, y un
+            transform que desplace el contenido hacia abajo —lo que hace
+            `enter-3d` en su fotograma inicial— cuenta para el overflow
+            desplazable, así que asomaría una barra de scroll durante la
+            animación. Una escala que entra desde 0.94 solo se pasa de 1 por el
+            rebote del resorte, y ahí como mucho un 1%.
+
+            La duración va en línea porque `.enter-scale` está fuera de toda
+            `@layer` y su `animation` en atajo (700 ms) le gana a cualquier
+            utilidad de Tailwind; 700 ms en un menú se siente lento. Una
+            declaración en línea sí gana, y el `!important` de
+            `prefers-reduced-motion` sigue ganándole a ella. */}
         <nav
           aria-label={ta('mobileMenu')}
-          className="enter mx-auto w-full max-w-6xl px-5 py-4 sm:px-8"
+          style={{ animationDuration: '380ms' }}
+          className="enter-scale relative mx-auto w-full max-w-6xl px-5 py-4 sm:px-8"
         >
           {/* Filas con divisores finos, el mismo vocabulario de las listas de
               las páginas: nada de una pila de píldoras. */}
@@ -479,16 +636,16 @@ export function Header() {
                             isCurrent(item.href) ? 'page' : undefined
                           }
                           className={cn(
-                            'flex min-h-11 items-center gap-3 rounded-xl px-2 text-sm transition-colors',
+                            'group/row press flex min-h-11 items-center gap-3 rounded-xl px-2 text-sm',
                             isCurrent(item.href)
                               ? 'bg-brand-wash font-semibold text-ink'
-                              : 'text-ink-muted'
+                              : 'text-ink-muted hover:bg-brand-wash/60'
                           )}
                         >
                           <span
                             aria-hidden="true"
                             className={cn(
-                              'grid size-8 shrink-0 place-items-center rounded-lg',
+                              'grid size-8 shrink-0 place-items-center rounded-lg shadow-lift-1 transition-[scale,rotate] duration-300 group-hover/row:-rotate-6 group-hover/row:scale-110',
                               group.chip
                             )}
                           >
@@ -518,7 +675,7 @@ export function Header() {
           <Button
             asChild
             size="lg"
-            className="sheen mt-6 w-full shadow-glow-brand"
+            className="sheen mt-6 w-full shadow-glow-brand transition-[translate,scale,background-color,border-color,color,box-shadow,opacity] active:scale-[0.97]"
           >
             <Link href="/contacto" onClick={() => setMenuOpen(false)}>
               {t('hireMe')}
@@ -593,12 +750,67 @@ function NavDropdown({
     return () => document.removeEventListener('pointerdown', onPointerDown)
   }, [open, onClose])
 
-  // Al abrir, el foco se mueve al primer elemento: quien navega con teclado cae
-  // dentro del menú en lugar de tener que tabular hasta él.
+  /**
+   * Si el menú se abrió por hover, NO se mueve el foco.
+   *
+   * Mover el foco al primer enlace es correcto cuando alguien abre el menú a
+   * propósito con teclado o clic. Hacerlo al simplemente pasar el mouse por
+   * encima le arrebata el foco a lo que estuviera enfocado, sin que nadie lo
+   * haya pedido.
+   */
+  const openedByHover = useRef(false)
+
   useEffect(() => {
-    if (!open) return
+    if (!open || openedByHover.current) return
     panelRef.current?.querySelector<HTMLElement>('a[href]')?.focus()
   }, [open])
+
+  /**
+   * ── POR QUÉ HAY HOVER ──
+   * La versión anterior solo abría con el chevron: la etiqueta era un enlace y
+   * el chevron un botón de 44px al lado. El código funcionaba —lo verifiqué con
+   * clics sintéticos— pero la affordance estaba mal: al hacer clic en la palabra
+   * "Trayectoria" el navegador NAVEGA, así que el menú nunca aparecía y se
+   * sentía roto. Era un fallo real reportado por el dueño.
+   *
+   * Ahora el grupo completo abre al pasar el mouse, así que el menú aparece
+   * antes de que a nadie le dé tiempo de hacer clic. El enlace del hub sigue
+   * siendo un enlace (rastreable, y el hub se alcanza sin abrir ningún popup) y
+   * el chevron sigue siendo un botón (teclado y táctil, donde no hay hover).
+   *
+   * El cierre lleva retardo: sin él, el hueco de 1px entre la etiqueta y el
+   * panel cierra el menú justo cuando el puntero va hacia él.
+   */
+  const closeTimer = useRef<number | null>(null)
+
+  const cancelClose = () => {
+    if (closeTimer.current !== null) {
+      window.clearTimeout(closeTimer.current)
+      closeTimer.current = null
+    }
+  }
+
+  const onPointerEnter = (event: React.PointerEvent) => {
+    // Solo puntero fino: en táctil `pointerenter` llega junto con el toque y
+    // abriría el menú al intentar seguir el enlace.
+    if (event.pointerType !== 'mouse') return
+    cancelClose()
+    if (!open) {
+      openedByHover.current = true
+      onOpen()
+    }
+  }
+
+  const onPointerLeave = (event: React.PointerEvent) => {
+    if (event.pointerType !== 'mouse') return
+    cancelClose()
+    closeTimer.current = window.setTimeout(() => {
+      onClose()
+      openedByHover.current = false
+    }, 220)
+  }
+
+  useEffect(() => cancelClose, [])
 
   /** Tabular más allá del último ítem cierra el menú en vez de dejarlo huérfano. */
   const handleBlur = (event: React.FocusEvent<HTMLDivElement>) => {
@@ -609,21 +821,25 @@ function NavDropdown({
   }
 
   return (
-    // La etiqueta del hub es un enlace normal y el chevron de al lado es lo único
-    // que abre el menú. Así /servicios y /proyectos son rastreables y se alcanzan
-    // sin abrir ningún popup, y quien usa touch no queda atrapado alternando un
-    // menú cuando lo que quería era la página.
+    // El grupo completo abre al pasar el mouse. La etiqueta del hub sigue siendo
+    // un enlace (rastreable) y el chevron un botón (teclado y táctil).
+    // `group/nav` no es decorativo: la etiqueta y el chevron son dos elementos
+    // distintos y sin él cada uno se iluminaría por su cuenta. Compartiendo el
+    // resaltado se leen como un solo control — que es lo que son, y lo que
+    // avisa de que ahí hay un menú.
     <div
       ref={wrapRef}
-      className="relative flex items-center"
+      className="group/nav relative flex items-center"
       onBlur={handleBlur}
+      onPointerEnter={onPointerEnter}
+      onPointerLeave={onPointerLeave}
     >
       <Link
         href={group.hub}
         aria-current={isCurrent(group.hub) ? 'page' : undefined}
         className={cn(
           NAV_LINK,
-          'pr-1',
+          'pr-1 group-hover/nav:bg-brand-wash/70',
           group.active
             ? 'font-semibold text-ink'
             : 'text-ink-muted hover:text-ink'
@@ -636,13 +852,22 @@ function NavDropdown({
       <button
         ref={toggleRef}
         type="button"
-        onClick={() => (open ? onClose() : onOpen())}
+        onClick={() => {
+          if (open) {
+            onClose()
+          } else {
+            // Apertura deliberada: el foco sí debe entrar al menú.
+            openedByHover.current = false
+            onOpen()
+          }
+        }}
         aria-expanded={open}
         aria-controls={group.panelId}
         aria-label={`${group.label}: ${submenuLabel}`}
         className={cn(
-          'inline-flex size-11 items-center justify-center rounded-xl text-ink-subtle transition-colors hover:bg-brand-wash hover:text-brand-strong',
-          open && 'bg-brand-wash text-brand-strong'
+          'press inline-flex size-11 items-center justify-center rounded-xl text-ink-subtle hover:bg-brand-wash hover:text-brand-strong',
+          'group-hover/nav:bg-brand-wash/70 group-hover/nav:text-brand-strong',
+          open && 'bg-brand-wash text-brand-strong shadow-[inset_0_1px_2px_0_var(--glass-edge)]'
         )}
       >
         <ChevronDown
@@ -660,36 +885,81 @@ function NavDropdown({
 
           El panel es OPACO (`bg-surface`), no de cristal: cuelga de un header que
           ya lleva backdrop-filter, y anidar cristal sobre cristal desenfoca dos
-          veces — el doble de costo por un efecto que se ve peor. */}
+          veces — el doble de costo por un efecto que se ve peor. Lo que sí lleva
+          es todo lo demás de una superficie de app: reflejo interior arriba,
+          sombra de cuarto nivel (dos planos de sombra, no una más grande), un
+          lavado de gradiente sobre toda la superficie y la línea de marca en el
+          canto de arriba.
+
+          La entrada es `.enter-3d`: el panel llega girando desde atrás, así se
+          lee como un objeto que se acerca y no como un rectángulo que aparece.
+          La duración va en `style` a propósito — `.enter-3d` está escrita fuera
+          de toda `@layer`, así que su `animation` en atajo (950 ms) le gana a
+          cualquier utilidad de Tailwind, y 950 ms en un menú se siente lento.
+          Una declaración en línea sí gana, y el `!important` de
+          `prefers-reduced-motion` sigue ganándole a ella. */}
       <div
         ref={panelRef}
         id={group.panelId}
         hidden={!open}
+        style={{ animationDuration: '340ms' }}
         className={cn(
-          'enter-scale absolute left-0 top-full mt-2 rounded-2xl border border-hairline bg-surface p-2 shadow-lift-3',
+          'enter-3d absolute left-0 top-full z-10 mt-2.5 origin-top rounded-2xl',
+          'border border-hairline bg-surface p-2',
+          'shadow-[inset_0_1px_0_0_var(--glass-highlight),var(--lift-4)]',
           group.width
         )}
       >
-        <ul>
-          {group.items.map((item) => {
+        {/* Dos capas decorativas. NO hay `overflow-hidden` que las recorte, y es
+            deliberado: el anillo de :focus-visible se dibuja 2px por fuera de
+            cada renglón y recortarlo al radio del panel le comería las esquinas.
+            En vez de eso, cada capa lleva su propia forma — el lavado hereda el
+            radio del panel y la línea de gradiente va con los extremos metidos,
+            así ninguna asoma por la silueta.
+
+            Los stops de `--grad-soft` son todos casi blancos, así que
+            `text-ink-muted` encima sigue por arriba de 5:1. */}
+        <span
+          aria-hidden="true"
+          className="grad-soft pointer-events-none absolute inset-0 rounded-2xl opacity-70"
+        />
+        <span
+          aria-hidden="true"
+          className="grad-fill pointer-events-none absolute inset-x-6 top-0 h-0.5 rounded-full opacity-90"
+        />
+
+        <ul className="relative">
+          {group.items.map((item, index) => {
             const Icon = item.icon
             return (
-              <li key={item.href}>
+              // Los renglones entran escalonados detrás del panel: es la
+              // cascada que hace que un menú se sienta de aplicación. Duración y
+              // retardo en línea por el mismo motivo que el panel — `.enter`
+              // trae el atajo `animation` sin capa, así que `step-N` y las
+              // utilidades de duración no lo pueden mover.
+              <li
+                key={item.href}
+                className="enter"
+                style={{
+                  animationDuration: '380ms',
+                  animationDelay: `${70 + index * 45}ms`,
+                }}
+              >
                 <Link
                   href={item.href}
                   onClick={onClose}
                   aria-current={isCurrent(item.href) ? 'page' : undefined}
                   className={cn(
-                    'group/item flex min-h-11 items-center gap-3 rounded-xl px-3 text-sm transition-colors hover:bg-ground-tint hover:text-ink',
+                    'group/item press flex min-h-11 items-center gap-3 rounded-xl px-3 text-sm',
                     isCurrent(item.href)
                       ? 'bg-brand-wash font-semibold text-ink'
-                      : 'text-ink-muted'
+                      : 'text-ink-muted hover:bg-brand-wash/70 hover:text-ink'
                   )}
                 >
                   <span
                     aria-hidden="true"
                     className={cn(
-                      'grid size-8 shrink-0 place-items-center rounded-lg transition-transform duration-300 group-hover/item:scale-110',
+                      'grid size-8 shrink-0 place-items-center rounded-lg shadow-lift-1 transition-[scale,rotate] duration-300 group-hover/item:-rotate-6 group-hover/item:scale-110',
                       group.chip
                     )}
                   >
@@ -703,11 +973,11 @@ function NavDropdown({
         </ul>
 
         {group.all && (
-          <div className="mt-2 border-t border-hairline pt-2">
+          <div className="relative mt-2 border-t border-hairline pt-2">
             <Link
               href={group.all.href}
               onClick={onClose}
-              className="group/all flex min-h-11 items-center gap-2 rounded-xl px-3 text-sm font-semibold text-brand-strong transition-colors hover:bg-brand-wash"
+              className="group/all press flex min-h-11 items-center gap-2 rounded-xl px-3 text-sm font-semibold text-brand-strong hover:bg-brand-wash"
             >
               {group.all.label}
               <ArrowRight
@@ -763,8 +1033,10 @@ function MobileLink({
       onClick={onNavigate}
       aria-current={current ? 'page' : undefined}
       className={cn(
-        'flex min-h-12 items-center justify-between gap-3 text-base transition-colors',
-        current ? 'font-semibold text-ink' : 'text-ink-muted hover:text-ink'
+        'press flex min-h-12 items-center justify-between gap-3 rounded-xl px-2 text-base',
+        current
+          ? 'font-semibold text-ink'
+          : 'text-ink-muted hover:bg-brand-wash/60 hover:text-ink'
       )}
     >
       {label}

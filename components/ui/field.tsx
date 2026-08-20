@@ -41,6 +41,20 @@ export interface FieldProps {
  *   el mismo momento en que llega su texto muchas veces no se anuncia);
  * - un marcador de requerido que es un glifo más texto para lector de pantalla,
  *   nunca color solo.
+ *
+ * NADA de lo anterior se toca al cambiar estilos. Es el contrato del componente.
+ *
+ * ── LO ÚNICO QUE SE AÑADIÓ: EL FOCO SE PROPAGA A LA ETIQUETA ──
+ * El grupo con nombre `group/field` más `group-has-[:focus]/field` hacen que la
+ * etiqueta pase a color de marca cuando el control que está debajo tiene el
+ * foco. Es CSS `:has()`, cero JS, y no cambia una sola línea del árbol de
+ * accesibilidad: el `for`/`id`, el `aria-describedby` y el `aria-invalid` son
+ * los mismos. Un navegador sin `:has()` simplemente no lo pinta.
+ *
+ * Se engancha a `:focus` y no a `:focus-visible` a propósito: aquí el objetivo
+ * no es señalar la navegación por teclado —de eso se encarga el anillo de
+ * globals.css— sino decir "estás escribiendo en este campo", que también aplica
+ * cuando entraste con el mouse.
  */
 export function Field({
   id,
@@ -68,8 +82,15 @@ export function Field({
     : children
 
   return (
-    <div data-slot="field" className={className}>
-      <label htmlFor={id} className="flex items-baseline gap-1 text-sm font-semibold text-ink">
+    <div data-slot="field" className={cn('group/field', className)}>
+      <label
+        htmlFor={id}
+        className={cn(
+          'flex items-baseline gap-1 text-sm font-semibold text-ink',
+          'transition-colors duration-200 ease-out-soft',
+          'group-has-[:focus]/field:text-brand-strong'
+        )}
+      >
         <span>{label}</span>
         {required ? (
           <>

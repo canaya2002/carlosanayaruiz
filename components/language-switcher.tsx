@@ -59,7 +59,16 @@ export function LanguageSwitcher() {
         : pathname
 
   return (
-    <Button asChild variant="ghost" size="sm" className="gap-2 text-sm font-medium">
+    // El padding y el gap se aprietan solo por debajo de sm, donde la
+    // etiqueta es "EN"/"ES" y no el nombre del idioma: ahi el control medía
+    // 71px de los 320 utiles de la barra a 360px. Desde sm vuelve al espaciado
+    // normal, porque ya hay sitio y un control de 64px se siente apretado.
+    <Button
+      asChild
+      variant="ghost"
+      size="sm"
+      className="gap-1.5 px-2.5 text-sm font-medium sm:gap-2 sm:px-3"
+    >
       <Link
         href={href}
         locale={targetLocale}

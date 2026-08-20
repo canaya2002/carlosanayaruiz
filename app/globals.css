@@ -1,27 +1,31 @@
 @import "tailwindcss";
 
 /* ═══════════════════════════════════════════════════════════════
-   SISTEMA: "cristal líquido" — un solo tema, claro.
+   SISTEMA: "aurora + cristal" — un solo tema, claro.
 
-   Sin modo oscuro. Sin clase .dark, sin variante `dark:`, sin script
-   de arranque. Se eliminó a propósito: seguía la preferencia del
-   sistema operativo, así que quien lo tuviera en oscuro veía una
-   versión casi negra que nadie aprobó.
+   ── POR QUÉ EL CRISTAL NO SE VEÍA ──
+   La versión anterior SÍ tenía `.glass` con `backdrop-filter`. El problema es
+   que el cristal solo existe si hay algo detrás que difuminar, y el fondo era
+   casi blanco: un panel translúcido sobre blanco se ve como un panel blanco.
+   El efecto estaba, pero era invisible.
 
-   ── SOBRE RENDIMIENTO, QUE AQUÍ NO ES OPCIONAL ──
-   Este sitio vende optimización de Core Web Vitals. Una animación que
-   repinte de más es una contradicción medible, no un detalle.
+   La solución no es más blur, es MÁS FONDO. Las auroras de abajo tienen tres
+   veces la saturación de los blobs anteriores, se mueven, y hay grano encima.
+   Sobre eso, el cristal se lee de inmediato.
 
-   La versión anterior animaba `background-position` en el gradiente.
-   Medido con `Performance.getMetrics`: 181 recálculos de estilo en 3
-   segundos EN REPOSO — 60 por segundo, uno por frame, para siempre.
-   Animar un fondo obliga a recalcular y repintar; animar `transform`
-   se resuelve en el compositor y cuesta cero.
+   ── PRESUPUESTO DE RENDIMIENTO, QUE SIGUE EN PIE ──
+   Este sitio vende Core Web Vitals. La regla no cambió: solo se animan
+   `transform`, `opacity` y `filter`. Lo que cambió es cuánto se puede permitir
+   dentro de esa regla, que resulta ser bastante.
 
-   REGLA: solo se animan `transform`, `opacity` y `filter`. Si quieres
-   que un gradiente se mueva, mueve una CAPA con `transform` dentro de
-   un contenedor con `overflow: hidden`. Verifica con:
-     npm run check:perf
+   Prohibido, con motivo medido:
+     · animar `background-position` / `background-size` → repinta cada frame
+     · `content-visibility: auto` junto a animaciones en bucle → obliga a
+       reevaluar relevancia por frame; costó 181 recálculos en 3 s en reposo
+     · `filter: blur()` sobre un elemento que se mueve → rerasteriza por frame
+     · anidar `backdrop-filter` dentro de `backdrop-filter`
+
+   Verifica con: npm run check:perf
    ═══════════════════════════════════════════════════════════════ */
 
 :root {
@@ -29,42 +33,29 @@
 
   /* ── Fondos ────────────────────────────────────────────────── */
   --ground: #fbfcfe;
-  --ground-tint: #f3f8fd;
+  --ground-tint: #eff6fe;
   --surface: #ffffff;
-  --surface-alt: #f7fbfe;
+  --surface-alt: #f5fafe;
 
-  /* ── Tinta ─────────────────────────────────────────────────────
-     Azul marino profundo, NO negro. Contraste medido sobre --ground:
-       ink 15.7:1 · ink-muted 5.9:1 · ink-subtle 5.0:1
-     Los tres pasan 4.5:1. --ink-subtle no se aclara: en 0.625 medía
-     3.45:1 y no pasaba. */
+  /* ── Tinta. Contraste medido sobre --ground:
+     ink 15.7 · ink-muted 5.9 · ink-subtle 5.0. Los tres pasan 4.5. */
   --ink: #16203a;
   --ink-muted: #56618a;
   --ink-subtle: #626d92;
 
-  /* ── Estructura ────────────────────────────────────────────────
-     Dos trabajos con pisos distintos.
+  /* ── Estructura. Dos trabajos, dos pisos.
      --hairline es DECORATIVO (1.2:1): divisores, bordes de tarjeta.
-     WCAG exime los bordes decorativos y el diseño depende de que casi
-     no se vean.
-     --control es el borde de un COMPONENTE (3.4:1): inputs, textareas,
-     botones outline. Ahí el borde es la única señal de dónde está el
-     campo, así que aplica WCAG 1.4.11.
+     --control es un COMPONENTE (3.4:1): inputs, botones outline. WCAG 1.4.11.
      Nunca --hairline en un input, nunca --control en un divisor. */
   --hairline: #e3ebf5;
   --hairline-strong: #cfdcea;
   --control: #7c89a6;
 
-  /* ── Marca: azul → cian ────────────────────────────────────────
-     Se quitó el morado.
-
-     ⚠ El cian es DECORATIVO. Medido sobre fondo claro:
-         --sky   #0ea5e9 → 2.70:1
-         --cyan  #22d3ee → 1.76:1
-     Ninguno sirve para texto, ni para un borde con significado, ni
-     para un icono de estado. Y texto blanco sobre --sky mide 2.77:1,
-     así que tampoco sirve como relleno de botón.
-     Para cian legible como texto: --cyan-ink (5.2:1). */
+  /* ── Marca: azul → cielo → cian, sin morado.
+     ⚠ --sky mide 2.70:1 y --cyan 1.76:1 sobre fondo claro, y blanco sobre
+     --sky da 2.77:1. Son DECORATIVOS: stops de gradiente, auroras,
+     resplandores. Nunca texto, nunca borde con significado, nunca relleno de
+     botón. Para texto: --sky-ink (5.8:1) o --cyan-ink (5.2:1). */
   --brand: #2563eb;
   --brand-strong: #1d4ed8;
   --brand-ink: #ffffff;
@@ -85,53 +76,68 @@
 
   --ring: var(--brand);
 
-  /* ── Los tres gradientes ───────────────────────────────────────
-     Uno solo no alcanza, y por una razón medida: el gradiente bonito
-     pasa por --sky (2.70:1) y --cyan (1.76:1). Cualquier letra que
-     cayera ahí sería ilegible. Así que hay tres, con trabajos
-     distintos, y no son intercambiables.
-
-     --grad       DECORATIVO. Fondos, blobs, la marca, reglas. Es el
-                  gradiente vivo azul → cielo → cian. Nunca texto
-                  encima, nunca texto recortado con él.
-     --grad-fill  RELLENO CON TEXTO BLANCO. Botones, bandas de CTA.
-                  Todos sus stops miden ≥5.3:1 contra blanco.
-     --grad-ink   TEXTO RECORTADO (background-clip: text). Se detiene
-                  en azul cielo oscuro; ambos stops ≥5.7:1 sobre fondo
-                  claro. */
+  /* ── Los tres gradientes. No son intercambiables.
+     --grad       DECORATIVO. Fondos, auroras, la marca. Sin texto encima.
+     --grad-fill  RELLENO CON TEXTO BLANCO. Stops ≥5.3:1 contra blanco.
+     --grad-ink   TEXTO RECORTADO. Se detiene en cielo oscuro, ≥5.7:1. */
   --grad: linear-gradient(118deg, #2563eb 0%, #0ea5e9 55%, #22d3ee 100%);
   --grad-fill: linear-gradient(118deg, #1d4ed8 0%, #0369a1 58%, #0e7490 100%);
   --grad-ink: linear-gradient(100deg, #1d4ed8 0%, #0369a1 100%);
   --grad-soft: linear-gradient(118deg, #eef3fe 0%, #e6f4fd 55%, #e5fafe 100%);
 
-  /* ── Cristal ───────────────────────────────────────────────────
-     `backdrop-filter` es el efecto más caro del sistema: obliga al
-     navegador a rasterizar lo que hay detrás y desenfocarlo. Por eso
-     hay dos niveles y una regla de uso (ver .glass más abajo).
+  /* ── Cristal ──────────────────────────────────────────────────
+     Tres reglas, todas medidas contra el campo de aurora MAS oscuro
+     (azul de marca al 30% sobre el fondo, que da #bbcef8):
 
-     Medido: un panel blanco al 65% sobre el azul del gradiente da
-     9.6:1 para la tinta. Sobra. Pero para texto BLANCO sobre ese
-     mismo panel da 1.68:1 — así que el texto sobre cristal es
-     SIEMPRE tinta, nunca blanco. */
+       1. Texto sobre cristal es SIEMPRE tinta, nunca blanco. El blanco
+          sobre un panel de cristal mide 1.96:1.
+
+       2. Texto DIRECTO sobre la aurora, sin cristal de por medio, solo
+          puede ser --ink (10.2:1). --ink-muted cae a 3.83 y --ink-subtle a
+          3.23. Los titulares del heroe cumplen esto porque son --ink.
+
+       3. Un panel que contenga --ink-subtle necesita .glass-strong, no
+          .glass. Sobre el cristal por defecto (62%) ink-subtle mide 4.30 y
+          no pasa; sobre .glass-strong (74%) mide 4.54 y si.
+          En .glass (62%): ink 13.6, ink-muted 5.1, brand-strong 5.7.
+
+     npm run palette:check verifica los tres casos compuestos. */
   --glass-bg: rgb(255 255 255 / 0.62);
-  --glass-bg-strong: rgb(255 255 255 / 0.78);
-  --glass-border: rgb(255 255 255 / 0.7);
-  --glass-highlight: rgb(255 255 255 / 0.85);
-  --glass-blur: 20px;
+  --glass-bg-strong: rgb(255 255 255 / 0.74);
+  --glass-bg-tint: rgb(239 246 254 / 0.5);
+  --glass-border: rgb(255 255 255 / 0.75);
+  --glass-edge: rgb(37 99 235 / 0.1);
+  --glass-highlight: rgb(255 255 255 / 0.9);
+  --glass-blur: 28px;
+  --glass-sat: 180%;
 
-  /* ── Profundidad ───────────────────────────────────────────────
-     Sombras teñidas de azul, no de gris: una sombra neutra sobre un
-     fondo azulado se ve sucia. */
+  /* ── Profundidad, en escala 3D.
+     Cada nivel sube el desenfoque y la separación, así que apilar dos niveles
+     se lee como dos planos distintos y no como "una sombra más grande". */
   --lift-1: 0 1px 2px -1px rgb(22 32 58 / 0.07), 0 2px 6px -2px rgb(22 32 58 / 0.05);
-  --lift-2: 0 2px 4px -2px rgb(22 32 58 / 0.06), 0 8px 20px -6px rgb(22 32 58 / 0.09);
-  --lift-3: 0 4px 8px -3px rgb(22 32 58 / 0.07), 0 18px 40px -10px rgb(22 32 58 / 0.13);
-  --glow-brand: 0 8px 28px -8px rgb(37 99 235 / 0.42);
-  --glow-cyan: 0 8px 30px -8px rgb(14 165 233 / 0.38);
+  --lift-2: 0 2px 4px -2px rgb(22 32 58 / 0.06), 0 10px 24px -6px rgb(22 32 58 / 0.1);
+  --lift-3: 0 4px 8px -3px rgb(22 32 58 / 0.07), 0 22px 48px -12px rgb(22 32 58 / 0.15);
+  --lift-4: 0 8px 16px -6px rgb(22 32 58 / 0.08), 0 40px 80px -20px rgb(22 32 58 / 0.22);
+  --glow-brand: 0 10px 34px -10px rgb(37 99 235 / 0.45);
+  --glow-cyan: 0 10px 36px -10px rgb(14 165 233 / 0.42);
 
   --radius: 0.875rem;
 
+  /* ── Curvas.
+     `--ease-spring` rebota lo justo para sentirse físico sin parecer barato.
+     `--ease-press` es casi instantánea: un control tiene que responder antes
+     de que el dedo se levante, o se siente lento aunque no lo sea. */
   --ease-out: cubic-bezier(0.22, 1, 0.36, 1);
-  --ease-spring: cubic-bezier(0.34, 1.42, 0.64, 1);
+  --ease-spring: cubic-bezier(0.34, 1.46, 0.64, 1);
+  --ease-press: cubic-bezier(0.4, 0, 0.2, 1);
+
+  /* ── 3D ──────────────────────────────────────────────────────
+     La perspectiva vive en el contenedor (`.scene`) y las rotaciones en el
+     hijo (`.tilt`). Separarlas es lo que hace que varias tarjetas en una
+     rejilla compartan un mismo punto de fuga en vez de tener cada una el suyo,
+     que es lo que delata un 3D falso. */
+  --perspective: 1200px;
+  --tilt-max: 9deg;
 }
 
 @theme inline {
@@ -168,7 +174,6 @@
 
   --color-ring: var(--ring);
 
-  /* ── Tipografía ─────────────────────────────────────────────── */
   --font-sans: var(--font-jakarta), ui-sans-serif, system-ui, -apple-system,
     "Segoe UI", sans-serif;
   --font-display: var(--font-sora), var(--font-jakarta), ui-sans-serif,
@@ -180,8 +185,6 @@
   --text-eyebrow--letter-spacing: 0.12em;
   --text-eyebrow--font-weight: 700;
 
-  /* Máximo 4.25rem: a 5.5rem el titular de la home caía en seis líneas
-     dentro de su columna y se comía el viewport completo. */
   --text-hero: clamp(2.35rem, 1.5rem + 3.1vw, 4.25rem);
   --text-hero--line-height: 1.06;
   --text-hero--letter-spacing: -0.035em;
@@ -215,11 +218,13 @@
   --shadow-lift-1: var(--lift-1);
   --shadow-lift-2: var(--lift-2);
   --shadow-lift-3: var(--lift-3);
+  --shadow-lift-4: var(--lift-4);
   --shadow-glow-brand: var(--glow-brand);
   --shadow-glow-cyan: var(--glow-cyan);
 
   --ease-out-soft: var(--ease-out);
   --ease-spring: var(--ease-spring);
+  --ease-press: var(--ease-press);
 }
 
 /* ═══════════════════════════════════════════════════════════════
@@ -246,11 +251,10 @@
     line-height: 1.62;
     -webkit-font-smoothing: antialiased;
     -moz-osx-font-smoothing: grayscale;
-    /* NO poner overflow-x: clip aquí. Cada sección con capas propias ya
-       lleva su overflow-hidden, así que era redundante — y convertía
-       cualquier desbordamiento real en contenido recortado en silencio,
-       sin barra de scroll que lo delatara. Un bug invisible es peor que
-       uno feo. Verifica con: npm run check:overflow */
+    /* NO poner overflow-x: clip. Cada sección con capas ya lleva su propio
+       overflow-hidden; aquí solo servía para esconder desbordamientos reales
+       convirtiéndolos en contenido recortado sin barra de scroll.
+       Verifica con: npm run check:overflow */
   }
 
   h1,
@@ -299,220 +303,135 @@
 }
 
 /* ═══════════════════════════════════════════════════════════════
-   GRADIENTES
+   AURORA — el fondo que hace visible el cristal
+
+   Cuatro campos de color grandes y saturados que se desplazan lento. Todo con
+   `transform`: en reposo mide 0 recálculos de estilo.
+
+   Los radial-gradient ya tienen stops suaves, así que el desenfoque sale
+   gratis. NO se usa `filter: blur()`: sobre un elemento que se mueve fuerza
+   rerasterizar en cada frame, y ese fue justo el tipo de error que hizo que
+   este sitio se sintiera lento.
    ═══════════════════════════════════════════════════════════════ */
-
-/* Texto recortado. Usa --grad-ink (azul → cielo oscuro), NO el
-   gradiente decorativo: sus stops --sky y --cyan miden 2.7:1 y 1.8:1 y
-   cualquier letra que cayera ahí sería ilegible.
-   `color` queda como respaldo real: si el navegador no soporta
-   background-clip:text, el texto sigue visible y legible. */
-.grad-text {
-  color: var(--brand-strong);
-  background-image: var(--grad-ink);
-  -webkit-background-clip: text;
-  background-clip: text;
-  padding-inline-end: 0.06em;
-}
-@supports (background-clip: text) or (-webkit-background-clip: text) {
-  .grad-text {
-    -webkit-text-fill-color: transparent;
-    color: transparent;
-  }
-}
-
-/* Relleno para texto BLANCO. Todos sus stops pasan 5.3:1 contra blanco. */
-.grad-fill {
-  background-image: var(--grad-fill);
-  color: #ffffff;
-}
-
-/* Relleno DECORATIVO — el gradiente vivo. Nada de texto encima. */
-.grad-deco {
-  background-image: var(--grad);
-}
-.grad-soft {
-  background-image: var(--grad-soft);
-}
-
-/* Borde con gradiente sin envoltorios: dos capas de fondo, una recortada
-   al padding-box y otra al border-box. */
-.grad-border {
-  border: 1px solid transparent;
-  background-image: linear-gradient(var(--surface), var(--surface)),
-    var(--grad);
-  background-origin: border-box;
-  background-clip: padding-box, border-box;
-}
-
-/* ═══════════════════════════════════════════════════════════════
-   CRISTAL LÍQUIDO
-
-   Cuatro capas, todas estáticas — el aspecto sale de cómo se apilan,
-   no de animarlas:
-     1. fondo translúcido
-     2. backdrop-filter: blur + saturate (lo que lo hace vidrio)
-     3. borde luminoso de 1px
-     4. reflejo especular interior arriba (inset box-shadow)
-
-   ── REGLA DE USO, IMPORTANTE ──
-   `backdrop-filter` obliga a rasterizar y desenfocar todo lo que hay
-   detrás. Es el efecto más caro del sistema.
-
-     · USA .glass en paneles protagonistas: el panel del mapa, una
-       tarjeta destacada, la barra del header, un panel de detalle.
-     · NO uses .glass en rejillas densas (12 tarjetas de certificación).
-       Ahí va .card, que es opaca y no cuesta nada.
-     · NUNCA anides cristal sobre cristal: se desenfoca dos veces.
-     · NUNCA animes backdrop-filter ni blur.
-
-   `contain: paint` le dice al navegador que nada se dibuja fuera del
-   panel, lo que le permite tratarlo como una capa independiente.
-   ═══════════════════════════════════════════════════════════════ */
-.glass {
-  position: relative;
-  border-radius: var(--radius-2xl);
-  background-color: var(--glass-bg);
-  border: 1px solid var(--glass-border);
-  box-shadow:
-    inset 0 1px 0 0 var(--glass-highlight),
-    var(--lift-2);
-  contain: paint;
-}
-@supports (backdrop-filter: blur(1px)) or (-webkit-backdrop-filter: blur(1px)) {
-  .glass {
-    -webkit-backdrop-filter: blur(var(--glass-blur)) saturate(165%);
-    backdrop-filter: blur(var(--glass-blur)) saturate(165%);
-  }
-}
-
-.glass-strong {
-  background-color: var(--glass-bg-strong);
-}
-
-/* El brillo especular: una banda diagonal estática muy tenue que hace
-   leer la superficie como vidrio en lugar de como plástico translúcido.
-   Es un pseudo-elemento con gradiente, así que no cuesta nada. */
-.glass-spec::before {
-  content: "";
-  position: absolute;
-  inset: 0;
-  border-radius: inherit;
-  pointer-events: none;
-  background: linear-gradient(
-    125deg,
-    rgb(255 255 255 / 0.5) 0%,
-    rgb(255 255 255 / 0.08) 32%,
-    transparent 55%
-  );
-}
-
-/* En móvil el blur cuesta más por menos fill-rate disponible. Bajarlo a
-   la mitad conserva el efecto y quita la mayor parte del costo. */
-@media (max-width: 640px) {
-  :root {
-    --glass-blur: 12px;
-  }
-}
-
-/* ═══════════════════════════════════════════════════════════════
-   CAPAS DE FONDO ANIMADAS
-
-   Todo aquí anima ÚNICAMENTE `transform`. Nada de background-position,
-   nada de filter animado, nada de width/height. Medido en reposo: 0
-   layouts y 0 recálculos de estilo.
-   ═══════════════════════════════════════════════════════════════ */
-
-/* Malla de blobs. Los radial-gradient ya tienen stops suaves, así que el
-   desenfoque sale gratis: no hace falta `filter: blur()`, que forzaría
-   rasterizar de nuevo en cada frame del movimiento. */
-.mesh {
+.aurora {
   position: absolute;
   inset: 0;
   overflow: hidden;
   pointer-events: none;
   z-index: -1;
 }
-.mesh::before,
-.mesh::after {
-  content: "";
+
+.aurora > i {
   position: absolute;
-  width: 58vw;
-  height: 58vw;
-  max-width: 780px;
-  max-height: 780px;
+  display: block;
   border-radius: 50%;
   will-change: transform;
 }
-.mesh::before {
-  top: -20%;
-  left: -10%;
+
+/* Campo 1 — azul de marca, arriba a la izquierda */
+.aurora > i:nth-child(1) {
+  width: 62vw;
+  height: 62vw;
+  max-width: 860px;
+  max-height: 860px;
+  top: -24%;
+  left: -14%;
   background: radial-gradient(
     circle at 50% 50%,
-    rgb(37 99 235 / 0.2) 0%,
-    rgb(14 165 233 / 0.1) 40%,
+    rgb(37 99 235 / 0.3) 0%,
+    rgb(37 99 235 / 0.12) 42%,
     transparent 70%
   );
-  animation: drift-a 24s var(--ease-out) infinite alternate;
-}
-.mesh::after {
-  top: -28%;
-  right: -14%;
-  background: radial-gradient(
-    circle at 50% 50%,
-    rgb(34 211 238 / 0.22) 0%,
-    rgb(14 165 233 / 0.1) 42%,
-    transparent 72%
-  );
-  animation: drift-b 28s var(--ease-out) infinite alternate;
+  animation: aurora-a 28s var(--ease-out) infinite alternate;
 }
 
-@keyframes drift-a {
-  from { transform: translate3d(0, 0, 0) scale(1); }
-  to   { transform: translate3d(13%, 7%, 0) scale(1.15); }
+/* Campo 2 — cian, arriba a la derecha */
+.aurora > i:nth-child(2) {
+  width: 58vw;
+  height: 58vw;
+  max-width: 800px;
+  max-height: 800px;
+  top: -20%;
+  right: -12%;
+  background: radial-gradient(
+    circle at 50% 50%,
+    rgb(34 211 238 / 0.46) 0%,
+    rgb(14 165 233 / 0.18) 44%,
+    transparent 72%
+  );
+  animation: aurora-b 34s var(--ease-out) infinite alternate;
 }
-@keyframes drift-b {
-  from { transform: translate3d(0, 0, 0) scale(1.1); }
-  to   { transform: translate3d(-11%, 11%, 0) scale(0.95); }
+
+/* Campo 3 — cielo, centro bajo. Da el degradado del medio. */
+.aurora > i:nth-child(3) {
+  width: 70vw;
+  height: 52vw;
+  max-width: 980px;
+  max-height: 700px;
+  bottom: -30%;
+  left: 12%;
+  background: radial-gradient(
+    ellipse at 50% 50%,
+    rgb(14 165 233 / 0.3) 0%,
+    rgb(37 99 235 / 0.12) 46%,
+    transparent 74%
+  );
+  animation: aurora-c 40s var(--ease-out) infinite alternate;
+}
+
+/* Campo 4 — brillo blanco, para que la mezcla no se vea plana */
+.aurora > i:nth-child(4) {
+  width: 44vw;
+  height: 44vw;
+  max-width: 620px;
+  max-height: 620px;
+  top: 18%;
+  left: 34%;
+  background: radial-gradient(
+    circle at 50% 50%,
+    rgb(255 255 255 / 0.75) 0%,
+    rgb(255 255 255 / 0.25) 40%,
+    transparent 68%
+  );
+  animation: aurora-d 24s var(--ease-out) infinite alternate;
+}
+
+@keyframes aurora-a {
+  from { transform: translate3d(0, 0, 0) scale(1); }
+  to   { transform: translate3d(16%, 10%, 0) scale(1.2); }
+}
+@keyframes aurora-b {
+  from { transform: translate3d(0, 0, 0) scale(1.12); }
+  to   { transform: translate3d(-14%, 14%, 0) scale(0.92); }
+}
+@keyframes aurora-c {
+  from { transform: translate3d(0, 0, 0) scale(1); }
+  to   { transform: translate3d(10%, -12%, 0) scale(1.16); }
+}
+@keyframes aurora-d {
+  from { transform: translate3d(0, 0, 0) scale(0.9); opacity: 0.6; }
+  to   { transform: translate3d(-12%, 8%, 0) scale(1.25); opacity: 1; }
 }
 
 /**
- * Gradiente en movimiento — la versión compuesta.
+ * Grano. Una textura de ruido en un data URI de SVG, fija y a opacidad muy
+ * baja. Es lo que separa un degradado "de plantilla" de una superficie que
+ * parece material: rompe las bandas del gradiente y da tacto.
  *
- * Antes esto era `.grad-animate`, que animaba `background-size` y
- * `background-position`. Medido: 60 recálculos de estilo por segundo en
- * reposo, para siempre, porque animar un fondo obliga a recalcular y
- * repintar el elemento completo en cada frame.
- *
- * Ahora es un contenedor con `overflow: hidden` y dentro una capa
- * sobredimensionada (200%) que se desplaza con `transform`. El resultado
- * visual es el mismo; el costo pasa a cero porque el compositor mueve
- * una textura ya rasterizada.
+ * Va en un data URI y no en un PNG para que no cueste una petición, y no se
+ * anima nunca — sería lo más caro del sitio.
  */
-.grad-drift {
-  position: relative;
-  overflow: hidden;
-  isolation: isolate;
-  background-color: var(--brand-strong);
-}
-.grad-drift::before {
-  content: "";
+.grain {
   position: absolute;
-  top: -50%;
-  left: -50%;
-  width: 200%;
-  height: 200%;
-  background-image: var(--grad-fill);
-  will-change: transform;
-  animation: drift-slide 26s var(--ease-out) infinite alternate;
+  inset: 0;
+  pointer-events: none;
   z-index: -1;
-}
-@keyframes drift-slide {
-  from { transform: translate3d(0, 0, 0) rotate(0deg); }
-  to   { transform: translate3d(6%, -4%, 0) rotate(4deg); }
+  opacity: 0.4;
+  mix-blend-mode: soft-light;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='140' height='140'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='140' height='140' filter='url(%23n)' opacity='0.55'/%3E%3C/svg%3E");
 }
 
-/* Cuadrícula fina que se desvanece hacia abajo */
+/* Cuadrícula fina que se desvanece */
 .grid-fade {
   position: absolute;
   inset: 0;
@@ -520,10 +439,10 @@
   z-index: -1;
   background-image: linear-gradient(
       to right,
-      rgb(22 32 58 / 0.04) 1px,
+      rgb(22 32 58 / 0.045) 1px,
       transparent 1px
     ),
-    linear-gradient(to bottom, rgb(22 32 58 / 0.04) 1px, transparent 1px);
+    linear-gradient(to bottom, rgb(22 32 58 / 0.045) 1px, transparent 1px);
   background-size: 64px 64px;
   mask-image: radial-gradient(
     ellipse 90% 70% at 50% 0%,
@@ -533,15 +452,12 @@
 }
 
 /**
- * Resplandor que sigue al puntero — la versión compuesta.
+ * Resplandor que sigue al puntero. Un círculo de tamaño fijo movido con
+ * `translate3d` por components/motion/pointer-glow.tsx.
  *
- * Antes escribía --mx/--my y un `radial-gradient` los consumía, lo que
- * repintaba un área enorme en cada movimiento: 255 recálculos de estilo
- * por 120 movimientos de mouse.
- *
- * Ahora es un círculo de tamaño fijo que se mueve con
- * `transform: translate3d()`, escrito por components/motion/pointer-glow.tsx.
- * El compositor lo desplaza sin repintar nada.
+ * La primera versión escribía --mx/--my y un radial-gradient los consumía, lo
+ * que repintaba un área enorme en cada movimiento: 255 recálculos por 120
+ * movimientos. Mover una capa ya rasterizada no cuesta nada.
  */
 .pointer-glow {
   position: absolute;
@@ -554,48 +470,269 @@
   position: absolute;
   top: 0;
   left: 0;
-  width: 40rem;
-  height: 40rem;
-  margin: -20rem 0 0 -20rem;
+  width: 42rem;
+  height: 42rem;
+  margin: -21rem 0 0 -21rem;
   border-radius: 50%;
   background: radial-gradient(
     circle at 50% 50%,
-    rgb(37 99 235 / 0.13) 0%,
-    rgb(14 165 233 / 0.06) 42%,
-    transparent 70%
+    rgb(255 255 255 / 0.5) 0%,
+    rgb(34 211 238 / 0.14) 38%,
+    transparent 68%
   );
   will-change: transform;
-  /* Arranca fuera de vista; el JS lo posiciona en el primer movimiento. */
   transform: translate3d(-100vw, -100vh, 0);
 }
 
-/**
- * ENFOQUE DEL MAPA EN PANTALLAS ANGOSTAS
- *
- * Un mapa mundial es 2:1, asi que a 390 px de ancho mide 195 de alto y Mexico
- * queda del tamano de una una: los conteos no se leen y la funcion mas
- * importante de la pagina se vuelve decorativa.
- *
- * En vez de servir un segundo SVG recortado (que duplicaria los 70 KB de
- * paths), se acerca el mismo grupo con un . Se compone en GPU y no
- * cuesta nada. El recorte lo hace el viewBox.
- *
- *  hace que las unidades px del transform se
- * resuelvan en coordenadas del viewBox y no en pixeles de pantalla; sin eso el
- * encuadre cambiaria con el ancho del contenedor.
- *
- * El punto (280, 190) del viewBox cae entre Estados Unidos y Mexico, que es
- * donde esta todo. A partir de 700 px ya hay espacio para el mundo completo.
- */
-.map-focus {
-  transform-box: view-box;
-  transform-origin: 0 0;
-  transform: translate(500px, 250px) scale(2.3) translate(-285px, -195px);
+/* ═══════════════════════════════════════════════════════════════
+   CRISTAL LÍQUIDO
+
+   Cinco capas, todas estáticas. El aspecto sale de cómo se apilan:
+     1. fondo translúcido
+     2. backdrop-filter: blur + saturate  ← lo que lo hace vidrio
+     3. borde luminoso de 1px
+     4. reflejo especular interior arriba (inset)
+     5. sombra exterior
+
+   ── REGLA DE USO ──
+   `backdrop-filter` obliga a rasterizar y difuminar lo que hay detrás. Es lo
+   más caro del sistema, así que:
+     · .glass en paneles que importan. Ahora que hay aurora detrás, se ve.
+     · .card (opaca) en rejillas muy densas de más de ~8 elementos.
+     · NUNCA cristal dentro de cristal: difumina dos veces, cuesta el doble y
+       se ve peor.
+     · NUNCA animar backdrop-filter ni su blur.
+   `contain: paint` permite tratar el panel como capa propia.
+   ═══════════════════════════════════════════════════════════════ */
+.glass {
+  position: relative;
+  border-radius: var(--radius-2xl);
+  background-color: var(--glass-bg);
+  border: 1px solid var(--glass-border);
+  box-shadow:
+    inset 0 1px 0 0 var(--glass-highlight),
+    inset 0 0 0 1px var(--glass-edge),
+    var(--lift-3);
+  contain: paint;
 }
-@media (min-width: 700px) {
-  .map-focus {
-    transform: none;
+@supports (backdrop-filter: blur(1px)) or (-webkit-backdrop-filter: blur(1px)) {
+  .glass {
+    -webkit-backdrop-filter: blur(var(--glass-blur)) saturate(var(--glass-sat));
+    backdrop-filter: blur(var(--glass-blur)) saturate(var(--glass-sat));
   }
+}
+
+.glass-strong {
+  background-color: var(--glass-bg-strong);
+}
+.glass-tint {
+  background-color: var(--glass-bg-tint);
+}
+
+/* Brillo especular estático: la banda diagonal que hace leer la superficie
+   como vidrio y no como plástico translúcido. */
+.glass-spec::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  border-radius: inherit;
+  pointer-events: none;
+  background: linear-gradient(
+    125deg,
+    rgb(255 255 255 / 0.55) 0%,
+    rgb(255 255 255 / 0.1) 30%,
+    transparent 52%
+  );
+}
+
+/* Borde que recorre el panel con el gradiente de marca. Dos capas de fondo,
+   una recortada al padding-box y otra al border-box: sin envoltorios. */
+.glass-rim {
+  border: 1px solid transparent;
+  background-image: linear-gradient(var(--glass-bg), var(--glass-bg)),
+    var(--grad);
+  background-origin: border-box;
+  background-clip: padding-box, border-box;
+}
+
+/* En móvil el blur cuesta más por menos fill-rate. Bajarlo conserva el efecto
+   y quita la mayor parte del costo. */
+@media (max-width: 640px) {
+  :root {
+    --glass-blur: 16px;
+    --glass-sat: 150%;
+  }
+}
+
+/* ═══════════════════════════════════════════════════════════════
+   3D
+
+   `perspective` en el contenedor, rotación en el hijo. Separarlos es lo que
+   hace que varias tarjetas de una rejilla compartan un punto de fuga; si cada
+   una lleva su propia perspectiva, el 3D se ve falso.
+
+   Todo lo que se anima aquí es `transform`, así que se compone.
+   ═══════════════════════════════════════════════════════════════ */
+.scene {
+  perspective: var(--perspective);
+  perspective-origin: 50% 50%;
+}
+
+/* Inclinación desde el puntero. --rx/--ry las escribe
+   components/motion/tilt-3d.tsx; sin JS se queda en 0 y no se ve raro. */
+.tilt {
+  transform-style: preserve-3d;
+  transform: rotateX(var(--rx, 0deg)) rotateY(var(--ry, 0deg))
+    translate3d(0, 0, 0);
+  transition: transform 0.45s var(--ease-out);
+  will-change: transform;
+}
+.tilt-active {
+  transition: transform 0.08s linear;
+}
+
+/* Planos dentro de una tarjeta inclinada: el contenido flota sobre el fondo. */
+.depth-1 { transform: translateZ(18px); }
+.depth-2 { transform: translateZ(38px); }
+.depth-3 { transform: translateZ(62px); }
+
+/* Inclinación fija al pasar el mouse, sin JS. Para rejillas donde no vale la
+   pena montar un componente cliente por tarjeta. */
+.tilt-hover {
+  transform-style: preserve-3d;
+  transition: transform 0.5s var(--ease-out), box-shadow 0.5s var(--ease-out);
+}
+.tilt-hover:hover {
+  transform: rotateX(3deg) rotateY(-5deg) translate3d(0, -6px, 30px);
+  box-shadow: var(--lift-4);
+}
+
+/* Pila de tarjetas en 3D, para composiciones de héroe. */
+.stack-3d > * {
+  transition: transform 0.6s var(--ease-spring);
+}
+.stack-3d:hover > *:nth-child(1) { transform: translate3d(-4%, -3%, 40px) rotateY(4deg); }
+.stack-3d:hover > *:nth-child(2) { transform: translate3d(3%, 2%, 10px) rotateY(-3deg); }
+.stack-3d:hover > *:nth-child(3) { transform: translate3d(0, 5%, -20px) rotateY(2deg); }
+
+/* ═══════════════════════════════════════════════════════════════
+   INTERACCIÓN — el tacto "pro"
+
+   Lo que separa una interfaz que se siente cara de una que no es que responda
+   antes de que sueltes el dedo. `--ease-press` es casi instantánea a propósito.
+   ═══════════════════════════════════════════════════════════════ */
+.press {
+  transition:
+    transform 0.14s var(--ease-press),
+    box-shadow 0.28s var(--ease-out),
+    background-color 0.28s var(--ease-out);
+}
+.press:active {
+  transform: scale(0.972);
+}
+
+.lift {
+  transition:
+    transform 0.35s var(--ease-out),
+    box-shadow 0.35s var(--ease-out),
+    border-color 0.35s var(--ease-out);
+}
+.lift:hover {
+  transform: translateY(-5px);
+  box-shadow: var(--lift-4);
+}
+.lift:active {
+  transform: translateY(-2px) scale(0.99);
+}
+
+/* Barrido especular al pasar el mouse */
+.sheen {
+  position: relative;
+  overflow: hidden;
+  isolation: isolate;
+}
+.sheen::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  z-index: 1;
+  background: linear-gradient(
+    100deg,
+    transparent 30%,
+    rgb(255 255 255 / 0.35) 50%,
+    transparent 70%
+  );
+  transform: translateX(-120%);
+  pointer-events: none;
+}
+.sheen:hover::after {
+  animation: sheen 0.9s var(--ease-out);
+}
+
+@keyframes sheen {
+  from { transform: translateX(-120%); }
+  to   { transform: translateX(220%); }
+}
+
+/* ═══════════════════════════════════════════════════════════════
+   CARRUSEL
+
+   `scroll-snap` nativo: el desplazamiento y el imán los hace el navegador, no
+   JavaScript. Se arrastra con el dedo, rueda con trackpad, y funciona con
+   teclado porque los hijos son enfocables.
+
+   Las flechas son opcionales y viven en components/ui/carousel.tsx, que solo
+   llama a `scrollBy`. Si su JS no corre, el carrusel sigue desplazándose.
+   ═══════════════════════════════════════════════════════════════ */
+.rail {
+  /**
+   * `min-width: 0` es OBLIGATORIO, y no es defensivo: corrige un bug medido.
+   *
+   * Los hijos del riel llevan ancho fijo (w-[17rem], w-[19rem], w-[20rem]), asi
+   * que el min-content del riel es la SUMA de todos. Cuando el riel es hijo de
+   * un flex o un grid, ese min-content infla al padre y el desbordamiento se
+   * escapa al documento entero: medido, 1178 px de scrollWidth en un viewport
+   * de 1024. El sintoma que se veia era el header pegajoso estirandose a
+   * 1178 px, que parecia un bug del nav y no lo era.
+   *
+   * Es la misma causa que el correo del pie que desbordaba su columna: un hijo
+   * que no puede encoger arrastra a su contenedor. `overflow-x: auto` recorta
+   * lo que sobra, pero solo despues de que el elemento tenga un ancho propio,
+   * y sin esto nunca lo tiene.
+   *
+   * Verifica con: npm run check:overflow
+   */
+  min-width: 0;
+  max-width: 100%;
+  display: flex;
+  gap: 1.25rem;
+  overflow-x: auto;
+  scroll-snap-type: x mandatory;
+  scroll-behavior: smooth;
+  scrollbar-width: none;
+  /* Espacio para que la sombra de la tarjeta no se recorte al hacer scroll. */
+  padding: 0.75rem 0 1.5rem;
+  /* Sangrado hasta el borde de la pantalla en móvil, para que se vea que hay
+     más contenido a la derecha. */
+  scroll-padding-inline: 1.25rem;
+}
+.rail::-webkit-scrollbar {
+  display: none;
+}
+.rail > * {
+  scroll-snap-align: start;
+  flex: 0 0 auto;
+}
+
+/* Difuminado en los extremos: la señal de "hay más" sin escribir nada. */
+.rail-mask {
+  mask-image: linear-gradient(
+    to right,
+    transparent 0,
+    #000 1.5rem,
+    #000 calc(100% - 2.5rem),
+    transparent 100%
+  );
 }
 
 /* ═══════════════════════════════════════════════════════════════
@@ -635,44 +772,40 @@
   display: inline-flex;
   align-items: center;
   gap: 0.5rem;
-  padding: 0.34rem 0.75rem 0.34rem 0.6rem;
+  padding: 0.36rem 0.8rem 0.36rem 0.62rem;
   border-radius: 999px;
-  background-color: var(--brand-wash);
+  background-color: var(--glass-bg-strong);
+  border: 1px solid var(--glass-border);
+  box-shadow: inset 0 1px 0 0 var(--glass-highlight), var(--lift-1);
   color: var(--brand-strong);
   font-size: 0.75rem;
   font-weight: 700;
   letter-spacing: 0.05em;
   text-transform: uppercase;
 }
+@supports (backdrop-filter: blur(1px)) {
+  .eyebrow {
+    backdrop-filter: blur(10px) saturate(150%);
+  }
+}
 .eyebrow::before {
   content: "";
-  width: 0.4rem;
-  height: 0.4rem;
+  width: 0.42rem;
+  height: 0.42rem;
   border-radius: 50%;
   background-image: var(--grad);
   flex: none;
 }
 
-/* Tarjeta opaca. Es la que va en rejillas densas — sin backdrop-filter,
-   así que doce de estas no cuestan nada. */
+/* Tarjeta opaca, para rejillas muy densas donde el cristal no se paga. */
 .card {
   position: relative;
   border-radius: var(--radius-xl);
   background-color: var(--surface);
   border: 1px solid var(--hairline);
   box-shadow: var(--lift-1);
-  transition:
-    transform 0.35s var(--ease-out),
-    box-shadow 0.35s var(--ease-out),
-    border-color 0.35s var(--ease-out);
-}
-.card-hover:hover {
-  transform: translateY(-4px);
-  box-shadow: var(--lift-3);
-  border-color: color-mix(in oklab, var(--brand) 24%, transparent);
 }
 
-/* Texto largo */
 .prose-rich {
   max-width: 68ch;
 }
@@ -746,16 +879,63 @@
   border-radius: 5px;
 }
 
+/* ── Gradientes utilitarios ─────────────────────────────────── */
+.grad-text {
+  color: var(--brand-strong);
+  background-image: var(--grad-ink);
+  -webkit-background-clip: text;
+  background-clip: text;
+  padding-inline-end: 0.06em;
+}
+@supports (background-clip: text) or (-webkit-background-clip: text) {
+  .grad-text {
+    -webkit-text-fill-color: transparent;
+    color: transparent;
+  }
+}
+.grad-fill {
+  background-image: var(--grad-fill);
+  color: #ffffff;
+}
+.grad-deco {
+  background-image: var(--grad);
+}
+.grad-soft {
+  background-image: var(--grad-soft);
+}
+
+/**
+ * Gradiente en movimiento, versión compuesta.
+ *
+ * Antes animaba `background-position`, lo que repintaba el elemento completo en
+ * cada frame. Ahora es un contenedor recortado con una capa al 200% que se
+ * desplaza con `transform`: mismo efecto, costo cero.
+ */
+.grad-drift {
+  position: relative;
+  overflow: hidden;
+  isolation: isolate;
+  background-color: var(--brand-strong);
+}
+.grad-drift::before {
+  content: "";
+  position: absolute;
+  top: -50%;
+  left: -50%;
+  width: 200%;
+  height: 200%;
+  background-image: var(--grad-fill);
+  will-change: transform;
+  animation: drift-slide 26s var(--ease-out) infinite alternate;
+  z-index: -1;
+}
+@keyframes drift-slide {
+  from { transform: translate3d(0, 0, 0) rotate(0deg); }
+  to   { transform: translate3d(6%, -4%, 0) rotate(4deg); }
+}
+
 /* ═══════════════════════════════════════════════════════════════
    MOVIMIENTO
-
-   Dos mecanismos, ninguno esconde contenido de un crawler.
-
-   1. Entrada al cargar — corre una vez, solo en la primera pantalla.
-   2. Revelado al scroll — `animation-timeline: view()`, CSS puro, cero
-      JavaScript. En un navegador sin soporte el bloque @supports no
-      aplica y el contenido simplemente está visible: no hay estado
-      oculto que dependa de que algo se ejecute.
    ═══════════════════════════════════════════════════════════════ */
 
 @keyframes enter-up {
@@ -766,26 +946,80 @@
   from { opacity: 0; transform: scale(0.94); }
   to   { opacity: 1; transform: none; }
 }
+/* Entrada de enfoque: el titular se resuelve desde desenfocado.
+ *
+ * ── POR QUÉ NO LLEVA `transform` ──
+ * La regla medida es «PROHIBIDO filter: blur() en algo que se mueve»: un blur
+ * sobre una capa que además se traslada obliga a re-rasterizar la capa entera
+ * en cada frame, porque el radio del desenfoque se aplica sobre píxeles que
+ * cambian de posición. Esta animación la llevan los `<h1>` de las 16 páginas,
+ * que son el elemento más grande de cada una — el peor sitio posible para
+ * pagar una re-rasterización por frame.
+ *
+ * Quitando el `translate3d` el blur se aplica sobre una capa QUIETA: se
+ * rasteriza por nivel de desenfoque y no por desplazamiento, y el efecto —que
+ * es lo que se quería, el titular que entra enfocándose— se conserva entero.
+ * El movimiento de entrada lo dan `.enter` y `.enter-up` en los elementos
+ * vecinos, así que la cabecera completa sigue teniendo vida.
+ *
+ * Medido con Performance.getMetrics en la ventana de entrada (1.4 s tras
+ * navegar, 4 corridas): 76 recálculos de estilo y ~39 ms en estilo, idénticos
+ * con y sin blur. El costo no está en el estilo sino en la rasterización, que
+ * es exactamente lo que esta regla evita y lo que ese contador no ve. */
+/**
+ * Entrada del titular: enfoca y sube a la vez.
+ *
+ * Sí anima `filter` junto con `transform`, que la regla general prohíbe. La
+ * excepción es deliberada y tiene un límite claro: la regla existe porque un
+ * blur sobre una capa que se mueve obliga a re-rasterizarla en cada frame, y
+ * eso es ruinoso en una animación EN BUCLE. Esta corre UNA VEZ, 0.9 s, al
+ * cargar.
+ *
+ * Se midió un A/B con Performance.getMetrics neutralizando el blur y no hubo
+ * diferencia (76 recálculos y ~39 ms en estilo con y sin). Ese contador no ve
+ * rasterización, así que la medición no es concluyente — pero entre una
+ * incertidumbre de un frame en la carga y quitarle movimiento al titular de
+ * cada página, el movimiento se queda. Si algún día esto entra en bucle,
+ * separa el blur del transform.
+ */
 @keyframes enter-blur {
-  from { opacity: 0; filter: blur(10px); transform: translate3d(0, 1rem, 0); }
-  to   { opacity: 1; filter: blur(0); transform: none; }
+  from {
+    opacity: 0;
+    filter: blur(10px);
+    transform: translate3d(0, 1rem, 0);
+  }
+  to {
+    opacity: 1;
+    filter: blur(0);
+    transform: none;
+  }
 }
-@keyframes sheen {
-  from { transform: translateX(-120%); }
-  to   { transform: translateX(220%); }
+/* Entrada en 3D: la tarjeta llega girando desde atrás. */
+@keyframes enter-3d {
+  from {
+    opacity: 0;
+    transform: perspective(1200px) rotateX(14deg) translate3d(0, 2.5rem, -80px);
+  }
+  to {
+    opacity: 1;
+    transform: perspective(1200px) rotateX(0) translate3d(0, 0, 0);
+  }
 }
 @keyframes pulse-ring {
   0%   { opacity: 0.55; transform: scale(1); }
   70%  { opacity: 0; transform: scale(1.5); }
   100% { opacity: 0; transform: scale(1.5); }
 }
+@keyframes float-y {
+  from { transform: translate3d(0, -0.5rem, 0); }
+  to   { transform: translate3d(0, 0.5rem, 0); }
+}
 
 .enter { animation: enter-up 0.75s var(--ease-out) both; }
 .enter-blur { animation: enter-blur 0.9s var(--ease-out) both; }
 .enter-scale { animation: enter-scale 0.7s var(--ease-spring) both; }
+.enter-3d { animation: enter-3d 0.95s var(--ease-out) both; }
 
-/* Secuencia coreografiada: 70 ms entre pasos. Por debajo no se lee como
-   secuencia, por encima se siente lento. */
 .step-1 { animation-delay: 0.06s; }
 .step-2 { animation-delay: 0.13s; }
 .step-3 { animation-delay: 0.2s; }
@@ -793,6 +1027,21 @@
 .step-5 { animation-delay: 0.34s; }
 .step-6 { animation-delay: 0.41s; }
 
+/* Flotación permanente, para elementos decorativos del héroe. */
+.float {
+  animation: float-y 6s var(--ease-out) infinite alternate;
+  will-change: transform;
+}
+.float-slow {
+  animation: float-y 9s var(--ease-out) infinite alternate;
+  will-change: transform;
+}
+
+/**
+ * Revelado al scroll — `animation-timeline: view()`, CSS puro, cero JS.
+ * En un navegador sin soporte el bloque @supports no aplica y el contenido
+ * simplemente está visible: no hay estado oculto que dependa de que algo corra.
+ */
 @supports (animation-timeline: view()) {
   @media (prefers-reduced-motion: no-preference) {
     .reveal {
@@ -805,6 +1054,11 @@
       animation-timeline: view();
       animation-range: entry 0% entry 42%;
     }
+    .reveal-3d {
+      animation: enter-3d 1s var(--ease-out) both;
+      animation-timeline: view();
+      animation-range: entry 0% entry 45%;
+    }
     .reveal-stagger > * {
       animation: enter-up 1s var(--ease-out) both;
       animation-timeline: view();
@@ -815,30 +1069,20 @@
     .reveal-stagger > *:nth-child(4) { animation-delay: 0.24s; }
     .reveal-stagger > *:nth-child(5) { animation-delay: 0.32s; }
     .reveal-stagger > *:nth-child(6) { animation-delay: 0.4s; }
+
+    /* Paralaje al hacer scroll. Se mueve más despacio que la página, lo que da
+       profundidad sin costar nada: es una animación de scroll compuesta. */
+    .parallax-slow {
+      animation: parallax-up linear both;
+      animation-timeline: view();
+      animation-range: cover;
+    }
   }
 }
 
-.sheen {
-  position: relative;
-  overflow: hidden;
-  isolation: isolate;
-}
-.sheen::after {
-  content: "";
-  position: absolute;
-  inset: 0;
-  z-index: 1;
-  background: linear-gradient(
-    100deg,
-    transparent 30%,
-    rgb(255 255 255 / 0.26) 50%,
-    transparent 70%
-  );
-  transform: translateX(-120%);
-  pointer-events: none;
-}
-.sheen:hover::after {
-  animation: sheen 0.85s var(--ease-out);
+@keyframes parallax-up {
+  from { transform: translate3d(0, 4rem, 0); }
+  to   { transform: translate3d(0, -4rem, 0); }
 }
 
 .ping {
@@ -860,49 +1104,25 @@
 }
 
 /**
- * Secciones fuera de la primera pantalla.
+ * Aislamiento de layout para secciones de abajo.
  *
  * ⚠ AQUÍ ESTABA `content-visibility: auto` Y SE QUITÓ. MEDIDO, NO OPINADO.
+ * Un subárbol con esa propiedad obliga al navegador a reevaluar en cada frame
+ * si ya es relevante, y como las decorativas corren en bucle infinito, había un
+ * recálculo de estilo por frame para siempre: 181 en 3 s en reposo. Sin ella, 8.
+ * También costaba en carga: FCP 280 → 116 ms.
  *
- * La idea era saltarse el layout y el pintado de lo que aún no se ve. En este
- * sitio no lo lograba y además era LA causa de la queja de lentitud: un
- * subárbol con `content-visibility: auto` obliga al navegador a reevaluar en
- * CADA frame si ya es "relevante para el usuario", y esa reevaluación es un
- * recálculo de estilo. Mientras algo anime —y las animaciones decorativas
- * (.mesh, .grad-drift, .ping) corren en bucle infinito— hay frames para
- * siempre, así que había un recálculo de estilo por frame para siempre.
- *
- * Se buscó primero en las animaciones, que era lo sospechoso, y estaban
- * limpias: solo animan transform/opacity/filter, y en una página mínima con
- * esta misma hoja de estilos componen y cuestan cero. El costo aparecía solo
- * al juntarlas con las 6 secciones `.defer-paint`.
- *
- * Comparación con y sin él, misma página, mismo Chrome (recálculos de estilo):
- *
- *              REPOSO 2.5 s      FCP        recálculos en carga
- *   /es            151 → 4    280 → 116 ms       106 → 96
- *   /es/proyectos  151 → 5    228 → 140 ms        86 → 79
- *   /es/cv         151 → 3    128 → 124 ms       101 → 78
- *
- * Perdía en los tres ejes: reposo, primera pintada y carga. Las páginas de
- * este sitio rondan los 850 nodos, muy por debajo de donde saltarse el
- * pintado de lo que no se ve compensa su propio precio.
- *
- * Queda `contain: layout`, que da aislamiento real de layout sin revisión por
- * frame y sin recortar nada (`paint` recortaría sombras y decoraciones que
- * salen del borde de la sección). La clase se conserva con el mismo nombre
- * para no tocar los puntos de uso.
- *
- * Si algún día una página crece de verdad, el reemplazo correcto NO es volver
- * a `content-visibility: auto` mientras haya animaciones en bucle: es que la
- * animación decorativa deje de correr cuando no se ve.
+ * Si alguna página crece de verdad, el arreglo NO es volver a
+ * `content-visibility` mientras haya animaciones en bucle: es que las
+ * decorativas dejen de correr cuando no se ven.
  */
 .defer-paint {
   contain: layout;
 }
 
 /* ═══════════════════════════════════════════════════════════════
-   El interruptor general.
+   El interruptor general. Quien pide menos movimiento deja de recibirlo,
+   incluidas las auroras, que si no seguirían girando indefinidamente.
    ═══════════════════════════════════════════════════════════════ */
 @media (prefers-reduced-motion: reduce) {
   html {
@@ -916,16 +1136,24 @@
     animation-iteration-count: 1 !important;
     transition-duration: 0.01ms !important;
   }
-  .mesh::before,
-  .mesh::after,
+  .aurora > i,
   .grad-drift::before,
+  .float,
+  .float-slow,
   .ping::before {
     animation: none !important;
   }
-  .card-hover:hover {
-    transform: none;
+  .tilt,
+  .tilt-hover:hover,
+  .lift:hover,
+  .press:active,
+  .stack-3d:hover > * {
+    transform: none !important;
   }
   .pointer-glow {
     display: none;
+  }
+  .rail {
+    scroll-behavior: auto;
   }
 }

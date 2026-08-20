@@ -1,17 +1,13 @@
 /**
- * Verifica que PALETTE_HEX en lib/constants.ts siga coincidiendo con los
- * tokens de app/globals.css.
+ * Verifica que PALETTE_HEX en lib/constants.ts siga coincidiendo con los tokens
+ * de app/globals.css, y que cada piso de contraste WCAG se cumpla.
  *
- *   node scripts/palette-check.mjs
+ *   npm run palette:check
  *
  * La tabla de hex existe porque tres consumidores no pueden leer una variable
  * CSS: el manifiesto PWA, el `themeColor` del viewport y Satori en lib/og.tsx.
  * Una copia derivada se podre en silencio — las tres ya habían derivado de
  * --brand por un margen visible antes de que este chequeo existiera.
- *
- * También comprueba los pisos de contraste WCAG que el sistema declara, porque
- * un token que se "aclara un poquito" es exactamente cómo se rompe un piso sin
- * que nadie lo note.
  *
  * Sale con código distinto de cero si algo no cuadra, para poder bloquear un
  * commit o un CI.
@@ -39,9 +35,21 @@ const contrast = (a, b) => {
   return (hi + 0.05) / (lo + 0.05)
 }
 
+/** Compone `fg` con opacidad `alpha` sobre `bg`. */
+const compose = (fg, bg, alpha) => {
+  const f = toRgb(fg)
+  const b = toRgb(bg)
+  return (
+    '#' +
+    f
+      .map((c, i) => c * alpha + b[i] * (1 - alpha))
+      .map((c) => Math.round(c * 255).toString(16).padStart(2, '0'))
+      .join('')
+  )
+}
+
 /* ── parseo ──────────────────────────────────────────────────────── */
 
-/** Lee `--nombre: #rrggbb;` del bloque :root de globals.css. */
 function parseCssTokens(css) {
   const start = css.indexOf(':root {')
   if (start === -1) throw new Error('No hay bloque :root en globals.css')
@@ -56,7 +64,6 @@ function parseCssTokens(css) {
   return tokens
 }
 
-/** Lee el objeto PALETTE_HEX.light directamente del fuente TS. */
 function parseDeclared(ts) {
   const table = ts.match(/export const PALETTE_HEX = \{([\s\S]*?)\n\} as const/)
   if (!table) throw new Error('No se encontró PALETTE_HEX en lib/constants.ts')
@@ -89,12 +96,11 @@ const MIRROR = {
 }
 
 /**
- * Los pisos que el sistema declara en los comentarios de globals.css.
- * `min` es la razón de contraste mínima aceptable contra `against`.
+ * Pisos sobre el fondo plano.
  *
- * `cyan` aparece a propósito con un piso de 0: está documentado como
- * decorativo puro (mide ~2.4:1) y no debe fallar el chequeo — pero sí debe
- * quedar registrado aquí para que nadie lo confunda con un color de texto.
+ * `sky` y `cyan` aparecen con piso 0 a propósito: están documentados como
+ * decorativos puros y no deben hacer fallar el chequeo — pero quedan listados
+ * para que nadie los confunda con colores de texto.
  */
 const FLOORS = [
   { token: 'ink', against: 'ground', min: 4.5, use: 'texto principal' },
@@ -107,23 +113,25 @@ const FLOORS = [
   { token: 'cyan-ink', against: 'ground', min: 4.5, use: 'texto cian legible' },
   { token: 'control', against: 'surface', min: 3.0, use: 'borde de input (1.4.11)' },
   { token: 'control', against: 'ground', min: 3.0, use: 'borde de input (1.4.11)' },
-  // Piso 0 a propósito: documentados como decorativos puros. Quedan
-  // listados para que nadie los confunda con colores de texto.
   { token: 'sky', against: 'ground', min: 0, use: 'SOLO decorativo (2.7:1)' },
   { token: 'cyan', against: 'ground', min: 0, use: 'SOLO decorativo (1.8:1)' },
 ]
 
-/** Texto blanco sobre rellenos de botón. */
-// Los stops del gradiente de RELLENO (--grad-fill). Todos llevan texto
-// blanco encima, así que todos tienen que pasar 4.5:1. El gradiente
-// decorativo (--grad) NO va aquí porque nunca lleva texto: sus stops sky
-// y cyan darían 2.77:1 y 1.68:1 contra blanco.
+/** Stops del gradiente de relleno. Todos llevan texto blanco encima. */
 const ON_FILL = [
   { token: 'brand', min: 4.5 },
   { token: 'brand-strong', min: 4.5 },
   { token: 'sky-ink', min: 4.5 },
   { token: 'cyan-ink', min: 4.5 },
 ]
+
+/**
+ * Opacidades reales del sistema. Si cambian en globals.css, cambian aquí.
+ * AURORA_PEAK es el campo más oscuro (azul de marca), que es el peor caso.
+ */
+const AURORA_PEAK = 0.3
+const GLASS = 0.62
+const GLASS_STRONG = 0.74
 
 /* ── ejecución ───────────────────────────────────────────────────── */
 
@@ -136,7 +144,7 @@ const declared = parseDeclared(ts)
 let failures = 0
 
 console.log('\n  espejo PALETTE_HEX ↔ globals.css')
-console.log('  ' + '─'.repeat(56))
+console.log('  ' + '─'.repeat(58))
 for (const [key, token] of Object.entries(MIRROR)) {
   const expected = tokens[token]
   const actual = declared[key]
@@ -153,8 +161,8 @@ for (const [key, token] of Object.entries(MIRROR)) {
   }
 }
 
-console.log('\n  pisos de contraste')
-console.log('  ' + '─'.repeat(56))
+console.log('\n  pisos sobre el fondo plano')
+console.log('  ' + '─'.repeat(58))
 for (const { token, against, min, use } of FLOORS) {
   const fg = tokens[token]
   const bg = tokens[against]
@@ -168,24 +176,88 @@ for (const { token, against, min, use } of FLOORS) {
   if (!ok) failures++
   const label = `${token} / ${against}`
   console.log(
-    `  ${ok ? '✓' : '✗'}  ${label.padEnd(26)} ${ratio.toFixed(2).padStart(6)}` +
+    `  ${ok ? '✓' : '✗'}  ${label.padEnd(28)} ${ratio.toFixed(2).padStart(6)}` +
       `  (min ${min})  ${use}`
   )
 }
 
 console.log('\n  texto blanco sobre relleno')
-console.log('  ' + '─'.repeat(56))
+console.log('  ' + '─'.repeat(58))
 for (const { token, min } of ON_FILL) {
   const ratio = contrast('#ffffff', tokens[token])
   const ok = ratio >= min
   if (!ok) failures++
   console.log(
-    `  ${ok ? '✓' : '✗'}  blanco / ${token.padEnd(16)} ${ratio.toFixed(2).padStart(6)}  (min ${min})`
+    `  ${ok ? '✓' : '✗'}  blanco / ${token.padEnd(18)} ${ratio.toFixed(2).padStart(6)}  (min ${min})`
   )
 }
+
+/**
+ * ── CASOS COMPUESTOS: cristal sobre aurora ──────────────────────────
+ *
+ * Esta es la sección que más importa, porque es el caso que casi se rompió al
+ * saturar el fondo para que el cristal fuera visible.
+ *
+ * Un token puede pasar contraste sobre el fondo plano y fallar sobre el mismo
+ * fondo con una aurora detrás y un panel de cristal en medio. Medir solo el
+ * caso simple da una falsa sensación de seguridad: `ink-subtle` pasa 4.96 sobre
+ * el fondo y cae a 4.30 sobre `.glass`.
+ */
+const auroraBg = compose(tokens.brand, tokens.ground, AURORA_PEAK)
+const onGlass = compose('#ffffff', auroraBg, GLASS)
+const onGlassStrong = compose('#ffffff', auroraBg, GLASS_STRONG)
+
+const COMPOSITE = [
+  { token: 'ink', bg: auroraBg, where: 'directo sobre aurora', min: 4.5 },
+  { token: 'ink', bg: onGlass, where: 'sobre .glass', min: 4.5 },
+  { token: 'ink-muted', bg: onGlass, where: 'sobre .glass', min: 4.5 },
+  { token: 'brand-strong', bg: onGlass, where: 'sobre .glass', min: 4.5 },
+  { token: 'ink-subtle', bg: onGlassStrong, where: 'sobre .glass-strong', min: 4.5 },
+]
+
+console.log('\n  compuestos: aurora + cristal')
+console.log('  ' + '─'.repeat(58))
+console.log(`  aurora al ${AURORA_PEAK * 100}% sobre fondo = ${auroraBg}`)
+console.log(`  cristal ${GLASS * 100}% encima = ${onGlass}`)
+console.log(`  cristal ${GLASS_STRONG * 100}% encima = ${onGlassStrong}`)
+console.log('')
+
+for (const { token, bg, where, min } of COMPOSITE) {
+  const fg = tokens[token]
+  if (!fg) {
+    console.error(`  ?  falta --${token}`)
+    failures++
+    continue
+  }
+  const ratio = contrast(fg, bg)
+  const ok = ratio >= min
+  if (!ok) failures++
+  const label = `${token} ${where}`
+  console.log(
+    `  ${ok ? '✓' : '✗'}  ${label.padEnd(36)} ${ratio.toFixed(2).padStart(6)}  (min ${min})`
+  )
+}
+
+/**
+ * Las dos reglas que se derivan de los números de arriba, impresas cada vez
+ * para que nadie las tenga que recordar.
+ */
+const subtleOnGlass = contrast(tokens['ink-subtle'], onGlass)
+const mutedOnAurora = contrast(tokens['ink-muted'], auroraBg)
+
+console.log('\n  reglas que salen de estos números')
+console.log('  ' + '─'.repeat(58))
+console.log(
+  `  · ink-subtle sobre .glass mide ${subtleOnGlass.toFixed(2)} y NO pasa.`
+)
+console.log('    Un panel que lleve ink-subtle tiene que ser .glass-strong.')
+console.log(
+  `  · ink-muted directo sobre la aurora mide ${mutedOnAurora.toFixed(2)} y NO pasa.`
+)
+console.log('    Texto sin cristal de por medio solo puede ser ink.')
 
 if (failures > 0) {
   console.error(`\n  ${failures} problema(s) de paleta.\n`)
   process.exit(1)
 }
-console.log('\n  Paleta consistente y todos los pisos de contraste se cumplen.\n')
+console.log('\n  Paleta consistente y todos los pisos se cumplen.\n')

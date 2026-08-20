@@ -71,6 +71,45 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
   })
 }
 
+/**
+ * ════════════════════════════════════════════════════════════════
+ * CAPAS DE FONDO — lo que hace visible el cristal
+ *
+ * Los CUATRO <i> son obligatorios: cada uno es un campo de color distinto, y
+ * sin ellos un panel translúcido sobre un fondo casi blanco se ve exactamente
+ * igual que un panel blanco.
+ *
+ * ── POR QUÉ AQUÍ VA `soft` Y POR QUÉ ESO NO ROMPE NADA ──
+ * `soft` baja la aurora al 70% de opacidad. Es lo que pide un documento legal:
+ * la cabecera tiene vida, pero el color no compite con once secciones de texto.
+ * Y no toca ninguna regla de contraste, porque bajar la opacidad ACLARA el
+ * fondo: los números medidos (ink 10.2:1 directo sobre la aurora a plena
+ * intensidad, ink-muted 3.83, ink-subtle 3.23) son el peor caso, y con menos
+ * aurora todos mejoran. Lo que NO cambia es el reparto: sobre la aurora solo va
+ * `text-ink`, y todo texto secundario vive dentro de un panel de cristal.
+ *
+ * Dos secciones con aurora en esta página —la cabecera y el cierre— contra un
+ * presupuesto medido de tres, el pie aparte. El documento pone su color con
+ * `.grad-soft`, un gradiente fijo que no se anima y por tanto no consume capa
+ * compuesta: es el mismo patrón con el que la home sostiene el cristal de la
+ * banda del stack.
+ * ════════════════════════════════════════════════════════════════
+ */
+function Backdrop({ soft = false }: { soft?: boolean }) {
+  return (
+    <>
+      <div className={soft ? 'aurora opacity-70' : 'aurora'} aria-hidden="true">
+        <i />
+        <i />
+        <i />
+        <i />
+      </div>
+      <div className="grain" aria-hidden="true" />
+      <div className="grid-fade" aria-hidden="true" />
+    </>
+  )
+}
+
 interface LegalSection {
   /**
    * Id del ancla. La tabla de contenido se arma del mismo arreglo, así que no
@@ -988,12 +1027,16 @@ export default async function PrivacyPage({ params }: Props) {
       />
 
       {/* ══ CABECERA ══════════════════════════════════════════════
-          La malla animada va en -z-10 dentro de un contenedor
-          `relative isolate overflow-hidden`, es decorativa y no captura
-          eventos. Ritmo de primera banda de página interior.         */}
+          Aurora suave, grano y cuadrícula, las tres decorativas, las tres en
+          -z-10 dentro de un contenedor `relative isolate overflow-hidden` y
+          ninguna capturando eventos.
+
+          Sin <PointerGlow /> a propósito: es un documento de once secciones que
+          se lee con scroll, no una cabecera de aterrizaje, y el resplandor
+          añadiría un listener de `pointermove` a la página más larga del
+          sitio. */}
       <section className="relative isolate overflow-hidden border-b border-hairline">
-        <div className="mesh" aria-hidden="true" />
-        <div className="grid-fade" aria-hidden="true" />
+        <Backdrop soft />
 
         <div className="mx-auto w-full max-w-6xl px-5 py-14 sm:px-8 sm:py-16">
           <Breadcrumbs
@@ -1006,39 +1049,72 @@ export default async function PrivacyPage({ params }: Props) {
               <ShieldCheck className="size-3.5" aria-hidden="true" />
               Legal
             </p>
+
+            {/* `text-ink` y no un recorte con gradiente: el título de un aviso
+                de privacidad es el nombre legal del documento. Es también el
+                único color de texto que aguanta ir DIRECTO sobre la aurora
+                (10.2:1); el acento lo pone la barra de gradiente de abajo. */}
             <h1 className="enter-blur step-2 mt-6 text-d1 text-ink">
               {t('privacyTitle')}
             </h1>
-            <p className="enter step-3 mt-5 text-lead text-ink-muted">
-              {t('privacyLead')}
-            </p>
-            <p className="enter step-4 mt-8 text-sm text-ink-subtle">
-              {t('lastUpdated')}:{' '}
-              <time dateTime={LAST_UPDATED} data-numeric="">
-                {updatedLabel}
-              </time>
-            </p>
+            <span
+              className="grad-deco enter step-2 mt-6 block h-1 w-12 rounded-full"
+              aria-hidden="true"
+            />
+
+            {/* ── POR QUÉ EL LEAD VA DENTRO DE CRISTAL ──
+                Medido: sobre la aurora `ink-muted` cae a 3.83:1 y `ink-subtle`
+                a 3.23:1, y ninguno pasa. Dentro de `.glass-strong` miden 5.1 y
+                4.54. El panel es `strong` y no el cristal por defecto porque
+                aquí dentro vive la fecha, que es `ink-subtle`: en `.glass` se
+                queda en 4.30 y no llega a 4.5. */}
+            <div className="glass glass-strong glass-spec enter step-3 mt-7 p-6 sm:p-7">
+              <p className="text-lead text-ink-muted">{t('privacyLead')}</p>
+              <p className="mt-5 text-sm text-ink-subtle">
+                {t('lastUpdated')}:{' '}
+                <time dateTime={LAST_UPDATED} data-numeric="">
+                  {updatedLabel}
+                </time>
+              </p>
+            </div>
           </div>
 
           {/* Los tres hechos que definen el documento, sin obligar a nadie a
-              leer once secciones para encontrarlos. */}
-          <ul className="enter step-5 mt-12 grid gap-4 sm:grid-cols-3">
-            {highlights.map((item) => {
+              leer once secciones para encontrarlos.
+
+              Tres nodos y tres transformes distintos, que no es redundancia: la
+              entrada (`.enter`) va en el <li> —una animación con `fill: both`
+              se queda dueña del `transform` de su elemento para siempre—, la
+              inclinación en hover (`.tilt-hover`) va en el <div>, y la
+              perspectiva compartida (`.scene`) en el <ul>, que es lo que hace
+              que las tres tarjetas giren hacia un mismo punto de fuga en lugar
+              de tener cada una el suyo. */}
+          <ul className="scene mt-12 grid gap-4 sm:grid-cols-3">
+            {highlights.map((item, index) => {
               const Icon = item.icon
               return (
-                <li key={item.title} className="card card-hover p-5">
-                  <span
-                    className="grad-deco inline-flex size-10 items-center justify-center rounded-xl text-white shadow-glow-brand"
-                    aria-hidden="true"
-                  >
-                    <Icon className="size-5" />
-                  </span>
-                  <p className="mt-4 text-sm font-bold text-ink">
-                    {item.title}
-                  </p>
-                  <p className="mt-1.5 text-sm leading-relaxed text-ink-muted">
-                    {item.text}
-                  </p>
+                <li
+                  key={item.title}
+                  className={`enter step-${index + 4}`}
+                >
+                  <div className="tilt-hover h-full rounded-2xl">
+                    {/* `.glass` a secas: aquí dentro no hay `ink-subtle`, y
+                        `ink-muted` sobre el cristal por defecto mide 5.1. */}
+                    <div className="glass glass-spec h-full p-5">
+                      <span
+                        className="grad-deco inline-flex size-10 items-center justify-center rounded-xl text-white shadow-glow-brand"
+                        aria-hidden="true"
+                      >
+                        <Icon className="size-5" />
+                      </span>
+                      <p className="mt-4 text-sm font-bold text-ink">
+                        {item.title}
+                      </p>
+                      <p className="mt-1.5 text-sm leading-relaxed text-ink-muted">
+                        {item.text}
+                      </p>
+                    </div>
+                  </div>
                 </li>
               )
             })}
@@ -1046,68 +1122,103 @@ export default async function PrivacyPage({ params }: Props) {
         </div>
       </section>
 
-      {/* ══ DOCUMENTO ══════════════════════════════════════════════ */}
-      <section className="mx-auto w-full max-w-6xl px-5 py-20 sm:px-8 sm:py-24">
-        <div className="grid gap-12 lg:grid-cols-[minmax(0,17rem)_minmax(0,1fr)] lg:gap-16">
-          {/* Contenido. Fijo en escritorio, lista simple sobre el texto en
-              móvil: un documento legal se navega, no se lee de corrido. */}
-          <nav
-            aria-label={en ? 'Contents' : 'Contenido'}
-            className="reveal lg:sticky lg:top-24 lg:self-start"
-          >
-            <p className="eyebrow">{en ? 'Contents' : 'Contenido'}</p>
-            <ol className="mt-5 border-t border-hairline">
+      {/* ══ DOCUMENTO ══════════════════════════════════════════════
+          Banda de `.grad-soft` y no una tercera aurora, y esto no es
+          conservadurismo: es un `background-image` fijo, así que da el color
+          que el cristal necesita detrás SIN consumir una capa compuesta ni
+          animar nada bajo una página de once secciones. Es el mismo patrón con
+          el que la home sostiene el cristal de la banda del stack.       */}
+      <section className="grad-soft border-y border-hairline">
+        <div className="mx-auto w-full max-w-6xl px-5 py-20 sm:px-8 sm:py-24">
+          <div className="grid gap-12 lg:grid-cols-[minmax(0,17rem)_minmax(0,1fr)] lg:gap-16">
+            {/* Contenido. Fijo en escritorio, lista simple sobre el texto en
+                móvil: un documento legal se navega, no se lee de corrido.
+
+                ⚠ ES `.card` (OPACA) Y NO CRISTAL, A PROPÓSITO. Un panel fijo
+                con `backdrop-filter` se queda quieto mientras el fondo se
+                desplaza debajo, así que el navegador tiene que volver a
+                muestrear y difuminar lo que hay detrás en CADA frame de scroll
+                — el gasto exacto que hacía sentir lento este sitio. El cristal
+                de esta sección va en el documento, que se desplaza con su
+                fondo. */}
+            <nav
+              aria-label={en ? 'Contents' : 'Contenido'}
+              className="lg:sticky lg:top-24 lg:self-start"
+            >
+              <p className="eyebrow">{en ? 'Contents' : 'Contenido'}</p>
+              <ol className="card mt-5 p-2">
+                {sections.map((section, index) => (
+                  <li key={section.id}>
+                    <a
+                      href={`#${section.id}`}
+                      className="press flex gap-3 rounded-lg px-2 py-2.5 text-sm text-ink-muted hover:bg-brand-wash hover:text-brand-strong"
+                    >
+                      <span data-numeric="" className="text-ink-subtle">
+                        {String(index + 1).padStart(2, '0')}
+                      </span>
+                      <span>{section.title}</span>
+                    </a>
+                  </li>
+                ))}
+              </ol>
+            </nav>
+
+            {/* El documento entero en UN panel de cristal, no once.
+                `backdrop-filter` es lo más caro del sistema y las secciones ya
+                se separan con su propia línea; once paneles serían once
+                desenfoques para el mismo texto.
+
+                `strong` es obligatorio: `.prose-rich` pinta párrafos y listas
+                en `ink-muted` (5.1 sobre el cristal por defecto, suficiente),
+                pero el numeral y las notas de abajo son `ink-subtle`, que en
+                `.glass` se queda en 4.30 y no pasa. */}
+            <div className="glass glass-strong glass-spec p-6 sm:p-10">
               {sections.map((section, index) => (
-                <li key={section.id} className="border-b border-hairline">
-                  <a
-                    href={`#${section.id}`}
-                    className="flex gap-3 py-3 text-sm text-ink-muted transition-colors hover:text-brand-strong"
-                  >
-                    <span data-numeric="" className="text-ink-subtle">
+                <section
+                  key={section.id}
+                  id={section.id}
+                  className="scroll-mt-24 border-t border-hairline pt-14 first:border-t-0 first:pt-0"
+                >
+                  {/* ⚠ AQUÍ YA NO HAY `.reveal`, Y NO ES OLVIDO. Antes lo
+                      llevaba el bloque del encabezado, cuando el documento no
+                      estaba dentro de un panel de cristal. Ahora sí lo está, y
+                      once animaciones ligadas al scroll DENTRO de una
+                      superficie con `backdrop-filter` obligan a recomponer ese
+                      desenfoque mientras se hace scroll — el gasto exacto que
+                      hacía sentir lento este sitio. El movimiento de la página
+                      lo pone la aurora de la cabecera; un aviso de privacidad
+                      se lee, no se coreografía. */}
+                  <div>
+                    <span
+                      data-numeric=""
+                      className="grad-text font-display text-sm font-bold"
+                    >
                       {String(index + 1).padStart(2, '0')}
                     </span>
-                    <span>{section.title}</span>
-                  </a>
-                </li>
+                    <h2 className="mt-2 text-d2 text-ink">{section.title}</h2>
+                  </div>
+
+                  {/* El h2 vive fuera de .prose-rich para poder llevar el
+                      numeral con gradiente; el cuerpo sí va envuelto, que es lo
+                      que fija la medida de 68ch, el ritmo y las viñetas de
+                      gradiente. */}
+                  <div className="prose-rich mt-5">{section.body}</div>
+                </section>
               ))}
-            </ol>
-          </nav>
-
-          <div className="max-w-[68ch]">
-            {sections.map((section, index) => (
-              <section
-                key={section.id}
-                id={section.id}
-                className="scroll-mt-24 border-t border-hairline pt-14 first:border-t-0 first:pt-0"
-              >
-                {/* El `.reveal` va solo en el bloque del encabezado y no en la
-                    sección completa: `animation-range: entry` sobre un bloque
-                    más alto que la pantalla dejaría el texto a media opacidad
-                    mientras se lee. El encabezado es corto y entra entero. */}
-                <div className="reveal">
-                  <span
-                    data-numeric=""
-                    className="grad-text font-display text-sm font-bold"
-                  >
-                    {String(index + 1).padStart(2, '0')}
-                  </span>
-                  <h2 className="mt-2 text-d2 text-ink">{section.title}</h2>
-                </div>
-
-                {/* El h2 vive fuera de .prose-rich para poder llevar el numeral
-                    con gradiente; el cuerpo sí va envuelto, que es lo que fija
-                    la medida de 68ch, el ritmo y las viñetas de gradiente. */}
-                <div className="prose-rich mt-5">{section.body}</div>
-              </section>
-            ))}
+            </div>
           </div>
         </div>
       </section>
 
-      {/* ══ CIERRE ═════════════════════════════════════════════════ */}
-      <section className="defer-paint border-t border-hairline bg-ground-tint">
-        <div className="mx-auto w-full max-w-6xl px-5 py-14 sm:px-8 sm:py-16">
-          <div className="reveal max-w-3xl">
+      {/* ══ CIERRE ═════════════════════════════════════════════════
+          Segunda y última sección con aurora de la página, esta vez a plena
+          intensidad: es una banda corta, con un solo panel de cristal encima y
+          nada que leer durante minutos. */}
+      <section className="defer-paint relative isolate overflow-hidden border-t border-hairline bg-ground-tint">
+        <Backdrop />
+
+        <div className="mx-auto w-full max-w-6xl px-5 py-16 sm:px-8 sm:py-20">
+          <div className="glass glass-strong glass-spec max-w-3xl p-7 sm:p-9">
             <h2 className="text-d2 text-ink">
               {en
                 ? 'Questions about how your data is handled?'
@@ -1119,6 +1230,9 @@ export default async function PrivacyPage({ params }: Props) {
                 : 'Pregúntame directamente. La misma dirección atiende solicitudes ARCO y cualquier otro punto de este aviso.'}
             </p>
 
+            {/* `outline` y `ghost`, nunca el variant `glass`: los dos botones
+                están DENTRO de un panel de cristal, y cristal sobre cristal
+                difumina dos veces, cuesta el doble y se ve peor. */}
             <div className="mt-8 flex flex-wrap items-center gap-3">
               <Button asChild variant="outline">
                 <a href={mailto}>

@@ -14,10 +14,16 @@ import {
 import { Breadcrumbs } from '@/components/layout/breadcrumbs'
 import { Button } from '@/components/ui/button'
 import { Badge } from '@/components/ui/badge'
+import { Carousel } from '@/components/ui/carousel'
+import { ImageSlot } from '@/components/ui/image-slot'
 import { PointerGlow } from '@/components/motion/pointer-glow'
+import { Tilt3D } from '@/components/motion/tilt-3d'
 import { PresenceMap } from '@/components/map/presence-map'
-import { ProjectCover } from '@/components/map/project-cover'
-import { getCompanies, type CompanyKind, type CountryCode } from '@/data/companies'
+import {
+  getCompanies,
+  type CompanyKind,
+  type CountryCode,
+} from '@/data/companies'
 import { NAP, routeUrl } from '@/lib/constants'
 import { formatShortDate } from '@/lib/utils'
 import { generatePageMetadata } from '@/lib/seo'
@@ -34,7 +40,7 @@ interface Props {
 }
 
 /**
- * Orden de los países en la rejilla. México primero: es donde vive la práctica
+ * Orden de los países en la lista. México primero: es donde vive la práctica
  * y donde está la mayoría de los registros. No es alfabético a propósito.
  */
 const COUNTRY_ORDER: readonly CountryCode[] = ['MEX', 'USA']
@@ -67,32 +73,45 @@ const KIND_BADGE: Record<
 }
 
 /**
- * Iniciales para la portada generada por código.
+ * ════════════════════════════════════════════════════════════════
+ * CAPAS DE FONDO
  *
- * Deterministas y sin tabla escrita a mano, porque data/companies.ts está hecho
- * para que se le agreguen clientes sin tocar esta página:
- *   · dos o más palabras → la inicial de las dos primeras
- *     (Master Loyalty Group → ML, Wan Hai Lines → WH, LogiRoute AI → LA)
- *   · una palabra con mayúscula interna → esas dos mayúsculas
- *     (AuraScope → AS)
- *   · una palabra a secas → sus dos primeras letras
- *     (Amazon → AM)
+ * Aurora + grano + cuadrícula. Van juntas y los cuatro <i> son obligatorios:
+ * cada uno es un campo de color distinto (azul de marca, cian, cielo y un
+ * brillo blanco para que la mezcla no se vea plana). Todo se mueve con
+ * `transform`, así que mientras el navegador las pueda componer cuestan cero
+ * recálculos de estilo.
+ *
+ * Y no son adorno: el cristal solo existe si hay algo saturado detrás que
+ * difuminar. Sobre el fondo casi blanco del sitio un panel translúcido se ve
+ * exactamente igual que un panel blanco — que es justo lo que pasaba antes.
+ *
+ * ── CUÁNTAS CABEN, MEDIDO ──
+ * Esta página monta DOS, más la del pie, que ya existe. El límite medido está
+ * en cinco: ahí se agota el presupuesto de capas compuestas, el navegador
+ * devuelve las animaciones al hilo principal y toda animación en bucle empieza
+ * a costar un recálculo de estilo por frame.
+ * Verifica: node scripts/perf-probe.mjs http://localhost:3000/es/proyectos
+ *
+ * `glow` monta el resplandor que sigue al puntero. Solo en la cabecera: cada
+ * instancia añade un listener de `pointermove` y una lectura de geometría por
+ * frame, así que repetirlo en todas las secciones no es gratis.
+ * ════════════════════════════════════════════════════════════════
  */
-function initials(name: string): string {
-  const words = name.split(/[\s\-–—_]+/).filter(Boolean)
-
-  if (words.length > 1) {
-    return words
-      .slice(0, 2)
-      .map((word) => word.charAt(0))
-      .join('')
-      .toUpperCase()
-  }
-
-  const caps = name.match(/[A-ZÁÉÍÓÚÑ]/g)
-  if (caps && caps.length >= 2) return caps.slice(0, 2).join('')
-
-  return name.slice(0, 2).toUpperCase()
+function Backdrop({ glow = false }: { glow?: boolean }) {
+  return (
+    <>
+      <div className="aurora" aria-hidden="true">
+        <i />
+        <i />
+        <i />
+        <i />
+      </div>
+      <div className="grain" aria-hidden="true" />
+      <div className="grid-fade" aria-hidden="true" />
+      {glow ? <PointerGlow /> : null}
+    </>
+  )
 }
 
 export async function generateMetadata({ params }: Props): Promise<Metadata> {
@@ -123,6 +142,7 @@ export default async function ProyectosPage({ params }: Props) {
   const t = await getTranslations('proyectos')
   const ttr = await getTranslations('trayectoria')
   const tc = await getTranslations('common')
+  const tl = await getTranslations('a11y')
 
   const companies = getCompanies(locale)
 
@@ -140,11 +160,25 @@ export default async function ProyectosPage({ params }: Props) {
   const ordered = groups.flatMap((group) => group.items)
 
   /**
-   * La portada de la primera tarjeta es la candidata a LCP de la rejilla, así
-   * que es la única con `priority`. Solo importa cuando exista una captura
-   * real: sin ella la portada es SVG en línea y no hay imagen que precargar.
+   * La portada de la primera tarjeta es la candidata a LCP del carril, así que
+   * es la única con `priority`. Solo importa cuando exista una captura real:
+   * sin ella el hueco es SVG en línea y no hay imagen que precargar.
    */
   const firstSlug = ordered[0]?.slug
+
+  /**
+   * Los tres números del panel de la cabecera. Se cuentan de los datos, no se
+   * escriben a mano: si mañana entra un cliente a data/companies.ts los tres se
+   * mueven solos y ninguno puede quedar desactualizado.
+   */
+  const stats: { value: number; label: string }[] = [
+    { value: companies.length, label: t('statEntries') },
+    { value: groups.length, label: t('statCountries') },
+    {
+      value: companies.filter((company) => company.kind === 'propio').length,
+      label: t('statOwn'),
+    },
+  ]
 
   const pageUrl = routeUrl('proyectos', locale)
   const listId = `${pageUrl}#lista`
@@ -202,15 +236,11 @@ export default async function ProyectosPage({ params }: Props) {
       />
 
       {/* ══ CABECERA + MAPA ════════════════════════════════════════
-          Tres capas decorativas, todas en -z-10 y ninguna captura eventos: la
-          malla, el resplandor que sigue al puntero y la cuadrícula que se
-          desvanece. La malla no es solo adorno aquí: es lo que el panel de
-          cristal del mapa desenfoca, y sin nada detrás el cristal se lee como
+          La aurora no es decoración aquí: es lo que el panel de cristal del
+          mapa difumina, y sin nada de color detrás el cristal se lee como
           plástico translúcido.                                          */}
       <section className="relative isolate overflow-hidden border-b border-hairline">
-        <div className="mesh" aria-hidden="true" />
-        <PointerGlow />
-        <div className="grid-fade" aria-hidden="true" />
+        <Backdrop glow />
 
         <div className="mx-auto w-full max-w-6xl px-5 py-14 sm:px-8 sm:py-16">
           <Breadcrumbs items={[{ label: t('title') }]} />
@@ -237,13 +267,33 @@ export default async function ProyectosPage({ params }: Props) {
               aria-hidden="true"
             />
 
-            <p className="enter step-2 mt-7 text-lead text-ink-muted">
-              {t('subtitle')}
-            </p>
+            {/* Los dos párrafos van DENTRO de cristal, no directos sobre la
+                aurora. Medido: `ink-muted` sobre el campo azul de la aurora cae
+                a 3.83:1 y no pasa; sobre `.glass-strong` mide 5.1:1. Y el texto
+                sobre cristal es SIEMPRE tinta, nunca blanco (1.96:1). */}
+            <div className="glass glass-strong glass-spec enter step-2 mt-7 p-6 sm:p-7">
+              <p className="text-lead text-ink-muted">{t('subtitle')}</p>
+              <p className="mt-4 max-w-[68ch] text-ink-muted">{t('lead')}</p>
 
-            <p className="enter step-3 mt-5 max-w-[68ch] text-ink-muted">
-              {t('lead')}
-            </p>
+              {/* Los tres números, contados de los datos. Un borde los separa
+                  en lugar de otra superficie: un segundo panel aquí dentro
+                  sería cristal sobre cristal. */}
+              <dl className="mt-7 grid grid-cols-3 gap-4 border-t border-hairline pt-6">
+                {stats.map((stat) => (
+                  <div key={stat.label}>
+                    <dt className="text-xs font-bold uppercase tracking-wide text-ink-muted">
+                      {stat.label}
+                    </dt>
+                    <dd
+                      data-numeric=""
+                      className="mt-1 font-display text-d2 text-brand-strong"
+                    >
+                      {stat.value}
+                    </dd>
+                  </div>
+                ))}
+              </dl>
+            </div>
           </div>
 
           {/* El mapa, a todo el ancho del contenedor. Ya es un panel de cristal
@@ -253,10 +303,11 @@ export default async function ProyectosPage({ params }: Props) {
             <PresenceMap locale={locale} />
           </div>
 
-          {/* Nota de transparencia sobre los dos tipos de marcador. Caja opaca y
-              liviana a propósito: el protagonista de esta sección es el cristal
-              del mapa, y una segunda superficie translúcida pegada debajo le
-              quitaría jerarquía además de costar otro repintado. */}
+          {/* Nota de transparencia sobre los dos tipos de marcador. Caja OPACA a
+              propósito: el protagonista de esta sección es el cristal del mapa,
+              y una segunda superficie translúcida pegada debajo le quitaría
+              jerarquía además de costar otro difuminado. Al ser opaca, su
+              `ink-muted` no compite contra la aurora. */}
           <div className="enter step-5 mt-5 flex max-w-[80ch] gap-3 rounded-xl border border-hairline bg-surface-alt p-4 sm:p-5">
             <Info
               className="mt-0.5 size-4 shrink-0 text-sky-ink"
@@ -269,38 +320,49 @@ export default async function ProyectosPage({ params }: Props) {
         </div>
       </section>
 
-      {/* ══ REJILLA POR PAÍS ═══════════════════════════════════════
-          Esta sección NO lleva `.defer-paint`, y es deliberado: aquí viven los
-          anclas #pais-MEX y #pais-USA a los que enlaza el mapa, y saltar a un
-          destino dentro de un contenedor con `content-visibility: auto` depende
-          de una altura estimada. Un salto que cae dos pantallas abajo es peor
-          que pintar esta sección de más.
+      {/* ══ CARRILES POR PAÍS ══════════════════════════════════════
+          Carrusel, no rejilla. El desplazamiento y el imán son nativos
+          (`scroll-snap`): si el JS del componente no corre el carril sigue
+          arrastrándose, y las tarjetas completas están en el HTML del servidor,
+          así que un crawler las lee todas — un carrusel con estado en JS solo
+          expone la primera lámina.
 
-          Tampoco lleva cristal: es una rejilla densa y `backdrop-filter` se
-          paga por tarjeta. `.card` es opaca y no cuesta nada.            */}
-      <section className="border-b border-hairline bg-ground-tint">
+          Esta sección NO lleva `.defer-paint`: aquí viven los anclas #pais-MEX
+          y #pais-USA a los que enlaza el mapa, y aislar el layout de un destino
+          de salto es pedirle al navegador que aterrice en el lugar equivocado.
+      */}
+      <section className="relative isolate overflow-hidden border-b border-hairline">
+        <Backdrop />
+
         <div className="mx-auto w-full max-w-6xl px-5 py-20 sm:px-8 sm:py-24">
           {/* La etiqueta de la sección es un párrafo, no un encabezado: los
               encabezados de este bloque son los de país, y meter un h2 arriba
               los empujaría a h3 sin que la jerarquía real cambiara. */}
           <p className="eyebrow reveal">{t('byCountry')}</p>
 
+          {/* `.eyebrow` ya es una superficie de cristal, así que la nota va en
+              su propio panel y no envolviendo a la píldora. */}
+          <div className="glass glass-strong glass-spec reveal mt-6 max-w-[70ch] px-5 py-4">
+            <p className="text-ink-muted">{t('railNote')}</p>
+          </div>
+
           {groups.map((group, groupIndex) => (
             <div
               key={group.iso}
-              className={groupIndex === 0 ? 'mt-10' : 'mt-16 sm:mt-20'}
+              className={groupIndex === 0 ? 'mt-12' : 'mt-16 sm:mt-20'}
             >
               {/* El id es el destino del enlace del mapa. El desplazamiento lo
-                  resuelve `:target { scroll-margin-top }` de globals.css. */}
+                  resuelve `:target { scroll-margin-top }` de globals.css.
+
+                  El h2 cae DIRECTO sobre la aurora, así que es `text-ink`
+                  (10.2:1) y el contador va en un badge de cristal: como
+                  `text-ink-subtle` suelto medía 3.23:1 y no pasaba. */}
               <h2
                 id={`pais-${group.iso}`}
-                className="reveal flex flex-wrap items-baseline gap-x-4 gap-y-2 text-d2 text-ink"
+                className="reveal flex flex-wrap items-center gap-x-4 gap-y-2 text-d2 text-ink"
               >
                 {COUNTRY_NAME[group.iso][locale]}
-                <span
-                  data-numeric=""
-                  className="text-sm font-semibold text-ink-subtle"
-                >
+                <Badge variant="glass" data-numeric="">
                   {group.items.length}{' '}
                   {group.items.length === 1
                     ? en
@@ -309,55 +371,85 @@ export default async function ProyectosPage({ params }: Props) {
                     : en
                       ? 'entries'
                       : 'registros'}
-                </span>
+                </Badge>
               </h2>
 
-              <ul className="reveal-stagger mt-8 grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
+              <Carousel
+                label={`${tl('projectsRail')} — ${COUNTRY_NAME[group.iso][locale]}`}
+                prevLabel={tl('prevSlide')}
+                nextLabel={tl('nextSlide')}
+                className="mt-6"
+              >
                 {group.items.map((company) => {
                   const kind = KIND_BADGE[company.kind]
                   const KindIcon = kind.icon
 
+                  /**
+                   * `portada.png` es la ruta acordada del hueco. Si algún día
+                   * hay una captura real registrada en data/companies.ts, esa
+                   * gana y el hueco desaparece sin tocar este archivo.
+                   */
+                  const shot = company.shots[0]
+
                   return (
-                    <li key={company.slug}>
+                    /* La inclinación sigue al puntero. `.scene` —la
+                       perspectiva— ya está en el riel del carrusel, así que
+                       todas las tarjetas comparten un mismo punto de fuga, que
+                       es lo que separa un 3D creíble de varias tarjetas girando
+                       cada una por su cuenta. */
+                    <Tilt3D
+                      key={company.slug}
+                      className="w-[19rem] sm:w-[23rem]"
+                    >
                       {/* La tarjeta entera es el enlace: un objetivo de clic
                           grande y un solo destino, en vez de un enlace-título
-                          de 200 px al que hay que apuntar. */}
+                          de 200 px al que hay que apuntar.
+
+                          Superficie OPACA (`.card`) y no cristal, por dos
+                          razones: la etiqueta del hueco de imagen ya es un
+                          panel de cristal, y un `backdrop-filter` dentro de otro
+                          difumina dos veces y se paga doble. Además, sobre la
+                          aurora una superficie opaca es lo que deja leer el
+                          `ink-muted` del cuerpo.
+
+                          Nada de `overflow-hidden` ni `.sheen` en este nodo:
+                          las dos cosas fuerzan el aplanado del 3D y las clases
+                          `.depth-*` de dentro dejarían de levantar. El recorte
+                          y el barrido especular viven en la portada. */}
                       <Link
                         href={{
                           pathname: '/proyectos/[slug]',
                           params: { slug: company.slug },
                         }}
-                        className="card card-hover group flex h-full flex-col overflow-hidden"
+                        className="card lift group flex h-full flex-col p-3 [transform-style:preserve-3d]"
                       >
-                        {/* Portada determinista por slug. Si algún día hay una
-                            captura en `shots`, el componente muestra la foto y
-                            el patrón desaparece: no hay que cambiar nada aquí. */}
-                        <ProjectCover
-                          seed={company.slug}
-                          label={initials(company.name)}
-                          shot={company.shots[0]}
-                          shotAlt={
-                            en
-                              ? `Screenshot of the ${company.name} project`
-                              : `Captura del proyecto ${company.name}`
+                        <ImageSlot
+                          path={
+                            shot ?? `/proyectos/${company.slug}/portada.png`
                           }
+                          filled={Boolean(shot)}
+                          alt={t('coverAlt', { name: company.name })}
+                          hint="Portada del proyecto"
+                          width={1200}
+                          height={750}
                           priority={company.slug === firstSlug}
-                          className="aspect-[16/10] w-full overflow-hidden border-b border-hairline"
+                          sizes="(min-width: 640px) 344px, 280px"
+                          className="sheen depth-1 aspect-[16/10] w-full overflow-hidden rounded-xl shadow-lift-2"
                         />
 
-                        <div className="flex flex-1 flex-col p-6">
-                          <div className="flex flex-wrap items-center gap-2">
+                        <div className="flex flex-1 flex-col p-3 pt-5 [transform-style:preserve-3d]">
+                          <div className="depth-2 flex flex-wrap items-center gap-2">
                             <Badge variant={kind.variant}>
                               <KindIcon className="size-3" aria-hidden="true" />
                               {t(kind.key)}
                             </Badge>
                           </div>
 
-                          <h3 className="mt-4 text-d3 text-ink transition-colors group-hover:text-brand-strong">
+                          <h3 className="depth-2 mt-4 text-d3 text-ink transition-colors duration-300 group-hover:text-brand-strong">
                             {company.name}
                           </h3>
 
-                          <p className="mt-1.5 text-sm font-semibold text-ink-muted">
+                          <p className="depth-1 mt-1.5 text-sm font-semibold text-ink-muted">
                             {company.role}
                           </p>
 
@@ -366,7 +458,7 @@ export default async function ProyectosPage({ params }: Props) {
                               escribe una fecha inventada. */}
                           <p
                             data-numeric=""
-                            className="mt-3 text-sm font-semibold text-brand-strong"
+                            className="depth-1 mt-3 text-sm font-semibold text-brand-strong"
                           >
                             <span className="sr-only">
                               {t('periodLabel')}:{' '}
@@ -401,7 +493,7 @@ export default async function ProyectosPage({ params }: Props) {
                             </div>
                           </div>
 
-                          <span className="mt-6 inline-flex items-center gap-1.5 text-sm font-semibold text-brand-strong">
+                          <span className="depth-2 mt-6 inline-flex items-center gap-1.5 text-sm font-semibold text-brand-strong">
                             {t('viewProject')}
                             <ArrowUpRight
                               className="size-4 transition-transform duration-300 group-hover:-translate-y-1 group-hover:translate-x-1"
@@ -410,12 +502,15 @@ export default async function ProyectosPage({ params }: Props) {
                           </span>
                         </div>
                       </Link>
-                    </li>
+                    </Tilt3D>
                   )
                 })}
-              </ul>
+              </Carousel>
             </div>
           ))}
+
+          {/* Cae directo sobre la aurora: `text-ink`, no `ink-subtle`. */}
+          <p className="reveal mt-10 text-sm text-ink">{tc('dragHint')}</p>
         </div>
       </section>
 

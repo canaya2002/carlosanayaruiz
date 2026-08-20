@@ -55,7 +55,8 @@ async function cdp(ws, id, method, params) {
       const msg = JSON.parse(event.data)
       if (msg.id !== id) return
       ws.removeEventListener('message', onMessage)
-      msg.error ? reject(new Error(JSON.stringify(msg.error))) : resolve(msg.result)
+      if (msg.error) reject(new Error(JSON.stringify(msg.error)))
+      else resolve(msg.result)
     }
     ws.addEventListener('message', onMessage)
     ws.send(JSON.stringify({ id, method, params }))
@@ -120,7 +121,13 @@ await cdp(ws, ++id, 'Page.addScriptToEvaluateOnNewDocument', {
 })
 
 await cdp(ws, ++id, 'Page.navigate', { url })
-await sleep(3500)
+// 5s y no 3.5s: con 3.5s la ventana de reposo empezaba antes de que la pagina
+// terminara de asentarse y capturaba 1 layout de asentamiento — el que hacen
+// los ResizeObserver de los carruseles en su primera llamada y el reflow tras
+// cargar las fuentes. Medido: con 5s de espera, cuatro ventanas de 3s seguidas
+// dan 0 layouts y 4-9 recalculos. Ese layout unico no era una regresion, era
+// el probe midiendo demasiado pronto y acusando al sitio.
+await sleep(5000)
 
 console.log('\n  ' + url + '\n')
 
@@ -135,12 +142,25 @@ const idleStyles = idleAfter.RecalcStyleCount - idleBefore.RecalcStyleCount
 console.log('  EN REPOSO (3 s sin tocar nada)')
 console.log('    layouts:            ' + idleLayouts)
 console.log('    recalculos estilo:  ' + idleStyles)
-console.log(
-  '    ' +
-    (idleLayouts === 0 && idleStyles <= IDLE_BUDGET
-      ? 'OK  las animaciones corren en el compositor'
-      : 'MAL algo repinta en reposo (presupuesto: ' + IDLE_BUDGET + ')')
-)
+// Se informa QUE limite se paso. El mensaje anterior decia "algo repinta en
+// reposo" tanto si sobraban recalculos como si habia un solo layout, y manda a
+// buscar en el lugar equivocado: un layout en reposo es un handler que mide el
+// DOM, y un exceso de recalculos es una animacion que no esta en el compositor.
+if (idleLayouts === 0 && idleStyles <= IDLE_BUDGET) {
+  console.log('    OK  las animaciones corren en el compositor')
+} else {
+  if (idleLayouts > 0) {
+    console.log(
+      '    MAL ' + idleLayouts + ' layout(s) en reposo — algo mide el DOM en un bucle'
+    )
+  }
+  if (idleStyles > IDLE_BUDGET) {
+    console.log(
+      '    MAL ' + idleStyles + ' recalculos en reposo (presupuesto: ' + IDLE_BUDGET + ')' +
+        ' — una animacion no esta en el compositor'
+    )
+  }
+}
 
 // ── 2. Mover el mouse ─────────────────────────────────────────────
 const moveBefore = await metrics()

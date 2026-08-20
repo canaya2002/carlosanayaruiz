@@ -16,13 +16,23 @@
     "menu": "Menu"
   },
   "a11y": {
+    "experienceRail": "Experience carousel",
     "skipToContent": "Skip to content",
     "mainNav": "Main navigation",
     "mobileMenu": "Mobile menu",
     "openSubmenu": "open submenu",
     "breadcrumb": "Breadcrumb",
     "socialLinks": "Profiles and social links",
-    "changeLanguage": "Change language"
+    "changeLanguage": "Change language",
+    "prevSlide": "Previous",
+    "nextSlide": "Next",
+    "servicesRail": "Services carousel",
+    "stackRail": "Technical stack carousel",
+    "scopeRail": "Service scope carousel",
+    "projectsRail": "Projects carousel",
+    "galleryRail": "Screenshots carousel",
+    "awardsRail": "Awards and recognitions carousel",
+    "certsRail": "Certifications carousel"
   },
   "language": {
     "switchTo": "Español",
@@ -43,7 +53,9 @@
     "ctaServices": "View services",
     "ctaContact": "Book a call",
     "ctaAbout": "See my background",
-    "headlineAccent": "and ChatGPT cites you."
+    "headlineAccent": "and ChatGPT cites you.",
+    "shotAlt": "Screenshot of a Core Web Vitals panel",
+    "credentialsLabel": "Verifiable credentials"
   },
   "trust": {
     "yearsExp": "4+ years of experience",
@@ -51,7 +63,17 @@
     "tecMty": "Tec de Monterrey",
     "companies": "Amazon · Master Loyalty Group · Wan Hai Lines",
     "companiesLabel": "Previously at",
-    "engineerLabel": "Computer Science Engineer"
+    "engineerLabel": "Computer Science Engineer",
+    "logoAlt": "{company} logo",
+    "metrics": {
+      "yearsLabel": "Years of experience",
+      "certifiedLabel": "Certified",
+      "pmpIssuer": "Project Management Institute",
+      "toeflLabel": "TOEFL iBT",
+      "toeflHint": "English C1",
+      "cityLabel": "Mexico City",
+      "cityHint": "Remote worldwide"
+    }
   },
   "audience": {
     "title": "Who I work with",
@@ -77,7 +99,8 @@
       "title": "Projects and companies",
       "desc": "The roles I have held and the projects I built on my own, each with its own page: what was done, on which stack, and over what period.",
       "cta": "See the projects",
-      "coverLabel": "Projects"
+      "coverLabel": "Projects",
+      "coverAlt": "Cover image for the projects section"
     },
     "awards": {
       "title": "Awards",
@@ -108,7 +131,12 @@
     "stackLabel": "Stack",
     "periodLabel": "Period",
     "ctaTitle": "Want the next entry on this list to be yours?",
-    "ctaLead": "Tell me what you are building or what broke. I reply within 24 to 48 business hours with a first read on where I would start."
+    "ctaLead": "Tell me what you are building or what broke. I reply within 24 to 48 business hours with a first read on where I would start.",
+    "railNote": "Drag the rail or use the arrows. Every card opens the full project page, with what I did and the stack it actually used.",
+    "coverAlt": "Cover image for the {name} project",
+    "statEntries": "Entries in total",
+    "statCountries": "Countries",
+    "statOwn": "Own projects"
   },
   "services": {
     "eyebrow": "Services",
@@ -196,6 +224,9 @@
     }
   },
   "about": {
+    "workingImageAlt": "Carlos Anaya Ruiz at work",
+    "setupImageAlt": "The workspace of Carlos Anaya Ruiz",
+    "awardImageAlt": "Image for the {title} recognition",
     "title": "About",
     "subtitle": "Computer science engineer. Technical SEO consultant. PMP certified.",
     "lead": "I studied Computer Science Engineering at Tecnológico de Monterrey, with a specialization in advanced AI for data science. Four years on, I do an uncommon mix: I write the code, and I'm also accountable for the organic traffic that code produces.",
@@ -288,6 +319,8 @@
     "orTry": "Or try:"
   },
   "cv": {
+    "certImageAlt": "Certificate document for {name}",
+    "awardImageAlt": "Image for the {title} recognition",
     "title": "CV",
     "eyebrow": "Curriculum vitae",
     "lead": "The whole track record on one page: education, the three roles I have held and what I did in each, certifications, awards, stack and languages. It all comes from the same data as the rest of the site, so no version of it can go stale.",
@@ -352,7 +385,9 @@
     "backToAll": "All projects",
     "ctaTitle": "Working on something like this?",
     "ctaLead": "Tell me what is happening with your site and I will tell you where it resembles this one, what can be measured, and where I would start.",
-    "ctaButton": "Talk about yours"
+    "ctaButton": "Talk about yours",
+    "galleryLead": "Three fixed positions per project: the main screenshot, a detail and the result. While a file does not exist yet, the placeholder names the exact path it goes to.",
+    "logoAlt": "{name} logo"
   },
   "common": {
     "readMore": "Read more",
@@ -361,7 +396,8 @@
     "backToHome": "Back to home",
     "learnMore": "Learn more",
     "relatedServices": "Related services",
-    "required": "required"
+    "required": "required",
+    "dragHint": "Drag or use the arrows"
   },
   "premios": {
     "crumb": "Awards",
@@ -397,7 +433,10 @@
     "cvCta": "See the CV",
     "ctaTitle": "Want someone who documents what he claims?",
     "ctaLead": "Describe the site and what changed. I reply within 24 to 48 business hours with a first read on what is likely going on.",
-    "ctaButton": "Write to me"
+    "ctaButton": "Write to me",
+    "railEyebrow": "At a glance",
+    "railTitle": "The three of them, as cards",
+    "photoAlt": "Photo of the recognition: {title}"
   },
   "certificaciones": {
     "title": "Certifications",
@@ -436,6 +475,20 @@
     "moreTitle": "The rest of what you can check",
     "ctaTitle": "Missing a document?",
     "ctaLead": "If you need a credential that is not in the folder — a letter, a direct verification with the issuer — ask for it and I will send it.",
-    "ctaCta": "Write to me"
+    "ctaCta": "Write to me",
+    "diplomaAlt": "{name} diploma",
+    "folderShotAlt": "Screenshot of the certificate folder on Google Drive",
+    "cefrLabel": "CEFR level"
+  },
+  "stack": {
+    "eyebrow": "Stack",
+    "title": "What I build with",
+    "subtitle": "The tools I work with, grouped by area. Drag to see every category."
+  },
+  "homeCta": {
+    "title": "Tell me where the traffic is leaking.",
+    "lead": "Describe the site and what changed. I reply within 24 to 48 business hours with a first read on what is likely going on.",
+    "alsoOn": "Also on",
+    "and": "and"
   }
 }

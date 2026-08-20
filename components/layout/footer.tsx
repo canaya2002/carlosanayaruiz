@@ -68,15 +68,67 @@ export async function Footer() {
     ? `${NAP.localityEn}, ${NAP.countryNameEn}`
     : `${NAP.locality}, ${NAP.countryName}`
 
-  /** Enlaces de texto del pie: un solo vocabulario para las tres columnas. */
+  /**
+   * Enlaces de texto del pie: un solo vocabulario para las tres columnas.
+   *
+   * ── POR QUÉ SON `text-ink` Y NO `text-ink-muted` ──
+   * Porque ahora hay una aurora detrás y estos enlaces caen DIRECTO sobre ella.
+   * La regla del sistema ("texto sin cristal de por medio solo puede ser ink")
+   * no es un gusto: medí el peor caso real, que es el solape de los tres campos
+   * de color en su pico. Ahí ink-muted da 2.98:1 y sigue sin pasar (4.47) aun
+   * bajando la aurora al 25% de opacidad, porque los campos se acumulan. `ink`
+   * da 7.94 en ese mismo punto. La tabla completa está en el bloque de la
+   * aurora, unas líneas más abajo. La jerarquía la hacen el tamaño y el peso,
+   * que es lo que el contraste permite aquí.
+   *
+   * El hover es una píldora OPACA (`bg-surface`), no un lavado translúcido: así
+   * `brand-strong` mide sus 6.5:1 contra blanco pase lo que pase detrás, en vez
+   * de depender de qué campo de aurora quedó bajo el cursor.
+   *
+   * Lleva `.press` y NO `transition-colors`: `.press` está escrita fuera de
+   * toda `@layer` en globals.css, así que su `transition` le gana a cualquier
+   * utilidad y dejaría la otra clase muerta. Lo que se anima es el fondo y el
+   * hundido al pulsar; el color cambia de golpe, que en un control es lo
+   * correcto.
+   */
   const linkClass =
-    'inline-flex min-h-10 items-center text-sm text-ink-muted transition-colors hover:text-brand-strong'
+    'press -mx-2 inline-flex min-h-10 items-center rounded-lg px-2 text-sm text-ink hover:bg-surface hover:text-brand-strong hover:shadow-lift-1'
 
   return (
     <footer className="relative isolate overflow-hidden border-t border-hairline bg-ground-tint">
-      {/* Dos capas decorativas: la cuadrícula que se desvanece y la línea de
-          gradiente del borde superior. Ninguna captura eventos y ninguna tiene
-          alto propio, así que el pie no cambia de tamaño por ellas. */}
+      {/* ══ CAPAS DE FONDO ═══════════════════════════════════════════
+          El pie tiene aurora propia. No es adorno: sin nada de color detrás, el
+          panel de cristal del bloque de contacto se ve como un rectángulo
+          blanco sobre un fondo casi blanco — el cristal existe solo si hay algo
+          que difuminar.
+
+          ⚠ VA A PLENA INTENSIDAD, Y EL PRECIO ES QUE TODO EL TEXTO QUE CAE
+          DIRECTO SOBRE ELLA ES `text-ink`. Antes de fijarlo así probé bajarle la
+          opacidad para poder conservar `text-ink-muted` en los enlaces, y NO
+          FUNCIONA: el peor caso no es un campo suelto sino el solape de los tres
+          campos de color, que se acumulan. Medido sobre --ground-tint con los
+          tres en su pico:
+
+            opacidad  aurora    ink    ink-muted
+              100%    #53c2f0   7.94     2.98
+               45%    #99d7f6  10.30     3.86
+               25%    #bce3fa  11.91     4.47   ← sigue sin pasar
+
+          O sea: no hay opacidad útil que salve a ink-muted. Los cuatro campos se
+          quedan a plena fuerza —que es lo que hace visible el cristal del panel
+          de contacto— y el texto secundario del pie o es `ink`, o vive dentro de
+          un panel de cristal. Ese es el reparto de abajo.
+
+          No lleva <PointerGlow />: el pie está en TODAS las páginas y casi todas
+          ya montan uno en su cabecera. Dos escuchas de `pointermove` en cada
+          página para un resplandor que vive bajo el pliegue no se paga. */}
+      <div className="aurora" aria-hidden="true">
+        <i />
+        <i />
+        <i />
+        <i />
+      </div>
+      <div className="grain" aria-hidden="true" />
       <div className="grid-fade" aria-hidden="true" />
       <span
         aria-hidden="true"
@@ -84,16 +136,31 @@ export async function Footer() {
       />
 
       <div className="mx-auto w-full max-w-6xl px-5 py-16 sm:px-8 sm:py-20">
+        {/* ⚠ AQUÍ NO VA `.reveal-stagger`, Y NO ES OLVIDO. Esa clase anima a
+            TODOS los hijos directos, y el cuarto es el panel de cristal:
+            desplazar una superficie con `backdrop-filter` mientras se hace
+            scroll obliga al navegador a volver a muestrear y difuminar lo que
+            hay detrás en cada frame, que es exactamente el gasto que hizo que
+            este sitio se sintiera lento. El movimiento del pie lo pone la
+            aurora, que solo mueve capas ya rasterizadas. */}
         <div className="grid gap-12 sm:grid-cols-2 lg:grid-cols-[minmax(0,1.6fr)_repeat(3,minmax(0,1fr))] lg:gap-10">
           {/* ══ IDENTIDAD ══════════════════════════════════════════
               Misma marca que el header. Está duplicada a propósito: el header es
               client component y este es server, y un componente compartido
               arrastraría uno de los dos al lado equivocado de la frontera. */}
           <div>
-            <Link href="/" className="group inline-flex items-center gap-2.5">
+            <Link
+              href="/"
+              className="group press -mx-2 inline-flex items-center gap-2.5 rounded-2xl px-2 py-1"
+            >
               <span
                 aria-hidden="true"
-                className="grad-fill grid size-9 place-items-center rounded-xl font-display text-sm font-bold shadow-glow-brand transition-transform duration-300 group-hover:scale-110"
+                // `rotate` y `scale`, no `transform`: en Tailwind v4 las
+                // utilidades `rotate-*` y `scale-*` escriben esas propiedades
+                // individuales, así que una `transition-property` que dijera
+                // `transform` no animaría ninguna de las dos — el cuadro
+                // saltaba de golpe.
+                className="sheen grad-fill grid size-9 place-items-center rounded-xl font-display text-sm font-bold shadow-glow-brand transition-[rotate,scale,box-shadow] duration-300 group-hover:-rotate-6 group-hover:scale-110 group-hover:shadow-glow-cyan"
               >
                 CA
               </span>
@@ -102,14 +169,25 @@ export async function Footer() {
               </span>
             </Link>
 
-            <p className="mt-5 max-w-sm text-sm leading-relaxed text-ink-muted">
+            {/* `text-ink`, no `text-ink-muted`: cae directo sobre la aurora.
+                Ver la tabla de arriba. */}
+            <p className="mt-5 max-w-sm text-sm leading-relaxed text-ink">
               {t('description')}
             </p>
 
             {/* rel="me" en los dos perfiles que sí pertenecen a la persona es lo
                 que los amarra al nodo Person del grafo del layout. Fiverr es un
                 listado de marketplace, no una identidad: nofollow y sin
-                rel="me". */}
+                rel="me".
+
+                Los tres chips usan `.lift` en lugar de una transición a mano, y
+                no es un cambio cosmético: la versión anterior declaraba
+                `transition-[transform,...]` y movía el chip con
+                `hover:-translate-y-0.5`, que en Tailwind v4 escribe la propiedad
+                `translate` — la transición nombraba una propiedad que nadie
+                tocaba, así que el salto era instantáneo. `.lift` sube, hunde al
+                pulsar y sube la sombra al segundo plano, todo desde globals.css
+                y con las curvas del sistema. */}
             <ul
               aria-label={ta('socialLinks')}
               className="mt-7 flex flex-wrap items-center gap-2"
@@ -120,7 +198,7 @@ export async function Footer() {
                   target="_blank"
                   rel="me noopener noreferrer"
                   aria-label={`${NAP.name} · LinkedIn`}
-                  className="inline-flex size-11 items-center justify-center rounded-xl border border-hairline bg-surface text-ink-muted shadow-lift-1 transition-[transform,color,box-shadow] duration-300 hover:-translate-y-0.5 hover:text-brand-strong hover:shadow-lift-2"
+                  className="lift inline-flex size-11 items-center justify-center rounded-xl border border-hairline bg-surface text-ink-muted shadow-lift-1 hover:text-brand-strong"
                 >
                   <Linkedin className="size-5" aria-hidden="true" />
                 </a>
@@ -131,7 +209,7 @@ export async function Footer() {
                   target="_blank"
                   rel="me noopener noreferrer"
                   aria-label={`${NAP.name} · GitHub`}
-                  className="inline-flex size-11 items-center justify-center rounded-xl border border-hairline bg-surface text-ink-muted shadow-lift-1 transition-[transform,color,box-shadow] duration-300 hover:-translate-y-0.5 hover:text-brand-strong hover:shadow-lift-2"
+                  className="lift inline-flex size-11 items-center justify-center rounded-xl border border-hairline bg-surface text-ink-muted shadow-lift-1 hover:text-brand-strong"
                 >
                   <Github className="size-5" aria-hidden="true" />
                 </a>
@@ -141,20 +219,20 @@ export async function Footer() {
                   href={SOCIAL_LINKS.fiverr}
                   target="_blank"
                   rel="nofollow noopener noreferrer"
-                  className="group inline-flex h-11 items-center gap-1.5 rounded-xl border border-hairline bg-surface px-3.5 text-sm font-medium text-ink-muted shadow-lift-1 transition-[transform,color,box-shadow] duration-300 hover:-translate-y-0.5 hover:text-brand-strong hover:shadow-lift-2"
+                  className="group lift sheen inline-flex h-11 items-center gap-1.5 rounded-xl border border-hairline bg-surface px-3.5 text-sm font-medium text-ink-muted shadow-lift-1 hover:text-brand-strong"
                 >
                   Fiverr
                   <ArrowUpRight
-                    className="size-3.5 transition-transform duration-300 group-hover:-translate-y-0.5 group-hover:translate-x-0.5"
+                    className="size-3.5 transition-[translate] duration-300 group-hover:-translate-y-0.5 group-hover:translate-x-0.5"
                     aria-hidden="true"
                   />
                 </a>
               </li>
             </ul>
 
-            <p className="mt-7 max-w-sm text-sm text-ink-subtle">
-              {t('builtWith')}
-            </p>
+            {/* Igual: sobre la aurora, `ink`. Este párrafo era `ink-subtle`, que
+                en el peor caso mide 2.51:1 — el pie ya no usa ese token. */}
+            <p className="mt-7 max-w-sm text-sm text-ink">{t('builtWith')}</p>
           </div>
 
           {/* ══ SERVICIOS ══════════════════════════════════════════ */}
@@ -191,13 +269,31 @@ export async function Footer() {
               columnas son listas de enlaces y van sin fondo — doce superficies
               con backdrop-filter costarían el triple por verse peor.
 
+              ⚠ ES `.glass-strong`, NO `.glass`, Y LA RAZÓN ESTÁ MEDIDA. El
+              chequeo de paleta compone el cristal sobre UN campo de aurora
+              (#bbcef8). Detrás de este panel puede haber DOS o TRES solapados,
+              que es más oscuro (#53c2f0 en el límite). Sobre ese peor caso:
+
+                            ink    ink-muted   ink-subtle
+                .glass     12.37     4.64         3.91
+                .glass-str 13.43     5.03         4.24
+
+              De ahí salen dos decisiones: el panel es `.glass-strong` (4.64 es
+              pasar por 3%, y la aurora se mueve), y adentro NO hay ink-subtle
+              —ni siquiera en el renglón del tiempo de respuesta— porque ni el
+              cristal fuerte lo salva cuando se solapan los campos.
+
               No anida cristal: el header es la otra superficie de cristal del
-              sitio y está en el otro extremo del documento.
+              sitio y está en el otro extremo del documento. Tampoco se mueve al
+              pasar el mouse — mover un panel con `backdrop-filter` obliga a
+              volver a muestrear todo lo que hay detrás en cada frame, que es
+              exactamente el tipo de gasto que hizo lento a este sitio. El
+              movimiento del pie lo pone la aurora que está detrás.
 
               `relative` en el contenido porque el reflejo de `.glass-spec` es un
               ::before absoluto y solo los hijos posicionados se pintan encima:
               sin eso, un blanco al 50% caería sobre el nombre y el correo. */}
-          <div className="glass glass-spec p-4 sm:p-5">
+          <div className="glass glass-strong glass-spec p-4 sm:p-5">
             <div className="relative">
               <FooterHeading>{t('contactTitle')}</FooterHeading>
 
@@ -248,7 +344,10 @@ export async function Footer() {
                 </p>
                 {/* El punto que late es el mismo indicador de disponibilidad de la
                     portada; aquí acompaña al tiempo de respuesta. */}
-                <p className="flex items-center gap-2.5 pt-1 text-ink-subtle">
+                {/* `text-ink-muted`, no `text-ink-subtle`: ver la tabla del
+                    panel. Con dos campos de aurora solapados detrás, ink-subtle
+                    se queda en 4.24 incluso sobre cristal fuerte. */}
+                <p className="flex items-center gap-2.5 pt-1 text-ink-muted">
                   <span className="ping" aria-hidden="true" />
                   {tc('responseTime')}
                 </p>
@@ -257,9 +356,11 @@ export async function Footer() {
           </div>
         </div>
 
-        {/* ══ BARRA INFERIOR ═══════════════════════════════════════ */}
+        {/* ══ BARRA INFERIOR ═══════════════════════════════════════
+            `text-ink` por lo mismo que el párrafo de "hecho con": este renglón
+            va directo sobre la aurora. */}
         <div className="mt-14 flex flex-col gap-4 border-t border-hairline pt-8 sm:mt-16 sm:flex-row sm:items-center sm:justify-between">
-          <p className="text-sm text-ink-subtle">
+          <p className="text-sm text-ink">
             &copy; <span data-numeric="">{year}</span> {NAP.name}.{' '}
             {t('allRightsReserved')}
           </p>

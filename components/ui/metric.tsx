@@ -8,6 +8,24 @@ export interface MetricProps extends Omit<React.HTMLAttributes<HTMLDivElement>, 
   label: React.ReactNode
   /** Calificador opcional: el periodo, la fuente, el matiz. */
   hint?: React.ReactNode
+  /**
+   * Flotación permanente del bloque completo. Para métricas que viven sobre la
+   * aurora en un héroe o junto a una composición 3D, donde un dato absolutamente
+   * quieto se ve pegado al papel.
+   *
+   * Usa `.float-slow` (9 s) y no `.float` (6 s) a propósito: una cifra que
+   * cabecea rápido se lee como inestable, y lo que se busca es que respire.
+   *
+   * ⚠ Una fila de métricas con `float` flota EN SINCRONÍA, que es el efecto
+   * exacto que delata el truco. Desfásalas con las clases de escalonado de
+   * globals.css, que son puro `animation-delay`:
+   *
+   *   <Metric float className="step-2" … />
+   *   <Metric float className="step-4" … />
+   *
+   * Se apaga solo con `prefers-reduced-motion`, desde globals.css.
+   */
+  float?: boolean
 }
 
 /**
@@ -29,10 +47,21 @@ export interface MetricProps extends Omit<React.HTMLAttributes<HTMLDivElement>, 
  * `data-numeric` activa las cifras tabulares de globals.css, así una fila de
  * métricas alinea dígito por dígito. Sigue en el <span> de la cifra, no en el
  * contenedor: es lo único que lleva números.
+ *
+ * ── DÓNDE PUEDE VIVIR ──
+ * El `hint` es `text-ink-subtle`, que mide 5.0:1 sobre el fondo y 4.30:1 sobre
+ * el cristal por defecto. Así que un Metric CON hint dentro de un panel de
+ * cristal exige `<GlassPanel strong>` (4.54:1). Sin hint, cualquiera de los dos
+ * sirve. Directamente sobre la aurora, solo el `label` (que es `--ink`) está a
+ * salvo: el hint ahí no pasa, así que va en panel.
  */
-export function Metric({ value, label, hint, className, ...props }: MetricProps) {
+export function Metric({ value, label, hint, float = false, className, ...props }: MetricProps) {
   return (
-    <div data-slot="metric" className={cn('flex flex-col', className)} {...props}>
+    <div
+      data-slot="metric"
+      className={cn('flex flex-col', float && 'float-slow', className)}
+      {...props}
+    >
       {/* Antes esta barra era un <hr> con la regla de acento del sistema
           anterior. Esa clase ya no existe, y un <hr> aquí tampoco significaba
           nada: la barra es decoración, no una separación de contenido. Por eso

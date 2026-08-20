@@ -15,3 +15,12 @@ npm-debug.log*
 .vercel
 *.tsbuildinfo
 next-env.d.ts
+
+# Capturas de scripts/shoot.mjs. Se escriben en la raíz porque son de un solo
+# uso — se miran y se tiran. Versionarlas engorda el repo con megabytes que
+# quedan obsoletos en el siguiente cambio de diseño.
+/*-desktop.png
+/*-tablet.png
+/*-movil.png
+/*-hero.png
+/*-nav.png
