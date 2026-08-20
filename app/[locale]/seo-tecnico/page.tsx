@@ -680,7 +680,25 @@ export default async function SeoTecnicoPage({ params }: Props) {
 
         <div className="mx-auto w-full max-w-6xl px-5 py-20 sm:px-8 sm:py-24">
           <div className="grid gap-12 lg:grid-cols-[minmax(0,22rem)_minmax(0,1fr)] lg:gap-20">
-            <div className="reveal">
+            {/* NO lleva `reveal` a proposito. Este bloque y su envoltorio eran
+                los dos unicos elementos del sitio con una animacion view() que
+                costaba ~60 recalculos de estilo por segundo en reposo, para
+                siempre: 181 en 3 s contra un presupuesto de 20, en las cuatro
+                paginas de servicio. Cancelar cualquiera de los dos por separado
+                bajaba a ~9, asi que hacian falta los dos.
+
+                Lo que NO es la causa, comprobado: no es el numero de animaciones
+                (inyecte 12 extra en /es hasta 50 corriendo y no se movio de 9),
+                no es anidamiento (0 anidados en el DOM de las 16 paginas: son
+                las dos columnas de un grid, y por eso comparten alto y top),
+                y no es el estado finished/progreso 1 fuera de pantalla (/es y
+                /es/proyectos tienen 4 y 5 de esos y estan sanas). El mecanismo
+                exacto sigue sin cerrar: esto es una mitigacion medida, no una
+                explicacion.
+
+                El FAQ entra igualmente: hereda la coreografia de primer pintado
+                de la seccion. Verifica con: npm run check:perf */}
+            <div>
               <p className="eyebrow">FAQ</p>
               <h2 className="mt-5 text-d1 text-ink">{t('faqTitle')}</h2>
             </div>
@@ -692,7 +710,7 @@ export default async function SeoTecnicoPage({ params }: Props) {
                 es lo más caro del sistema y las respuestas ya se separan con su
                 propia línea. El `name` compartido da el acordeón exclusivo
                 —abrir una cierra la anterior— de forma nativa, sin JS. */}
-            <div className="glass glass-spec reveal px-5 sm:px-7">
+            <div className="glass glass-spec px-5 sm:px-7">
               {service.faq.map((faq) => (
                 <Disclosure
                   key={faq.question}
