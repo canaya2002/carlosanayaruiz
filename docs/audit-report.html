@@ -1,0 +1,886 @@
+<title>Indexation Debt</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,400;12..96,600;12..96,800&family=IBM+Plex+Sans:wght@400;500;600&family=IBM+Plex+Mono:wght@400;500;600&display=swap">
+
+<style>
+  /* ═══════════════════════════════════════════════════════════
+     Palette — cool green-cast neutrals, three semantic signals.
+     Deliberately not the audited site's warm paper: this is the
+     instrument, not the subject.
+     ═══════════════════════════════════════════════════════════ */
+  :root {
+    --ground: #f6f8f7;
+    --surface: #ffffff;
+    --sunken: #eef1f0;
+    --ink: #141d1c;
+    --muted: #576664;
+    --faint: #7c8a88;
+    --rule: #dce2e0;
+    --rule-strong: #c3ccca;
+
+    --verified: #0c6b5b;
+    --verified-wash: #e4f0ed;
+    --yours: #9c5a08;
+    --yours-wash: #f7eee2;
+    --broken: #8c2b2b;
+    --broken-wash: #f6e9e9;
+
+    --display: "Bricolage Grotesque", ui-sans-serif, system-ui, sans-serif;
+    --body: "IBM Plex Sans", ui-sans-serif, system-ui, sans-serif;
+    --mono: "IBM Plex Mono", ui-monospace, "SF Mono", Menlo, monospace;
+
+    --measure: 74ch;
+    --shell: 1140px;
+  }
+
+  :root:not([data-theme="light"]) {
+    @media (prefers-color-scheme: dark) {
+      --ground: #0d1413;
+      --surface: #131c1b;
+      --sunken: #101817;
+      --ink: #e8ecea;
+      --muted: #8b9a97;
+      --faint: #6d7b79;
+      --rule: #24302e;
+      --rule-strong: #35423f;
+
+      --verified: #3fbfa4;
+      --verified-wash: #12302a;
+      --yours: #d59340;
+      --yours-wash: #33260f;
+      --broken: #d96a6a;
+      --broken-wash: #331919;
+    }
+  }
+
+  :root[data-theme="dark"] {
+    --ground: #0d1413;
+    --surface: #131c1b;
+    --sunken: #101817;
+    --ink: #e8ecea;
+    --muted: #8b9a97;
+    --faint: #6d7b79;
+    --rule: #24302e;
+    --rule-strong: #35423f;
+
+    --verified: #3fbfa4;
+    --verified-wash: #12302a;
+    --yours: #d59340;
+    --yours-wash: #33260f;
+    --broken: #d96a6a;
+    --broken-wash: #331919;
+  }
+
+  * { box-sizing: border-box; }
+
+  body {
+    margin: 0;
+    background: var(--ground);
+    color: var(--ink);
+    font-family: var(--body);
+    font-size: 16.5px;
+    line-height: 1.6;
+    -webkit-font-smoothing: antialiased;
+  }
+
+  .shell {
+    max-width: var(--shell);
+    margin: 0 auto;
+    padding: 0 clamp(1.25rem, 4vw, 3.5rem);
+  }
+
+  .prose { max-width: var(--measure); }
+
+  h1, h2, h3 {
+    font-family: var(--display);
+    font-weight: 800;
+    text-wrap: balance;
+    margin: 0;
+    letter-spacing: -0.02em;
+  }
+
+  h1 { font-size: clamp(2.5rem, 1.6rem + 3.6vw, 4.5rem); line-height: 1.0; }
+  h2 { font-size: clamp(1.6rem, 1.3rem + 1.2vw, 2.25rem); line-height: 1.12; }
+  h3 { font-size: 1.1rem; font-weight: 600; line-height: 1.3; letter-spacing: -0.01em; }
+
+  p { margin: 0; }
+  .stack > * + * { margin-top: 1.1em; }
+
+  a { color: var(--verified); text-decoration: underline; text-underline-offset: 0.18em; }
+  a:focus-visible, button:focus-visible {
+    outline: 2px solid var(--verified);
+    outline-offset: 3px;
+    border-radius: 2px;
+  }
+
+  code, .num, .mono { font-family: var(--mono); font-variant-numeric: tabular-nums; }
+  code {
+    font-size: 0.86em;
+    background: var(--sunken);
+    padding: 0.12em 0.36em;
+    border-radius: 3px;
+  }
+
+  .eyebrow {
+    font-family: var(--mono);
+    font-size: 0.72rem;
+    font-weight: 500;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+    color: var(--faint);
+    display: block;
+  }
+
+  /* ── Masthead ─────────────────────────────────────────── */
+  .masthead {
+    border-bottom: 1px solid var(--rule);
+    padding: clamp(3rem, 8vw, 6rem) 0 clamp(2rem, 5vw, 3.5rem);
+  }
+  .masthead .lede {
+    font-size: clamp(1.1rem, 1rem + 0.5vw, 1.35rem);
+    color: var(--muted);
+    margin-top: 1.6rem;
+    max-width: 62ch;
+    line-height: 1.5;
+  }
+  .meta-row {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.5rem 2.25rem;
+    margin-top: 2.5rem;
+    font-family: var(--mono);
+    font-size: 0.8rem;
+    color: var(--faint);
+  }
+  .meta-row b { color: var(--muted); font-weight: 500; }
+
+  /* ── Verdict strip ────────────────────────────────────── */
+  .verdict {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+    gap: 1px;
+    background: var(--rule);
+    border: 1px solid var(--rule);
+    margin: clamp(2.5rem, 6vw, 4rem) 0;
+  }
+  .verdict div { background: var(--surface); padding: 1.25rem 1.35rem; }
+  .verdict .v { font-family: var(--mono); font-size: 1.6rem; font-weight: 600; line-height: 1; font-variant-numeric: tabular-nums; }
+  .verdict .k { font-size: 0.78rem; color: var(--muted); margin-top: 0.5rem; line-height: 1.35; }
+  .verdict .ok .v { color: var(--verified); }
+
+  section { padding: clamp(2.75rem, 6vw, 4.5rem) 0; border-bottom: 1px solid var(--rule); }
+  section:last-of-type { border-bottom: 0; }
+  .sec-head { margin-bottom: 2.25rem; }
+  .sec-head h2 { margin-top: 0.7rem; }
+  .sec-head p { color: var(--muted); margin-top: 0.9rem; max-width: var(--measure); }
+
+  /* ── Ledger ───────────────────────────────────────────── */
+  .ledger { display: flex; flex-direction: column; gap: 1px; background: var(--rule); border-block: 1px solid var(--rule); }
+  .row {
+    background: var(--surface);
+    display: grid;
+    grid-template-columns: 4px minmax(0, 1fr) minmax(0, 15rem);
+    gap: 0 1.5rem;
+    align-items: start;
+  }
+  .row > .stripe { background: var(--rule-strong); align-self: stretch; }
+  .row.fixed  > .stripe { background: var(--verified); }
+  .row.flag   > .stripe { background: var(--yours); }
+  .row .body { padding: 1.3rem 0 1.35rem 1.35rem; }
+  .row .measure { padding: 1.3rem 1.35rem 1.35rem 0; }
+  .row h3 { margin-bottom: 0.45rem; }
+  .row p { font-size: 0.93rem; color: var(--muted); }
+  .row p + p { margin-top: 0.6rem; }
+
+  .ba { font-family: var(--mono); font-size: 0.83rem; display: flex; flex-direction: column; gap: 0.4rem; }
+  .ba span { display: flex; gap: 0.6rem; align-items: baseline; }
+  .ba .lbl { color: var(--faint); min-width: 3.2rem; }
+  .ba .was { color: var(--broken); text-decoration: line-through; text-decoration-thickness: 1px; }
+  .ba .now { color: var(--verified); font-weight: 500; }
+
+  @media (max-width: 720px) {
+    .row { grid-template-columns: 4px minmax(0, 1fr); }
+    .row .measure { padding: 0 1.35rem 1.35rem; grid-column: 2; }
+    .row .body { padding-bottom: 0.8rem; }
+  }
+
+  /* ── Tables ───────────────────────────────────────────── */
+  .tw { overflow-x: auto; border: 1px solid var(--rule); background: var(--surface); }
+  table { border-collapse: collapse; width: 100%; min-width: 34rem; font-size: 0.9rem; }
+  th, td { text-align: left; padding: 0.7rem 1rem; border-bottom: 1px solid var(--rule); vertical-align: top; }
+  thead th {
+    font-family: var(--mono); font-size: 0.72rem; font-weight: 500;
+    letter-spacing: 0.1em; text-transform: uppercase; color: var(--faint);
+    background: var(--sunken); white-space: nowrap;
+  }
+  tbody tr:last-child td { border-bottom: 0; }
+  td.n, th.n { font-family: var(--mono); font-variant-numeric: tabular-nums; text-align: right; white-space: nowrap; }
+  .pass { color: var(--verified); font-weight: 500; }
+  .fail { color: var(--broken); font-weight: 500; }
+
+  .pill {
+    display: inline-block; font-family: var(--mono); font-size: 0.68rem; font-weight: 500;
+    letter-spacing: 0.06em; text-transform: uppercase; padding: 0.16rem 0.44rem;
+    border-radius: 2px; white-space: nowrap;
+  }
+  .pill.done { background: var(--verified-wash); color: var(--verified); }
+  .pill.you  { background: var(--yours-wash);   color: var(--yours); }
+  .pill.na   { background: var(--sunken);       color: var(--muted); }
+
+  /* ── Callout ──────────────────────────────────────────── */
+  .callout {
+    border: 1px solid var(--rule);
+    border-left: 3px solid var(--yours);
+    background: var(--surface);
+    padding: 1.35rem 1.5rem;
+    margin-top: 1.75rem;
+  }
+  .callout .eyebrow { color: var(--yours); margin-bottom: 0.6rem; }
+  .callout p { font-size: 0.94rem; color: var(--muted); }
+  .callout p + p { margin-top: 0.7rem; }
+
+  ul.tight { margin: 1.1rem 0 0; padding-left: 0; list-style: none; }
+  ul.tight li { position: relative; padding-left: 1.4rem; color: var(--muted); font-size: 0.95rem; }
+  ul.tight li + li { margin-top: 0.6rem; }
+  ul.tight li::before {
+    content: ""; position: absolute; left: 0; top: 0.62em;
+    width: 0.5rem; height: 1px; background: var(--rule-strong);
+  }
+  ul.tight li b { color: var(--ink); font-weight: 600; }
+
+  .two { display: grid; grid-template-columns: repeat(auto-fit, minmax(min(100%, 20rem), 1fr)); gap: 2rem 2.75rem; }
+
+  footer { padding: 3rem 0 4rem; color: var(--faint); font-size: 0.85rem; font-family: var(--mono); }
+
+  @media (prefers-reduced-motion: reduce) { * { animation: none !important; transition: none !important; } }
+</style>
+
+<div class="shell">
+
+  <header class="masthead">
+    <span class="eyebrow">Technical audit &amp; rebuild · carlosanayaruiz.com</span>
+    <h1>Indexation&nbsp;Debt</h1>
+    <p class="lede">
+      Every image on the site was a 1000&#215;1000&#160;px square, including the ones declared to
+      Google as 1200&#215;630 and the one called <code>favicon.ico</code>. That was not the worst
+      thing found.
+    </p>
+    <div class="meta-row">
+      <span><b>Scope</b> SEO · design · UI/UX · brand</span>
+      <span><b>Stack</b> Next.js 16.1 · React 19 · Tailwind v4.1</span>
+      <span><b>Locales</b> es-MX (x-default) · en-US</span>
+      <span><b>Date</b> 2026-08-19</span>
+    </div>
+  </header>
+
+  <div class="verdict">
+    <div class="ok"><div class="v">0</div><div class="k">TypeScript errors, strict mode</div></div>
+    <div class="ok"><div class="v">33</div><div class="k">routes prerendered, none dynamic</div></div>
+    <div class="ok"><div class="v">111</div><div class="k">JSON-LD nodes, 0 parse errors</div></div>
+    <div class="ok"><div class="v">78&#8202;KB</div><div class="k">asset payload, was 5,800&#8202;KB</div></div>
+    <div class="ok"><div class="v">22/22</div><div class="k">URLs 200, canonical + hreflang + SERP-safe metadata</div></div>
+  </div>
+
+  <section>
+    <div class="sec-head">
+      <span class="eyebrow">01 — What was actually broken</span>
+      <h2>Nine defects that were shipping</h2>
+      <p>
+        Not style opinions. Each of these was verifiable against the running site, and each is
+        verified fixed against a production build. The measurement column is the proof, not a
+        claim.
+      </p>
+    </div>
+
+    <div class="ledger">
+
+      <div class="row fixed">
+        <div class="stripe"></div>
+        <div class="body">
+          <h3>Open Graph images were the wrong shape</h3>
+          <p>
+            <code>og-es.png</code>, <code>og-en.png</code> and <code>og-default.png</code> were
+            1000&#215;1000 squares. The metadata declared all three as 1200&#215;630. Every social
+            and AI link preview was reading a dimension that did not match the file.
+          </p>
+          <p>
+            OG images are now generated per page and per locale by <code>next/og</code>, so the
+            declared size and the produced pixels cannot disagree. Eleven routes, both locales,
+            all prerendered — so the build renders and validates every card.
+          </p>
+        </div>
+        <div class="measure">
+          <div class="ba">
+            <span><span class="lbl">was</span><span class="was">1000&#215;1000</span></span>
+            <span><span class="lbl">now</span><span class="now">1200&#215;630 &#215;22</span></span>
+          </div>
+        </div>
+      </div>
+
+      <div class="row fixed">
+        <div class="stripe"></div>
+        <div class="body">
+          <h3><code>favicon.ico</code> was a 517&#8202;KB PNG</h3>
+          <p>
+            Renamed, not converted. Every icon in <code>public/</code> was the same 1000&#215;1000
+            source at ~517&#8202;KB regardless of role — <code>icon-192.png</code> was not 192&#8202;px,
+            <code>apple-touch-icon.png</code> was not 180. The headshot was 2.26&#8202;MB rendered at
+            80&#8202;px.
+          </p>
+          <p>
+            All regenerated at their real sizes by <code>scripts/generate-assets.mjs</code>,
+            including a genuine multi-resolution ICO at 16/32/48.
+          </p>
+        </div>
+        <div class="measure">
+          <div class="ba">
+            <span><span class="lbl">was</span><span class="was">5,800 KB</span></span>
+            <span><span class="lbl">now</span><span class="now">78 KB</span></span>
+            <span><span class="lbl">ico</span><span class="now">517 KB &#8594; 1.6 KB</span></span>
+          </div>
+        </div>
+      </div>
+
+      <div class="row fixed">
+        <div class="stripe"></div>
+        <div class="body">
+          <h3>Structured data claimed a site search that does not exist</h3>
+          <p>
+            The <code>WebSite</code> node declared a <code>SearchAction</code> pointing at
+            <code>/contacto?q={search_term_string}</code>. There is no site search. It also used the
+            Spanish path on English pages.
+          </p>
+          <p>
+            Removed. Also removed: <code>dateModified: new Date()</code>, which made every page
+            claim it changed on every deploy, and the identical
+            <code>lastModified</code> stamp on every sitemap URL. Manufactured freshness teaches a
+            crawler to ignore the field.
+          </p>
+        </div>
+        <div class="measure">
+          <div class="ba">
+            <span><span class="lbl">was</span><span class="was">fabricated</span></span>
+            <span><span class="lbl">now</span><span class="now">0 dangling @id</span></span>
+            <span><span class="lbl">now</span><span class="now">0 fake dates</span></span>
+          </div>
+        </div>
+      </div>
+
+      <div class="row fixed">
+        <div class="stripe"></div>
+        <div class="body">
+          <h3>Three of four services had a slug that matched no route</h3>
+          <p>
+            <code>data/services.ts</code> carried a free-text <code>slug</code> per locale.
+            <code>aplicaciones-web-nextjs-firebase</code> against a real route of
+            <code>/desarrollo-web</code>; <code>automatizacion-ia-chatbots</code> against
+            <code>/automatizacion-ia</code>; <code>dashboards-responsivos</code> against
+            <code>/dashboards</code>. Those slugs built schema <code>@id</code>s and canonical URLs.
+          </p>
+          <p>
+            Replaced with <code>route: RouteKey</code> referencing a single <code>ROUTES</code>
+            table. The drift is now a compile error rather than a silent wrong URL.
+          </p>
+        </div>
+        <div class="measure">
+          <div class="ba">
+            <span><span class="lbl">was</span><span class="was">3 of 4 wrong</span></span>
+            <span><span class="lbl">now</span><span class="now">type-enforced</span></span>
+          </div>
+        </div>
+      </div>
+
+      <div class="row fixed">
+        <div class="stripe"></div>
+        <div class="body">
+          <h3>Unprefixed URLs were hard 404s</h3>
+          <p>
+            The middleware matcher was <code>['/', '/(es|en)/:path*']</code> — it only ever saw URLs
+            that already had a locale prefix. <code>/sobre-mi</code> never reached next-intl and
+            404'd instead of redirecting. Every inbound link that dropped the prefix was a dead end.
+          </p>
+        </div>
+        <div class="measure">
+          <div class="ba">
+            <span><span class="lbl">was</span><span class="was">404</span></span>
+            <span><span class="lbl">now</span><span class="now">307 &#8594; /es/sobre-mi</span></span>
+          </div>
+        </div>
+      </div>
+
+      <div class="row fixed">
+        <div class="stripe"></div>
+        <div class="body">
+          <h3>The image optimizer was an open proxy</h3>
+          <p>
+            <code>images.remotePatterns</code> allowed
+            <code>{ protocol: 'https', hostname: '**' }</code>. Anyone could pass any URL on the
+            internet through <code>/_next/image</code> on this domain, consuming the transformation
+            quota and laundering third-party content through the brand.
+          </p>
+          <p>
+            Removed entirely — every image is local. Added a CSP, and
+            <code>firestore.rules</code>, without which both form collections are world-readable.
+          </p>
+        </div>
+        <div class="measure">
+          <div class="ba">
+            <span><span class="lbl">was</span><span class="was">hostname: **</span></span>
+            <span><span class="lbl">now</span><span class="now">no remote hosts</span></span>
+          </div>
+        </div>
+      </div>
+
+      <div class="row fixed">
+        <div class="stripe"></div>
+        <div class="body">
+          <h3>Dark mode was dead code</h3>
+          <p>
+            <code>tailwind.config.ts</code> declared <code>darkMode: 'class'</code>, but Tailwind
+            v4 never loads a JS config without an <code>@config</code> directive. The whole file was
+            inert — as was a second, duplicate PostCSS config, and a Playfair Display that no rule
+            referenced but every visitor downloaded.
+          </p>
+          <p>
+            Real token-level theming now, applied before first paint so there is no flash. Seven
+            font files became two.
+          </p>
+        </div>
+        <div class="measure">
+          <div class="ba">
+            <span><span class="lbl">was</span><span class="was">7 fonts, 0 themes</span></span>
+            <span><span class="lbl">now</span><span class="now">2 fonts, 2 themes</span></span>
+          </div>
+        </div>
+      </div>
+
+      <div class="row fixed">
+        <div class="stripe"></div>
+        <div class="body">
+          <h3>The home page competed with its own service pages</h3>
+          <p>
+            It rendered all twelve service FAQs, marked up as <code>FAQPage</code> — the same
+            questions and answers as the four service pages, under a different URL. Two pages
+            answering one query is how they end up ranking against each other.
+          </p>
+          <p>
+            Split: home owns six engagement-level questions, each service page owns its own
+            technical ones. Verified zero cross-page duplication across 44 questions in both
+            locales.
+          </p>
+        </div>
+        <div class="measure">
+          <div class="ba">
+            <span><span class="lbl">was</span><span class="was">12 duplicated</span></span>
+            <span><span class="lbl">now</span><span class="now">0 duplicated</span></span>
+          </div>
+        </div>
+      </div>
+
+      <div class="row fixed">
+        <div class="stripe"></div>
+        <div class="body">
+          <h3>Your own diagnostic tools were being served a different page</h3>
+          <p>
+            A <code>Disallow: /_next/static/chunks/</code> rule applied to every crawler without its
+            own group — which includes <code>Google-InspectionTool</code>, so URL Inspection and the
+            Rich Results Test, plus Lighthouse and PageSpeed Insights. They would have rendered a
+            JS-stripped DOM that differs from Googlebot's.
+          </p>
+          <p>
+            Dropped. <code>robots.txt</code> now names Googlebot, Bingbot,
+            <code>OAI-SearchBot</code>, <code>ChatGPT-User</code>, <code>PerplexityBot</code>,
+            <code>ClaudeBot</code> and <code>Google-Extended</code> explicitly, so each is
+            greppable rather than assumed.
+          </p>
+        </div>
+        <div class="measure">
+          <div class="ba">
+            <span><span class="lbl">was</span><span class="was">chunks blocked</span></span>
+            <span><span class="lbl">now</span><span class="now">11 agents named</span></span>
+          </div>
+        </div>
+      </div>
+
+    </div>
+  </section>
+
+  <section>
+    <div class="sec-head">
+      <span class="eyebrow">02 — Accessibility</span>
+      <h2>Three contrast failures, measured not eyeballed</h2>
+      <p>
+        Every ratio below was computed from the oklch tokens through sRGB to WCAG relative
+        luminance. Two of these I introduced in the new design system by using recessed tokens at
+        body size; all three were caught before launch.
+      </p>
+    </div>
+
+    <div class="tw">
+      <table>
+        <thead>
+          <tr>
+            <th>Token</th>
+            <th>Used for</th>
+            <th class="n">Before</th>
+            <th class="n">Floor</th>
+            <th class="n">After</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td><code>--ink-subtle</code></td>
+            <td>Body copy at <code>text-sm</code></td>
+            <td class="n fail">3.45</td>
+            <td class="n">4.5</td>
+            <td class="n pass">4.89</td>
+          </tr>
+          <tr>
+            <td><code>--accent</code></td>
+            <td>Metric labels, badge text</td>
+            <td class="n fail">4.24</td>
+            <td class="n">4.5</td>
+            <td class="n pass">5.12</td>
+          </tr>
+          <tr>
+            <td><code>--accent</code> on its wash</td>
+            <td>Badge on tinted ground</td>
+            <td class="n fail">3.81</td>
+            <td class="n">4.5</td>
+            <td class="n pass">4.61</td>
+          </tr>
+          <tr>
+            <td><code>--line-control</code> <span class="pill done">new</span></td>
+            <td>Input, textarea, outline button borders</td>
+            <td class="n fail">1.55</td>
+            <td class="n">3.0</td>
+            <td class="n pass">3.64</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+
+    <div class="prose stack" style="margin-top:1.75rem">
+      <p>
+        That last row is the interesting one. A divider and a form-field border had been sharing one
+        token. WCAG exempts purely decorative boundaries from a contrast floor — which is correct,
+        and the editorial look depends on hairlines being barely there — but an input's border
+        <em>is</em> the affordance telling you where the field is, so it is governed by 1.4.11
+        non-text contrast at 3:1. Collapsing the two jobs into one token is exactly how a 1.55:1
+        input border ships without anyone noticing.
+      </p>
+      <p>
+        Also verified across all 22 URLs: exactly one <code>&lt;h1&gt;</code> per page, no skipped
+        heading level, a working skip link, correct <code>lang</code>, and no icon missing
+        <code>aria-hidden</code>. The locale switcher was a <code>&lt;button&gt;</code>, so the
+        alternate-locale URL existed nowhere in the page and could not be middle-clicked — it is now
+        a real anchor with <code>hrefLang</code>.
+      </p>
+    </div>
+  </section>
+
+  <section>
+    <div class="sec-head">
+      <span class="eyebrow">03 — Structural</span>
+      <h2>Four sources of truth that had already drifted</h2>
+      <p>
+        Most defects above are one instance of one pattern: the same fact stored in two places. The
+        fix is not to correct the copies but to delete them.
+      </p>
+    </div>
+
+    <div class="tw">
+      <table>
+        <thead>
+          <tr><th>Fact</th><th>Copies before</th><th>Owner now</th><th>Enforced by</th></tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td>Palette</td>
+            <td>4 — CSS, manifest, viewport, OG renderer</td>
+            <td><code>PALETTE_HEX</code></td>
+            <td><code>palette-check.mjs</code> recomputes oklch&#8594;sRGB and fails on mismatch</td>
+          </tr>
+          <tr>
+            <td>Routes</td>
+            <td>3 — routing, sitemap, <code>llms.txt</code></td>
+            <td><code>ROUTES</code></td>
+            <td><code>Record&lt;RouteKey, …&gt;</code> in the sitemap</td>
+          </tr>
+          <tr>
+            <td>NAP</td>
+            <td>4 — constants, personal data, schema, <code>llms.txt</code></td>
+            <td><code>NAP</code></td>
+            <td>Single import, no literals</td>
+          </tr>
+          <tr>
+            <td>Service URLs</td>
+            <td>2 — route table and a free-text slug</td>
+            <td><code>route: RouteKey</code></td>
+            <td>Compile error on drift</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+
+    <div class="prose stack" style="margin-top:1.75rem">
+      <p>
+        The palette copies had <em>already</em> diverged: the manifest and every OG card were
+        painting <code>#1e3a8f</code> while <code>--brand</code> actually resolves to
+        <code>#1858b1</code> — a visibly more navy blue, on precisely the surfaces people
+        screenshot. <code>llms.txt</code> was advertising six URLs for pages that did not exist. It
+        is now a generated route.
+      </p>
+    </div>
+  </section>
+
+  <section>
+    <div class="sec-head">
+      <span class="eyebrow">04 — Needs you</span>
+      <h2>Seven things I could not decide or deploy</h2>
+      <p>
+        Ordered by how much they cost to leave undone.
+      </p>
+    </div>
+
+    <div class="ledger">
+      <div class="row flag">
+        <div class="stripe"></div>
+        <div class="body">
+          <h3>Deploy the Firestore rules</h3>
+          <p>
+            <code>firestore.rules</code> is written but not deployed — I have no credentials. Until
+            <code>firebase deploy --only firestore:rules</code> runs, both form collections are
+            world-readable, and <code>contact_messages</code> holds names, emails and free text.
+            Everything in the client service layer is a speed bump; this is the actual control.
+          </p>
+        </div>
+        <div class="measure"><div class="ba"><span><span class="lbl">effort</span><span class="now">one command</span></span></div></div>
+      </div>
+
+      <div class="row flag">
+        <div class="stripe"></div>
+        <div class="body">
+          <h3>The contact email is on a different domain</h3>
+          <p>
+            You chose <code>carlos@carlosanayaweb.com</code>; the site is
+            <code>carlosanayaruiz.com</code>. It works, and it is implemented — but entity
+            resolution is a convergence problem, and a contact domain that does not match the site
+            is one more thing Google has to reconcile rather than one more signal agreeing. If you
+            own both, <code>carlos@carlosanayaruiz.com</code> is strictly stronger.
+          </p>
+        </div>
+        <div class="measure"><div class="ba"><span><span class="lbl">effort</span><span class="now">1 line</span></span></div></div>
+      </div>
+
+      <div class="row flag">
+        <div class="stripe"></div>
+        <div class="body">
+          <h3>Sign off on the pricing description</h3>
+          <p>
+            The FAQ now says you work on closed scope and do not publish rates. It is safe and
+            non-committal, but it describes how you bill and it feeds
+            <code>FAQPage</code> structured data, so it should be your sentence, not mine.
+          </p>
+          <p>
+            Two claims that are <em>not</em> mine, for the record: the 24–48 business-hour response
+            time and the projected 15% fuel reduction on the hackathon award were both in your
+            existing content. I carried them forward. The 15% is already labelled
+            &#8220;proyectada&#8221;, which does the honest work — whether an unmeasured projection
+            belongs on the trust page is your judgement, not a defect.
+          </p>
+        </div>
+        <div class="measure"><div class="ba"><span><span class="lbl">where</span><span class="now">data/faq.ts</span></span></div></div>
+      </div>
+
+      <div class="row flag">
+        <div class="stripe"></div>
+        <div class="body">
+          <h3>Set the two verification env vars</h3>
+          <p>
+            <code>NEXT_PUBLIC_GOOGLE_SITE_VERIFICATION</code> and
+            <code>NEXT_PUBLIC_BING_SITE_VERIFICATION</code> are wired and documented in
+            <code>.env.example</code>. Unset, they emit no tag at all rather than an empty one — so
+            nothing is broken, but nothing is verified either. Bing matters here specifically
+            because it grounds Copilot.
+          </p>
+        </div>
+        <div class="measure"><div class="ba"><span><span class="lbl">effort</span><span class="now">2 vars</span></span></div></div>
+      </div>
+
+      <div class="row flag">
+        <div class="stripe"></div>
+        <div class="body">
+          <h3>Legal pages need a lawyer's pass</h3>
+          <p>
+            The privacy notice and terms are written and are accurate to what the site actually does
+            — the two Firestore collections, cookieless analytics, no trackers, ARCO rights under
+            the LFPDPPP. They are a technical starting point drafted from the code, and there is a
+            source comment on each saying so. Not legal advice.
+          </p>
+        </div>
+        <div class="measure"><div class="ba"><span><span class="lbl">status</span><span class="now">drafted</span></span></div></div>
+      </div>
+
+      <div class="row flag">
+        <div class="stripe"></div>
+        <div class="body">
+          <h3><code>middleware.ts</code> &#8594; <code>proxy.ts</code></h3>
+          <p>
+            Next 16.1 prints a deprecation warning. It is the only warning left in the build and it
+            is not breaking — but it will break on a future major. Deliberately left alone: all 22
+            localised routes and both 404 boundaries rewrite through it, and a silent regression
+            there breaks every English URL. Worth its own change with its own verification.
+          </p>
+        </div>
+        <div class="measure"><div class="ba"><span><span class="lbl">urgency</span><span class="now">next major</span></span></div></div>
+      </div>
+
+      <div class="row flag">
+        <div class="stripe"></div>
+        <div class="body">
+          <h3>Bump <code>CONTENT_UPDATED</code> when copy changes</h3>
+          <p>
+            One honest constant in <code>app/sitemap.ts</code> replaced the per-deploy
+            <code>new Date()</code>. It needs a manual bump when page content actually changes — not
+            on refactors, not on dependency updates. A stale-but-true <code>lastmod</code> costs
+            nothing; a fresh-but-false one costs the credibility of the signal.
+          </p>
+        </div>
+        <div class="measure"><div class="ba"><span><span class="lbl">cadence</span><span class="now">on edit</span></span></div></div>
+      </div>
+    </div>
+  </section>
+
+  <section>
+    <div class="sec-head">
+      <span class="eyebrow">05 — Checklist coverage</span>
+      <h2>What a code change can and cannot reach</h2>
+      <p>
+        Your checklist has 64 sections. Roughly a third of them are not implementable in a
+        repository, and saying otherwise would be the least useful thing in this report.
+      </p>
+    </div>
+
+    <div class="tw">
+      <table>
+        <thead>
+          <tr><th>&#167;</th><th>Area</th><th>State</th><th>Note</th></tr>
+        </thead>
+        <tbody>
+          <tr><td class="n">1–11</td><td>Domain, crawl, index, robots, sitemap, canonical, URLs, architecture, internal links, mobile, JS, CWV</td><td><span class="pill done">done</span></td><td>Verified against a production build, not source</td></tr>
+          <tr><td class="n">12–13</td><td>Titles &amp; meta descriptions</td><td><span class="pill done">done</span></td><td>All 22 unique and inside the SERP truncation point — see below</td></tr>
+          <tr><td class="n">14</td><td>Heading structure</td><td><span class="pill done">done</span></td><td>One <code>h1</code> per page, no skipped levels, 22/22</td></tr>
+          <tr><td class="n">15–17</td><td>People-first content, E-E-A-T, service pages</td><td><span class="pill done">done</span></td><td>Each service page now states who it is <em>not</em> for</td></tr>
+          <tr><td class="n">20–26</td><td>Entity SEO, schema, breadcrumbs, images, video</td><td><span class="pill done">done</span></td><td>111 nodes, no self-serving ratings, no fake offers. No video exists</td></tr>
+          <tr><td class="n">34–35</td><td>Localisation, hreflang</td><td><span class="pill done">done</span></td><td>Reciprocal, self-referencing, x-default → es</td></tr>
+          <tr><td class="n">36–42</td><td>AI surfaces, AEO restraint, accessibility</td><td><span class="pill done">done</span></td><td>No <code>llms.txt</code> magical thinking; the crawler access is the lever</td></tr>
+          <tr><td class="n">43–45</td><td>Security, trust pages, UX</td><td><span class="pill you">1 step</span></td><td>Rules written, not deployed</td></tr>
+          <tr><td class="n">18</td><td>Topical authority</td><td><span class="pill you">yours</span></td><td>Structure shipped, articles not written — see below</td></tr>
+          <tr><td class="n">19, 54</td><td>Keyword &amp; competitor research</td><td><span class="pill you">yours</span></td><td>Needs your Search Console data, which I cannot see</td></tr>
+          <tr><td class="n">27–28</td><td>Google Business Profile</td><td><span class="pill na">off-site</span></td><td>Entirely outside the repo. Note a home-based service-area business has real eligibility limits — do not invent an address</td></tr>
+          <tr><td class="n">29–30</td><td>Reviews, NAP citations</td><td><span class="pill na">off-site</span></td><td>NAP is now single-source, so it is safe to copy from</td></tr>
+          <tr><td class="n">31–32</td><td>Location &amp; service+city pages</td><td><span class="pill na">n/a</span></td><td>One location, no second city with real demand. Generating them would be the doorway abuse §32 forbids</td></tr>
+          <tr><td class="n">33, 52–53</td><td>Backlinks, social, digital PR</td><td><span class="pill na">off-site</span></td><td>Earned, not configured</td></tr>
+          <tr><td class="n">46–48, 59–61</td><td>Analytics, GSC review, audit cadence</td><td><span class="pill you">yours</span></td><td>Wiring is in place; the reviewing is a habit</td></tr>
+        </tbody>
+      </table>
+    </div>
+
+    <div class="callout" style="border-left-color:var(--verified)">
+      <span class="eyebrow" style="color:var(--verified)">Closed — SERP truncation</span>
+      <p>
+        <b>Every meta description on the site had been too long.</b> Measured on rendered HTML:
+        177–263 characters against Google's ~155 truncation point, with 16 of 17 titles over ~60 once
+        the <code>| Carlos Anaya Ruiz</code> template appends its 20 characters. All were unique and
+        accurate — the part that matters most — but the second half of each, where the value
+        proposition sat, never reached the reader.
+      </p>
+      <p>
+        Rewritten and re-measured against a fresh build, decoding HTML entities before counting
+        (<code>&amp;amp;</code> is one character, not five — counting the raw markup would have
+        produced wrong numbers on three of these pages).
+      </p>
+      <div class="ba" style="flex-direction:row;gap:2.5rem;margin-top:1.1rem;flex-wrap:wrap">
+        <span><span class="lbl">titles</span><span class="was">up to 86</span><span class="now">max 58 / 60</span></span>
+        <span><span class="lbl">desc</span><span class="was">up to 263</span><span class="now">max 150 / 155</span></span>
+        <span><span class="lbl">unique</span><span class="now">22/22 · 22/22</span></span>
+      </div>
+    </div>
+
+    <div class="callout">
+      <span class="eyebrow">The honest gap</span>
+      <p>
+        <b>The site has no articles.</b> Sections 15, 18, 36 and 41 all converge on original,
+        non-commodity content demonstrating real experience — and that is the single largest
+        remaining opportunity, worth more than anything left in the code.
+      </p>
+      <p>
+        I deliberately did not generate any. Section 50 forbids publishing unreviewed AI output and
+        section 15 requires actual experience; a dozen synthetic posts about Core Web Vitals would
+        have made the checklist look more complete while making the site materially worse. What I
+        shipped instead is the structure that content will hang from: a real
+        <code>/servicios</code> hub, so the four service pages sit in a
+        Home&#8202;&#8594;&#8202;hub&#8202;&#8594;&#8202;service hierarchy instead of floating.
+      </p>
+      <p>
+        You have the raw material and almost nobody else in this niche does — the migration that
+        lost 40% of its traffic because nobody mapped the URLs, the platform with half its pages
+        blocked by a misconfigured <code>robots.txt</code>. Those are already on the SEO page as
+        assertions. Written up as post-mortems with the actual diagnosis, they are the kind of thing
+        other people cite.
+      </p>
+    </div>
+  </section>
+
+  <section>
+    <div class="sec-head">
+      <span class="eyebrow">06 — Verification</span>
+      <h2>How this was checked</h2>
+    </div>
+
+    <div class="two">
+      <div class="stack">
+        <h3>Against a production build, not source</h3>
+        <p style="color:var(--muted);font-size:0.95rem">
+          Grepping source tells you what someone intended. Every claim in this report was measured
+          by building the site, serving it, and reading the rendered HTML — because the OG routes
+          were initially marked dynamic, which means the build was not executing them at all and a
+          rendering failure would have reached production unseen.
+        </p>
+        <ul class="tight">
+          <li><b>Type</b> — <code>tsc --noEmit --incremental false</code>, exit 0. Non-incremental on purpose: a stale <code>.tsbuildinfo</code> can mask a whole error class.</li>
+          <li><b>Build</b> — <code>next build</code>, exit 0. All 33 routes prerendered; nothing dynamic but the proxy.</li>
+          <li><b>Routes</b> — 22 pages, 11 OG cards, sitemap, robots, manifest, <code>llms.txt</code>: all 200. Both 404 boundaries return real 404s.</li>
+          <li><b>Schema</b> — every block JSON-parsed, 111 nodes, zero dangling <code>@id</code>, zero <code>aggregateRating</code> / <code>review</code> / <code>priceRange</code> / <code>SearchAction</code>.</li>
+          <li><b>Previews</b> — fetched the exact <code>og:image</code> URL each page declares; all return <code>image/png</code>. Confirmed English pages now serve English alt text, which they did not.</li>
+          <li><b>Colour</b> — recomputed every oklch&#8594;sRGB conversion independently and compared against the values actually shipped in the built stylesheet.</li>
+          <li><b>SERP</b> — all 44 title and description lengths measured twice, independently, on separately-built servers. Identical row for row.</li>
+        </ul>
+      </div>
+
+      <div class="stack">
+        <h3>Two findings I rejected</h3>
+        <p style="color:var(--muted);font-size:0.95rem">
+          Automated review surfaces plausible-sounding problems that are not problems. Both of these
+          came from my own checks and both were false.
+        </p>
+        <ul class="tight">
+          <li><b><code>Offer</code> nodes on every page.</b> Read as an invented price. They are <code>OfferCatalog → Offer → itemOffered: Service</code> carrying a name and a URL and nothing else — the correct way to declare a catalogue without inventing pricing. A substring grep for <code>"Offer"</code> was too blunt.</li>
+          <li><b><code>dateModified</code> equal to today.</b> Read as the fabricated-freshness bug returning. It comes from a <code>LAST_UPDATED</code> constant on pages genuinely authored today, and the visible date on the page matches. It will not drift.</li>
+        </ul>
+        <p style="color:var(--muted);font-size:0.95rem">
+          Worth stating because the opposite error — accepting a confident finding without checking
+          — is how a correct implementation gets &#8220;fixed&#8221; into a broken one.
+        </p>
+      </div>
+    </div>
+  </section>
+
+  <footer>
+    58 files changed · 8,649 insertions · 3,971 deletions · 30 files added<br>
+    Verified against <code>next build</code> at 2026-08-19. Nothing above is a projection.
+  </footer>
+
+</div>

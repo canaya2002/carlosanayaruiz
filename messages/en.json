@@ -1,157 +1,244 @@
 {
   "nav": {
     "home": "Home",
-    "books": "Resources",
-    "about": "About",
-    "contact": "Contact",
-    "hireMe": "Hire Me",
-    "openMenu": "Open menu",
-    "closeMenu": "Close menu"
-  },
-  "hero": {
-    "greeting": "Hi, I'm",
-    "tagline": "Technical SEO Consultant & Full-Stack Engineer in Mexico",
-    "subtitle": "I help businesses and founders build fast, indexable, high-converting websites — with high-performance engineering, real technical SEO, and modern architecture.",
-    "ctaServices": "View services",
-    "ctaContact": "Schedule a call",
-    "ctaAbout": "See my background"
-  },
-  "trust": {
-    "yearsExp": "4+ years of experience",
-    "pmpCert": "PMP Certified",
-    "companies": "Amazon · Master Loyalty · Wan Hai Lines",
-    "tecMty": "Tec de Monterrey"
-  },
-  "services": {
-    "title": "Services",
-    "subtitle": "Engineering & technical SEO solutions to scale your digital business",
-    "benefits": "Key benefits",
-    "includes": "What's included",
-    "cta": "Request a quote",
-    "ctaFiverr": "Hire on Fiverr",
-    "faq": "Frequently asked questions",
-    "process": "My Work Process",
-    "processSubtitle": "Proven methodology for measurable results",
-    "viewAll": "View service details",
-    "step1Title": "Audit",
-    "step1Desc": "Deep technical analysis of your site, performance, SEO, and improvement opportunities.",
-    "step2Title": "Strategy",
-    "step2Desc": "Architecture definition, priorities, and roadmap with clear deliverables.",
-    "step3Title": "Implementation",
-    "step3Desc": "Iterative development with sprints, code reviews, and continuous QA.",
-    "step4Title": "Measurement",
-    "step4Desc": "Metrics tracking, Core Web Vitals, rankings, and conversions."
-  },
-  "servicePages": {
-    "seoTecnico": {
-      "title": "Technical SEO Consultant in Mexico",
-      "subtitle": "Audits, information architecture, structured data, and performance optimization so Google understands, indexes, and ranks your site.",
-      "ctaMain": "Request SEO audit",
-      "ctaSecondary": "Schedule a call"
-    },
-    "desarrolloWeb": {
-      "title": "Web Development with Next.js & Firebase",
-      "subtitle": "Modern, fast, SEO-optimized web applications — from landing pages to full SaaS platforms.",
-      "ctaMain": "Get a project quote",
-      "ctaSecondary": "See work process"
-    },
-    "automatizacionIA": {
-      "title": "AI Automation & Chatbots for Business",
-      "subtitle": "Intelligent chatbots, automated workflows, and LLM integration to reduce operational costs and improve customer experience.",
-      "ctaMain": "Explore automation",
-      "ctaSecondary": "Schedule consultation"
-    },
-    "dashboards": {
-      "title": "Enterprise Dashboards & Analytics",
-      "subtitle": "Interactive, responsive dashboards that turn data into decisions — connected to your data sources in real time.",
-      "ctaMain": "Get a dashboard quote",
-      "ctaSecondary": "See examples"
-    }
-  },
-  "books": {
-    "title": "Technical Resources",
-    "subtitle": "High-value technical knowledge in SEO, web development, and modern architecture",
-    "audience": "Who is it for",
-    "buy": "Buy now",
-    "pages": "pages",
-    "comingSoon": "More resources coming soon. I'm working on it!",
-    "upcoming": "Coming Soon",
-    "upcomingDesc": "This book is in active development. Subscribe to the newsletter to be the first to know when it's available.",
-    "notifyMe": "Notify me when it's ready",
-    "freeResources": "Free Resources",
-    "freeResourcesDesc": "In the meantime, you can explore these published resources:"
-  },
-  "about": {
-    "title": "About Me",
-    "subtitle": "Engineer, tech lead & SEO consultant",
-    "summary": "Professional Summary",
-    "experience": "Professional Experience",
-    "education": "Education",
-    "skills": "Stack & Specialties",
-    "awards": "Awards & Recognition",
-    "languages": "Languages",
-    "certs": "Certifications",
-    "viewCerts": "View all my certifications",
-    "philosophy": "My Work Philosophy",
-    "philosophyDesc": "I combine high-performance engineering with technical SEO strategy. I don't build pretty websites nobody finds — I build digital products that rank, convert, and scale.",
-    "servicesLink": "See what I can do for your project"
-  },
-  "contact": {
-    "title": "Contact",
-    "subtitle": "Have a project in mind? I'd love to hear from you.",
-    "info": "Contact Information",
-    "social": "Social Media",
-    "form": "Send me a message",
-    "name": "Name",
-    "namePh": "Your full name",
-    "email": "Email",
-    "emailPh": "you@email.com",
-    "subject": "Subject",
-    "subjectPh": "What would you like to discuss?",
-    "message": "Message",
-    "messagePh": "Tell me more about your project or idea...",
-    "send": "Send Message",
-    "sending": "Sending...",
-    "sent": "Message sent!",
-    "thanks": "Thanks for reaching out. I'll respond as soon as possible.",
-    "another": "Send another message",
-    "errorTitle": "Error sending",
-    "errorDesc": "Could not send your message. Please try again.",
-    "retry": "Try again",
-    "location": "Location",
-    "connect": "Connect with me",
-    "seeProjects": "See my projects",
-    "fiverr": "Hire me on Fiverr",
-    "projectTypes": "Project Types",
-    "projectTypesDesc": "I work on technical SEO, web development, AI automation, and dashboard projects. From one-off audits to 2-3 month engagements.",
-    "responseTime": "Response time: 24-48 business hours"
-  },
-  "newsletter": {
-    "title": "Subscribe to the Newsletter",
-    "subtitle": "Get updates on new projects, articles, and technical SEO resources.",
-    "placeholder": "you@email.com",
-    "subscribe": "Subscribe",
-    "thankYou": "Thanks for subscribing!",
-    "noSpam": "No spam. Unsubscribe anytime.",
-    "alreadySubscribed": "You're already subscribed.",
-    "error": "An error occurred. Please try again.",
-    "tryAgain": "Try again"
-  },
-  "footer": {
-    "description": "Carlos Anaya Ruiz — Technical SEO consultant & full-stack engineer in Mexico. I build web apps with Next.js and Firebase, AI automation, and high-performance dashboards.",
-    "navigation": "Navigation",
-    "contactTitle": "Contact",
     "services": "Services",
-    "seoTecnico": "Technical SEO",
-    "desarrolloWeb": "Web Development",
-    "automatizacionIA": "AI Automation",
-    "dashboardsLabel": "Dashboards",
-    "allRightsReserved": "All rights reserved."
+    "about": "About",
+    "books": "Resources",
+    "contact": "Contact",
+    "hireMe": "Hire me",
+    "openMenu": "Open menu",
+    "closeMenu": "Close menu",
+    "menu": "Menu"
+  },
+  "a11y": {
+    "skipToContent": "Skip to content",
+    "mainNav": "Main navigation",
+    "mobileMenu": "Mobile menu",
+    "breadcrumb": "Breadcrumb",
+    "socialLinks": "Profiles and social links",
+    "changeLanguage": "Change language"
   },
   "language": {
     "switchTo": "Español",
     "current": "English",
     "label": "Language"
+  },
+  "hero": {
+    "eyebrow": "Technical SEO consultant · Mexico City",
+    "headline": "Technical SEO so Google indexes you",
+    "lead": "I'm Carlos Anaya Ruiz. I audit, rebuild, and migrate Next.js sites for product teams and agencies. What I fix is concrete: indexation, structured data, Core Web Vitals, and migrations that don't drop organic traffic.",
+    "ctaPrimary": "Book a call",
+    "ctaSecondary": "View services",
+    "ctaTertiary": "See my background",
+    "locationNote": "Mexico City, GMT-6. Remote, or in person in CDMX.",
+    "greeting": "Hi, I'm",
+    "tagline": "Technical SEO consultant and full-stack engineer in Mexico City",
+    "subtitle": "I'm Carlos Anaya Ruiz. I audit, rebuild, and migrate Next.js sites for product teams and agencies. What I fix is concrete: indexation, structured data, Core Web Vitals, and migrations that don't drop organic traffic.",
+    "ctaServices": "View services",
+    "ctaContact": "Book a call",
+    "ctaAbout": "See my background",
+    "headlineAccent": "and ChatGPT cites you."
+  },
+  "trust": {
+    "yearsExp": "4+ years of experience",
+    "pmpCert": "PMP certified",
+    "tecMty": "Tec de Monterrey",
+    "companies": "Amazon · Master Loyalty Group · Wan Hai Lines",
+    "companiesLabel": "Previously at",
+    "engineerLabel": "Computer Science Engineer"
+  },
+  "audience": {
+    "title": "Who I work with",
+    "subtitle": "Three different situations, one question: where is the traffic leaking.",
+    "startups": {
+      "title": "Startups and founders",
+      "desc": "You're launching, and version one has to be right: routes, rendering, schema, and analytics from day one. Fixing that later costs triple and costs you rankings."
+    },
+    "agencies": {
+      "title": "Agencies and studios",
+      "desc": "You have the strategy; you're missing the person who ships it in the code. I work inside your repo, under your brand, with PRs your team reviews before merge."
+    },
+    "established": {
+      "title": "Established companies",
+      "desc": "You have traffic and something is holding it back: a migration that never closed properly, dropped indexation, a CMS fighting you. We diagnose with data before touching a line."
+    }
+  },
+  "services": {
+    "eyebrow": "Services",
+    "title": "Four ways to work together",
+    "subtitle": "All of them start with an audit and end with something you can verify in Search Console.",
+    "viewService": "View this service",
+    "requestQuote": "Request a quote",
+    "process": "How I work",
+    "processSubtitle": "Four phases, scope agreed in writing. No mid-project surprises.",
+    "step1Title": "Audit",
+    "step1Desc": "I crawl the site, read the server logs, and go through your Search Console. You get a list prioritized by real impact, not an eighty-page PDF nobody opens.",
+    "step2Title": "Plan",
+    "step2Desc": "We decide what gets fixed first and what isn't worth touching. Every item carries an estimate, a risk, and the metric that will tell us whether it worked.",
+    "step3Title": "Implementation",
+    "step3Desc": "I work in branches, with reviewable PRs and a staging environment. Nothing reaches production before you've seen it.",
+    "step4Title": "Verification",
+    "step4Desc": "I compare before and after: indexed pages, field Core Web Vitals, and queries that gained position. If something didn't move, I tell you.",
+    "faq": "Frequently asked questions",
+    "faqSubtitle": "What people ask before signing.",
+    "allServices": "All services",
+    "benefits": "Key benefits",
+    "includes": "What's included",
+    "cta": "Request a quote",
+    "ctaFiverr": "Hire on Fiverr",
+    "viewAll": "View this service"
+  },
+  "servicesHub": {
+    "title": "Services",
+    "subtitle": "Technical SEO, Next.js development, AI automation, and business dashboards.",
+    "lead": "Four services held to the same standard: if it can't be measured, it doesn't get billed as a result. We start where the real bottleneck is, not where the easy sale is.",
+    "chooseHelp": "If you're not sure which one you need, describe the problem and I'll tell you. That conversation is free."
+  },
+  "servicePages": {
+    "seoTecnico": {
+      "title": "Technical SEO Consultant in Mexico",
+      "subtitle": "Audits, structured data, Core Web Vitals, and migrations. I work on the code, not on a generic checklist.",
+      "whyTitle": "Why this matters",
+      "whatTitle": "What I actually do",
+      "deliverablesTitle": "What you get",
+      "toolsTitle": "Tools I use",
+      "faqTitle": "Frequently asked questions",
+      "relatedTitle": "Related services",
+      "ctaMain": "Request an audit",
+      "ctaSecondary": "Book a call",
+      "ctaNote": "I reply within 24-48 business hours, Mexico City time."
+    },
+    "desarrolloWeb": {
+      "title": "Web Development with Next.js and Firebase",
+      "subtitle": "Apps that render on the server, load fast on 4G, and get indexed the same day they ship.",
+      "whyTitle": "Why this matters",
+      "whatTitle": "What I build",
+      "deliverablesTitle": "What you get",
+      "toolsTitle": "Stack",
+      "faqTitle": "Frequently asked questions",
+      "relatedTitle": "Related services",
+      "ctaMain": "Get a project quote",
+      "ctaSecondary": "See how I work",
+      "ctaNote": "You get scope, timeline, and price in writing before I write a line of code."
+    },
+    "automatizacionIA": {
+      "title": "AI Automation and Chatbots",
+      "subtitle": "Chatbots with real context and workflows that remove manual work. With spend limits, conversation logs, and a human who can step in.",
+      "whyTitle": "Why this matters",
+      "whatTitle": "What I automate",
+      "deliverablesTitle": "What you get",
+      "toolsTitle": "Models and integrations",
+      "faqTitle": "Frequently asked questions",
+      "relatedTitle": "Related services",
+      "ctaMain": "Scope a process",
+      "ctaSecondary": "Book a call",
+      "ctaNote": "If the process shouldn't be automated, I'll say so on the first call."
+    },
+    "dashboards": {
+      "title": "Dashboards and Business Analytics",
+      "subtitle": "A dashboard leadership opens on Monday and understands without a walkthrough. Wired to your data, not to last week's export.",
+      "whyTitle": "Why this matters",
+      "whatTitle": "What I build",
+      "deliverablesTitle": "What you get",
+      "toolsTitle": "Sources and libraries",
+      "faqTitle": "Frequently asked questions",
+      "relatedTitle": "Related services",
+      "ctaMain": "Get a dashboard quote",
+      "ctaSecondary": "Book a call",
+      "ctaNote": "We start by naming the five metrics decisions actually get made on."
+    }
+  },
+  "about": {
+    "title": "About",
+    "subtitle": "Computer science engineer. Technical SEO consultant. PMP certified.",
+    "lead": "I studied Computer Science Engineering at Tecnológico de Monterrey, with a specialization in advanced AI for data science. Four years on, I do an uncommon mix: I write the code, and I'm also accountable for the organic traffic that code produces.",
+    "summary": "Professional summary",
+    "experience": "Experience",
+    "education": "Education",
+    "skills": "Stack and specialties",
+    "awards": "Recognition",
+    "languages": "Languages",
+    "certs": "Certifications",
+    "viewCerts": "View certifications",
+    "philosophy": "How I think about the work",
+    "philosophyDesc": "A pretty site nobody finds is an expensive brochure. A fast site with incoherent architecture isn't much better. The work lives at the seam: code Google can crawl, content a language model can cite, and numbers that hold up under review.",
+    "servicesLink": "See how I can help",
+    "credentialsNote": "Every degree and certification is available for review in a public folder. None of this asks you to take my word for it."
+  },
+  "contact": {
+    "title": "Contact",
+    "subtitle": "Tell me what's broken, or what you want to build.",
+    "lead": "The more specific your message, the more useful my first reply. If you already have the URL, Search Console access, or a Lighthouse report, send them: I'll come to the call with hypotheses instead of questions.",
+    "info": "Contact details",
+    "form": "Send me a message",
+    "name": "Name",
+    "namePh": "First and last name",
+    "email": "Email",
+    "emailPh": "you@email.com",
+    "subject": "Subject",
+    "subjectPh": "SEO audit, migration, dashboard...",
+    "message": "Message",
+    "messagePh": "Site URL, what's happening, and since when.",
+    "consent": "I agree that my data will be used only to answer this message, under Mexico's federal data protection law (LFPDPPP).",
+    "consentLink": "Privacy notice",
+    "send": "Open my message in email",
+    "location": "Location",
+    "responseTime": "Reply within 24-48 business hours",
+    "directEmail": "Direct email",
+    "projectTypes": "Project types",
+    "projectTypesDesc": "Standalone audits of one to two weeks, builds of four to eight, and ongoing monthly work for teams that need an in-house SEO engineer.",
+    "requiredField": "This field is required",
+    "invalidEmail": "Enter a valid email address",
+    "social": "Profiles and social",
+    "connect": "Connect with me",
+    "seeProjects": "See my projects",
+    "fiverr": "Hire me on Fiverr",
+    "mailtoNote": "Sending opens your email app with the message already written. Nothing is stored in any database.",
+    "noMailClient": "Email app did not open?",
+    "copyEmail": "Copy my email",
+    "copied": "Copied",
+    "orDirect": "Or reach me directly"
+  },
+  "books": {
+    "title": "Technical resources",
+    "subtitle": "What I've written about technical SEO, Next.js, and web performance.",
+    "audience": "Who it's for",
+    "buy": "Buy",
+    "pages": "pages",
+    "comingSoon": "More on the way.",
+    "upcoming": "Coming soon",
+    "upcomingDesc": "It's in active writing. Subscribe and I'll tell you the day it ships, not before.",
+    "notifyMe": "Notify me at launch",
+    "freeResources": "Free resources",
+    "freeResourcesDesc": "In the meantime, this is already public and free:"
+  },
+  "legal": {
+    "privacyTitle": "Privacy Notice",
+    "privacyLead": "What data this site collects, what I use it for, who it's shared with, and how you can exercise your ARCO rights under Mexico's federal data protection law (LFPDPPP).",
+    "termsTitle": "Terms and Conditions",
+    "termsLead": "The rules for using this site, and the general conditions under which I provide consulting and development services.",
+    "lastUpdated": "Last updated"
+  },
+  "footer": {
+    "description": "Technical SEO consulting and web development from Mexico City. Audits, migrations, Next.js, and structured data, so your site is legible to search engines and to language models alike.",
+    "navigation": "Navigation",
+    "contactTitle": "Contact",
+    "services": "Services",
+    "legal": "Legal",
+    "seoTecnico": "Technical SEO",
+    "desarrolloWeb": "Web Development",
+    "automatizacionIA": "AI Automation",
+    "dashboards": "Dashboards",
+    "dashboardsLabel": "Dashboards",
+    "allRightsReserved": "All rights reserved.",
+    "builtWith": "Built with Next.js and Tailwind, deployed on Vercel. Hand-written, no templates."
+  },
+  "notFound": {
+    "title": "404",
+    "heading": "This page doesn't exist",
+    "lead": "The link is broken, or the URL moved. If you got here from Google, tell me and I'll redirect it: an indexed 404 is my bug, not yours.",
+    "goHome": "Back to home",
+    "orTry": "Or try:"
   },
   "breadcrumbs": {
     "home": "Home"
@@ -162,6 +249,7 @@
     "present": "Present",
     "backToHome": "Back to home",
     "learnMore": "Learn more",
-    "relatedServices": "Related Services"
+    "relatedServices": "Related services",
+    "required": "required"
   }
 }

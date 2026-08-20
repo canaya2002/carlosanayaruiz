@@ -1,25 +1,44 @@
-import { Locale } from './types'
+import { forLocale, type Localized, type Locale, type YearMonth } from './types'
 
-export interface Experience {
-  id: string
+/** Stable, locale-independent keys. Used as React keys and schema identifiers. */
+export type ExperienceId = 'amazon-sde' | 'pmp-master' | 'wanhai-it'
+
+/** ISO 3166-1 alpha-2 for the countries in this record. */
+export type WorkCountry = 'MX' | 'US'
+
+/**
+ * A role is either finished (it has an end date and is not current) or ongoing
+ * (no end date, and current). Modelling it as a union makes the third,
+ * contradictory state — `current: true` next to a filled `endDate` — impossible
+ * to write, which is the kind of inconsistency that leaks straight into JSON-LD.
+ */
+export type EmploymentPeriod =
+  | { startDate: YearMonth; endDate: YearMonth; current: false }
+  | { startDate: YearMonth; endDate: null; current: true }
+
+interface ExperienceRecord {
+  id: ExperienceId
   company: string
   position: string
+  /** Localised display label for the place of work. */
   location: string
-  startDate: string
-  endDate: string | null
-  current: boolean
+  /** Locale-independent country, for schema and filtering. */
+  country: WorkCountry
   description: string
   highlights: string[]
   technologies?: string[]
 }
 
-const experienceData: Record<Locale, Experience[]> = {
+export type Experience = ExperienceRecord & EmploymentPeriod
+
+const experienceData: Localized<Experience[]> = {
   es: [
     {
       id: 'amazon-sde',
       company: 'Amazon',
       position: 'Software Developer Engineer',
       location: 'Estados Unidos',
+      country: 'US',
       startDate: '2023-11',
       endDate: '2025-04',
       current: false,
@@ -37,6 +56,7 @@ const experienceData: Record<Locale, Experience[]> = {
       company: 'Master Loyalty Group',
       position: 'PMP – Project Manager',
       location: 'México',
+      country: 'MX',
       startDate: '2022-09',
       endDate: '2023-08',
       current: false,
@@ -53,6 +73,7 @@ const experienceData: Record<Locale, Experience[]> = {
       company: 'Wan Hai Lines',
       position: 'IT Manager',
       location: 'México',
+      country: 'MX',
       startDate: '2021-02',
       endDate: '2022-08',
       current: false,
@@ -71,6 +92,7 @@ const experienceData: Record<Locale, Experience[]> = {
       company: 'Amazon',
       position: 'Software Developer Engineer',
       location: 'United States',
+      country: 'US',
       startDate: '2023-11',
       endDate: '2025-04',
       current: false,
@@ -88,6 +110,7 @@ const experienceData: Record<Locale, Experience[]> = {
       company: 'Master Loyalty Group',
       position: 'PMP – Project Manager',
       location: 'Mexico',
+      country: 'MX',
       startDate: '2022-09',
       endDate: '2023-08',
       current: false,
@@ -104,6 +127,7 @@ const experienceData: Record<Locale, Experience[]> = {
       company: 'Wan Hai Lines',
       position: 'IT Manager',
       location: 'Mexico',
+      country: 'MX',
       startDate: '2021-02',
       endDate: '2022-08',
       current: false,
@@ -119,5 +143,5 @@ const experienceData: Record<Locale, Experience[]> = {
 }
 
 export function getExperiences(locale: Locale): Experience[] {
-  return experienceData[locale] ?? experienceData.es
+  return forLocale(experienceData, locale)
 }

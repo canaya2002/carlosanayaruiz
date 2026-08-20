@@ -5,7 +5,13 @@
 .DS_Store
 *.pem
 npm-debug.log*
-.env*
+
+# Local env files. .env.example IS committed — it documents the contract.
+.env
+.env.local
+.env*.local
+!.env.example
+
 .vercel
 *.tsbuildinfo
 next-env.d.ts

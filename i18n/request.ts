@@ -1,4 +1,5 @@
 import { getRequestConfig } from 'next-intl/server'
+import { hasLocale } from 'next-intl'
 import { routing } from './routing'
 
 const messageImports = {
@@ -7,13 +8,20 @@ const messageImports = {
 } as const
 
 export default getRequestConfig(async ({ requestLocale }) => {
-  let locale = await requestLocale
+  const requested = await requestLocale
+  const locale = hasLocale(routing.locales, requested)
+    ? requested
+    : routing.defaultLocale
 
-  if (!locale || !routing.locales.includes(locale as 'es' | 'en')) {
-    locale = routing.defaultLocale
+  return {
+    locale,
+    messages: (await messageImports[locale]()).default,
+    /**
+     * Pinning the timezone keeps server and client date formatting identical.
+     * Without it next-intl falls back to the runtime's zone, which is UTC on
+     * Vercel and the visitor's zone in the browser — a hydration mismatch that
+     * only shows up on dates near midnight.
+     */
+    timeZone: 'America/Mexico_City',
   }
-
-  const messages = (await messageImports[locale as 'es' | 'en']()).default
-
-  return { locale, messages }
 })

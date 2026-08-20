@@ -1,39 +1,53 @@
 import { Metadata } from 'next'
-import { SITE_CONFIG, getSiteConfig, SEO_IMAGES } from './constants'
+import {
+  SITE_CONFIG,
+  getSiteConfig,
+  ROUTES,
+  type RouteKey,
+} from './constants'
 import { Locale } from '@/data/types'
 
 interface SEOProps {
+  /** Page title without the brand suffix — the template appends it. */
   title?: string
+  /**
+   * Unique, specific description. Google frequently rewrites snippets from
+   * page content, so this is a proposal rather than a guarantee; it still
+   * matters for social cards and for AI crawlers extracting a summary.
+   */
   description?: string
-  keywords?: string[]
-  image?: string
-  path?: string
-  type?: 'website' | 'article'
+  /**
+   * Route key from the ROUTES table. Drives canonical + hreflang so a
+   * renamed slug updates every reference at once.
+   */
+  route: RouteKey
+  type?: 'website' | 'article' | 'profile'
   publishedTime?: string
   modifiedTime?: string
-  author?: string
   noIndex?: boolean
   locale: Locale
-  /** When true, title is used as-is without the "| Carlos Anaya Ruiz" suffix */
+  /** Use the title verbatim, without the "| Carlos Anaya Ruiz" suffix. */
   absoluteTitle?: boolean
 }
 
 /**
- * Generate Next.js Metadata for any page.
- * - Title uses template "Page Title | Carlos Anaya Ruiz"
- * - Description is unique and specific per page
- * - OG images use locale-specific variants from public/
+ * Builds page metadata.
+ *
+ * Two things this deliberately does NOT emit:
+ *
+ *  - `keywords`. The meta keywords tag has been ignored by Google for two
+ *    decades; shipping it is noise, not optimisation.
+ *  - `openGraph.images`. Next merges the generated `opengraph-image` route
+ *    automatically, so hard-coding a URL here is how the declared-size /
+ *    real-size mismatch happened in the first place.
  */
 export function generatePageMetadata({
   title,
   description,
-  keywords,
-  image,
-  path = '',
+  route,
   type = 'website',
   publishedTime,
   modifiedTime,
-  author,
   noIndex = false,
   locale,
   absoluteTitle = false,
@@ -42,23 +56,16 @@ export function generatePageMetadata({
 
   const metaTitle = title || config.title
   const metaDescription = description || config.description
-  const ogImage =
-    image || (locale === 'en' ? SEO_IMAGES.ogEn : SEO_IMAGES.ogEs)
-  const metaUrl = `${config.url}/${locale}${path}`
-  const configKeywords = Array.isArray(config.keywords) ? config.keywords : []
-  const metaKeywords = keywords
-    ? [...configKeywords, ...keywords]
-    : configKeywords
 
-  const alternateLocale = locale === 'es' ? 'en' : 'es'
+  const paths = ROUTES[route]
+  const canonical = `${SITE_CONFIG.url}/${locale}${paths[locale]}`
 
   return {
     title: absoluteTitle ? { absolute: metaTitle } : metaTitle,
     description: metaDescription,
-    keywords: metaKeywords,
-    authors: [{ name: author || config.name }],
-    creator: config.name,
-    publisher: config.name,
+    authors: [{ name: SITE_CONFIG.name, url: SITE_CONFIG.url }],
+    creator: SITE_CONFIG.name,
+    publisher: SITE_CONFIG.name,
     robots: noIndex
       ? { index: false, follow: false }
       : {
@@ -68,46 +75,39 @@ export function generatePageMetadata({
             index: true,
             follow: true,
             'max-video-preview': -1,
-            'max-image-preview': 'large' as const,
+            'max-image-preview': 'large',
             'max-snippet': -1,
           },
         },
     alternates: {
-      canonical: metaUrl,
+      canonical,
+      // Reciprocal and self-referencing, both required for hreflang to be
+      // honoured. x-default points at Spanish: the practice is Mexico-based
+      // and Spanish is the primary market.
       languages: {
-        'es-MX': `${config.url}/es${path}`,
-        'en-US': `${config.url}/en${path}`,
-        'x-default': `${config.url}/es${path}`,
+        'es-MX': `${SITE_CONFIG.url}/es${paths.es}`,
+        'en-US': `${SITE_CONFIG.url}/en${paths.en}`,
+        'x-default': `${SITE_CONFIG.url}/es${paths.es}`,
       },
     },
     openGraph: {
       type: type === 'article' ? 'article' : 'website',
       locale: config.ogLocale,
-      alternateLocale: alternateLocale === 'es' ? 'es_MX' : 'en_US',
-      url: metaUrl,
+      alternateLocale: locale === 'es' ? 'en_US' : 'es_MX',
+      url: canonical,
       title: metaTitle,
       description: metaDescription,
-      siteName: config.name,
-      images: [
-        {
-          url: ogImage,
-          width: 1200,
-          height: 630,
-          alt: `Carlos Anaya Ruiz — ${title || (locale === 'en' ? 'Technical SEO & Web Development' : 'SEO Técnico & Desarrollo Web')}`,
-          type: 'image/png',
-        },
-      ],
+      siteName: SITE_CONFIG.name,
       ...(type === 'article' && {
         publishedTime,
         modifiedTime,
-        authors: [author || config.name],
+        authors: [SITE_CONFIG.name],
       }),
     },
     twitter: {
       card: 'summary_large_image',
       title: metaTitle,
       description: metaDescription,
-      images: [ogImage],
     },
   }
 }

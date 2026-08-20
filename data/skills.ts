@@ -1,12 +1,32 @@
-import { Locale } from './types'
+import { forLocale, type Localized, type Locale } from './types'
+
+/**
+ * Locale-independent category keys. Used as React keys and as the join between
+ * the two locales, so the ES and EN lists stay in the same order and a category
+ * can never exist in one language only.
+ */
+export type SkillCategoryId =
+  | 'seo-performance'
+  | 'languages-backend'
+  | 'frontend-mobile'
+  | 'data'
+  | 'cloud-devops'
+  | 'ai-ml'
+  | 'management'
 
 export interface SkillCategory {
-  category: string
+  category: SkillCategoryId
+  /** Localised heading for the group. */
   label: string
+  /**
+   * Tool and technology names. Deliberately unlocalised strings — product
+   * names are not translated, and no self-assessed level is attached to them
+   * because the record does not support one.
+   */
   skills: string[]
 }
 
-const skillsData: Record<Locale, SkillCategory[]> = {
+const skillsData: Localized<SkillCategory[]> = {
   es: [
     {
       category: 'seo-performance',
@@ -84,5 +104,5 @@ const skillsData: Record<Locale, SkillCategory[]> = {
 }
 
 export function getSkillCategories(locale: Locale): SkillCategory[] {
-  return skillsData[locale] ?? skillsData.es
+  return forLocale(skillsData, locale)
 }
