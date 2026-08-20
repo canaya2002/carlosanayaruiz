@@ -164,6 +164,9 @@
     <div><div class="v">22</div><div class="k">URLs del sitemap, todas 200, cero 3xx</div></div>
     <div><div class="v">168</div><div class="k">nodos JSON-LD válidos</div></div>
     <div><div class="v">78&#8202;KB</div><div class="k">assets, antes 5,800&#8202;KB</div></div>
+    <div><div class="v">48</div><div class="k">comprobaciones de layout sin desborde: 8 páginas × 6 anchos</div></div>
+    <div><div class="v">0</div><div class="k">layouts en reposo, con las animaciones corriendo</div></div>
+    <div><div class="v">31</div><div class="k">huecos de imagen etiquetados con su ruta</div></div>
   </div>
 
   <section>
@@ -439,10 +442,142 @@
 
   <section>
     <div class="sec-head">
-      <span class="eyebrow">03 — Dos bugs de layout</span>
+      <span class="eyebrow">03 — El rediseño que pediste</span>
+      <h2>Por qué el cristal no se veía, y qué hizo falta para que se viera</h2>
+      <p>
+        Dijiste que faltaba vida, movimiento, carruseles, 3D y glassmorphism. El
+        <code>backdrop-filter</code> ya estaba en el código de la versión que rechazaste. El
+        problema es que <b>el cristal solo existe si hay algo detrás que difuminar</b>, y el fondo
+        era casi blanco: un panel translúcido sobre blanco se ve como un panel blanco. El efecto
+        estaba y era invisible. La solución no era más desenfoque, era más fondo.
+      </p>
+    </div>
+
+    <div class="ledger">
+      <div class="row fixed">
+        <div class="stripe"></div>
+        <div class="body">
+          <h3>Aurora detrás del cristal</h3>
+          <p>
+            Cuatro campos de color con tres veces la saturación de los blobs anteriores, que se
+            mueven en bucle, con grano encima. Sobre eso el cristal se lee de inmediato.
+          </p>
+          <p>
+            El coste está acotado por una regla que no se rompe: <b>solo se animan
+            <code>transform</code>, <code>opacity</code> y <code>filter</code></b>, que son las tres
+            propiedades que corren en el compositor. Nada de <code>background-position</code>, que
+            repinta cada frame.
+          </p>
+        </div>
+        <div class="measure">
+          <div class="ba">
+            <span><span class="lbl">layouts en reposo</span><span class="new">0</span></span>
+            <span><span class="lbl">recálculos en 3&#8202;s</span><span class="new">4&#8211;9</span></span>
+            <span><span class="lbl">presupuesto</span><span class="new">20</span></span>
+          </div>
+        </div>
+      </div>
+
+      <div class="row fixed">
+        <div class="stripe"></div>
+        <div class="body">
+          <h3>3D con un solo punto de fuga</h3>
+          <p>
+            La perspectiva vive en el contenedor y la rotación en el hijo. Separarlas es lo que hace
+            que varias tarjetas de una misma rejilla compartan un punto de fuga en lugar de tener
+            cada una el suyo, que es exactamente lo que delata un 3D falso.
+          </p>
+        </div>
+        <div class="measure">
+          <div class="ba">
+            <span><span class="lbl">perspectiva</span><span class="new">1200px</span></span>
+            <span><span class="lbl">inclinación máx.</span><span class="new">9deg</span></span>
+          </div>
+        </div>
+      </div>
+
+      <div class="row fixed">
+        <div class="stripe"></div>
+        <div class="body">
+          <h3>Carruseles sin JavaScript</h3>
+          <p>
+            El desplazamiento y el imán los hace el navegador con <code>scroll-snap</code>. Se
+            arrastra con el dedo, rueda con trackpad y funciona con teclado sin escribir nada. Si el
+            JS no corre, el carrusel sigue desplazándose y lo único que se pierde son las flechas.
+          </p>
+          <p>
+            Esto importa para lo que vendes: <b>un carrusel con estado en JS solo expone la primera
+            lámina a un crawler.</b> Aquí el contenido completo va en el HTML del servidor.
+          </p>
+        </div>
+        <div class="measure">
+          <div class="ba">
+            <span><span class="lbl">JS para desplazar</span><span class="new">0&#8202;KB</span></span>
+            <span><span class="lbl">visible al crawler</span><span class="new">todas las láminas</span></span>
+          </div>
+        </div>
+      </div>
+
+      <div class="row fixed">
+        <div class="stripe"></div>
+        <div class="body">
+          <h3>Huecos de imagen que dicen dónde van</h3>
+          <p>
+            Pediste muchos espacios vacíos con algo que los referenciara. Mientras un hueco está
+            vacío dibuja un patrón de color y escribe encima <b>la ruta exacta del archivo que
+            falta</b>, para que puedas pegar cada imagen sin abrir el código.
+          </p>
+          <p>
+            El inventario de <code>docs/IMAGENES.md</code> se genera escaneando el código, no a
+            mano: un documento que lista rutas escrito a mano se desincroniza en la primera página
+            nueva, y entonces es peor que no tenerlo. Para apagar las etiquetas cuando ya no las
+            necesites: <code>NEXT_PUBLIC_SHOW_SLOTS=0</code>.
+          </p>
+        </div>
+        <div class="measure">
+          <div class="ba">
+            <span><span class="lbl">huecos</span><span class="new">31</span></span>
+            <span><span class="lbl">con ruta fija</span><span class="new">7</span></span>
+            <span><span class="lbl">por dato</span><span class="new">24</span></span>
+          </div>
+        </div>
+      </div>
+
+      <div class="row fixed">
+        <div class="stripe"></div>
+        <div class="body">
+          <h3>Cuatro páginas nuevas y un mapa honesto</h3>
+          <p>
+            <code>/proyectos</code> con una página propia por empresa, <code>/premios</code>,
+            <code>/certificaciones</code> y <code>/cv</code>. El mapa mundial no lleva JS: los pines
+            son anclas de verdad, así que un crawler los sigue y funcionan sin hidratar.
+          </p>
+          <p>
+            Los empleos aparecen <b>a nivel país y no como pin exacto</b>, con una nota que lo
+            explica en la propia página. No es una limitación técnica: es que en tu registro de
+            experiencia solo quedó anotado el país, y no voy a inventar coordenadas para que el
+            mapa se vea más lleno.
+          </p>
+        </div>
+        <div class="measure">
+          <div class="ba">
+            <span><span class="lbl">registros</span><span class="new">5</span></span>
+            <span><span class="lbl">países</span><span class="new">2</span></span>
+            <span><span class="lbl">pin exacto</span><span class="new">1 (CDMX)</span></span>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section>
+    <div class="sec-head">
+      <span class="eyebrow">04 — Seis bugs de layout, cuatro de la última ronda</span>
       <h2>Encontrados midiendo, no mirando</h2>
       <p>
-        Los dos estaban invisibles por la misma razón, y la razón la había puesto yo.
+        Ninguno de los seis se veía como lo que era. Dos venían de la ronda anterior y cuatro los
+        introduje yo al meter el 3D y los carruseles. Los cuatro nuevos comparten una propiedad
+        incómoda: <b>el elemento que el reporte señalaba no era el culpable</b>.
       </p>
     </div>
 
@@ -470,6 +605,26 @@
             <td>Su <code>min-content</code> es la cadena completa, así que desbordaba la columna del pie aunque la rejilla usara <code>minmax(0,1fr)</code></td>
             <td><code>min-w-0</code> + <code>overflow-wrap: anywhere</code></td>
           </tr>
+          <tr>
+            <td>Los carriles de los carruseles sin <code>min-width: 0</code></td>
+            <td>El <code>min-content</code> del carril es la <em>suma</em> de sus láminas de ancho fijo. Al ser hijo de un flex, ese tamaño inflaba al padre y el desbordamiento se escapaba al documento: <b>1178&#8202;px de <code>scrollWidth</code> en un viewport de 1024</b>. El síntoma visible era el header pegajoso estirándose a 1178, que parecía un bug del nav y no lo era</td>
+            <td><code>min-width: 0</code> y <code>max-width: 100%</code> en <code>.rail</code>. Misma causa que el correo del pie de la fila anterior: un hijo que no puede encoger arrastra a su contenedor</td>
+          </tr>
+          <tr>
+            <td>El nav de escritorio conmutaba en <code>lg</code> y la hamburguesa en <code>xl</code></td>
+            <td>Entre 1024 y 1279&#8202;px se dibujaban <b>los dos a la vez</b>: marca 227 + nav 582 + controles 306 + gaps = 1178&#8202;px dentro de una fila de 960. En todas las páginas</td>
+            <td>Los dos en <code>xl</code>. El nav pide ~1139&#8202;px de contenido, así que no cabía en <code>lg</code> ni aunque no chocaran</td>
+          </tr>
+          <tr>
+            <td>La fila del header pedía 1094&#8202;px teniendo 1088 a 1440&#8202;px</td>
+            <td>No producía scroll: algo se comprimía siempre, en silencio. Era el apretón que hacía envolver el nav y que llevaba dos rondas sin diagnosticar</td>
+            <td>Enlaces del nav a <code>px-2.5</code>: 4&#8202;px menos por enlace, 24 en total, y quedan 18 de holgura para cuando una etiqueta crezca al traducir</td>
+          </tr>
+          <tr>
+            <td>La fila del header pedía 336&#8202;px teniendo 320 a 360&#8202;px</td>
+            <td>Tampoco producía scroll — se comía el <code>px-5</code> del contenedor y dejaba la hamburguesa a 4&#8202;px del borde en vez de 20. Peor que un desborde, porque <b>ningún chequeo de <code>scrollWidth</code> lo ve</b></td>
+            <td>La marca a <code>text-base</code> y el conmutador de idioma apretado solo por debajo de <code>sm</code></td>
+          </tr>
         </tbody>
       </table>
     </div>
@@ -492,11 +647,38 @@
         encontró los dos bugs de la tabla de arriba.
       </p>
     </div>
+
+    <div class="callout">
+      <span class="eyebrow">Dos veces que la herramienta acusó a quien no era</span>
+      <p>
+        <b>El reporte de desbordamiento culpaba al header.</b> Y el header estaba impecable: medía
+        1178&#8202;px porque el documento entero medía 1178, y todo bloque al 100&#8202;% se estira
+        con él. Perseguí el síntoma durante un buen rato antes de entender que un elemento
+        reportado no es necesariamente la causa.
+      </p>
+      <p>
+        Así que el script aprendió a apuntar a causas. Ahora comprueba dos cosas más:
+        <b>scrollers que se salen de su propio contenedor</b> —un carril más ancho que su padre no
+        se está desplazando, se está fugando— y <b>la fila del header contra su ancho disponible</b>,
+        sumando los hijos visibles. Los dos chequeos encontraron un defecto real al estrenarse, y el
+        segundo encontró el apretón de 1440&#8202;px que llevaba dos rondas escondido.
+      </p>
+      <p>
+        <b>El probe de rendimiento acusó al sitio de un layout en reposo.</b> No era del sitio: el
+        probe abría su ventana de medición 3.5&#8202;s después de navegar, antes de que la página
+        acabara de asentarse, y capturaba el layout que hacen los <code>ResizeObserver</code> de los
+        carruseles en su primera llamada. Con 5&#8202;s de espera, cuatro ventanas de 3&#8202;s
+        seguidas dan 0. El veredicto además decía &#8220;algo repinta en reposo&#8221; tanto si
+        sobraban recálculos como si había un solo layout, y eso manda a buscar en el lugar
+        equivocado: un layout en reposo es un handler que mide el DOM, y un exceso de recálculos es
+        una animación que no está en el compositor. Ahora nombra el límite que se pasó.
+      </p>
+    </div>
   </section>
 
   <section>
     <div class="sec-head">
-      <span class="eyebrow">04 — Accesibilidad</span>
+      <span class="eyebrow">05 — Accesibilidad</span>
       <h2>Cada color medido, ninguno a ojo</h2>
       <p>
         La paleta nueva es azul → violeta → cian sobre fondo claro. El cian es el problema
@@ -543,7 +725,7 @@
 
   <section>
     <div class="sec-head">
-      <span class="eyebrow">05 — Sin backend</span>
+      <span class="eyebrow">06 — Sin backend</span>
       <h2>Lo que se fue, y lo que eso cambia</h2>
     </div>
 
@@ -594,11 +776,54 @@
 
   <section>
     <div class="sec-head">
-      <span class="eyebrow">06 — Te toca a ti</span>
-      <h2>Cinco cosas que no puedo decidir ni ejecutar</h2>
+      <span class="eyebrow">07 — Te toca a ti</span>
+      <h2>Siete cosas que no puedo decidir ni ejecutar</h2>
+      <p>
+        Las dos primeras son las que bloquean lo que acabas de pedir: el mapa y las imágenes están
+        construidos y esperando datos que solo tú tienes.
+      </p>
     </div>
 
     <div class="ledger">
+      <div class="row flag">
+        <div class="stripe"></div>
+        <div class="body">
+          <h3>Las ciudades de Amazon, Master Loyalty Group y Wan Hai Lines</h3>
+          <p>
+            El mapa los dibuja agrupados por país porque en tu registro de experiencia solo quedó
+            anotado el país. Dime la ciudad de cada uno y aparecen como pines exactos, igual que el
+            de CDMX. <b>No los voy a colocar a ojo</b>: un pin en una ciudad donde no trabajaste es
+            una afirmación falsa sobre tu trayectoria en una página que existe para dar confianza,
+            y en el mejor de los casos alguien de esa empresa lo nota.
+          </p>
+          <p>
+            Se editan en <code>data/companies.ts</code>: el campo <code>coords</code> es opcional a
+            propósito, para que la ausencia de dato se vea como ausencia y no como cero.
+          </p>
+        </div>
+        <div class="measure"><div class="ba"><span><span class="lbl">falta</span><span class="new">3 ciudades</span></span><span><span class="lbl">costo</span><span class="new">3 líneas</span></span></div></div>
+      </div>
+
+      <div class="row flag">
+        <div class="stripe"></div>
+        <div class="body">
+          <h3>Las imágenes de los 31 huecos</h3>
+          <p>
+            Están todos declarados y cada uno anuncia en pantalla la ruta exacta del archivo que le
+            toca. No hace falta que me preguntes dónde va nada: la ruta está escrita encima del
+            hueco, y <code>docs/IMAGENES.md</code> tiene la tabla completa con el tamaño
+            recomendado de cada uno.
+          </p>
+          <p>
+            Los PDFs van en <code>public/pdf/</code> y se declaran en el array <code>docs</code> de
+            la entrada correspondiente. Cuando ya no quieras ver las etiquetas de ruta en el sitio,
+            pon <code>NEXT_PUBLIC_SHOW_SLOTS=0</code> en Vercel — el hueco sigue dibujando su
+            patrón, así que la página nunca se ve rota, solo deja de anunciar rutas a los
+            visitantes.
+          </p>
+        </div>
+        <div class="measure"><div class="ba"><span><span class="lbl">puestas</span><span class="new">0 de 31</span></span><span><span class="lbl">dónde va cada una</span><span class="new">docs/IMAGENES.md</span></span></div></div>
+      </div>
       <div class="row flag">
         <div class="stripe"></div>
         <div class="body">
@@ -684,7 +909,7 @@
 
   <section>
     <div class="sec-head">
-      <span class="eyebrow">07 — Cobertura de tu checklist</span>
+      <span class="eyebrow">08 — Cobertura de tu checklist</span>
       <h2>Lo que un cambio de código alcanza, y lo que no</h2>
       <p>
         Tu checklist tiene 64 secciones. Cerca de un tercio no es implementable en un repositorio,
@@ -741,7 +966,7 @@
 
   <section>
     <div class="sec-head">
-      <span class="eyebrow">08 — Verificación</span>
+      <span class="eyebrow">09 — Verificación</span>
       <h2>Cómo se comprobó</h2>
     </div>
 
@@ -759,8 +984,12 @@
           <li><b>Idioma</b> — <code>/</code> → <code>/es</code> probado con <code>en-US</code>, <code>en-GB</code>, <code>es-MX</code> y sin header.</li>
           <li><b>Tema</b> — 0 apariciones de <code>prefers-color-scheme</code> en el HTML de las 22 páginas, 0 de <code>.dark</code> en el CSS servido.</li>
           <li><b>Schema</b> — cada bloque parseado como JSON, 168 nodos, cero <code>@id</code> colgando, cero <code>aggregateRating</code> / <code>review</code> / <code>SearchAction</code>.</li>
-          <li><b>Layout</b> — cero desbordamiento horizontal en 360, 390, 414, 768, 1024 y 1440&#8202;px, en las 22 páginas.</li>
-          <li><b>Color</b> — los 11 valores recalculados contra el CSS y 14 pisos de contraste validados.</li>
+          <li><b>hreflang</b> — el HTML servido dice <code>hrefLang</code> con L mayúscula, que es cómo lo serializa Next. Comprobado en el DOM y no dado por bueno: el parser lo normaliza, los tres atributos llegan como <code>hreflang</code> y responden a un selector en minúscula.</li>
+          <li><b>Layout</b> — cero desbordamiento en 360, 390, 414, 768, 1024 y 1440&#8202;px. Tres chequeos por ancho, no uno: elementos que rebasan sin que nadie los recorte, scrollers más anchos que su contenedor, y la fila del header contra su ancho disponible.</li>
+          <li><b>Color</b> — los 12 valores recalculados contra el CSS, más los casos <em>compuestos</em>: el contraste del texto sobre cristal translúcido apoyado en el campo de aurora más oscuro, que es el único que puede fallar y el que a ojo parece bien.</li>
+          <li><b>Rendimiento</b> — 0 layouts y 4&#8211;9 recálculos de estilo en 3&#8202;s en reposo con todas las animaciones corriendo; 0 layouts forzados en 120 movimientos de ratón; ninguna tarea larga.</li>
+          <li><b>Interacción</b> — los desplegables del nav probados con clics sintéticos reales por el protocolo DevTools, no leyendo el código: abren, y cierran con <kbd>Esc</kbd>.</li>
+          <li><b>Linter</b> — <code>eslint .</code>, 0 errores y 0 avisos. <code>next lint</code> se eliminó en Next 16, así que el script del repo lo llamaba a la nada y pasaba en vacío; ahora está en <code>npm run verify</code> para no descubrir un error de lint en el build de Vercel.</li>
         </ul>
       </div>
 
@@ -773,7 +1002,9 @@
         <ul class="tight">
           <li><b>Nodos <code>Offer</code> en todas las páginas.</b> Se leían como un precio inventado. Son <code>OfferCatalog → itemOffered: Service</code> con nombre y URL y nada más — la forma correcta de declarar un catálogo sin inventar precios. Un grep por la subcadena <code>&quot;Offer&quot;</code> era demasiado burdo.</li>
           <li><b><code>dateModified</code> igual a hoy.</b> Se leía como el regreso del bug de frescura fabricada. Viene de una constante <code>LAST_UPDATED</code> en páginas escritas hoy, y la fecha visible coincide. No va a derivar.</li>
-          <li><b>&#8220;Móvil está roto&#8221;.</b> Lo escribí, y estaba equivocado. Era mi método de captura. Ver la sección 03.</li>
+          <li><b>&#8220;Móvil está roto&#8221;.</b> Lo escribí, y estaba equivocado. Era mi método de captura. Ver la sección 04.</li>
+          <li><b>&#8220;El header desborda 154&#8202;px&#8221;.</b> El header no tenía nada. Medía 1178&#8202;px porque el documento entero medía 1178, inflado por un carril de carrusel sin <code>min-width: 0</code>. Un elemento que aparece en un reporte de desbordamiento no es necesariamente la causa: cualquier bloque al 100&#8202;% se estira con el documento.</li>
+          <li><b>&#8220;Algo repinta en reposo&#8221;.</b> Era mi propio probe midiendo antes de que la página se asentara, y capturando el layout de arranque de los <code>ResizeObserver</code>. Cuatro ventanas consecutivas con la espera corregida dan 0.</li>
         </ul>
         <p style="color:var(--muted);font-size:0.94rem">
           Vale decirlo porque el error inverso —aceptar un hallazgo con tono seguro sin
@@ -784,8 +1015,8 @@
   </section>
 
   <footer>
-    96 archivos modificados · 14,985 inserciones · 4,084 eliminaciones<br>
-    Verificado contra https://www.carlosanayaruiz.com el 2026-08-20. Nada de lo anterior es una proyección.
+    126 archivos cambiados · 27,628 inserciones · 4,060 eliminaciones desde el estado inicial<br>
+    Verificado contra https://www.carlosanayaruiz.com el 2026-08-20, después del despliegue del commit b737608. Nada de lo anterior es una proyección.
   </footer>
 
 </div>
