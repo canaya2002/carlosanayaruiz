@@ -1,14 +1,12 @@
-<title>Indexation Debt</title>
+<title>Deuda de Indexación</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,400;12..96,600;12..96,800&family=IBM+Plex+Sans:wght@400;500;600&family=IBM+Plex+Mono:wght@400;500;600&display=swap">
 
 <style>
-  /* ═══════════════════════════════════════════════════════════
-     Palette — cool green-cast neutrals, three semantic signals.
-     Deliberately not the audited site's warm paper: this is the
-     instrument, not the subject.
-     ═══════════════════════════════════════════════════════════ */
+  /* Paleta de instrumento: neutros con sesgo verde frío y tres señales
+     semánticas. Deliberadamente distinta del sitio auditado — esto es el
+     aparato de medición, no el sujeto. */
   :root {
     --ground: #f6f8f7;
     --surface: #ffffff;
@@ -19,301 +17,189 @@
     --rule: #dce2e0;
     --rule-strong: #c3ccca;
 
-    --verified: #0c6b5b;
-    --verified-wash: #e4f0ed;
-    --yours: #9c5a08;
-    --yours-wash: #f7eee2;
-    --broken: #8c2b2b;
-    --broken-wash: #f6e9e9;
+    --ok: #0c6b5b;
+    --ok-wash: #e4f0ed;
+    --you: #9c5a08;
+    --you-wash: #f7eee2;
+    --was: #8c2b2b;
 
     --display: "Bricolage Grotesque", ui-sans-serif, system-ui, sans-serif;
     --body: "IBM Plex Sans", ui-sans-serif, system-ui, sans-serif;
     --mono: "IBM Plex Mono", ui-monospace, "SF Mono", Menlo, monospace;
-
     --measure: 74ch;
-    --shell: 1140px;
   }
 
   :root:not([data-theme="light"]) {
     @media (prefers-color-scheme: dark) {
-      --ground: #0d1413;
-      --surface: #131c1b;
-      --sunken: #101817;
-      --ink: #e8ecea;
-      --muted: #8b9a97;
-      --faint: #6d7b79;
-      --rule: #24302e;
-      --rule-strong: #35423f;
-
-      --verified: #3fbfa4;
-      --verified-wash: #12302a;
-      --yours: #d59340;
-      --yours-wash: #33260f;
-      --broken: #d96a6a;
-      --broken-wash: #331919;
+      --ground: #0d1413; --surface: #131c1b; --sunken: #101817;
+      --ink: #e8ecea; --muted: #8b9a97; --faint: #6d7b79;
+      --rule: #24302e; --rule-strong: #35423f;
+      --ok: #3fbfa4; --ok-wash: #12302a;
+      --you: #d59340; --you-wash: #33260f; --was: #d96a6a;
     }
   }
-
   :root[data-theme="dark"] {
-    --ground: #0d1413;
-    --surface: #131c1b;
-    --sunken: #101817;
-    --ink: #e8ecea;
-    --muted: #8b9a97;
-    --faint: #6d7b79;
-    --rule: #24302e;
-    --rule-strong: #35423f;
-
-    --verified: #3fbfa4;
-    --verified-wash: #12302a;
-    --yours: #d59340;
-    --yours-wash: #33260f;
-    --broken: #d96a6a;
-    --broken-wash: #331919;
+    --ground: #0d1413; --surface: #131c1b; --sunken: #101817;
+    --ink: #e8ecea; --muted: #8b9a97; --faint: #6d7b79;
+    --rule: #24302e; --rule-strong: #35423f;
+    --ok: #3fbfa4; --ok-wash: #12302a;
+    --you: #d59340; --you-wash: #33260f; --was: #d96a6a;
   }
 
   * { box-sizing: border-box; }
-
   body {
-    margin: 0;
-    background: var(--ground);
-    color: var(--ink);
-    font-family: var(--body);
-    font-size: 16.5px;
-    line-height: 1.6;
+    margin: 0; background: var(--ground); color: var(--ink);
+    font-family: var(--body); font-size: 16.5px; line-height: 1.6;
     -webkit-font-smoothing: antialiased;
   }
-
-  .shell {
-    max-width: var(--shell);
-    margin: 0 auto;
-    padding: 0 clamp(1.25rem, 4vw, 3.5rem);
-  }
-
-  .prose { max-width: var(--measure); }
-
-  h1, h2, h3 {
-    font-family: var(--display);
-    font-weight: 800;
-    text-wrap: balance;
-    margin: 0;
-    letter-spacing: -0.02em;
-  }
-
-  h1 { font-size: clamp(2.5rem, 1.6rem + 3.6vw, 4.5rem); line-height: 1.0; }
-  h2 { font-size: clamp(1.6rem, 1.3rem + 1.2vw, 2.25rem); line-height: 1.12; }
-  h3 { font-size: 1.1rem; font-weight: 600; line-height: 1.3; letter-spacing: -0.01em; }
-
+  .shell { max-width: 1140px; margin: 0 auto; padding: 0 clamp(1.25rem, 4vw, 3.5rem); }
+  h1, h2, h3 { font-family: var(--display); font-weight: 800; text-wrap: balance; margin: 0; letter-spacing: -0.02em; }
+  h1 { font-size: clamp(2.4rem, 1.5rem + 3.5vw, 4.25rem); line-height: 1.02; }
+  h2 { font-size: clamp(1.55rem, 1.3rem + 1.1vw, 2.2rem); line-height: 1.12; }
+  h3 { font-size: 1.08rem; font-weight: 600; line-height: 1.3; letter-spacing: -0.01em; }
   p { margin: 0; }
   .stack > * + * { margin-top: 1.1em; }
-
-  a { color: var(--verified); text-decoration: underline; text-underline-offset: 0.18em; }
-  a:focus-visible, button:focus-visible {
-    outline: 2px solid var(--verified);
-    outline-offset: 3px;
-    border-radius: 2px;
-  }
-
-  code, .num, .mono { font-family: var(--mono); font-variant-numeric: tabular-nums; }
-  code {
-    font-size: 0.86em;
-    background: var(--sunken);
-    padding: 0.12em 0.36em;
-    border-radius: 3px;
-  }
+  a { color: var(--ok); text-decoration: underline; text-underline-offset: 0.18em; }
+  a:focus-visible { outline: 2px solid var(--ok); outline-offset: 3px; border-radius: 2px; }
+  code, .mono { font-family: var(--mono); font-variant-numeric: tabular-nums; }
+  code { font-size: 0.86em; background: var(--sunken); padding: 0.12em 0.36em; border-radius: 3px; }
 
   .eyebrow {
-    font-family: var(--mono);
-    font-size: 0.72rem;
-    font-weight: 500;
-    letter-spacing: 0.14em;
-    text-transform: uppercase;
-    color: var(--faint);
-    display: block;
+    font-family: var(--mono); font-size: 0.72rem; font-weight: 500;
+    letter-spacing: 0.14em; text-transform: uppercase; color: var(--faint); display: block;
   }
 
-  /* ── Masthead ─────────────────────────────────────────── */
-  .masthead {
-    border-bottom: 1px solid var(--rule);
-    padding: clamp(3rem, 8vw, 6rem) 0 clamp(2rem, 5vw, 3.5rem);
-  }
-  .masthead .lede {
-    font-size: clamp(1.1rem, 1rem + 0.5vw, 1.35rem);
-    color: var(--muted);
-    margin-top: 1.6rem;
-    max-width: 62ch;
-    line-height: 1.5;
-  }
-  .meta-row {
-    display: flex;
-    flex-wrap: wrap;
-    gap: 0.5rem 2.25rem;
-    margin-top: 2.5rem;
-    font-family: var(--mono);
-    font-size: 0.8rem;
-    color: var(--faint);
-  }
+  .masthead { border-bottom: 1px solid var(--rule); padding: clamp(3rem, 8vw, 5.5rem) 0 clamp(2rem, 5vw, 3.25rem); }
+  .masthead .lede { font-size: clamp(1.08rem, 1rem + 0.5vw, 1.3rem); color: var(--muted); margin-top: 1.5rem; max-width: 62ch; line-height: 1.5; }
+  .meta-row { display: flex; flex-wrap: wrap; gap: 0.5rem 2.25rem; margin-top: 2.25rem; font-family: var(--mono); font-size: 0.8rem; color: var(--faint); }
   .meta-row b { color: var(--muted); font-weight: 500; }
 
-  /* ── Verdict strip ────────────────────────────────────── */
-  .verdict {
-    display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
-    gap: 1px;
-    background: var(--rule);
-    border: 1px solid var(--rule);
-    margin: clamp(2.5rem, 6vw, 4rem) 0;
-  }
-  .verdict div { background: var(--surface); padding: 1.25rem 1.35rem; }
-  .verdict .v { font-family: var(--mono); font-size: 1.6rem; font-weight: 600; line-height: 1; font-variant-numeric: tabular-nums; }
+  .verdict { display: grid; grid-template-columns: repeat(auto-fit, minmax(148px, 1fr)); gap: 1px; background: var(--rule); border: 1px solid var(--rule); margin: clamp(2.25rem, 6vw, 3.5rem) 0; }
+  .verdict div { background: var(--surface); padding: 1.2rem 1.3rem; }
+  .verdict .v { font-family: var(--mono); font-size: 1.55rem; font-weight: 600; line-height: 1; color: var(--ok); font-variant-numeric: tabular-nums; }
   .verdict .k { font-size: 0.78rem; color: var(--muted); margin-top: 0.5rem; line-height: 1.35; }
-  .verdict .ok .v { color: var(--verified); }
 
-  section { padding: clamp(2.75rem, 6vw, 4.5rem) 0; border-bottom: 1px solid var(--rule); }
+  section { padding: clamp(2.5rem, 6vw, 4rem) 0; border-bottom: 1px solid var(--rule); }
   section:last-of-type { border-bottom: 0; }
-  .sec-head { margin-bottom: 2.25rem; }
+  .sec-head { margin-bottom: 2rem; }
   .sec-head h2 { margin-top: 0.7rem; }
   .sec-head p { color: var(--muted); margin-top: 0.9rem; max-width: var(--measure); }
 
-  /* ── Ledger ───────────────────────────────────────────── */
   .ledger { display: flex; flex-direction: column; gap: 1px; background: var(--rule); border-block: 1px solid var(--rule); }
-  .row {
-    background: var(--surface);
-    display: grid;
-    grid-template-columns: 4px minmax(0, 1fr) minmax(0, 15rem);
-    gap: 0 1.5rem;
-    align-items: start;
-  }
+  .row { background: var(--surface); display: grid; grid-template-columns: 4px minmax(0, 1fr) minmax(0, 14rem); gap: 0 1.5rem; align-items: start; }
   .row > .stripe { background: var(--rule-strong); align-self: stretch; }
-  .row.fixed  > .stripe { background: var(--verified); }
-  .row.flag   > .stripe { background: var(--yours); }
-  .row .body { padding: 1.3rem 0 1.35rem 1.35rem; }
-  .row .measure { padding: 1.3rem 1.35rem 1.35rem 0; }
+  .row.fixed > .stripe { background: var(--ok); }
+  .row.flag > .stripe { background: var(--you); }
+  .row .body { padding: 1.25rem 0 1.3rem 1.3rem; }
+  .row .measure { padding: 1.25rem 1.3rem 1.3rem 0; }
   .row h3 { margin-bottom: 0.45rem; }
   .row p { font-size: 0.93rem; color: var(--muted); }
-  .row p + p { margin-top: 0.6rem; }
+  .row p + p { margin-top: 0.55rem; }
 
-  .ba { font-family: var(--mono); font-size: 0.83rem; display: flex; flex-direction: column; gap: 0.4rem; }
+  .ba { font-family: var(--mono); font-size: 0.82rem; display: flex; flex-direction: column; gap: 0.4rem; }
   .ba span { display: flex; gap: 0.6rem; align-items: baseline; }
-  .ba .lbl { color: var(--faint); min-width: 3.2rem; }
-  .ba .was { color: var(--broken); text-decoration: line-through; text-decoration-thickness: 1px; }
-  .ba .now { color: var(--verified); font-weight: 500; }
+  .ba .lbl { color: var(--faint); min-width: 3rem; }
+  .ba .old { color: var(--was); text-decoration: line-through; text-decoration-thickness: 1px; }
+  .ba .new { color: var(--ok); font-weight: 500; }
 
   @media (max-width: 720px) {
     .row { grid-template-columns: 4px minmax(0, 1fr); }
-    .row .measure { padding: 0 1.35rem 1.35rem; grid-column: 2; }
+    .row .measure { padding: 0 1.3rem 1.3rem; grid-column: 2; }
     .row .body { padding-bottom: 0.8rem; }
   }
 
-  /* ── Tables ───────────────────────────────────────────── */
   .tw { overflow-x: auto; border: 1px solid var(--rule); background: var(--surface); }
   table { border-collapse: collapse; width: 100%; min-width: 34rem; font-size: 0.9rem; }
-  th, td { text-align: left; padding: 0.7rem 1rem; border-bottom: 1px solid var(--rule); vertical-align: top; }
-  thead th {
-    font-family: var(--mono); font-size: 0.72rem; font-weight: 500;
-    letter-spacing: 0.1em; text-transform: uppercase; color: var(--faint);
-    background: var(--sunken); white-space: nowrap;
-  }
+  th, td { text-align: left; padding: 0.68rem 1rem; border-bottom: 1px solid var(--rule); vertical-align: top; }
+  thead th { font-family: var(--mono); font-size: 0.72rem; font-weight: 500; letter-spacing: 0.1em; text-transform: uppercase; color: var(--faint); background: var(--sunken); white-space: nowrap; }
   tbody tr:last-child td { border-bottom: 0; }
   td.n, th.n { font-family: var(--mono); font-variant-numeric: tabular-nums; text-align: right; white-space: nowrap; }
-  .pass { color: var(--verified); font-weight: 500; }
-  .fail { color: var(--broken); font-weight: 500; }
+  .pass { color: var(--ok); font-weight: 500; }
+  .fail { color: var(--was); font-weight: 500; }
 
-  .pill {
-    display: inline-block; font-family: var(--mono); font-size: 0.68rem; font-weight: 500;
-    letter-spacing: 0.06em; text-transform: uppercase; padding: 0.16rem 0.44rem;
-    border-radius: 2px; white-space: nowrap;
-  }
-  .pill.done { background: var(--verified-wash); color: var(--verified); }
-  .pill.you  { background: var(--yours-wash);   color: var(--yours); }
-  .pill.na   { background: var(--sunken);       color: var(--muted); }
+  .pill { display: inline-block; font-family: var(--mono); font-size: 0.68rem; font-weight: 500; letter-spacing: 0.06em; text-transform: uppercase; padding: 0.16rem 0.44rem; border-radius: 2px; white-space: nowrap; }
+  .pill.done { background: var(--ok-wash); color: var(--ok); }
+  .pill.you { background: var(--you-wash); color: var(--you); }
+  .pill.na { background: var(--sunken); color: var(--muted); }
 
-  /* ── Callout ──────────────────────────────────────────── */
-  .callout {
-    border: 1px solid var(--rule);
-    border-left: 3px solid var(--yours);
-    background: var(--surface);
-    padding: 1.35rem 1.5rem;
-    margin-top: 1.75rem;
-  }
-  .callout .eyebrow { color: var(--yours); margin-bottom: 0.6rem; }
+  .callout { border: 1px solid var(--rule); border-left: 3px solid var(--you); background: var(--surface); padding: 1.3rem 1.45rem; margin-top: 1.6rem; }
+  .callout.good { border-left-color: var(--ok); }
+  .callout .eyebrow { color: var(--you); margin-bottom: 0.6rem; }
+  .callout.good .eyebrow { color: var(--ok); }
   .callout p { font-size: 0.94rem; color: var(--muted); }
   .callout p + p { margin-top: 0.7rem; }
 
-  ul.tight { margin: 1.1rem 0 0; padding-left: 0; list-style: none; }
-  ul.tight li { position: relative; padding-left: 1.4rem; color: var(--muted); font-size: 0.95rem; }
+  ul.tight { margin: 1.05rem 0 0; padding-left: 0; list-style: none; }
+  ul.tight li { position: relative; padding-left: 1.4rem; color: var(--muted); font-size: 0.94rem; }
   ul.tight li + li { margin-top: 0.6rem; }
-  ul.tight li::before {
-    content: ""; position: absolute; left: 0; top: 0.62em;
-    width: 0.5rem; height: 1px; background: var(--rule-strong);
-  }
+  ul.tight li::before { content: ""; position: absolute; left: 0; top: 0.62em; width: 0.5rem; height: 1px; background: var(--rule-strong); }
   ul.tight li b { color: var(--ink); font-weight: 600; }
 
   .two { display: grid; grid-template-columns: repeat(auto-fit, minmax(min(100%, 20rem), 1fr)); gap: 2rem 2.75rem; }
-
-  footer { padding: 3rem 0 4rem; color: var(--faint); font-size: 0.85rem; font-family: var(--mono); }
-
+  footer { padding: 2.75rem 0 4rem; color: var(--faint); font-size: 0.85rem; font-family: var(--mono); }
   @media (prefers-reduced-motion: reduce) { * { animation: none !important; transition: none !important; } }
 </style>
 
 <div class="shell">
 
   <header class="masthead">
-    <span class="eyebrow">Technical audit &amp; rebuild · carlosanayaruiz.com</span>
-    <h1>Indexation&nbsp;Debt</h1>
+    <span class="eyebrow">Auditoría y reconstrucción · www.carlosanayaruiz.com</span>
+    <h1>Deuda de<br>Indexación</h1>
     <p class="lede">
-      Every image on the site was a 1000&#215;1000&#160;px square, including the ones declared to
-      Google as 1200&#215;630 and the one called <code>favicon.ico</code>. That was not the worst
-      thing found.
+      Cada imagen del sitio era un cuadrado de 1000&#215;1000&#160;px, incluidas las que se
+      declaraban a Google como 1200&#215;630 y la que se llamaba <code>favicon.ico</code>.
+      No fue lo peor que apareció.
     </p>
     <div class="meta-row">
-      <span><b>Scope</b> SEO · design · UI/UX · brand</span>
+      <span><b>Alcance</b> SEO · diseño · UI/UX · marca</span>
       <span><b>Stack</b> Next.js 16.1 · React 19 · Tailwind v4.1</span>
-      <span><b>Locales</b> es-MX (x-default) · en-US</span>
-      <span><b>Date</b> 2026-08-19</span>
+      <span><b>Idiomas</b> es-MX (x-default) · en-US</span>
+      <span><b>En producción</b> 2026-08-20</span>
     </div>
   </header>
 
   <div class="verdict">
-    <div class="ok"><div class="v">0</div><div class="k">TypeScript errors, strict mode</div></div>
-    <div class="ok"><div class="v">33</div><div class="k">routes prerendered, none dynamic</div></div>
-    <div class="ok"><div class="v">111</div><div class="k">JSON-LD nodes, 0 parse errors</div></div>
-    <div class="ok"><div class="v">78&#8202;KB</div><div class="k">asset payload, was 5,800&#8202;KB</div></div>
-    <div class="ok"><div class="v">22/22</div><div class="k">URLs 200, canonical + hreflang + SERP-safe metadata</div></div>
+    <div><div class="v">0</div><div class="k">errores de TypeScript en modo strict</div></div>
+    <div><div class="v">27/27</div><div class="k">URLs en 200 en producción</div></div>
+    <div><div class="v">22</div><div class="k">URLs del sitemap, todas 200, cero 3xx</div></div>
+    <div><div class="v">168</div><div class="k">nodos JSON-LD válidos</div></div>
+    <div><div class="v">78&#8202;KB</div><div class="k">assets, antes 5,800&#8202;KB</div></div>
   </div>
 
   <section>
     <div class="sec-head">
-      <span class="eyebrow">01 — What was actually broken</span>
-      <h2>Nine defects that were shipping</h2>
+      <span class="eyebrow">01 — Lo que te hizo rechazar la primera versión</span>
+      <h2>Dos síntomas, dos causas mías</h2>
       <p>
-        Not style opinions. Each of these was verifiable against the running site, and each is
-        verified fixed against a production build. The measurement column is the proof, not a
-        claim.
+        Dijiste que el sitio estaba solo en inglés y que el negro no te gustaba. Ninguna de las
+        dos era un problema de contenido: eran dos decisiones que dejé en su valor por defecto.
       </p>
     </div>
 
     <div class="ledger">
-
       <div class="row fixed">
         <div class="stripe"></div>
         <div class="body">
-          <h3>Open Graph images were the wrong shape</h3>
+          <h3>&#8220;Solo está en inglés&#8221;</h3>
           <p>
-            <code>og-es.png</code>, <code>og-en.png</code> and <code>og-default.png</code> were
-            1000&#215;1000 squares. The metadata declared all three as 1200&#215;630. Every social
-            and AI link preview was reading a dimension that did not match the file.
+            <code>localeDetection</code> de next-intl viene en <code>true</code> por omisión.
+            Negociaba el idioma con el header <code>Accept-Language</code> del navegador, así que
+            cualquiera con el navegador en inglés —incluido tú— aterrizaba en <code>/en</code> y
+            nunca veía el sitio en español.
           </p>
           <p>
-            OG images are now generated per page and per locale by <code>next/og</code>, so the
-            declared size and the produced pixels cannot disagree. Eleven routes, both locales,
-            all prerendered — so the build renders and validates every card.
+            Ahora <code>localeDetection: false</code>. Esta práctica es México primero: el español
+            es el mercado principal y el <code>x-default</code> de hreflang, así que
+            <code>/</code> resuelve a <code>/es</code> siempre y al inglés se llega por decisión.
+            Google además desaconseja redirigir por <code>Accept-Language</code>, porque sus
+            crawlers no envían el header de forma consistente.
           </p>
         </div>
         <div class="measure">
           <div class="ba">
-            <span><span class="lbl">was</span><span class="was">1000&#215;1000</span></span>
-            <span><span class="lbl">now</span><span class="now">1200&#215;630 &#215;22</span></span>
+            <span><span class="lbl">antes</span><span class="old">/ → /en</span></span>
+            <span><span class="lbl">ahora</span><span class="new">/ → /es</span></span>
+            <span><span class="lbl">probado</span><span class="new">en-US, en-GB, es-MX, sin header</span></span>
           </div>
         </div>
       </div>
@@ -321,566 +207,585 @@
       <div class="row fixed">
         <div class="stripe"></div>
         <div class="body">
-          <h3><code>favicon.ico</code> was a 517&#8202;KB PNG</h3>
+          <h3>&#8220;El negro no me gusta&#8221;</h3>
           <p>
-            Renamed, not converted. Every icon in <code>public/</code> was the same 1000&#215;1000
-            source at ~517&#8202;KB regardless of role — <code>icon-192.png</code> was not 192&#8202;px,
-            <code>apple-touch-icon.png</code> was not 180. The headshot was 2.26&#8202;MB rendered at
-            80&#8202;px.
+            El script de tema seguía <code>prefers-color-scheme</code>. Tu sistema operativo está
+            en oscuro, así que recibiste la versión casi negra — que era justo la menos trabajada
+            y la que nadie aprobó.
           </p>
           <p>
-            All regenerated at their real sizes by <code>scripts/generate-assets.mjs</code>,
-            including a genuine multi-resolution ICO at 16/32/48.
+            El modo oscuro se eliminó entero. Un detalle que no era obvio: el script estaba
+            <b>duplicado en <code>app/not-found.tsx</code></b>, y como Next inyecta el markup de
+            esa frontera en el payload de todas las páginas, seguía llegando al navegador en cada
+            URL del sitio después de quitarlo del layout. Lo cacé revisando el HTML servido, no el
+            código fuente.
           </p>
         </div>
         <div class="measure">
           <div class="ba">
-            <span><span class="lbl">was</span><span class="was">5,800 KB</span></span>
-            <span><span class="lbl">now</span><span class="now">78 KB</span></span>
-            <span><span class="lbl">ico</span><span class="now">517 KB &#8594; 1.6 KB</span></span>
+            <span><span class="lbl">antes</span><span class="old">seguía al SO</span></span>
+            <span><span class="lbl">ahora</span><span class="new">0 scripts de tema</span></span>
+            <span><span class="lbl">ahora</span><span class="new">0 &#8220;.dark&#8221; en el CSS</span></span>
           </div>
         </div>
+      </div>
+    </div>
+  </section>
+
+  <section>
+    <div class="sec-head">
+      <span class="eyebrow">02 — Defectos que ya estaban en producción</span>
+      <h2>Nueve cosas que estaban rotas antes de empezar</h2>
+      <p>
+        No son opiniones de estilo. Cada una era verificable contra el sitio que corría, y cada una
+        está verificada como corregida contra el build de producción actual.
+      </p>
+    </div>
+
+    <div class="ledger">
+      <div class="row fixed">
+        <div class="stripe"></div>
+        <div class="body">
+          <h3>Las imágenes Open Graph tenían la forma equivocada</h3>
+          <p>
+            <code>og-es.png</code>, <code>og-en.png</code> y <code>og-default.png</code> eran
+            cuadrados de 1000&#215;1000. La metadata las declaraba a todas como 1200&#215;630. Cada
+            vista previa de enlace, social o de IA, leía una dimensión que no coincidía con el
+            archivo.
+          </p>
+          <p>
+            Ahora se generan por página y por idioma con <code>next/og</code>, así que el tamaño
+            declarado y los píxeles producidos no pueden discrepar. Once rutas, dos idiomas, todas
+            prerenderizadas — el build las ejecuta y las valida.
+          </p>
+        </div>
+        <div class="measure"><div class="ba">
+          <span><span class="lbl">antes</span><span class="old">1000&#215;1000</span></span>
+          <span><span class="lbl">ahora</span><span class="new">1200&#215;630 &#215;22</span></span>
+        </div></div>
       </div>
 
       <div class="row fixed">
         <div class="stripe"></div>
         <div class="body">
-          <h3>Structured data claimed a site search that does not exist</h3>
+          <h3><code>favicon.ico</code> era un PNG de 517&#8202;KB</h3>
           <p>
-            The <code>WebSite</code> node declared a <code>SearchAction</code> pointing at
-            <code>/contacto?q={search_term_string}</code>. There is no site search. It also used the
-            Spanish path on English pages.
+            Renombrado, no convertido. Cada icono en <code>public/</code> era el mismo cuadrado de
+            1000&#215;1000 a ~517&#8202;KB sin importar su función: <code>icon-192.png</code> no
+            medía 192&#8202;px, <code>apple-touch-icon.png</code> no medía 180. Tu foto pesaba
+            2.26&#8202;MB para renderizarse a 128&#8202;px.
           </p>
           <p>
-            Removed. Also removed: <code>dateModified: new Date()</code>, which made every page
-            claim it changed on every deploy, and the identical
-            <code>lastModified</code> stamp on every sitemap URL. Manufactured freshness teaches a
-            crawler to ignore the field.
+            Todo se regenera con <code>npm run assets:generate</code>, cada archivo al tamaño al
+            que realmente se sirve, incluido un ICO multi-resolución de verdad (16/32/48).
           </p>
         </div>
-        <div class="measure">
-          <div class="ba">
-            <span><span class="lbl">was</span><span class="was">fabricated</span></span>
-            <span><span class="lbl">now</span><span class="now">0 dangling @id</span></span>
-            <span><span class="lbl">now</span><span class="now">0 fake dates</span></span>
-          </div>
-        </div>
+        <div class="measure"><div class="ba">
+          <span><span class="lbl">antes</span><span class="old">5,800 KB</span></span>
+          <span><span class="lbl">ahora</span><span class="new">78 KB</span></span>
+          <span><span class="lbl">ico</span><span class="new">517 KB → 1.6 KB</span></span>
+        </div></div>
       </div>
 
       <div class="row fixed">
         <div class="stripe"></div>
         <div class="body">
-          <h3>Three of four services had a slug that matched no route</h3>
+          <h3>El schema declaraba un buscador que no existe</h3>
           <p>
-            <code>data/services.ts</code> carried a free-text <code>slug</code> per locale.
-            <code>aplicaciones-web-nextjs-firebase</code> against a real route of
-            <code>/desarrollo-web</code>; <code>automatizacion-ia-chatbots</code> against
-            <code>/automatizacion-ia</code>; <code>dashboards-responsivos</code> against
-            <code>/dashboards</code>. Those slugs built schema <code>@id</code>s and canonical URLs.
+            El nodo <code>WebSite</code> declaraba un <code>SearchAction</code> apuntando a
+            <code>/contacto?q={search_term_string}</code>. No hay buscador en el sitio. Y en las
+            páginas en inglés usaba la ruta en español.
           </p>
           <p>
-            Replaced with <code>route: RouteKey</code> referencing a single <code>ROUTES</code>
-            table. The drift is now a compile error rather than a silent wrong URL.
+            Eliminado. También <code>dateModified: new Date()</code>, que hacía que cada página
+            declarara haber cambiado en cada deploy, y el mismo sello en cada URL del sitemap. Una
+            frescura fabricada le enseña al crawler a ignorar el campo.
           </p>
         </div>
-        <div class="measure">
-          <div class="ba">
-            <span><span class="lbl">was</span><span class="was">3 of 4 wrong</span></span>
-            <span><span class="lbl">now</span><span class="now">type-enforced</span></span>
-          </div>
-        </div>
+        <div class="measure"><div class="ba">
+          <span><span class="lbl">antes</span><span class="old">fabricado</span></span>
+          <span><span class="lbl">ahora</span><span class="new">0 @id colgando</span></span>
+          <span><span class="lbl">ahora</span><span class="new">0 fechas falsas</span></span>
+        </div></div>
       </div>
 
       <div class="row fixed">
         <div class="stripe"></div>
         <div class="body">
-          <h3>Unprefixed URLs were hard 404s</h3>
+          <h3>Tres de cuatro servicios tenían un slug que no era ninguna ruta</h3>
           <p>
-            The middleware matcher was <code>['/', '/(es|en)/:path*']</code> — it only ever saw URLs
-            that already had a locale prefix. <code>/sobre-mi</code> never reached next-intl and
-            404'd instead of redirecting. Every inbound link that dropped the prefix was a dead end.
+            <code>data/services.ts</code> llevaba un <code>slug</code> de texto libre por idioma.
+            <code>aplicaciones-web-nextjs-firebase</code> contra una ruta real de
+            <code>/desarrollo-web</code>; <code>automatizacion-ia-chatbots</code> contra
+            <code>/automatizacion-ia</code>. Esos slugs construían los <code>@id</code> del schema y
+            las URLs canónicas.
+          </p>
+          <p>
+            Reemplazados por <code>route: RouteKey</code> contra una tabla única. La deriva ahora es
+            un error de compilación, no una URL silenciosamente equivocada.
           </p>
         </div>
-        <div class="measure">
-          <div class="ba">
-            <span><span class="lbl">was</span><span class="was">404</span></span>
-            <span><span class="lbl">now</span><span class="now">307 &#8594; /es/sobre-mi</span></span>
-          </div>
-        </div>
+        <div class="measure"><div class="ba">
+          <span><span class="lbl">antes</span><span class="old">3 de 4 mal</span></span>
+          <span><span class="lbl">ahora</span><span class="new">tipado, no representable</span></span>
+        </div></div>
       </div>
 
       <div class="row fixed">
         <div class="stripe"></div>
         <div class="body">
-          <h3>The image optimizer was an open proxy</h3>
+          <h3>Las URLs sin prefijo eran 404 duros</h3>
           <p>
-            <code>images.remotePatterns</code> allowed
-            <code>{ protocol: 'https', hostname: '**' }</code>. Anyone could pass any URL on the
-            internet through <code>/_next/image</code> on this domain, consuming the transformation
-            quota and laundering third-party content through the brand.
-          </p>
-          <p>
-            Removed entirely — every image is local. Added a CSP, and
-            <code>firestore.rules</code>, without which both form collections are world-readable.
+            El matcher del middleware era <code>['/', '/(es|en)/:path*']</code>: solo veía URLs que
+            ya traían prefijo de idioma. <code>/sobre-mi</code> nunca llegaba a next-intl y daba 404
+            en lugar de redirigir. Cada enlace entrante que perdiera el prefijo era un callejón sin
+            salida.
           </p>
         </div>
-        <div class="measure">
-          <div class="ba">
-            <span><span class="lbl">was</span><span class="was">hostname: **</span></span>
-            <span><span class="lbl">now</span><span class="now">no remote hosts</span></span>
-          </div>
-        </div>
+        <div class="measure"><div class="ba">
+          <span><span class="lbl">antes</span><span class="old">404</span></span>
+          <span><span class="lbl">ahora</span><span class="new">307 → /es/sobre-mi</span></span>
+        </div></div>
       </div>
 
       <div class="row fixed">
         <div class="stripe"></div>
         <div class="body">
-          <h3>Dark mode was dead code</h3>
+          <h3>El optimizador de imágenes era un proxy abierto</h3>
           <p>
-            <code>tailwind.config.ts</code> declared <code>darkMode: 'class'</code>, but Tailwind
-            v4 never loads a JS config without an <code>@config</code> directive. The whole file was
-            inert — as was a second, duplicate PostCSS config, and a Playfair Display that no rule
-            referenced but every visitor downloaded.
+            <code>images.remotePatterns</code> permitía
+            <code>{ protocol: 'https', hostname: '**' }</code>. Cualquiera podía pasar cualquier URL
+            de internet por <code>/_next/image</code> en tu dominio, consumiendo tu cuota de
+            transformaciones y lavando contenido de terceros a través de tu marca.
           </p>
           <p>
-            Real token-level theming now, applied before first paint so there is no flash. Seven
-            font files became two.
+            Eliminado: todas las imágenes son locales. Se añadió un CSP, y al quitar la base de
+            datos <code>connect-src</code> se cerró todavía más.
           </p>
         </div>
-        <div class="measure">
-          <div class="ba">
-            <span><span class="lbl">was</span><span class="was">7 fonts, 0 themes</span></span>
-            <span><span class="lbl">now</span><span class="now">2 fonts, 2 themes</span></span>
-          </div>
-        </div>
+        <div class="measure"><div class="ba">
+          <span><span class="lbl">antes</span><span class="old">hostname: **</span></span>
+          <span><span class="lbl">ahora</span><span class="new">sin hosts remotos</span></span>
+        </div></div>
       </div>
 
       <div class="row fixed">
         <div class="stripe"></div>
         <div class="body">
-          <h3>The home page competed with its own service pages</h3>
+          <h3>La portada competía con sus propias páginas de servicio</h3>
           <p>
-            It rendered all twelve service FAQs, marked up as <code>FAQPage</code> — the same
-            questions and answers as the four service pages, under a different URL. Two pages
-            answering one query is how they end up ranking against each other.
+            Renderizaba las doce FAQ de servicio, marcadas como <code>FAQPage</code> — las mismas
+            preguntas y respuestas que las cuatro páginas de servicio, bajo otra URL. Dos páginas
+            respondiendo una consulta es cómo terminan compitiendo entre sí.
           </p>
           <p>
-            Split: home owns six engagement-level questions, each service page owns its own
-            technical ones. Verified zero cross-page duplication across 44 questions in both
-            locales.
+            Separado: la portada lleva seis preguntas sobre cómo se trabaja, y cada página de
+            servicio lleva las técnicas que le pertenecen. Cero duplicación entre 44 preguntas en
+            los dos idiomas.
           </p>
         </div>
-        <div class="measure">
-          <div class="ba">
-            <span><span class="lbl">was</span><span class="was">12 duplicated</span></span>
-            <span><span class="lbl">now</span><span class="now">0 duplicated</span></span>
-          </div>
-        </div>
+        <div class="measure"><div class="ba">
+          <span><span class="lbl">antes</span><span class="old">12 duplicadas</span></span>
+          <span><span class="lbl">ahora</span><span class="new">0 duplicadas</span></span>
+        </div></div>
       </div>
 
       <div class="row fixed">
         <div class="stripe"></div>
         <div class="body">
-          <h3>Your own diagnostic tools were being served a different page</h3>
+          <h3>Tus propias herramientas de diagnóstico veían otra página</h3>
           <p>
-            A <code>Disallow: /_next/static/chunks/</code> rule applied to every crawler without its
-            own group — which includes <code>Google-InspectionTool</code>, so URL Inspection and the
-            Rich Results Test, plus Lighthouse and PageSpeed Insights. They would have rendered a
-            JS-stripped DOM that differs from Googlebot's.
+            Una regla <code>Disallow: /_next/static/chunks/</code> aplicaba a todo crawler sin grupo
+            propio — lo que incluye <code>Google-InspectionTool</code>, o sea la Inspección de URLs
+            y el test de resultados enriquecidos, más Lighthouse y PageSpeed Insights. Habrían
+            renderizado un DOM sin JS distinto del que ve Googlebot.
           </p>
           <p>
-            Dropped. <code>robots.txt</code> now names Googlebot, Bingbot,
+            Quitada. <code>robots.txt</code> ahora nombra explícitamente Googlebot, Bingbot,
             <code>OAI-SearchBot</code>, <code>ChatGPT-User</code>, <code>PerplexityBot</code>,
-            <code>ClaudeBot</code> and <code>Google-Extended</code> explicitly, so each is
-            greppable rather than assumed.
+            <code>ClaudeBot</code> y <code>Google-Extended</code>, para que cada uno sea
+            verificable con un grep y no una suposición.
           </p>
         </div>
-        <div class="measure">
-          <div class="ba">
-            <span><span class="lbl">was</span><span class="was">chunks blocked</span></span>
-            <span><span class="lbl">now</span><span class="now">11 agents named</span></span>
-          </div>
-        </div>
+        <div class="measure"><div class="ba">
+          <span><span class="lbl">antes</span><span class="old">chunks bloqueados</span></span>
+          <span><span class="lbl">ahora</span><span class="new">11 agentes nombrados</span></span>
+        </div></div>
       </div>
 
+      <div class="row fixed">
+        <div class="stripe"></div>
+        <div class="body">
+          <h3>El host canónico no era el que servía</h3>
+          <p>
+            Encontrado <b>después</b> del primer deploy, mirando producción. Vercel tiene el apex
+            redirigiendo a <code>www</code> con un 307, pero la constante del sitio apuntaba al
+            apex. Resultado: los 22 canonical, los 22 <code>&lt;loc&gt;</code> del sitemap, los
+            hreflang y los <code>@id</code> del grafo apuntaban a URLs que redirigen.
+          </p>
+          <p>
+            Tu propia checklist lo prohíbe en dos puntos: el sitemap no debe contener 3xx, y el
+            canonical debe apuntar a la URL real. Corregido a <code>www</code>, que es el host que
+            devuelve 200.
+          </p>
+        </div>
+        <div class="measure"><div class="ba">
+          <span><span class="lbl">antes</span><span class="old">22 loc en 3xx</span></span>
+          <span><span class="lbl">ahora</span><span class="new">22 loc en 200</span></span>
+        </div></div>
+      </div>
     </div>
   </section>
 
   <section>
     <div class="sec-head">
-      <span class="eyebrow">02 — Accessibility</span>
-      <h2>Three contrast failures, measured not eyeballed</h2>
+      <span class="eyebrow">03 — Dos bugs de layout</span>
+      <h2>Encontrados midiendo, no mirando</h2>
       <p>
-        Every ratio below was computed from the oklch tokens through sRGB to WCAG relative
-        luminance. Two of these I introduced in the new design system by using recessed tokens at
-        body size; all three were caught before launch.
+        Los dos estaban invisibles por la misma razón, y la razón la había puesto yo.
       </p>
     </div>
 
-    <div class="tw">
+    <div class="prose stack" style="max-width:var(--measure)">
+      <p>
+        Había puesto <code>overflow-x: clip</code> en <code>body</code> para contener los blobs del
+        fondo animado. Cada sección con malla ya lleva su propio <code>overflow-hidden</code>, así
+        que era redundante — y convertía cualquier desbordamiento horizontal real en
+        <b>contenido recortado en silencio</b>, sin barra de scroll que lo delatara. Medio titular
+        fuera de pantalla y nadie se entera.
+      </p>
+    </div>
+
+    <div class="tw" style="margin-top:1.6rem">
       <table>
-        <thead>
-          <tr>
-            <th>Token</th>
-            <th>Used for</th>
-            <th class="n">Before</th>
-            <th class="n">Floor</th>
-            <th class="n">After</th>
-          </tr>
-        </thead>
+        <thead><tr><th>Causa</th><th>Efecto</th><th>Arreglo</th></tr></thead>
         <tbody>
           <tr>
-            <td><code>--ink-subtle</code></td>
-            <td>Body copy at <code>text-sm</code></td>
-            <td class="n fail">3.45</td>
-            <td class="n">4.5</td>
-            <td class="n pass">4.89</td>
+            <td><code>whitespace-nowrap</code> en el botón — el default de shadcn</td>
+            <td>&#8220;Abrir mi correo con el mensaje&#8221; queda indivisible: <code>min-content</code> ~310&#8202;px. Inflaba su contenedor y desbordaba la celda de rejilla 40&#8202;px a 360&#8202;px de ancho</td>
+            <td>Fuera del botón base. En español las etiquetas son más largas que en inglés, y este default no sobrevive la traducción</td>
           </tr>
           <tr>
-            <td><code>--accent</code></td>
-            <td>Metric labels, badge text</td>
-            <td class="n fail">4.24</td>
-            <td class="n">4.5</td>
-            <td class="n pass">5.12</td>
-          </tr>
-          <tr>
-            <td><code>--accent</code> on its wash</td>
-            <td>Badge on tinted ground</td>
-            <td class="n fail">3.81</td>
-            <td class="n">4.5</td>
-            <td class="n pass">4.61</td>
-          </tr>
-          <tr>
-            <td><code>--line-control</code> <span class="pill done">new</span></td>
-            <td>Input, textarea, outline button borders</td>
-            <td class="n fail">1.55</td>
-            <td class="n">3.0</td>
-            <td class="n pass">3.64</td>
+            <td><code>carlos@carlosanayaweb.com</code> no tiene espacios</td>
+            <td>Su <code>min-content</code> es la cadena completa, así que desbordaba la columna del pie aunque la rejilla usara <code>minmax(0,1fr)</code></td>
+            <td><code>min-w-0</code> + <code>overflow-wrap: anywhere</code></td>
           </tr>
         </tbody>
       </table>
     </div>
 
-    <div class="prose stack" style="margin-top:1.75rem">
+    <div class="callout good">
+      <span class="eyebrow">Un diagnóstico que me salió mal, y cómo lo supe</span>
       <p>
-        That last row is the interesting one. A divider and a form-field border had been sharing one
-        token. WCAG exempts purely decorative boundaries from a contrast floor — which is correct,
-        and the editorial look depends on hairlines being barely there — but an input's border
-        <em>is</em> the affordance telling you where the field is, so it is governed by 1.4.11
-        non-text contrast at 3:1. Collapsing the two jobs into one token is exactly how a 1.55:1
-        input border ships without anyone noticing.
+        Miré una captura de móvil, vi el titular cortado a media palabra y escribí que móvil estaba
+        roto. <b>No lo estaba.</b> Había capturado con
+        <code>chrome --headless --window-size=390,1400</code>, y ese flag fija el tamaño de la
+        <em>ventana</em>, no el viewport de layout ni el modo móvil: la página se maquetaba como
+        escritorio y la captura recortaba los primeros 390&#8202;px. Se ve idéntico a un bug de
+        desbordamiento.
       </p>
       <p>
-        Also verified across all 22 URLs: exactly one <code>&lt;h1&gt;</code> per page, no skipped
-        heading level, a working skip link, correct <code>lang</code>, and no icon missing
-        <code>aria-hidden</code>. The locale switcher was a <code>&lt;button&gt;</code>, so the
-        alternate-locale URL existed nowhere in the page and could not be middle-clicked — it is now
-        a real anchor with <code>hrefLang</code>.
+        Lo descubrí porque medí en lugar de seguir mirando. Ahora hay dos scripts en el repo:
+        <code>npm run check:overflow</code> mide <code>scrollWidth</code> contra
+        <code>clientWidth</code> en seis anchos por el protocolo DevTools, y
+        <code>npm run shoot</code> captura con emulación de dispositivo real. El primero también
+        encontró los dos bugs de la tabla de arriba.
       </p>
     </div>
   </section>
 
   <section>
     <div class="sec-head">
-      <span class="eyebrow">03 — Structural</span>
-      <h2>Four sources of truth that had already drifted</h2>
+      <span class="eyebrow">04 — Accesibilidad</span>
+      <h2>Cada color medido, ninguno a ojo</h2>
       <p>
-        Most defects above are one instance of one pattern: the same fact stored in two places. The
-        fix is not to correct the copies but to delete them.
+        La paleta nueva es azul → violeta → cian sobre fondo claro. El cian es el problema
+        interesante.
       </p>
     </div>
 
     <div class="tw">
       <table>
-        <thead>
-          <tr><th>Fact</th><th>Copies before</th><th>Owner now</th><th>Enforced by</th></tr>
-        </thead>
+        <thead><tr><th>Token</th><th>Uso</th><th class="n">Contraste</th><th class="n">Piso</th></tr></thead>
         <tbody>
-          <tr>
-            <td>Palette</td>
-            <td>4 — CSS, manifest, viewport, OG renderer</td>
-            <td><code>PALETTE_HEX</code></td>
-            <td><code>palette-check.mjs</code> recomputes oklch&#8594;sRGB and fails on mismatch</td>
-          </tr>
-          <tr>
-            <td>Routes</td>
-            <td>3 — routing, sitemap, <code>llms.txt</code></td>
-            <td><code>ROUTES</code></td>
-            <td><code>Record&lt;RouteKey, …&gt;</code> in the sitemap</td>
-          </tr>
-          <tr>
-            <td>NAP</td>
-            <td>4 — constants, personal data, schema, <code>llms.txt</code></td>
-            <td><code>NAP</code></td>
-            <td>Single import, no literals</td>
-          </tr>
-          <tr>
-            <td>Service URLs</td>
-            <td>2 — route table and a free-text slug</td>
-            <td><code>route: RouteKey</code></td>
-            <td>Compile error on drift</td>
-          </tr>
+          <tr><td><code>--ink</code></td><td>Texto principal (azul marino, no negro)</td><td class="n pass">15.71</td><td class="n">4.5</td></tr>
+          <tr><td><code>--ink-muted</code></td><td>Texto corrido</td><td class="n pass">5.89</td><td class="n">4.5</td></tr>
+          <tr><td><code>--ink-subtle</code></td><td>Metadatos</td><td class="n pass">4.96</td><td class="n">4.5</td></tr>
+          <tr><td><code>--brand</code></td><td>Enlaces, relleno de botón</td><td class="n pass">5.03</td><td class="n">4.5</td></tr>
+          <tr><td><code>--violet</code></td><td>Acento, íconos de lista</td><td class="n pass">5.55</td><td class="n">4.5</td></tr>
+          <tr><td><code>--control</code></td><td>Bordes de input y botón outline</td><td class="n pass">3.51</td><td class="n">3.0</td></tr>
+          <tr><td><code>--cyan</code></td><td><b>Solo decorativo</b> — stop de gradiente, resplandor</td><td class="n fail">2.37</td><td class="n">—</td></tr>
         </tbody>
       </table>
     </div>
 
-    <div class="prose stack" style="margin-top:1.75rem">
+    <div class="prose stack" style="margin-top:1.6rem; max-width:var(--measure)">
       <p>
-        The palette copies had <em>already</em> diverged: the manifest and every OG card were
-        painting <code>#1e3a8f</code> while <code>--brand</code> actually resolves to
-        <code>#1858b1</code> — a visibly more navy blue, on precisely the surfaces people
-        screenshot. <code>llms.txt</code> was advertising six URLs for pages that did not exist. It
-        is now a generated route.
+        El cian mide <b>2.37:1</b>. No sirve para texto, ni para un borde que signifique algo, ni
+        para un icono de estado. De ahí una restricción que quedó escrita en el sistema: el
+        gradiente <em>de fondo</em> llega hasta el cian, pero el gradiente <em>de texto</em> se
+        detiene en violeta. Una letra que cayera en el stop cian sería ilegible.
+      </p>
+      <p>
+        La otra distinción que quedó codificada son los dos tipos de borde.
+        <code>--hairline</code> mide 1.2:1 y así debe ser: WCAG exime los bordes decorativos y el
+        diseño depende de que los divisores casi no se vean. Pero el borde de un input <em>es</em>
+        la señal de dónde está el campo, así que le aplica la regla 1.4.11 con piso de 3:1. Colapsar
+        los dos trabajos en un token es exactamente cómo se publica un input a 1.55:1 sin que nadie
+        lo note — pasó en la versión anterior.
+      </p>
+      <p>
+        <code>npm run palette:check</code> recalcula los 11 valores contra el CSS y valida 14 pisos
+        de contraste. Falla el build si algo no cuadra.
       </p>
     </div>
   </section>
 
   <section>
     <div class="sec-head">
-      <span class="eyebrow">04 — Needs you</span>
-      <h2>Seven things I could not decide or deploy</h2>
-      <p>
-        Ordered by how much they cost to leave undone.
-      </p>
-    </div>
-
-    <div class="ledger">
-      <div class="row flag">
-        <div class="stripe"></div>
-        <div class="body">
-          <h3>Deploy the Firestore rules</h3>
-          <p>
-            <code>firestore.rules</code> is written but not deployed — I have no credentials. Until
-            <code>firebase deploy --only firestore:rules</code> runs, both form collections are
-            world-readable, and <code>contact_messages</code> holds names, emails and free text.
-            Everything in the client service layer is a speed bump; this is the actual control.
-          </p>
-        </div>
-        <div class="measure"><div class="ba"><span><span class="lbl">effort</span><span class="now">one command</span></span></div></div>
-      </div>
-
-      <div class="row flag">
-        <div class="stripe"></div>
-        <div class="body">
-          <h3>The contact email is on a different domain</h3>
-          <p>
-            You chose <code>carlos@carlosanayaweb.com</code>; the site is
-            <code>carlosanayaruiz.com</code>. It works, and it is implemented — but entity
-            resolution is a convergence problem, and a contact domain that does not match the site
-            is one more thing Google has to reconcile rather than one more signal agreeing. If you
-            own both, <code>carlos@carlosanayaruiz.com</code> is strictly stronger.
-          </p>
-        </div>
-        <div class="measure"><div class="ba"><span><span class="lbl">effort</span><span class="now">1 line</span></span></div></div>
-      </div>
-
-      <div class="row flag">
-        <div class="stripe"></div>
-        <div class="body">
-          <h3>Sign off on the pricing description</h3>
-          <p>
-            The FAQ now says you work on closed scope and do not publish rates. It is safe and
-            non-committal, but it describes how you bill and it feeds
-            <code>FAQPage</code> structured data, so it should be your sentence, not mine.
-          </p>
-          <p>
-            Two claims that are <em>not</em> mine, for the record: the 24–48 business-hour response
-            time and the projected 15% fuel reduction on the hackathon award were both in your
-            existing content. I carried them forward. The 15% is already labelled
-            &#8220;proyectada&#8221;, which does the honest work — whether an unmeasured projection
-            belongs on the trust page is your judgement, not a defect.
-          </p>
-        </div>
-        <div class="measure"><div class="ba"><span><span class="lbl">where</span><span class="now">data/faq.ts</span></span></div></div>
-      </div>
-
-      <div class="row flag">
-        <div class="stripe"></div>
-        <div class="body">
-          <h3>Set the two verification env vars</h3>
-          <p>
-            <code>NEXT_PUBLIC_GOOGLE_SITE_VERIFICATION</code> and
-            <code>NEXT_PUBLIC_BING_SITE_VERIFICATION</code> are wired and documented in
-            <code>.env.example</code>. Unset, they emit no tag at all rather than an empty one — so
-            nothing is broken, but nothing is verified either. Bing matters here specifically
-            because it grounds Copilot.
-          </p>
-        </div>
-        <div class="measure"><div class="ba"><span><span class="lbl">effort</span><span class="now">2 vars</span></span></div></div>
-      </div>
-
-      <div class="row flag">
-        <div class="stripe"></div>
-        <div class="body">
-          <h3>Legal pages need a lawyer's pass</h3>
-          <p>
-            The privacy notice and terms are written and are accurate to what the site actually does
-            — the two Firestore collections, cookieless analytics, no trackers, ARCO rights under
-            the LFPDPPP. They are a technical starting point drafted from the code, and there is a
-            source comment on each saying so. Not legal advice.
-          </p>
-        </div>
-        <div class="measure"><div class="ba"><span><span class="lbl">status</span><span class="now">drafted</span></span></div></div>
-      </div>
-
-      <div class="row flag">
-        <div class="stripe"></div>
-        <div class="body">
-          <h3><code>middleware.ts</code> &#8594; <code>proxy.ts</code></h3>
-          <p>
-            Next 16.1 prints a deprecation warning. It is the only warning left in the build and it
-            is not breaking — but it will break on a future major. Deliberately left alone: all 22
-            localised routes and both 404 boundaries rewrite through it, and a silent regression
-            there breaks every English URL. Worth its own change with its own verification.
-          </p>
-        </div>
-        <div class="measure"><div class="ba"><span><span class="lbl">urgency</span><span class="now">next major</span></span></div></div>
-      </div>
-
-      <div class="row flag">
-        <div class="stripe"></div>
-        <div class="body">
-          <h3>Bump <code>CONTENT_UPDATED</code> when copy changes</h3>
-          <p>
-            One honest constant in <code>app/sitemap.ts</code> replaced the per-deploy
-            <code>new Date()</code>. It needs a manual bump when page content actually changes — not
-            on refactors, not on dependency updates. A stale-but-true <code>lastmod</code> costs
-            nothing; a fresh-but-false one costs the credibility of the signal.
-          </p>
-        </div>
-        <div class="measure"><div class="ba"><span><span class="lbl">cadence</span><span class="now">on edit</span></span></div></div>
-      </div>
-    </div>
-  </section>
-
-  <section>
-    <div class="sec-head">
-      <span class="eyebrow">05 — Checklist coverage</span>
-      <h2>What a code change can and cannot reach</h2>
-      <p>
-        Your checklist has 64 sections. Roughly a third of them are not implementable in a
-        repository, and saying otherwise would be the least useful thing in this report.
-      </p>
-    </div>
-
-    <div class="tw">
-      <table>
-        <thead>
-          <tr><th>&#167;</th><th>Area</th><th>State</th><th>Note</th></tr>
-        </thead>
-        <tbody>
-          <tr><td class="n">1–11</td><td>Domain, crawl, index, robots, sitemap, canonical, URLs, architecture, internal links, mobile, JS, CWV</td><td><span class="pill done">done</span></td><td>Verified against a production build, not source</td></tr>
-          <tr><td class="n">12–13</td><td>Titles &amp; meta descriptions</td><td><span class="pill done">done</span></td><td>All 22 unique and inside the SERP truncation point — see below</td></tr>
-          <tr><td class="n">14</td><td>Heading structure</td><td><span class="pill done">done</span></td><td>One <code>h1</code> per page, no skipped levels, 22/22</td></tr>
-          <tr><td class="n">15–17</td><td>People-first content, E-E-A-T, service pages</td><td><span class="pill done">done</span></td><td>Each service page now states who it is <em>not</em> for</td></tr>
-          <tr><td class="n">20–26</td><td>Entity SEO, schema, breadcrumbs, images, video</td><td><span class="pill done">done</span></td><td>111 nodes, no self-serving ratings, no fake offers. No video exists</td></tr>
-          <tr><td class="n">34–35</td><td>Localisation, hreflang</td><td><span class="pill done">done</span></td><td>Reciprocal, self-referencing, x-default → es</td></tr>
-          <tr><td class="n">36–42</td><td>AI surfaces, AEO restraint, accessibility</td><td><span class="pill done">done</span></td><td>No <code>llms.txt</code> magical thinking; the crawler access is the lever</td></tr>
-          <tr><td class="n">43–45</td><td>Security, trust pages, UX</td><td><span class="pill you">1 step</span></td><td>Rules written, not deployed</td></tr>
-          <tr><td class="n">18</td><td>Topical authority</td><td><span class="pill you">yours</span></td><td>Structure shipped, articles not written — see below</td></tr>
-          <tr><td class="n">19, 54</td><td>Keyword &amp; competitor research</td><td><span class="pill you">yours</span></td><td>Needs your Search Console data, which I cannot see</td></tr>
-          <tr><td class="n">27–28</td><td>Google Business Profile</td><td><span class="pill na">off-site</span></td><td>Entirely outside the repo. Note a home-based service-area business has real eligibility limits — do not invent an address</td></tr>
-          <tr><td class="n">29–30</td><td>Reviews, NAP citations</td><td><span class="pill na">off-site</span></td><td>NAP is now single-source, so it is safe to copy from</td></tr>
-          <tr><td class="n">31–32</td><td>Location &amp; service+city pages</td><td><span class="pill na">n/a</span></td><td>One location, no second city with real demand. Generating them would be the doorway abuse §32 forbids</td></tr>
-          <tr><td class="n">33, 52–53</td><td>Backlinks, social, digital PR</td><td><span class="pill na">off-site</span></td><td>Earned, not configured</td></tr>
-          <tr><td class="n">46–48, 59–61</td><td>Analytics, GSC review, audit cadence</td><td><span class="pill you">yours</span></td><td>Wiring is in place; the reviewing is a habit</td></tr>
-        </tbody>
-      </table>
-    </div>
-
-    <div class="callout" style="border-left-color:var(--verified)">
-      <span class="eyebrow" style="color:var(--verified)">Closed — SERP truncation</span>
-      <p>
-        <b>Every meta description on the site had been too long.</b> Measured on rendered HTML:
-        177–263 characters against Google's ~155 truncation point, with 16 of 17 titles over ~60 once
-        the <code>| Carlos Anaya Ruiz</code> template appends its 20 characters. All were unique and
-        accurate — the part that matters most — but the second half of each, where the value
-        proposition sat, never reached the reader.
-      </p>
-      <p>
-        Rewritten and re-measured against a fresh build, decoding HTML entities before counting
-        (<code>&amp;amp;</code> is one character, not five — counting the raw markup would have
-        produced wrong numbers on three of these pages).
-      </p>
-      <div class="ba" style="flex-direction:row;gap:2.5rem;margin-top:1.1rem;flex-wrap:wrap">
-        <span><span class="lbl">titles</span><span class="was">up to 86</span><span class="now">max 58 / 60</span></span>
-        <span><span class="lbl">desc</span><span class="was">up to 263</span><span class="now">max 150 / 155</span></span>
-        <span><span class="lbl">unique</span><span class="now">22/22 · 22/22</span></span>
-      </div>
-    </div>
-
-    <div class="callout">
-      <span class="eyebrow">The honest gap</span>
-      <p>
-        <b>The site has no articles.</b> Sections 15, 18, 36 and 41 all converge on original,
-        non-commodity content demonstrating real experience — and that is the single largest
-        remaining opportunity, worth more than anything left in the code.
-      </p>
-      <p>
-        I deliberately did not generate any. Section 50 forbids publishing unreviewed AI output and
-        section 15 requires actual experience; a dozen synthetic posts about Core Web Vitals would
-        have made the checklist look more complete while making the site materially worse. What I
-        shipped instead is the structure that content will hang from: a real
-        <code>/servicios</code> hub, so the four service pages sit in a
-        Home&#8202;&#8594;&#8202;hub&#8202;&#8594;&#8202;service hierarchy instead of floating.
-      </p>
-      <p>
-        You have the raw material and almost nobody else in this niche does — the migration that
-        lost 40% of its traffic because nobody mapped the URLs, the platform with half its pages
-        blocked by a misconfigured <code>robots.txt</code>. Those are already on the SEO page as
-        assertions. Written up as post-mortems with the actual diagnosis, they are the kind of thing
-        other people cite.
-      </p>
-    </div>
-  </section>
-
-  <section>
-    <div class="sec-head">
-      <span class="eyebrow">06 — Verification</span>
-      <h2>How this was checked</h2>
+      <span class="eyebrow">05 — Sin backend</span>
+      <h2>Lo que se fue, y lo que eso cambia</h2>
     </div>
 
     <div class="two">
       <div class="stack">
-        <h3>Against a production build, not source</h3>
-        <p style="color:var(--muted);font-size:0.95rem">
-          Grepping source tells you what someone intended. Every claim in this report was measured
-          by building the site, serving it, and reading the rendered HTML — because the OG routes
-          were initially marked dynamic, which means the build was not executing them at all and a
-          rendering failure would have reached production unseen.
+        <h3>Eliminado</h3>
+        <ul class="tight">
+          <li><b>Firebase / Firestore</b> completo: la dependencia npm, <code>lib/firebase.ts</code>, <code>lib/firebase-services.ts</code>, <code>firestore.rules</code> y el newsletter.</li>
+          <li><b>Modo oscuro</b> completo: tokens, script de arranque, componente de toggle, y los namespaces <code>theme</code> y <code>newsletter</code> del catálogo de copy.</li>
+          <li><b>El CSP se cerró</b>: ya no abre <code>*.googleapis.com</code>, <code>*.firebaseio.com</code>, <code>*.firebaseapp.com</code> ni sus variantes <code>wss://</code>.</li>
+        </ul>
+      </div>
+      <div class="stack">
+        <h3>El formulario, sin servidor</h3>
+        <p style="color:var(--muted);font-size:0.94rem">
+          Compone un <code>mailto:</code> y abre tu aplicación de correo con el mensaje ya escrito.
+          La pantalla lo dice antes de que hagas clic, y hay una salida alterna —copiar el correo—
+          para quien no tenga cliente configurado.
+        </p>
+        <p style="color:var(--muted);font-size:0.94rem">
+          Se mantuvo como formulario a propósito: los campos &#8220;URL del sitio&#8221; y
+          &#8220;qué está pasando y desde cuándo&#8221; hacen que la gente escriba un correo útil.
+          Un <code>mailto:</code> pelón produce &#8220;hola, info?&#8221;.
+        </p>
+        <p style="color:var(--muted);font-size:0.94rem">
+          Si algún día quieres recepción real (Resend, Formspree), el cambio es el
+          <code>onSubmit</code> de un archivo, más añadir ese host a <code>connect-src</code>.
+        </p>
+      </div>
+    </div>
+
+    <div class="callout">
+      <span class="eyebrow">Consecuencia que sí hay que revisar</span>
+      <p>
+        El aviso de privacidad se reescribió desde cero porque describía una recolección de datos
+        que ya no existe: mencionaba Firestore, las colecciones <code>contact_messages</code> y
+        <code>newsletter_subscribers</code>, y un newsletter. Ahora dice lo que realmente pasa —
+        que el sitio no almacena nada, que la analítica de Vercel es agregada y sin cookies, y que
+        por eso no se requiere banner de consentimiento.
+      </p>
+      <p>
+        Sigue siendo un punto de partida técnico redactado desde el código, con una nota en
+        comentario que lo dice. <b>No es asesoría legal.</b> Que lo lea un abogado antes de
+        depender de él.
+      </p>
+    </div>
+  </section>
+
+  <section>
+    <div class="sec-head">
+      <span class="eyebrow">06 — Te toca a ti</span>
+      <h2>Cinco cosas que no puedo decidir ni ejecutar</h2>
+    </div>
+
+    <div class="ledger">
+      <div class="row flag">
+        <div class="stripe"></div>
+        <div class="body">
+          <h3>El correo está en otro dominio</h3>
+          <p>
+            Elegiste <code>carlos@carlosanayaweb.com</code>; el sitio es
+            <code>carlosanayaruiz.com</code>. Funciona y está implementado, pero la resolución de
+            entidad es un problema de convergencia: un dominio de contacto que no coincide con el
+            del sitio es una cosa más que Google tiene que reconciliar en lugar de una señal más
+            que concuerda. Si tienes los dos,
+            <code>carlos@carlosanayaruiz.com</code> es estrictamente más fuerte.
+          </p>
+        </div>
+        <div class="measure"><div class="ba"><span><span class="lbl">costo</span><span class="new">1 línea</span></span></div></div>
+      </div>
+
+      <div class="row flag">
+        <div class="stripe"></div>
+        <div class="body">
+          <h3>Decide qué host es el canónico</h3>
+          <p>
+            Ahora es <code>www</code>, porque es el que sirve 200. El apex redirige con un
+            <b>307 temporal</b>, que no es la señal correcta para una elección permanente de host.
+            Si prefieres el apex —más corto y coincide con la marca— hay que hacer dos cosas
+            juntas: invertir la redirección en Vercel a permanente y cambiar la constante. Cambiar
+            solo una reintroduce el defecto al revés.
+          </p>
+        </div>
+        <div class="measure"><div class="ba"><span><span class="lbl">dónde</span><span class="new">Vercel + constants.ts</span></span></div></div>
+      </div>
+
+      <div class="row flag">
+        <div class="stripe"></div>
+        <div class="body">
+          <h3>Pon las dos variables de verificación</h3>
+          <p>
+            <code>NEXT_PUBLIC_GOOGLE_SITE_VERIFICATION</code> y
+            <code>NEXT_PUBLIC_BING_SITE_VERIFICATION</code> están conectadas y documentadas en
+            <code>.env.example</code>. Sin valor no emiten etiqueta, así que nada está roto — pero
+            nada está verificado tampoco. Bing importa especialmente: es lo que alimenta el
+            grounding de Copilot.
+          </p>
+        </div>
+        <div class="measure"><div class="ba"><span><span class="lbl">costo</span><span class="new">2 variables</span></span></div></div>
+      </div>
+
+      <div class="row flag">
+        <div class="stripe"></div>
+        <div class="body">
+          <h3>Firma el texto de cómo cobras</h3>
+          <p>
+            La FAQ dice que trabajas por alcance cerrado y que no publicas tarifas. Es seguro y no
+            compromete nada, pero describe cómo facturas y alimenta datos estructurados
+            <code>FAQPage</code>, así que debería ser tu frase, no mía.
+          </p>
+          <p>
+            Dos afirmaciones que <em>no</em> son mías, para el registro: las 24–48 horas de
+            respuesta y el 15% proyectado de reducción de combustible del hackathon ya estaban en tu
+            contenido. Las conservé. El 15% ya dice &#8220;proyectada&#8221;, que hace el trabajo
+            honesto; si una proyección sin medir pertenece a la página de confianza es tu criterio,
+            no un defecto.
+          </p>
+        </div>
+        <div class="measure"><div class="ba"><span><span class="lbl">dónde</span><span class="new">data/faq.ts</span></span></div></div>
+      </div>
+
+      <div class="row flag">
+        <div class="stripe"></div>
+        <div class="body">
+          <h3>Sube <code>CONTENT_UPDATED</code> cuando cambie el contenido</h3>
+          <p>
+            Una constante honesta en <code>app/sitemap.ts</code> reemplazó el
+            <code>new Date()</code> por deploy. Necesita subirse a mano cuando el contenido cambie
+            de verdad — no en refactors ni en actualizaciones de dependencias. Un
+            <code>lastmod</code> viejo pero cierto no cuesta nada; uno fresco pero falso cuesta la
+            credibilidad de la señal.
+          </p>
+        </div>
+        <div class="measure"><div class="ba"><span><span class="lbl">cadencia</span><span class="new">al editar</span></span></div></div>
+      </div>
+    </div>
+  </section>
+
+  <section>
+    <div class="sec-head">
+      <span class="eyebrow">07 — Cobertura de tu checklist</span>
+      <h2>Lo que un cambio de código alcanza, y lo que no</h2>
+      <p>
+        Tu checklist tiene 64 secciones. Cerca de un tercio no es implementable en un repositorio,
+        y decir lo contrario sería lo menos útil de este reporte.
+      </p>
+    </div>
+
+    <div class="tw">
+      <table>
+        <thead><tr><th>&#167;</th><th>Área</th><th>Estado</th><th>Nota</th></tr></thead>
+        <tbody>
+          <tr><td class="n">1–14</td><td>Dominio, rastreo, indexación, robots, sitemap, canonical, URLs, arquitectura, enlazado, móvil, JS, CWV, títulos, encabezados</td><td><span class="pill done">hecho</span></td><td>Verificado contra producción, no contra el código</td></tr>
+          <tr><td class="n">15–17</td><td>Contenido para personas, E-E-A-T, páginas de servicio</td><td><span class="pill done">hecho</span></td><td>Cada servicio declara para quién <em>no</em> es</td></tr>
+          <tr><td class="n">20–26</td><td>Entity SEO, schema, breadcrumbs, imágenes</td><td><span class="pill done">hecho</span></td><td>168 nodos, sin ratings propios, sin ofertas falsas. No hay video</td></tr>
+          <tr><td class="n">34–35</td><td>Localización, hreflang</td><td><span class="pill done">hecho</span></td><td>Recíprocos, autorreferenciales, x-default → es</td></tr>
+          <tr><td class="n">36–42</td><td>Superficies de IA, contención AEO, accesibilidad</td><td><span class="pill done">hecho</span></td><td>Sin pensamiento mágico sobre <code>llms.txt</code>; la palanca es el acceso de crawlers</td></tr>
+          <tr><td class="n">43–45</td><td>Seguridad, páginas de confianza, UX</td><td><span class="pill done">hecho</span></td><td>Sin base de datos, la superficie de ataque se redujo sola</td></tr>
+          <tr><td class="n">18</td><td>Autoridad temática</td><td><span class="pill you">tuyo</span></td><td>La estructura está; los artículos no — ver abajo</td></tr>
+          <tr><td class="n">19, 54</td><td>Keywords y competencia</td><td><span class="pill you">tuyo</span></td><td>Necesita tus datos de Search Console, que no puedo ver</td></tr>
+          <tr><td class="n">27–28</td><td>Google Business Profile</td><td><span class="pill na">fuera del sitio</span></td><td>Un negocio sin local público tiene límites reales de elegibilidad. No inventes una dirección</td></tr>
+          <tr><td class="n">29–30</td><td>Reseñas, citations NAP</td><td><span class="pill na">fuera del sitio</span></td><td>El NAP ya es fuente única, así que es seguro copiar de ahí</td></tr>
+          <tr><td class="n">31–32</td><td>Páginas de ubicación y servicio+ciudad</td><td><span class="pill na">n/a</span></td><td>Una ubicación. Generarlas sería el abuso de páginas puerta que §32 prohíbe</td></tr>
+          <tr><td class="n">33, 52–53</td><td>Backlinks, social, PR digital</td><td><span class="pill na">fuera del sitio</span></td><td>Se gana, no se configura</td></tr>
+          <tr><td class="n">46–48, 59–61</td><td>Analítica, revisión de GSC, cadencia de auditoría</td><td><span class="pill you">tuyo</span></td><td>El cableado está; revisar es un hábito</td></tr>
+        </tbody>
+      </table>
+    </div>
+
+    <div class="callout">
+      <span class="eyebrow">El hueco que sigue abierto</span>
+      <p>
+        <b>El sitio no tiene artículos.</b> Las secciones 15, 18, 36 y 41 convergen todas en
+        contenido original que demuestre experiencia real — y es la oportunidad más grande que
+        queda, vale más que cualquier cosa pendiente en el código.
+      </p>
+      <p>
+        No generé ninguno a propósito. La sección 50 prohíbe publicar salida de IA sin revisión y la
+        15 exige experiencia real; una docena de posts sintéticos sobre Core Web Vitals habría hecho
+        que la checklist se viera más completa y el sitio fuera materialmente peor. Lo que sí
+        entregué es la estructura de la que va a colgar ese contenido: un hub
+        <code>/servicios</code> real, con las cuatro páginas en una jerarquía
+        inicio&#8202;→&#8202;hub&#8202;→&#8202;servicio en lugar de flotando.
+      </p>
+      <p>
+        Ya tienes la materia prima y casi nadie en este nicho la tiene. Está en tu página de SEO
+        como afirmaciones sueltas: la migración que perdió 40% del tráfico porque nadie mapeó las
+        URLs, la plataforma con la mitad de sus páginas bloqueadas por un <code>robots.txt</code>
+        mal configurado. Escritas como post-mortems con el diagnóstico real, son la clase de cosa
+        que otros citan — y cerca de un tercio de tu checklist (GBP, reseñas, citations, backlinks)
+        se gana justamente así.
+      </p>
+    </div>
+  </section>
+
+  <section>
+    <div class="sec-head">
+      <span class="eyebrow">08 — Verificación</span>
+      <h2>Cómo se comprobó</h2>
+    </div>
+
+    <div class="two">
+      <div class="stack">
+        <h3>Contra producción, no contra el código</h3>
+        <p style="color:var(--muted);font-size:0.94rem">
+          Hacer grep al código te dice qué intentaba alguien. Todo lo que afirma este reporte se
+          midió contra el sitio construido y servido.
         </p>
         <ul class="tight">
-          <li><b>Type</b> — <code>tsc --noEmit --incremental false</code>, exit 0. Non-incremental on purpose: a stale <code>.tsbuildinfo</code> can mask a whole error class.</li>
-          <li><b>Build</b> — <code>next build</code>, exit 0. All 33 routes prerendered; nothing dynamic but the proxy.</li>
-          <li><b>Routes</b> — 22 pages, 11 OG cards, sitemap, robots, manifest, <code>llms.txt</code>: all 200. Both 404 boundaries return real 404s.</li>
-          <li><b>Schema</b> — every block JSON-parsed, 111 nodes, zero dangling <code>@id</code>, zero <code>aggregateRating</code> / <code>review</code> / <code>priceRange</code> / <code>SearchAction</code>.</li>
-          <li><b>Previews</b> — fetched the exact <code>og:image</code> URL each page declares; all return <code>image/png</code>. Confirmed English pages now serve English alt text, which they did not.</li>
-          <li><b>Colour</b> — recomputed every oklch&#8594;sRGB conversion independently and compared against the values actually shipped in the built stylesheet.</li>
-          <li><b>SERP</b> — all 44 title and description lengths measured twice, independently, on separately-built servers. Identical row for row.</li>
+          <li><b>Tipos</b> — <code>tsc --noEmit --incremental false</code>, salida 0. No incremental a propósito: un <code>.tsbuildinfo</code> viejo puede esconder toda una clase de errores.</li>
+          <li><b>Build</b> — salida 0. Todas las rutas prerenderizadas; nada dinámico salvo el proxy.</li>
+          <li><b>Producción</b> — 27/27 URLs en 200, 404 real en ruta inexistente, las 22 del sitemap en 200 sin un solo 3xx.</li>
+          <li><b>Idioma</b> — <code>/</code> → <code>/es</code> probado con <code>en-US</code>, <code>en-GB</code>, <code>es-MX</code> y sin header.</li>
+          <li><b>Tema</b> — 0 apariciones de <code>prefers-color-scheme</code> en el HTML de las 22 páginas, 0 de <code>.dark</code> en el CSS servido.</li>
+          <li><b>Schema</b> — cada bloque parseado como JSON, 168 nodos, cero <code>@id</code> colgando, cero <code>aggregateRating</code> / <code>review</code> / <code>SearchAction</code>.</li>
+          <li><b>Layout</b> — cero desbordamiento horizontal en 360, 390, 414, 768, 1024 y 1440&#8202;px, en las 22 páginas.</li>
+          <li><b>Color</b> — los 11 valores recalculados contra el CSS y 14 pisos de contraste validados.</li>
         </ul>
       </div>
 
       <div class="stack">
-        <h3>Two findings I rejected</h3>
-        <p style="color:var(--muted);font-size:0.95rem">
-          Automated review surfaces plausible-sounding problems that are not problems. Both of these
-          came from my own checks and both were false.
+        <h3>Hallazgos que rechacé al comprobarlos</h3>
+        <p style="color:var(--muted);font-size:0.94rem">
+          La revisión automatizada produce problemas que suenan plausibles y no lo son. Estos
+          salieron de mis propios chequeos y los tres eran falsos.
         </p>
         <ul class="tight">
-          <li><b><code>Offer</code> nodes on every page.</b> Read as an invented price. They are <code>OfferCatalog → Offer → itemOffered: Service</code> carrying a name and a URL and nothing else — the correct way to declare a catalogue without inventing pricing. A substring grep for <code>"Offer"</code> was too blunt.</li>
-          <li><b><code>dateModified</code> equal to today.</b> Read as the fabricated-freshness bug returning. It comes from a <code>LAST_UPDATED</code> constant on pages genuinely authored today, and the visible date on the page matches. It will not drift.</li>
+          <li><b>Nodos <code>Offer</code> en todas las páginas.</b> Se leían como un precio inventado. Son <code>OfferCatalog → itemOffered: Service</code> con nombre y URL y nada más — la forma correcta de declarar un catálogo sin inventar precios. Un grep por la subcadena <code>&quot;Offer&quot;</code> era demasiado burdo.</li>
+          <li><b><code>dateModified</code> igual a hoy.</b> Se leía como el regreso del bug de frescura fabricada. Viene de una constante <code>LAST_UPDATED</code> en páginas escritas hoy, y la fecha visible coincide. No va a derivar.</li>
+          <li><b>&#8220;Móvil está roto&#8221;.</b> Lo escribí, y estaba equivocado. Era mi método de captura. Ver la sección 03.</li>
         </ul>
-        <p style="color:var(--muted);font-size:0.95rem">
-          Worth stating because the opposite error — accepting a confident finding without checking
-          — is how a correct implementation gets &#8220;fixed&#8221; into a broken one.
+        <p style="color:var(--muted);font-size:0.94rem">
+          Vale decirlo porque el error inverso —aceptar un hallazgo con tono seguro sin
+          comprobarlo— es cómo una implementación correcta se &#8220;arregla&#8221; hasta romperse.
         </p>
       </div>
     </div>
   </section>
 
   <footer>
-    58 files changed · 8,649 insertions · 3,971 deletions · 30 files added<br>
-    Verified against <code>next build</code> at 2026-08-19. Nothing above is a projection.
+    96 archivos modificados · 14,985 inserciones · 4,084 eliminaciones<br>
+    Verificado contra https://www.carlosanayaruiz.com el 2026-08-20. Nada de lo anterior es una proyección.
   </footer>
 
 </div>
