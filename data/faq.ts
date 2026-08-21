@@ -48,7 +48,7 @@ const siteFaqData: Localized<FaqItem[]> = {
     {
       question: '¿En qué idiomas y zonas horarias trabajas?',
       answer:
-        'Español e inglés, ambos a nivel profesional (TOEFL iBT 92). Estoy en Ciudad de México, GMT-6, que se traslapa con casi todo el horario laboral de Estados Unidos y de Latinoamérica. Respondo consultas nuevas en 24 a 48 horas hábiles.',
+        'Español e inglés, ambos a nivel profesional (TOEFL iBT 92). Estoy en Ciudad de México, GMT-6, que se traslapa con casi todo el horario laboral de Estados Unidos y de Latinoamérica. Respondo consultas nuevas en menos de 24 horas.',
     },
   ],
   en: [
@@ -80,7 +80,7 @@ const siteFaqData: Localized<FaqItem[]> = {
     {
       question: 'What languages and time zones do you work in?',
       answer:
-        'Spanish and English, both at professional level (TOEFL iBT 92). I am in Mexico City, GMT-6, which overlaps with nearly the whole US and Latin American working day. I reply to new enquiries within 24 to 48 business hours.',
+        'Spanish and English, both at professional level (TOEFL iBT 92). I am in Mexico City, GMT-6, which overlaps with nearly the whole US and Latin American working day. I reply to new enquiries in under 24 hours.',
     },
   ],
 }

@@ -5,6 +5,7 @@ import { getMessages, setRequestLocale, getTranslations } from 'next-intl/server
 import { notFound } from 'next/navigation'
 import { Header } from '@/components/layout/header'
 import { Footer } from '@/components/layout/footer'
+import { Drum, SheetField } from '@/components/instrument/rail'
 import {
   SITE_CONFIG,
   getSiteConfig,
@@ -223,6 +224,21 @@ export default async function LocaleLayout({
           <a href="#main-content" className="skip-to-content">
             {t('skipToContent')}
           </a>
+          {/* EL RIEL. Va aquí y no dentro de cada página, y eso es todo el
+              arreglo: montado por página no podía existir ni en el nav ni en
+              el pie, así que la misma línea se veía en tres tramos y se
+              cortaba a media página. Un solo elemento fijo corre del canto
+              superior del nav al canto inferior del pie y su marca no se
+              puede desfasar. */}
+          <Drum />
+
+          {/* LA HOJA. Un solo elemento fijo detrás de todo el documento, con
+              la misma graduación y la misma velocidad que el riel: el riel es
+              su margen perforado y esto es su superficie. Antes cada sección
+              pintaba su propio campo con una máscara, y el canto de esa
+              máscara se leía como una regla de separación suelta. */}
+          <SheetField />
+
           <div className="flex min-h-screen flex-col">
             <Header />
             <main id="main-content" className="flex-1">

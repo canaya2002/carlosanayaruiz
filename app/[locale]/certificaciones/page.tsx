@@ -2,6 +2,7 @@ import type { Metadata } from 'next'
 import { setRequestLocale, getTranslations } from 'next-intl/server'
 import { Link } from '@/i18n/navigation'
 import { Rail } from '@/components/instrument/rail'
+import { Span } from '@/components/instrument/span'
 import { Ribbon } from '@/components/instrument/ribbon'
 import { getAwards } from '@/data/awards'
 import { getEducation } from '@/data/education'
@@ -71,12 +72,15 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
   return generatePageMetadata({
     locale: locale as Locale,
     route: 'certificaciones',
+    /* La plantilla añade « | Carlos Anaya Ruiz» (20 caracteres), así que el
+       título de la página tiene que caber en ~40 para no pasar de 60 y que
+       Google no lo recorte. El anterior daba 73. */
     title: en
-      ? 'Certifications — PMP, TOEFL iBT 92, Tec de Monterrey'
-      : 'Certificaciones — PMP, TOEFL iBT 92, Tec de Monterrey',
+      ? 'Certifications — PMP and TOEFL iBT 92'
+      : 'Certificaciones — PMP y TOEFL iBT 92',
     description: en
-      ? 'Verifiable credentials: Project Management Professional (PMP), TOEFL iBT 92, and Computer Science engineering from Tecnológico de Monterrey. The certificate folder is open to read.'
-      : 'Credenciales verificables: Project Management Professional (PMP), TOEFL iBT 92 e Ingeniería en Tecnologías Computacionales por el Tecnológico de Monterrey. La carpeta de certificados está abierta.',
+      ? 'Verifiable credentials: PMP, TOEFL iBT 92 and Computer Science engineering from Tecnológico de Monterrey. The certificate folder is open to read.'
+      : 'Credenciales verificables: PMP, TOEFL iBT 92 e Ingeniería en Tecnologías Computacionales por el Tec de Monterrey. La carpeta está abierta.',
   })
 }
 
@@ -174,6 +178,18 @@ export default async function CertificationsPage({ params }: Props) {
   // Tres cifras, las tres contadas de los datos de arriba. Ninguna escrita a
   // mano: si mañana entra una credencial más, el número sube solo.
   const issuers = new Set(credentials.map((credential) => credential.issuer))
+
+  /* Las credenciales CON fecha, para el tramo del margen. La primera de
+     la lista no la tiene —es un grado en curso— y aquí se cae sola en vez
+     de imprimirse como un año inventado. Lo que se lee es el emisor,
+     porque el margen mide 18rem y el nombre completo de una
+     especialización no cabe en una línea. */
+  const spanEntries = credentials
+    .filter((credential) => credential.dateEnd ?? credential.date)
+    .map((credential) => ({
+      date: (credential.dateEnd ?? credential.date) as string,
+      what: credential.issuer,
+    }))
   const stats = [
     { value: credentials.length, label: t('statCredentials') },
     { value: issuers.size, label: t('statIssuers') },
@@ -237,8 +253,7 @@ export default async function CertificationsPage({ params }: Props) {
           // La fecha del registro: el fin del periodo cuando es un rango.
           const awarded = credential.dateEnd ?? credential.date
           const academic =
-            credential.kind === 'degree' ||
-            credential.kind === 'specialization'
+            credential.kind === 'degree' || credential.kind === 'specialization'
 
           return {
             '@type': 'ListItem',
@@ -285,30 +300,45 @@ export default async function CertificationsPage({ params }: Props) {
               Tres cifras, y las tres se cuentan del mismo arreglo que se
               imprime más abajo. No hay un número escrito a mano en esta
               página. */}
-          <section className="relative px-5 pt-16 sm:px-10">
-            <p className="stamp">{t('eyebrow')}</p>
+          <section className="hero-in relative px-5 pt-16 sm:px-10">
+            {/* ── LA HOJA TIENE DOS MÁRGENES ──
+                Las tres cifras iban en `sm:grid-cols-3` a todo el ancho: a
+                1440 eran tres islas con trescientos píxeles de nada entre
+                cada una. Aquí son una placa grabada, que es lo que son. */}
+            <div className="ledger">
+              <div className="min-w-0">
+                <p className="stamp">{t('eyebrow')}</p>
 
-            <h1 className="mt-6 max-w-[16ch] text-hero text-ink">
-              {t('h1Lead')}
-              <span className="block">{t('h1Accent')}</span>
-            </h1>
+                <h1 className="mt-6 max-w-[16ch] text-hero text-ink">
+                  {t('h1Lead')}
+                  <span className="block">{t('h1Accent')}</span>
+                </h1>
 
-            <p className="mt-10 max-w-[52ch] font-human text-lead text-ink-muted">
-              {t('lead')}
-            </p>
+                <p className="mt-10 max-w-[52ch] font-human text-lead text-ink-muted">
+                  {t('lead')}
+                </p>
 
-            <p className="mt-6 max-w-[62ch] text-ink-muted">{t('note')}</p>
+                <p className="mt-6 max-w-[62ch] text-ink-muted">{t('note')}</p>
+              </div>
 
-            <dl className="mt-14 grid gap-x-10 gap-y-8 border-t border-hairline pt-8 sm:grid-cols-3">
-              {stats.map((stat) => (
-                <div key={stat.label}>
-                  <dt className="stamp">{stat.label}</dt>
-                  <dd className="mt-3 font-mono text-d2 tabular-nums text-ink">
-                    {stat.value}
-                  </dd>
-                </div>
-              ))}
-            </dl>
+              {/* ── EL MARGEN DE ANOTACIÓN ── */}
+              <aside className="margin margin-sticky">
+                <Span
+                  entries={spanEntries}
+                  label={en ? 'the span' : 'el tramo'}
+                  spanLabel={en ? 'by issue date' : 'por fecha de expedición'}
+                />
+
+                <dl>
+                  {stats.map((stat) => (
+                    <div key={stat.label} className="margin-row">
+                      <dt className="margin-key">{stat.label}</dt>
+                      <dd className="margin-read">{stat.value}</dd>
+                    </div>
+                  ))}
+                </dl>
+              </aside>
+            </div>
           </section>
 
           {/* ═══ LAS CREDENCIALES ════════════════════════════════
@@ -328,19 +358,9 @@ export default async function CertificationsPage({ params }: Props) {
                 corta contra un borde deja de leerse como cinta. La máscara
                 de `.ribbon` las desvanece en los cantos. */}
             <div className="-mx-5 mt-14 overflow-hidden sm:-mx-10">
-              <Ribbon
-                items={ribbonNames}
-                label={tl('certsRail')}
-                duration="58s"
-                large
-              />
+              <Ribbon items={ribbonNames} label={tl('certsRail')} large />
               <div className="mt-4">
-                <Ribbon
-                  items={ribbonIssuers}
-                  label={t('issuedBy')}
-                  duration="72s"
-                  reverse
-                />
+                <Ribbon items={ribbonIssuers} label={t('issuedBy')} reverse />
               </div>
             </div>
 

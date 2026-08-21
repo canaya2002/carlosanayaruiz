@@ -373,9 +373,9 @@ export default async function TermsPage({ params }: Props) {
               </p>
               <p>
                 Content may be corrected, expanded, moved or removed at any time
-                — technical writing that is not revised becomes wrong. When a URL
-                changes, a permanent redirect is put in place where reasonable,
-                so links you have shared keep working.
+                — technical writing that is not revised becomes wrong. When a
+                URL changes, a permanent redirect is put in place where
+                reasonable, so links you have shared keep working.
               </p>
             </>
           ),
@@ -450,8 +450,8 @@ export default async function TermsPage({ params }: Props) {
               </p>
               <p>
                 Puedo actualizar estos términos. La fecha de última
-                actualización que aparece arriba identifica la versión vigente, y
-                seguir usando el sitio después de un cambio implica aceptar la
+                actualización que aparece arriba identifica la versión vigente,
+                y seguir usando el sitio después de un cambio implica aceptar la
                 versión publicada.
               </p>
             </>
@@ -484,8 +484,8 @@ export default async function TermsPage({ params }: Props) {
                 en Google te está vendiendo algo que no puede entregar.
               </p>
               <p>
-                Aplicar una técnica descrita aquí en un sitio en producción es tu
-                decisión y tu responsabilidad. Prueba los cambios antes de
+                Aplicar una técnica descrita aquí en un sitio en producción es
+                tu decisión y tu responsabilidad. Prueba los cambios antes de
                 desplegarlos y deja siempre un camino de regreso.
               </p>
             </>
@@ -720,23 +720,67 @@ export default async function TermsPage({ params }: Props) {
           {/* ═══ CABECERA ════════════════════════════════════════
               Sin aguja y sin marcas: el instrumento en vivo es de la home.
               Aquí el eje de la izquierda solo da continuidad de material. */}
-          <section className="px-5 pt-16 pb-16 sm:px-10">
-            <p className="stamp">Legal</p>
+          <section className="hero-in px-5 pt-16 pb-16 sm:px-10">
+            {/* ── LA HOJA TIENE DOS MÁRGENES ── */}
+            <div className="ledger">
+              <div className="min-w-0">
+                <p className="stamp">Legal</p>
 
-            <h1 className="mt-6 max-w-[13ch] text-hero text-ink">
-              {t('termsTitle')}
-            </h1>
+                <h1 className="mt-6 max-w-[13ch] text-hero text-ink">
+                  {t('termsTitle')}
+                </h1>
 
-            <p className="mt-10 max-w-[46ch] font-human text-lead text-ink-muted">
-              {t('termsLead')}
-            </p>
+                <p className="mt-10 max-w-[46ch] font-human text-lead text-ink-muted">
+                  {t('termsLead')}
+                </p>
 
-            <p className="stamp mt-8">
-              {t('lastUpdated')} ·{' '}
-              <time dateTime={LAST_UPDATED} data-numeric="">
-                {updatedLabel}
-              </time>
-            </p>
+                <p className="stamp mt-8">
+                  {t('lastUpdated')} ·{' '}
+                  <time dateTime={LAST_UPDATED} data-numeric="">
+                    {updatedLabel}
+                  </time>
+                </p>
+              </div>
+
+              {/* ── EL MARGEN DE ANOTACIÓN ──
+                  Sin índice: el documento ya trae el suyo, pegajoso, en su
+                  propia sección. Dos índices en una pantalla son el mismo
+                  dato dos veces. Esto es la FICHA — cláusulas, fecha y
+                  responsable— que es lo que se mira antes de decidir si se
+                  lee. */}
+              <aside className="margin margin-sticky">
+                <div className="margin-row">
+                  <span className="margin-key">
+                    {en ? 'clauses' : 'cláusulas'}
+                  </span>
+                  <span className="margin-read">{sections.length}</span>
+                  <span className="margin-val">
+                    {en
+                      ? 'numbered, cited by number.'
+                      : 'numeradas, y se citan por número.'}
+                  </span>
+                </div>
+
+                <div className="margin-row">
+                  <span className="margin-key">
+                    {en ? 'in force since' : 'vigente desde'}
+                  </span>
+                  <span className="margin-val !text-ink">
+                    <time dateTime={LAST_UPDATED} data-numeric="">
+                      {updatedLabel}
+                    </time>
+                  </span>
+                </div>
+
+                <div className="margin-row">
+                  <span className="margin-key">
+                    {en ? 'accountable' : 'responsable'}
+                  </span>
+                  <span className="margin-val !text-ink">{NAP.name}</span>
+                  <span className="margin-val">{NAP.email}</span>
+                </div>
+              </aside>
+            </div>
           </section>
 
           {/* ═══ RESUMEN ═════════════════════════════════════════

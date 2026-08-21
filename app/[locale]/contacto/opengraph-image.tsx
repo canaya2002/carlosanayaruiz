@@ -36,7 +36,7 @@ export default async function Image({ params }: Params) {
       ? 'You write to the engineer who does the work — no account manager in between.'
       : 'Le escribes al ingeniero que hace el trabajo, sin ejecutivo de cuenta en medio.',
     facts: en
-      ? ['24-48 business hours', 'Spanish / English', 'GMT-6']
-      : ['24-48 horas hábiles', 'Español / inglés', 'GMT-6'],
+      ? ['under 24 hours', 'Spanish / English', 'GMT-6']
+      : ['menos de 24 horas', 'Español / inglés', 'GMT-6'],
   })
 }

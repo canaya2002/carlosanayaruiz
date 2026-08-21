@@ -131,7 +131,7 @@
     "stackLabel": "Stack",
     "periodLabel": "Periodo",
     "ctaTitle": "¿Quieres que el siguiente proyecto de esta lista sea el tuyo?",
-    "ctaLead": "Cuéntame qué estás construyendo o qué se rompió. Respondo en 24 a 48 horas hábiles con una primera lectura de por dónde empezaría.",
+    "ctaLead": "Cuéntame qué estás construyendo o qué se rompió. Respondo en menos de 24 horas con una primera lectura de por dónde empezaría.",
     "railNote": "Arrastra el carril o usa las flechas. Cada tarjeta abre la página completa del proyecto, con lo que hice y el stack que se usó de verdad.",
     "coverAlt": "Portada del proyecto {name}",
     "statEntries": "Registros en total",
@@ -180,7 +180,7 @@
       "relatedTitle": "Servicios relacionados",
       "ctaMain": "Solicitar auditoría",
       "ctaSecondary": "Agendar una llamada",
-      "ctaNote": "Respondo en 24-48 horas hábiles, hora de Ciudad de México."
+      "ctaNote": "Respondo en menos de 24 horas, hora de Ciudad de México."
     },
     "desarrolloWeb": {
       "title": "Desarrollo Web con Next.js y Firebase",
@@ -260,7 +260,7 @@
     "consentLink": "Aviso de privacidad",
     "send": "Abrir mi correo con el mensaje",
     "location": "Ubicación",
-    "responseTime": "Respuesta en 24-48 horas hábiles",
+    "responseTime": "Respuesta en menos de 24 horas",
     "directEmail": "Correo directo",
     "projectTypes": "Tipos de proyecto",
     "projectTypesDesc": "Auditorías puntuales de una a dos semanas, proyectos de desarrollo de cuatro a ocho, y trabajo mensual continuo para equipos que necesitan un ingeniero SEO de planta.",
@@ -288,6 +288,56 @@
     "freeResources": "Recursos gratuitos",
     "freeResourcesDesc": "Mientras tanto, esto ya es público y gratis:"
   },
+  "canales": {
+    "eyebrow": "tres canales · paralelos",
+    "title": "Por dónde me escribes",
+    "formTitle": "El formulario",
+    "formNote": "Cinco campos, y el de la URL es el que más ayuda. Si me llega el sitio, la primera respuesta ya trae una lectura.",
+    "waTitle": "WhatsApp",
+    "waNote": "Para una duda de treinta segundos. Se abre con el tema ya escrito, así que no hay que explicarlo dos veces.",
+    "calTitle": "Agendar una llamada",
+    "calNote": "Treinta minutos, con la agenda abierta. Elige el hueco que te sirva y llega sin preparar nada."
+  },
+  "lead": {
+    "nombre": "Tu nombre",
+    "email": "Tu correo",
+    "asunto": "De qué va",
+    "asuntoHint": "si no sabes, déjalo en «todavía no sé»",
+    "sitio": "La URL",
+    "sitioHint": "opcional, y lo más útil de los cinco",
+    "mensaje": "Qué está pasando",
+    "mensajeHint": "y desde cuándo",
+    "submit": "Enviar",
+    "enviando": "Enviando…",
+    "nota": "Respondo en menos de 24 horas, desde Ciudad de México. Tu correo no entra en ninguna lista.",
+    "ok": "Llegó. Te respondo en menos de 24 horas.",
+    "invalido": "Falta algo o el correo no se ve bien. Revisa el nombre, el correo y el mensaje.",
+    "sinConfigurar": "La recepción del formulario todavía no está conectada. Mándame un WhatsApp o escríbeme directo y llega igual.",
+    "error": "Algo falló de mi lado. Inténtalo en un momento, o mándame un WhatsApp.",
+    "asuntos": [
+      "Todavía no sé",
+      "SEO técnico",
+      "Desarrollo web",
+      "Automatización con IA",
+      "Dashboards",
+      "Otra cosa"
+    ]
+  },
+  "newsletter": {
+    "eyebrow": "boletín · en preparación",
+    "title": "Cuando escriba algo, te llega",
+    "lead": "Notas de SEO técnico y rendimiento: lo que encuentro auditando sitios reales, con los números. Sin cadencia fija — escribo cuando hay algo que valga la pena leer.",
+    "label": "Tu correo",
+    "placeholder": "tu@correo.com",
+    "submit": "Suscribirme",
+    "consent": "Solo para el boletín. Nada de spam, nada de terceros, y te das de baja con un clic.",
+    "privacy": "Cómo trato tus datos",
+    "ok": "Listo. Te escribo cuando publique el primero.",
+    "yaEstaba": "Ya estabas en la lista. Nada que hacer.",
+    "invalido": "Ese correo no se ve bien. Revísalo y vuelve a intentar.",
+    "sinConfigurar": "La lista todavía no está conectada. Escríbeme directo y te apunto a mano.",
+    "error": "Algo falló de mi lado. Inténtalo en un momento o escríbeme directo."
+  },
   "legal": {
     "privacyTitle": "Aviso de Privacidad",
     "privacyLead": "Qué datos recojo en este sitio, para qué los uso, con quién se comparten y cómo puedes ejercer tus derechos ARCO conforme a la LFPDPPP.",
@@ -297,6 +347,7 @@
   },
   "footer": {
     "description": "Consultoría SEO técnica y desarrollo web desde Ciudad de México. Auditorías, migraciones, Next.js y datos estructurados para que tu sitio sea legible tanto para buscadores como para modelos de lenguaje.",
+    "clientArea": "¿Eres cliente? Zona de clientes",
     "navigation": "Navegación",
     "contactTitle": "Contacto",
     "services": "Servicios",
@@ -345,7 +396,7 @@
     "stackNote": "Herramientas y tecnologías por grupo. Sin niveles autoevaluados: el registro no los tiene y ponerlos sería inventarlos.",
     "languages": "Idiomas",
     "ctaTitle": "¿Te sirve lo que acabas de leer?",
-    "ctaDesc": "Cuéntame qué necesitas y en qué plazo. Respondo en 24 a 48 horas hábiles con una primera lectura.",
+    "ctaDesc": "Cuéntame qué necesitas y en qué plazo. Respondo en menos de 24 horas con una primera lectura.",
     "ctaLink": "Contáctame",
     "contact": {
       "email": "Correo electrónico",
@@ -430,7 +481,7 @@
     "cvDesc": "El recorrido completo en una sola página: formación, experiencia, certificaciones e idiomas.",
     "cvCta": "Ver el CV",
     "ctaTitle": "¿Te sirve alguien que documenta lo que afirma?",
-    "ctaLead": "Cuéntame el sitio y qué cambió. Respondo en 24 a 48 horas hábiles con una primera lectura de lo que probablemente está pasando.",
+    "ctaLead": "Cuéntame el sitio y qué cambió. Respondo en menos de 24 horas con una primera lectura de lo que probablemente está pasando.",
     "ctaButton": "Escríbeme",
     "railEyebrow": "De un vistazo",
     "railTitle": "Los tres, en tarjetas",
@@ -485,7 +536,7 @@
   },
   "homeCta": {
     "title": "Cuéntame por dónde se está fugando el tráfico.",
-    "lead": "Descríbeme el sitio y qué cambió. Respondo en 24 a 48 horas hábiles con una primera lectura de lo que probablemente está pasando.",
+    "lead": "Descríbeme el sitio y qué cambió. Respondo en menos de 24 horas con una primera lectura de lo que probablemente está pasando.",
     "alsoOn": "También en",
     "and": "y"
   }

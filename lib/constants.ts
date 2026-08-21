@@ -75,6 +75,17 @@ export const SOCIAL_LINKS = {
   phone: NAP.phone,
   certsDrive:
     'https://drive.google.com/drive/folders/1wanG6pMmIIlwEir_5bZv4bbMYOQlxuHz?usp=sharing',
+  /**
+   * La otra propiedad: donde va quien YA es cliente.
+   *
+   * Es el segundo enlace del sitio que manda a alguien fuera del dominio a
+   * propósito —el otro es el CTA del pie— y por eso está bien que lo haga: el
+   * clic de mayor intención, quien todavía no ha contratado, se queda aquí. Y
+   * descongestiona la página de contacto de gente que no viene a contratar
+   * sino a resolver algo de un trabajo en curso. Sin él esas dos intenciones
+   * compiten por el mismo formulario, y la que pierde es la que paga.
+   */
+  clientPortal: 'https://carlosanayaweb.com',
 } as const
 
 /**
@@ -182,6 +193,32 @@ export const SEO_IMAGES = {
     es: 'Carlos Anaya Ruiz, consultor SEO técnico y desarrollador full-stack en Ciudad de México',
     en: 'Carlos Anaya Ruiz, technical SEO consultant and full-stack developer in Mexico City',
   } as Record<Locale, string>,
+  /**
+   * El retrato de medio cuerpo. Es un RECORTE con canal alfa —fondo
+   * transparente, no negro— y de ahí sale todo lo que el sistema puede hacer
+   * con él: se compone directo sobre el hollín, la retícula del tambor se ve
+   * por detrás y no hace falta ni una caja ni un borde para encuadrarlo.
+   *
+   * WebP y no PNG: el mismo recorte a 1000 px pesa 95 KB en vez de 2.8 MB, y
+   * next/image lo vuelve a codificar a AVIF por encima de eso.
+   */
+  portrait: '/carlos-anaya-ruiz-retrato.webp',
+  portraitWidth: 1000,
+  portraitHeight: 1663,
+  /**
+   * El retrato en blanco y negro. Es el que va en «el operador», en /sobre-mi y
+   * en el CV, y sustituye a la foto de 800×800 con fondo de oficina que era
+   * deuda declarada.
+   *
+   * Cuadrado y de estudio, así que no necesita el duotono de media tinta que
+   * llevaba la anterior: esa trama de rayas existía para convertir una foto
+   * pobre en un artefacto de imprenta deliberado. Con esta se retiró.
+   *
+   * 400×400 son 8 KB. Es pequeña para 2× a más de 200 px, así que NO se sirve
+   * más grande que 15rem en ningún sitio.
+   */
+  portraitBw: '/carlos-anaya-ruiz-bn.webp',
+  portraitBwSize: 400,
   appleTouchIcon: '/apple-touch-icon.png',
   icon192: '/icon-192.png',
   icon512: '/icon-512.png',

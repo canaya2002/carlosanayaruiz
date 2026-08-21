@@ -4,6 +4,7 @@ import { setRequestLocale, getTranslations } from 'next-intl/server'
 import { Link } from '@/i18n/navigation'
 import { MediaSlot } from '@/components/instrument/media-slot'
 import { Rail } from '@/components/instrument/rail'
+import { Span } from '@/components/instrument/span'
 import { Ribbon } from '@/components/instrument/ribbon'
 import { getPersonalInfo } from '@/data/personal'
 import { getExperiences } from '@/data/experience'
@@ -87,13 +88,31 @@ export default async function AboutPage({ params }: Props) {
   const personal = getPersonalInfo(locale)
   const experiences = getExperiences(locale)
   const education = getEducation(locale)
+
+  /* EL TRAMO de la trayectoria: los empleos y los estudios en el MISMO
+     eje, que es lo que hace legible una carrera — un grado y un puesto
+     no son categorías distintas cuando lo que se mide es el tiempo.
+     Ninguna fecha está escrita a mano: salen de los dos archivos de
+     datos, así que una entrada nueva aparece sola. */
+  const spanEntries = [
+    ...experiences.map((experience) => ({
+      date: experience.startDate,
+      what: experience.company,
+    })),
+    ...education.map((item) => ({
+      date: item.startDate,
+      what: item.institution,
+    })),
+  ]
   const skillCategories = getSkillCategories(locale)
   const awards = getAwards(locale)
 
   // `awards.ts` modela tres cosas distintas en un mismo archivo. Un examen
   // aprobado no es un premio, así que las certificaciones se listan bajo
   // Certificaciones y solo las distinciones reales quedan en Reconocimientos.
-  const certifications = awards.filter((award) => award.kind === 'certification')
+  const certifications = awards.filter(
+    (award) => award.kind === 'certification'
+  )
   const recognitions = awards.filter((award) => award.kind !== 'certification')
 
   // El título, distinto de la especialización cursada dentro de él.
@@ -216,7 +235,7 @@ export default async function AboutPage({ params }: Props) {
           {/* ═══ CABECERA ════════════════════════════════════════
               La persona es la entidad de la que habla esta página, así que
               el nombre es el h1 y "Sobre mí" es la etiqueta de arriba. */}
-          <section className="px-5 pt-16 sm:px-10">
+          <section className="hero-in px-5 pt-16 sm:px-10">
             <p className="stamp">{t('title')}</p>
 
             <h1 className="mt-6 max-w-[11ch] text-hero text-ink">
@@ -261,21 +280,41 @@ export default async function AboutPage({ params }: Props) {
                 </ul>
               </div>
 
+              {/* `.figure-bw` y no `.portrait`: la plancha clara y la trama de
+                  rayas de 3 px existían para salvar una foto de 800 px con
+                  fondo de oficina. Llegó una de estudio en blanco y negro, así
+                  que la muleta se fue y lo que queda es la regla del sistema —
+                  la foto se disuelve en el material. */}
               <figure className="m-0">
-                <span className="portrait block">
+                <span className="figure-bw">
                   <span className="portrait-shutter" aria-hidden="true" />
                   <Image
-                    src={SEO_IMAGES.avatar}
+                    src={SEO_IMAGES.portraitBw}
                     alt={SEO_IMAGES.avatarAlt[locale]}
-                    width={SEO_IMAGES.avatarWidth}
-                    height={SEO_IMAGES.avatarHeight}
-                    sizes="(min-width: 768px) 17rem, 100vw"
+                    width={SEO_IMAGES.portraitBwSize}
+                    height={SEO_IMAGES.portraitBwSize}
+                    sizes="(min-width: 768px) 15rem, 60vw"
                   />
                 </span>
-                <figcaption className="stamp mt-4">
+                <figcaption className="stamp mt-4 tabular-nums">
                   {NAP.locality} · 19.4326 N / 99.1332 W
                 </figcaption>
               </figure>
+
+              {/* EL TRAMO, debajo del retrato. Esta cabecera ya repartía
+                  texto y foto en dos columnas, así que aquí no hacía falta
+                  otra rejilla: le faltaba el INSTRUMENTO. Un eje con los
+                  empleos y los estudios juntos dice de un vistazo lo que
+                  tres bandas de prosa dicen en tres pantallas. */}
+              <div className="mt-10 border-t border-hairline pt-5">
+                <Span
+                  entries={spanEntries}
+                  label={en ? 'the span' : 'el tramo'}
+                  spanLabel={
+                    en ? 'jobs and degrees, one axis' : 'empleos y estudios'
+                  }
+                />
+              </div>
             </div>
           </section>
 
@@ -349,11 +388,18 @@ export default async function AboutPage({ params }: Props) {
 
             {/* La foto de trabajo abre la trayectoria: una imagen antes de la
                 lista de puestos, no una por puesto. */}
-            <MediaSlot
-              id="sobre-mi-trabajo"
-              className="mt-12 w-full max-w-3xl"
-              sizes="(min-width: 768px) 48rem, 100vw"
-            />
+            <div className="mt-12 grid max-w-4xl gap-x-14 gap-y-4 lg:grid-cols-2">
+              <MediaSlot
+                id="sobre-mi-trabajo"
+                sizes="(min-width: 1024px) 40vw, 100vw"
+              />
+              {/* El puesto de trabajo, sin él dentro. Es lo que dice «esto es
+                  un oficio» sin tener que escribirlo. */}
+              <MediaSlot
+                id="sobre-mi-escritorio"
+                sizes="(min-width: 1024px) 40vw, 100vw"
+              />
+            </div>
 
             <ol className="reveal-stagger mt-12">
               {experiences.map((exp) => (
@@ -522,13 +568,11 @@ export default async function AboutPage({ params }: Props) {
               <Ribbon
                 items={stack}
                 label={en ? 'Stack and tools' : 'Stack y herramientas'}
-                duration="72s"
               />
               <div className="mt-3">
                 <Ribbon
                   items={stack}
                   label={en ? 'Stack, second rail' : 'Stack, segundo carril'}
-                  duration="88s"
                   reverse
                 />
               </div>
@@ -567,7 +611,9 @@ export default async function AboutPage({ params }: Props) {
             id="idiomas"
             className="border-t border-hairline px-5 py-20 sm:px-10"
           >
-            <p className="stamp">{en ? 'languages · cefr' : 'idiomas · mcer'}</p>
+            <p className="stamp">
+              {en ? 'languages · cefr' : 'idiomas · mcer'}
+            </p>
             <h2 className="mt-5 max-w-[16ch] text-d1 text-ink">
               {t('languages')}
             </h2>

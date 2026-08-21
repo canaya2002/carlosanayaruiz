@@ -158,43 +158,62 @@ export default async function BooksPage({ params }: Props) {
               ese archivo no existe, y un hueco de imagen dibujado a tres
               capas era el envoltorio más grande de la página. Lo que decía
               —el estado y los temas— sigue abajo, en la fila del libro. */}
-          <section className="relative px-5 pt-16 pb-20 sm:px-10">
-            <p className="stamp">
-              {en ? 'Books & resources' : 'Libros y recursos'}
-            </p>
+          <section className="hero-in relative px-5 pt-16 pb-20 sm:px-10">
+            {/* ── LA HOJA TIENE DOS MÁRGENES, Y AQUÍ NO HAY INSTRUMENTO ──
+                Hay UN libro. Un eje de tiempo con una sola marca no es una
+                medición, y este proyecto ya tiene la regla escrita: un
+                instrumento que rotula cinco plumas y dibuja cuatro miente.
+                Así que el margen lleva el ESTADO —las dos cifras contadas
+                del arreglo— y nada más. Que una página diga «cero
+                publicados» en su margen es más honesto que dibujarle un
+                aparato. */}
+            <div className="ledger">
+              <div className="min-w-0">
+                <p className="stamp">
+                  {en ? 'Books & resources' : 'Libros y recursos'}
+                </p>
 
-            <h1 className="mt-6 max-w-[12ch] text-hero text-ink">
-              {t('title')}
-            </h1>
+                <h1 className="mt-6 max-w-[12ch] text-hero text-ink">
+                  {t('title')}
+                </h1>
 
-            <p className="mt-10 max-w-[46ch] font-human text-lead text-ink-muted">
-              {t('subtitle')}
-            </p>
+                <p className="mt-10 max-w-[46ch] font-human text-lead text-ink-muted">
+                  {t('subtitle')}
+                </p>
 
-            <p className="mt-6 max-w-[62ch] text-ink-muted">
-              {en
-                ? 'Short version: one title, still in draft. This page exists so you can see what is coming and, meanwhile, get to what is already free to read.'
-                : 'Versión corta: un título, todavía en borrador. Esta página existe para que veas qué viene y, mientras tanto, para llevarte a lo que ya se puede leer gratis.'}
-            </p>
+                <p className="mt-6 max-w-[62ch] text-ink-muted">
+                  {en
+                    ? 'Short version: one title, still in draft. This page exists so you can see what is coming and, meanwhile, get to what is already free to read.'
+                    : 'Versión corta: un título, todavía en borrador. Esta página existe para que veas qué viene y, mientras tanto, para llevarte a lo que ya se puede leer gratis.'}
+                </p>
+              </div>
 
-            {/* Dos cifras que salen de contar el arreglo, no de escribirlas:
-                mientras nada esté publicado, la de abajo dice cero. */}
-            <dl className="reveal-stagger mt-14">
-              {counters.map((counter) => (
-                <div
-                  key={counter.label}
-                  className="band grid grid-cols-[minmax(0,1fr)_auto] items-baseline gap-x-6"
-                >
-                  <dt className="text-ink">{counter.label}</dt>
-                  <dd
-                    data-numeric=""
-                    className="font-mono text-d2 tabular-nums text-ink"
-                  >
-                    {counter.value}
-                  </dd>
+              {/* ── EL MARGEN DE ANOTACIÓN ── */}
+              <aside className="margin margin-sticky">
+                {/* Dos cifras que salen de contar el arreglo, no de
+                    escribirlas: mientras nada esté publicado, la de abajo
+                    dice cero. */}
+                <dl>
+                  {counters.map((counter) => (
+                    <div key={counter.label} className="margin-row">
+                      <dt className="margin-key">{counter.label}</dt>
+                      <dd data-numeric="" className="margin-read">
+                        {counter.value}
+                      </dd>
+                    </div>
+                  ))}
+                </dl>
+
+                <div className="margin-row">
+                  <span className="margin-key">{en ? 'status' : 'estado'}</span>
+                  <span className="margin-prose">
+                    {en
+                      ? 'In active writing. No pre-order, no waiting list and no date: none of the three exists yet, so none of the three is announced.'
+                      : 'En escritura activa. Sin preventa, sin lista de espera y sin fecha: ninguna de las tres existe todavía, así que ninguna se anuncia.'}
+                  </span>
                 </div>
-              ))}
-            </dl>
+              </aside>
+            </div>
           </section>
 
           {/* ═══ LA CINTA ════════════════════════════════════════ */}
@@ -208,7 +227,6 @@ export default async function BooksPage({ params }: Props) {
             <Ribbon
               items={ribbonItems}
               label={en ? 'Topics and resources' : 'Temas y recursos'}
-              duration="72s"
             />
           </section>
 
@@ -255,10 +273,7 @@ export default async function BooksPage({ params }: Props) {
                   </dl>
 
                   {book.pages ? (
-                    <p
-                      data-numeric=""
-                      className="stamp mt-6 tabular-nums"
-                    >
+                    <p data-numeric="" className="stamp mt-6 tabular-nums">
                       ~{book.pages} {t('pages')}
                     </p>
                   ) : null}

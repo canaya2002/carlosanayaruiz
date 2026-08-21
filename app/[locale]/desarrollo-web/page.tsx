@@ -4,6 +4,8 @@ import { setRequestLocale, getTranslations } from 'next-intl/server'
 import { Link } from '@/i18n/navigation'
 import { MediaSlot } from '@/components/instrument/media-slot'
 import { Rail } from '@/components/instrument/rail'
+import { Pens } from '@/components/instrument/pens'
+import { ContactChannels } from '@/components/sections/contact-channels'
 import { Ribbon } from '@/components/instrument/ribbon'
 import { getServiceById, getServices, servicePath } from '@/data/services'
 import { NAP } from '@/lib/constants'
@@ -89,29 +91,65 @@ export default async function DesarrolloWebPage({ params }: Props) {
     ? [
         {
           label: 'Frontend',
-          items: ['Next.js 16 (App Router)', 'React 19', 'TypeScript', 'Tailwind CSS'],
+          items: [
+            'Next.js 16 (App Router)',
+            'React 19',
+            'TypeScript',
+            'Tailwind CSS',
+          ],
         },
         {
           label: 'Data & backend',
-          items: ['Firebase', 'Firestore', 'Firebase Auth', 'Cloud Functions', 'Node.js', 'PostgreSQL'],
+          items: [
+            'Firebase',
+            'Firestore',
+            'Firebase Auth',
+            'Cloud Functions',
+            'Node.js',
+            'PostgreSQL',
+          ],
         },
         {
           label: 'Infrastructure & quality',
-          items: ['Vercel', 'CI/CD', 'Git', 'Lighthouse', 'Schema.org / JSON-LD'],
+          items: [
+            'Vercel',
+            'CI/CD',
+            'Git',
+            'Lighthouse',
+            'Schema.org / JSON-LD',
+          ],
         },
       ]
     : [
         {
           label: 'Frontend',
-          items: ['Next.js 16 (App Router)', 'React 19', 'TypeScript', 'Tailwind CSS'],
+          items: [
+            'Next.js 16 (App Router)',
+            'React 19',
+            'TypeScript',
+            'Tailwind CSS',
+          ],
         },
         {
           label: 'Datos y backend',
-          items: ['Firebase', 'Firestore', 'Firebase Auth', 'Cloud Functions', 'Node.js', 'PostgreSQL'],
+          items: [
+            'Firebase',
+            'Firestore',
+            'Firebase Auth',
+            'Cloud Functions',
+            'Node.js',
+            'PostgreSQL',
+          ],
         },
         {
           label: 'Infraestructura y calidad',
-          items: ['Vercel', 'CI/CD', 'Git', 'Lighthouse', 'Schema.org / JSON-LD'],
+          items: [
+            'Vercel',
+            'CI/CD',
+            'Git',
+            'Lighthouse',
+            'Schema.org / JSON-LD',
+          ],
         },
       ]
 
@@ -157,36 +195,93 @@ export default async function DesarrolloWebPage({ params }: Props) {
           {/* ═══ CABECERA ════════════════════════════════════════
               El titular es el LCP y se pinta desde el servidor: no espera a
               ninguna secuencia de entrada, ninguna imagen y ningún script. */}
-          <section className="relative px-5 pt-16 pb-20 sm:px-10">
-            <p className="stamp">
-              {en ? 'service · web development' : 'servicio · desarrollo web'}
-            </p>
+          <section className="hero-in relative px-5 pt-16 pb-20 sm:px-10">
+            {/* ── LA HOJA TIENE DOS MÁRGENES ──
+                El texto a la izquierda, la lectura del operador a la
+                derecha. Por debajo de 80rem el margen cae al flujo y su
+                regla se vuelve horizontal: no hay dos columnas donde no
+                caben dos columnas. */}
+            <div className="ledger">
+              <div className="min-w-0">
+                <p className="stamp">
+                  {en
+                    ? 'service · web development'
+                    : 'servicio · desarrollo web'}
+                </p>
 
-            <h1 className="mt-7 max-w-[15ch] text-hero text-ink">
-              {t('title')}
-            </h1>
+                <h1 className="mt-7 max-w-[15ch] text-hero text-ink">
+                  {t('title')}
+                </h1>
 
-            <p className="mt-10 max-w-[46ch] text-lead text-ink-muted">
-              {t('subtitle')}
-            </p>
+                <p className="mt-10 max-w-[46ch] text-lead text-ink-muted">
+                  {t('subtitle')}
+                </p>
 
-            <p className="mt-10 flex flex-wrap gap-x-8 gap-y-3">
-              <Link className="link-stylus" href="/contacto">
-                {t('ctaMain')} →
-              </Link>
-              <Link className="link-stylus" href="/servicios">
-                {ts('allServices')} →
-              </Link>
-            </p>
+                <p className="mt-10 flex flex-wrap gap-x-8 gap-y-3">
+                  <Link className="link-stylus" href="/contacto">
+                    {t('ctaMain')} →
+                  </Link>
+                  <Link className="link-stylus" href="/servicios">
+                    {ts('allServices')} →
+                  </Link>
+                </p>
 
-            {/* Sin `.live`: aquí no hay nada midiendo del otro lado. El punto
+                {/* Sin `.live`: aquí no hay nada midiendo del otro lado. El punto
                 que late pertenece a la home, donde sí corre un
                 PerformanceObserver. */}
-            <p className="mt-8 max-w-[52ch] text-sm text-ink-muted">
-              {en
-                ? `From ${NAP.localityEn}, for teams in any time zone. Spanish or English.`
-                : `Desde ${NAP.locality}, para equipos en cualquier zona horaria. En español o inglés.`}
-            </p>
+                <p className="mt-8 max-w-[52ch] text-sm text-ink-muted">
+                  {en
+                    ? `From ${NAP.localityEn}, for teams in any time zone. Spanish or English.`
+                    : `Desde ${NAP.locality}, para equipos en cualquier zona horaria. En español o inglés.`}
+                </p>
+              </div>
+
+              {/* ── EL MARGEN DE ANOTACIÓN ──
+                  La segunda columna de la hoja. Medido a 1440: sin ella el
+                  45% derecho de la página estaba muerto en todo offset de
+                  scroll. Lo que va aquí no es relleno — es la LECTURA:
+                  cuántas plumas escriben, cuántos renglones tiene el
+                  alcance y para quién NO es. Todo sale del archivo de datos
+                  del servicio, así que no puede desmentir al cuerpo de la
+                  página. */}
+              <aside className="margin margin-sticky">
+                <Pens
+                  steps={service.process}
+                  label={en ? 'the register' : 'el registro'}
+                  unit={en ? 'pens' : 'plumas'}
+                  legend={
+                    en
+                      ? 'one pen per step. Trace length is the step position in the delivery, not a percentage of anything.'
+                      : 'una pluma por paso. El largo del trazo es la posición del paso en la entrega, no un porcentaje de nada.'
+                  }
+                />
+
+                <div className="margin-row">
+                  <span className="margin-key">
+                    {en ? 'line items' : 'renglones'}
+                  </span>
+                  <span className="margin-read">{service.includes.length}</span>
+                  <span className="margin-val">
+                    {en
+                      ? 'items in the scope, written out below.'
+                      : 'renglones en el alcance, escritos abajo.'}
+                  </span>
+                </div>
+
+                {/* El descalificador, en el margen. Es donde un técnico
+                    anota lo que el aparato NO mide, y es lo que separa una
+                    página de servicio de un folleto. Sale del campo notFor,
+                    que el repo obliga a mantener sincero. */}
+                {service.notFor[0] ? (
+                  <div className="margin-row">
+                    <span className="margin-key">
+                      {en ? 'not a fit' : 'no aplica'}
+                    </span>
+                    <span className="margin-prose">{service.notFor[0]}</span>
+                  </div>
+                ) : null}
+              </aside>
+            </div>
           </section>
 
           {/* ═══ CONTEXTO ════════════════════════════════════════
@@ -387,13 +482,11 @@ export default async function DesarrolloWebPage({ params }: Props) {
               <Ribbon
                 items={stack}
                 label={en ? 'Stack and tools' : 'Stack y herramientas'}
-                duration="58s"
               />
               <div className="mt-3">
                 <Ribbon
                   items={stack}
                   label={en ? 'Stack, second rail' : 'Stack, segundo carril'}
-                  duration="72s"
                   reverse
                 />
               </div>
@@ -502,6 +595,47 @@ export default async function DesarrolloWebPage({ params }: Props) {
             </p>
           </section>
 
+          {/* ═══ LA PRUEBA, PENDIENTE DE ARCHIVO ═════════════════
+              Los dos huecos de imagen de este servicio, con su ruta exacta
+              escrita. Mientras el archivo no exista es un RENGLÓN —qué falta,
+              a qué ruta, de qué tamaño— y no una caja de cuatrocientos
+              píxeles de nada. El mismo dato genera docs/MEDIA.md, así que la
+              lista que se entrega y lo que pinta la página no pueden
+              contradecirse. */}
+          <section className="border-t border-hairline px-5 py-16 sm:px-10">
+            <p className="stamp">
+              {en
+                ? 'the proof · file pending'
+                : 'la prueba · pendiente de archivo'}
+            </p>
+            <div className="mt-8 grid gap-x-14 gap-y-4 lg:grid-cols-2">
+              <MediaSlot
+                id="desarrollo-web-lighthouse"
+                sizes="(min-width: 1024px) 40vw, 100vw"
+              />
+              <MediaSlot
+                id="desarrollo-web-codigo"
+                sizes="(min-width: 1024px) 40vw, 100vw"
+              />
+            </div>
+          </section>
+
+          {/* ═══ LOS TRES CANALES ════════════════════════════════
+              La misma banda de la portada de contacto, con el mensaje de
+              WhatsApp de ESTA página: quien escribe desde aquí llega con el
+              tema ya nombrado y no hay que interrogarlo. Cada canal degrada
+              solo si no está configurado. */}
+          <section className="border-t border-hairline px-5 py-20 sm:px-10">
+            <ContactChannels
+              locale={locale}
+              waMessage={
+                en
+                  ? 'Hi Carlos — I came from your web development page. What I want to build is '
+                  : 'Hola Carlos, vengo de tu página de desarrollo web. Lo que quiero construir es '
+              }
+            />
+          </section>
+
           {/* ═══ CIERRE ══════════════════════════════════════════ */}
           <section className="border-t border-hairline px-5 py-24 sm:px-10">
             <h2 className="max-w-[18ch] text-d1 text-ink">
@@ -511,8 +645,8 @@ export default async function DesarrolloWebPage({ params }: Props) {
             </h2>
             <p className="mt-6 max-w-[54ch] text-lead text-ink-muted">
               {en
-                ? 'Send the URL, the stack you are on today, and what has to be live by when. I reply within 24 to 48 business hours.'
-                : 'Mándame la URL, el stack en el que estás hoy y qué tiene que estar en producción y para cuándo. Respondo en 24 a 48 horas hábiles.'}
+                ? 'Send the URL, the stack you are on today, and what has to be live by when. I reply in under 24 hours.'
+                : 'Mándame la URL, el stack en el que estás hoy y qué tiene que estar en producción y para cuándo. Respondo en menos de 24 horas.'}
             </p>
 
             <p className="mt-10 flex flex-wrap items-baseline gap-x-8 gap-y-3">

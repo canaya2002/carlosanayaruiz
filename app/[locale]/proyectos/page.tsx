@@ -229,34 +229,47 @@ export default async function ProyectosPage({ params }: Props) {
               Sin instrumento en vivo: el que mide la página abierta vive
               en la home y duplicarlo aquí lo volvería decoración. Lo que
               esta página mide son duraciones, y eso se ve más abajo. */}
-          <section className="relative px-5 pt-16 sm:px-10">
-            <p className="stamp">{ttr('eyebrow')}</p>
+          <section className="hero-in relative px-5 pt-16 sm:px-10">
+            {/* ── LA HOJA TIENE DOS MÁRGENES ── */}
+            <div className="ledger">
+              <div className="min-w-0">
+                <p className="stamp">{ttr('eyebrow')}</p>
 
-            <h1 className="mt-6 max-w-[14ch] text-hero text-ink">
-              {t('title')}
-            </h1>
+                <h1 className="mt-6 max-w-[14ch] text-hero text-ink">
+                  {t('title')}
+                </h1>
 
-            <p className="mt-10 max-w-[46ch] font-human text-lead text-ink-muted">
-              {t('subtitle')}
-            </p>
+                <p className="mt-10 max-w-[46ch] font-human text-lead text-ink-muted">
+                  {t('subtitle')}
+                </p>
 
-            <p className="mt-8 max-w-[62ch] text-ink-muted">{t('lead')}</p>
+                <p className="mt-8 max-w-[62ch] text-ink-muted">{t('lead')}</p>
+              </div>
 
-            {/* Los tres números, contados de los datos. Tres filas medidas,
-                no tres tarjetas: la jerarquía la da la regla, no una caja. */}
-            <dl className="reveal-stagger mt-14 max-w-md">
-              {stats.map((stat) => (
-                <div
-                  key={stat.label}
-                  className="band flex items-baseline justify-between gap-6"
-                >
-                  <dt className="stamp">{stat.label}</dt>
-                  <dd className="font-mono text-d3 tabular-nums text-ink">
-                    {stat.value}
-                  </dd>
+              {/* ── EL MARGEN DE ANOTACIÓN ──
+                  Los tres números iban en `max-w-md` con
+                  `justify-between`: la cifra acababa a 350 px de su propia
+                  etiqueta y el resto de la hoja en negro. */}
+              <aside className="margin margin-sticky">
+                <dl>
+                  {stats.map((stat) => (
+                    <div key={stat.label} className="margin-row">
+                      <dt className="margin-key">{stat.label}</dt>
+                      <dd className="margin-read">{stat.value}</dd>
+                    </div>
+                  ))}
+                </dl>
+
+                {/* El hueco declarado del registro. Un proyecto con NDA es
+                    un dato del registro, no un vacío que se disimula. */}
+                <div className="margin-row">
+                  <span className="margin-key">
+                    {en ? 'on the record' : 'sobre el registro'}
+                  </span>
+                  <span className="margin-prose">{t('mapNote')}</span>
                 </div>
-              ))}
-            </dl>
+              </aside>
+            </div>
           </section>
 
           {/* ═══ EL MAPA ═════════════════════════════════════════
@@ -284,9 +297,7 @@ export default async function ProyectosPage({ params }: Props) {
             {/* La nota de transparencia sobre los dos tipos de marcador. Es
                 un hueco declarado del registro, así que se dibuja como
                 hueco: regla punteada, sin caja. */}
-            <p className="gap mt-8 max-w-[80ch] pt-4 text-sm">
-              {t('mapNote')}
-            </p>
+            <p className="gap mt-8 max-w-[80ch] pt-4 text-sm">{t('mapNote')}</p>
           </section>
 
           {/* ═══ LAS CINTAS ══════════════════════════════════════
@@ -300,19 +311,9 @@ export default async function ProyectosPage({ params }: Props) {
             <h2 id="cintas-heading" className="sr-only">
               {en ? 'Companies and stack' : 'Empresas y stack'}
             </h2>
-            <Ribbon
-              items={names}
-              label={t('title')}
-              duration="58s"
-              large
-            />
+            <Ribbon items={names} label={t('title')} large />
             <div className="mt-4">
-              <Ribbon
-                items={stack}
-                label={t('stackLabel')}
-                duration="76s"
-                reverse
-              />
+              <Ribbon items={stack} label={t('stackLabel')} reverse />
             </div>
           </section>
 

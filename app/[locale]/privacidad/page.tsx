@@ -20,7 +20,11 @@
  * hechos vigentes, verificables en el código, son:
  *
  *   - No hay base de datos. No hay servidor que reciba formularios. No hay
- *     newsletter ni lista de correo.
+ *     newsletter ni lista de correo. ⚠ ESO CAMBIÓ: hay un boletín
+ *     voluntario, y el documento lo declara en su propia sección. Si vuelves
+ *     a tocar la recolección de datos, el aviso se actualiza EN EL MISMO
+ *     commit — un aviso que dice «no hay lista» junto a un formulario de alta
+ *     no es un descuido de copy, es una declaración falsa.
  *   - El formulario de contacto compone un `mailto:` y abre la aplicación de
  *     correo del visitante. Lo que escribe viaja por su propio proveedor de
  *     correo; el sitio no lo almacena ni lo transmite.
@@ -60,7 +64,7 @@ interface Props {
 }
 
 /** Fecha real de la última edición de fondo. También alimenta el JSON-LD. */
-const LAST_UPDATED = '2026-08-19'
+const LAST_UPDATED = '2026-08-21'
 
 export async function generateMetadata({ params }: Props): Promise<Metadata> {
   const { locale } = await params
@@ -72,9 +76,11 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
     title: en
       ? 'Privacy Notice & ARCO Rights'
       : 'Aviso de privacidad y derechos ARCO',
+    /* La descripción decía «sin servidor de formularios» y con el boletín
+       eso dejó de ser cierto. Y medía 169 caracteres, que Google recorta. */
     description: en
-      ? 'No database, no form server, no tracking cookies. What reaches my inbox, how long it is kept, and how to exercise your ARCO rights under the LFPDPPP.'
-      : 'Sin base de datos, sin servidor de formularios y sin cookies de rastreo. Qué llega a mi buzón, cuánto se conserva y cómo ejercer tus derechos ARCO conforme a la LFPDPPP.',
+      ? 'No database and no tracking cookies. What reaches my inbox, the one opt-in list, how long data is kept and how to exercise your ARCO rights.'
+      : 'Sin base de datos y sin cookies de rastreo. Qué llega a mi buzón, la única lista voluntaria, cuánto se conserva y cómo ejercer tus derechos ARCO.',
   })
 }
 
@@ -215,10 +221,13 @@ export default async function PrivacyPage({ params }: Props) {
                 It is worth saying before anything else, because it changes
                 everything that follows:{' '}
                 <strong>
-                  this site has no database, no server that receives forms and
-                  no mailing list
+                  this site has no database and the contact form submits to no
+                  server
                 </strong>
-                . There is no place where this site keeps anything of yours.
+                . There is exactly one exception, and it is opt-in: the
+                newsletter, which is described in its own section below. Apart
+                from that address, there is no place where this site keeps
+                anything of yours.
               </p>
               <p>
                 The contact form does not submit to any server. When you fill it
@@ -228,8 +237,8 @@ export default async function PrivacyPage({ params }: Props) {
                 email, from your own account and through your own email
                 provider. The site does not store it, does not transmit it and
                 cannot read it — its security policy (
-                <code>form-action &lsquo;self&rsquo;</code>) even prevents a form
-                on these pages from pointing at an outside host.
+                <code>form-action &lsquo;self&rsquo;</code>) even prevents a
+                form on these pages from pointing at an outside host.
               </p>
               <p>
                 You can verify this yourself: open your browser&rsquo;s
@@ -271,17 +280,30 @@ export default async function PrivacyPage({ params }: Props) {
                 persistent profile of you; the detail is in the cookies section
                 below.
               </p>
+              <h3>The newsletter, if you subscribe to it</h3>
+              <p>
+                One email address, and nothing else — there is no name field and
+                no tracking pixel. It is entirely optional: nothing on this site
+                requires it and nothing is withheld if you skip it. The address
+                goes to the email provider that sends the newsletter, and it is
+                used for that and for nothing else.
+              </p>
+              <p>
+                You can unsubscribe from the link in any issue, or by writing to{' '}
+                <a href={`mailto:${NAP.email}`}>{NAP.email}</a>. Withdrawing
+                consent removes the address from the list; it does not affect
+                anything else, because there is nothing else.
+              </p>
               <h3>What this site does not collect</h3>
               <p>
                 There are no user accounts and no sign-up, so no passwords
-                exist. There is no newsletter and no mailing list, so there is
-                no list your address could end up on. Payment or card data, your
-                phone number, your precise location and sensitive personal data
-                (health, ethnic or racial origin, religious beliefs, political
-                opinions, sexual preference) are never requested. The site also
-                sends a <code>Permissions-Policy</code> header that denies
-                camera, microphone and geolocation at the browser level, so this
-                domain cannot even ask you for them.
+                exist. Payment or card data, your phone number, your precise
+                location and sensitive personal data (health, ethnic or racial
+                origin, religious beliefs, political opinions, sexual
+                preference) are never requested. The site also sends a{' '}
+                <code>Permissions-Policy</code> header that denies camera,
+                microphone and geolocation at the browser level, so this domain
+                cannot even ask you for them.
               </p>
               <p>
                 I do not address minors: this site speaks to professionals and
@@ -291,8 +313,8 @@ export default async function PrivacyPage({ params }: Props) {
               <p>
                 If you include confidential or sensitive information inside your
                 message, you do so on your own initiative. Please do not: email
-                is not an end-to-end encrypted channel. That is what a call
-                and, where needed, a signed non-disclosure agreement are for.
+                is not an end-to-end encrypted channel. That is what a call and,
+                where needed, a signed non-disclosure agreement are for.
               </p>
             </>
           ),
@@ -314,11 +336,20 @@ export default async function PrivacyPage({ params }: Props) {
                   agreed.
                 </li>
               </ul>
-              <h3>There are no secondary purposes</h3>
+              <h3>The newsletter is a separate, consented purpose</h3>
               <p>
-                There is no newsletter to add you to, no distribution list and
-                no remarketing. And not as a policy I could quietly reverse: the
-                infrastructure to do it does not exist here.
+                Subscribing to the newsletter is a secondary purpose under the
+                LFPDPPP, so it asks for its own consent and it is given by the
+                deliberate act of typing an address and submitting it. It is
+                used to send what I write, and to nothing else — it is not
+                cross-referenced with the emails you send me, it does not feed
+                advertising and the list is not shared.
+              </p>
+              <h3>No other secondary purposes</h3>
+              <p>
+                There is no remarketing and no profiling. And not as a policy I
+                could quietly reverse: the infrastructure to do it does not
+                exist here.
               </p>
               <p>
                 <strong>What I never do with your data:</strong> I do not sell
@@ -625,14 +656,16 @@ export default async function PrivacyPage({ params }: Props) {
               <p>
                 Conviene decirlo antes que nada, porque cambia todo lo demás:{' '}
                 <strong>
-                  este sitio no tiene base de datos, no tiene servidor que reciba
-                  formularios y no tiene lista de correo
+                  este sitio no tiene base de datos y el formulario de contacto
+                  no manda nada a ningún servidor
                 </strong>
-                . No existe un lugar donde este sitio guarde algo tuyo.
+                . Hay exactamente una excepción, y es voluntaria: el boletín,
+                que tiene su propia sección más abajo. Fuera de esa dirección,
+                no existe un lugar donde este sitio guarde algo tuyo.
               </p>
               <p>
-                El formulario de contacto no envía nada a ningún servidor. Cuando
-                lo llenas y haces clic, el sitio arma un enlace{' '}
+                El formulario de contacto no envía nada a ningún servidor.
+                Cuando lo llenas y haces clic, el sitio arma un enlace{' '}
                 <code>mailto:</code> con el asunto y el mensaje ya escritos y
                 abre la aplicación de correo de tu dispositivo. De ahí en
                 adelante <em>tú</em> envías el correo, desde tu propia cuenta y
@@ -644,8 +677,8 @@ export default async function PrivacyPage({ params }: Props) {
               <p>
                 Puedes comprobarlo tú mismo: abre las herramientas de
                 desarrollador de tu navegador, mira la pestaña de red y envía el
-                formulario. No aparece ninguna petición saliente, porque no hay a
-                dónde mandarla.
+                formulario. No aparece ninguna petición saliente, porque no hay
+                a dónde mandarla.
               </p>
               <p>
                 También hay un botón que copia mi correo a tu portapapeles, para
@@ -681,18 +714,30 @@ export default async function PrivacyPage({ params }: Props) {
                 perfil persistente sobre ti; el detalle está en la sección de
                 cookies.
               </p>
+              <h3>El boletín, si te suscribes</h3>
+              <p>
+                Una dirección de correo y nada más: no hay campo de nombre y no
+                hay píxel de seguimiento. Es del todo opcional — nada en este
+                sitio la pide y nada se te niega si no la das. La dirección va
+                al proveedor de correo que manda el boletín, y se usa para eso y
+                para nada más.
+              </p>
+              <p>
+                Te das de baja desde el enlace de cualquier envío, o
+                escribiéndome a <a href={`mailto:${NAP.email}`}>{NAP.email}</a>.
+                Revocar el consentimiento saca la dirección de la lista; no
+                afecta a nada más, porque no hay nada más.
+              </p>
               <h3>Lo que este sitio no recoge</h3>
               <p>
                 No hay cuentas de usuario ni registro, así que no existen
-                contraseñas. No hay boletín ni lista de correo, así que no existe
-                una lista en la que tu dirección pueda acabar. Nunca se piden
-                datos de pago o de tarjeta, tu teléfono, tu ubicación precisa ni
-                datos personales sensibles (salud, origen étnico o racial,
-                creencias religiosas, opiniones políticas, preferencia sexual).
-                El sitio además envía una cabecera{' '}
-                <code>Permissions-Policy</code> que niega cámara, micrófono y
-                geolocalización a nivel de navegador: este dominio no puede ni
-                pedírtelos.
+                contraseñas. Nunca se piden datos de pago o de tarjeta, tu
+                teléfono, tu ubicación precisa ni datos personales sensibles
+                (salud, origen étnico o racial, creencias religiosas, opiniones
+                políticas, preferencia sexual). El sitio además envía una
+                cabecera <code>Permissions-Policy</code> que niega cámara,
+                micrófono y geolocalización a nivel de navegador: este dominio
+                no puede ni pedírtelos.
               </p>
               <p>
                 No me dirijo a menores de edad: este sitio le habla a
@@ -726,11 +771,20 @@ export default async function PrivacyPage({ params }: Props) {
                   y se acordó.
                 </li>
               </ul>
-              <h3>No hay finalidades secundarias</h3>
+              <h3>El boletín es una finalidad aparte, y consentida</h3>
               <p>
-                No hay boletín al que pueda agregarte, no hay lista de difusión y
-                no hay remarketing. Y no como una política que podría revertir en
-                silencio: aquí no existe la infraestructura para hacerlo.
+                Suscribirte al boletín es una finalidad secundaria conforme a la
+                LFPDPPP, así que pide su propio consentimiento y lo das con el
+                acto deliberado de escribir tu dirección y enviarla. Se usa para
+                mandarte lo que escribo, y para nada más: no se cruza con los
+                correos que me manda, no alimenta publicidad y la lista no se
+                comparte.
+              </p>
+              <h3>No hay otras finalidades secundarias</h3>
+              <p>
+                No hay remarketing y no hay perfilado. Y no como una política
+                que podría revertir en silencio: aquí no existe la
+                infraestructura para hacerlo.
               </p>
               <p>
                 <strong>Lo que nunca hago con tus datos:</strong> no los vendo,
@@ -755,15 +809,15 @@ export default async function PrivacyPage({ params }: Props) {
               <p>
                 De esa casilla no se guarda registro en ninguna parte, porque no
                 hay dónde guardarlo. La casilla es la condición para que el
-                mensaje pase a tu aplicación de correo, y el correo que envías es
-                por sí mismo la evidencia de que decidiste mandarlo.
+                mensaje pase a tu aplicación de correo, y el correo que envías
+                es por sí mismo la evidencia de que decidiste mandarlo.
               </p>
               <p>
                 Puedes revocar tu consentimiento cuando quieras escribiendo a{' '}
-                {emailLink}. Revocarlo significa que elimino tu mensaje y su hilo
-                de mi buzón y dejo de usar tus datos, salvo que deba conservar
-                algo por una obligación legal o fiscal, o para defender un
-                derecho.
+                {emailLink}. Revocarlo significa que elimino tu mensaje y su
+                hilo de mi buzón y dejo de usar tus datos, salvo que deba
+                conservar algo por una obligación legal o fiscal, o para
+                defender un derecho.
               </p>
               <p>
                 También puedes pedirme que limite el uso o la divulgación de tus
@@ -780,20 +834,20 @@ export default async function PrivacyPage({ params }: Props) {
               <p>
                 El sitio se sirve desde la infraestructura de{' '}
                 <strong>Vercel</strong>, que además provee la medición agregada
-                de tráfico y rendimiento (Vercel Analytics y Speed Insights). Ese
-                es el único tercero que participa en el funcionamiento de estas
-                páginas.
+                de tráfico y rendimiento (Vercel Analytics y Speed Insights).
+                Ese es el único tercero que participa en el funcionamiento de
+                estas páginas.
               </p>
               <p>
-                Los correos que me escribes viven en mi proveedor de correo, como
-                en cualquier consultoría. No pasan por este sitio.
+                Los correos que me escribes viven en mi proveedor de correo,
+                como en cualquier consultoría. No pasan por este sitio.
               </p>
               <p>
                 No hay CRM, ni plataforma de email marketing, ni píxel
                 publicitario, ni Google Analytics, ni Meta Pixel, ni chat de
                 terceros, ni mapas embebidos, ni video incrustado. Las
-                tipografías se auto-hospedan en el build, así que tu navegador no
-                hace ni una petición a Google Fonts, y todas las imágenes se
+                tipografías se auto-hospedan en el build, así que tu navegador
+                no hace ni una petición a Google Fonts, y todas las imágenes se
                 sirven desde este mismo dominio.
               </p>
               <h3>Transferencias fuera de México</h3>
@@ -838,8 +892,8 @@ export default async function PrivacyPage({ params }: Props) {
                 Un banner que pide permiso para algo que no ocurre es teatro de
                 cumplimiento, y prefiero decirlo en este aviso que ponerte un
                 obstáculo en la primera pantalla. Si algún día añado una
-                herramienta que sí requiera consentimiento, aparecerá el banner y
-                este aviso lo dirá antes.
+                herramienta que sí requiera consentimiento, aparecerá el banner
+                y este aviso lo dirá antes.
               </p>
               <p>
                 Tampoco queda nada guardado en tu navegador: el sitio no escribe
@@ -987,12 +1041,12 @@ export default async function PrivacyPage({ params }: Props) {
           body: (
             <>
               <p>
-                Si cambia lo que este sitio hace con los datos —un formulario que
-                sí mande a un servidor, un proveedor distinto, una herramienta de
-                medición que sí use cookies— actualizo este aviso y muevo la
-                fecha de última actualización que aparece arriba, en el mismo
-                cambio que toque el código. La versión publicada aquí es siempre
-                la vigente.
+                Si cambia lo que este sitio hace con los datos —un formulario
+                que sí mande a un servidor, un proveedor distinto, una
+                herramienta de medición que sí use cookies— actualizo este aviso
+                y muevo la fecha de última actualización que aparece arriba, en
+                el mismo cambio que toque el código. La versión publicada aquí
+                es siempre la vigente.
               </p>
               <p>
                 Cualquier duda sobre este documento va al mismo lugar:{' '}
@@ -1031,23 +1085,67 @@ export default async function PrivacyPage({ params }: Props) {
           {/* ═══ CABECERA ════════════════════════════════════════
               Sin aguja y sin marcas: el instrumento en vivo es de la home.
               Aquí el eje de la izquierda solo da continuidad de material. */}
-          <section className="px-5 pt-16 pb-16 sm:px-10">
-            <p className="stamp">Legal</p>
+          <section className="hero-in px-5 pt-16 pb-16 sm:px-10">
+            {/* ── LA HOJA TIENE DOS MÁRGENES ── */}
+            <div className="ledger">
+              <div className="min-w-0">
+                <p className="stamp">Legal</p>
 
-            <h1 className="mt-6 max-w-[13ch] text-hero text-ink">
-              {t('privacyTitle')}
-            </h1>
+                <h1 className="mt-6 max-w-[13ch] text-hero text-ink">
+                  {t('privacyTitle')}
+                </h1>
 
-            <p className="mt-10 max-w-[46ch] font-human text-lead text-ink-muted">
-              {t('privacyLead')}
-            </p>
+                <p className="mt-10 max-w-[46ch] font-human text-lead text-ink-muted">
+                  {t('privacyLead')}
+                </p>
 
-            <p className="stamp mt-8">
-              {t('lastUpdated')} ·{' '}
-              <time dateTime={LAST_UPDATED} data-numeric="">
-                {updatedLabel}
-              </time>
-            </p>
+                <p className="stamp mt-8">
+                  {t('lastUpdated')} ·{' '}
+                  <time dateTime={LAST_UPDATED} data-numeric="">
+                    {updatedLabel}
+                  </time>
+                </p>
+              </div>
+
+              {/* ── EL MARGEN DE ANOTACIÓN ──
+                  Sin índice: el documento ya trae el suyo, pegajoso, en su
+                  propia sección. Dos índices en una pantalla son el mismo
+                  dato dos veces. Esto es la FICHA — cláusulas, fecha y
+                  responsable— que es lo que se mira antes de decidir si se
+                  lee. */}
+              <aside className="margin margin-sticky">
+                <div className="margin-row">
+                  <span className="margin-key">
+                    {en ? 'clauses' : 'cláusulas'}
+                  </span>
+                  <span className="margin-read">{sections.length}</span>
+                  <span className="margin-val">
+                    {en
+                      ? 'numbered, cited by number.'
+                      : 'numeradas, y se citan por número.'}
+                  </span>
+                </div>
+
+                <div className="margin-row">
+                  <span className="margin-key">
+                    {en ? 'in force since' : 'vigente desde'}
+                  </span>
+                  <span className="margin-val !text-ink">
+                    <time dateTime={LAST_UPDATED} data-numeric="">
+                      {updatedLabel}
+                    </time>
+                  </span>
+                </div>
+
+                <div className="margin-row">
+                  <span className="margin-key">
+                    {en ? 'accountable' : 'responsable'}
+                  </span>
+                  <span className="margin-val !text-ink">{NAP.name}</span>
+                  <span className="margin-val">{NAP.email}</span>
+                </div>
+              </aside>
+            </div>
           </section>
 
           {/* ═══ RESUMEN ═════════════════════════════════════════

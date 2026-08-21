@@ -4,6 +4,8 @@ import { setRequestLocale, getTranslations } from 'next-intl/server'
 import { Link } from '@/i18n/navigation'
 import { MediaSlot } from '@/components/instrument/media-slot'
 import { Rail } from '@/components/instrument/rail'
+import { Pens } from '@/components/instrument/pens'
+import { ContactChannels } from '@/components/sections/contact-channels'
 import { Ribbon } from '@/components/instrument/ribbon'
 import {
   getServiceById,
@@ -144,39 +146,94 @@ export default async function AiAutomationPage({ params }: Props) {
               Sin aguja ni marcas: el instrumento en vivo es de la home.
               Aquí la cinta corre por el margen y el titular es lo único
               que pesa. */}
-          <section className="relative px-5 pt-16 pb-20 sm:px-10">
-            <p className="stamp">
-              {en
-                ? `channel ${channelId('ai-automation')} · ai automation`
-                : `canal ${channelId('ai-automation')} · automatización con ia`}
-            </p>
+          <section className="hero-in relative px-5 pt-16 pb-20 sm:px-10">
+            {/* ── LA HOJA TIENE DOS MÁRGENES ──
+                El texto a la izquierda, la lectura del operador a la
+                derecha. Por debajo de 80rem el margen cae al flujo y su
+                regla se vuelve horizontal: no hay dos columnas donde no
+                caben dos columnas. */}
+            <div className="ledger">
+              <div className="min-w-0">
+                <p className="stamp">
+                  {en
+                    ? `channel ${channelId('ai-automation')} · ai automation`
+                    : `canal ${channelId('ai-automation')} · automatización con ia`}
+                </p>
 
-            {/* `hyphens` solo por debajo de 640: «Automatización» son catorce
+                {/* `hyphens` solo por debajo de 640: «Automatización» son catorce
                 caracteres sin un punto de corte natural y a 375 px mide más
                 que la columna. Arriba de sm sobra sitio y la partición se
                 apaga, que es donde se vería mal. */}
-            <h1 className="mt-6 text-hero text-ink [hyphens:auto] [overflow-wrap:break-word] sm:[hyphens:manual]">
-              {t('title')}
-            </h1>
+                <h1 className="mt-6 text-hero text-ink [hyphens:auto] [overflow-wrap:break-word] sm:[hyphens:manual]">
+                  {t('title')}
+                </h1>
 
-            <p className="mt-10 max-w-[48ch] text-lead text-ink-muted">
-              {t('subtitle')}
-            </p>
+                <p className="mt-10 max-w-[48ch] text-lead text-ink-muted">
+                  {t('subtitle')}
+                </p>
 
-            <p className="mt-10 flex flex-wrap gap-x-8 gap-y-3">
-              <Link className="link-stylus" href="/contacto">
-                {t('ctaMain')} →
-              </Link>
-              <Link className="link-stylus" href="/servicios">
-                {ts('allServices')} →
-              </Link>
-            </p>
+                <p className="mt-10 flex flex-wrap gap-x-8 gap-y-3">
+                  <Link className="link-stylus" href="/contacto">
+                    {t('ctaMain')} →
+                  </Link>
+                  <Link className="link-stylus" href="/servicios">
+                    {ts('allServices')} →
+                  </Link>
+                </p>
 
-            <p className="stamp mt-8">
-              {en
-                ? `Based in ${NAP.localityEn}. Available remotely.`
-                : `Desde ${NAP.locality}. Disponible en remoto.`}
-            </p>
+                <p className="stamp mt-8">
+                  {en
+                    ? `Based in ${NAP.localityEn}. Available remotely.`
+                    : `Desde ${NAP.locality}. Disponible en remoto.`}
+                </p>
+              </div>
+
+              {/* ── EL MARGEN DE ANOTACIÓN ──
+                  La segunda columna de la hoja. Medido a 1440: sin ella el
+                  45% derecho de la página estaba muerto en todo offset de
+                  scroll. Lo que va aquí no es relleno — es la LECTURA:
+                  cuántas plumas escriben, cuántos renglones tiene el
+                  alcance y para quién NO es. Todo sale del archivo de datos
+                  del servicio, así que no puede desmentir al cuerpo de la
+                  página. */}
+              <aside className="margin margin-sticky">
+                <Pens
+                  steps={service.process}
+                  label={en ? 'the register' : 'el registro'}
+                  unit={en ? 'pens' : 'plumas'}
+                  legend={
+                    en
+                      ? 'one pen per step. Trace length is the step position in the delivery, not a percentage of anything.'
+                      : 'una pluma por paso. El largo del trazo es la posición del paso en la entrega, no un porcentaje de nada.'
+                  }
+                />
+
+                <div className="margin-row">
+                  <span className="margin-key">
+                    {en ? 'line items' : 'renglones'}
+                  </span>
+                  <span className="margin-read">{service.includes.length}</span>
+                  <span className="margin-val">
+                    {en
+                      ? 'items in the scope, written out below.'
+                      : 'renglones en el alcance, escritos abajo.'}
+                  </span>
+                </div>
+
+                {/* El descalificador, en el margen. Es donde un técnico
+                    anota lo que el aparato NO mide, y es lo que separa una
+                    página de servicio de un folleto. Sale del campo notFor,
+                    que el repo obliga a mantener sincero. */}
+                {service.notFor[0] ? (
+                  <div className="margin-row">
+                    <span className="margin-key">
+                      {en ? 'not a fit' : 'no aplica'}
+                    </span>
+                    <span className="margin-prose">{service.notFor[0]}</span>
+                  </div>
+                ) : null}
+              </aside>
+            </div>
           </section>
 
           {/* ═══ CONTEXTO ════════════════════════════════════════
@@ -355,20 +412,18 @@ export default async function AiAutomationPage({ params }: Props) {
           >
             <div className="px-5 sm:px-10">
               <p className="stamp">Stack</p>
-              <h2 id="stack-heading" className="mt-5 max-w-[16ch] text-d1 text-ink">
+              <h2
+                id="stack-heading"
+                className="mt-5 max-w-[16ch] text-d1 text-ink"
+              >
                 {t('toolsTitle')}
               </h2>
             </div>
 
             <div className="mt-10" aria-hidden="true">
-              <Ribbon items={tapeItems} label={tl('stackRail')} duration="58s" />
+              <Ribbon items={tapeItems} label={tl('stackRail')} />
               <div className="mt-3">
-                <Ribbon
-                  items={tapeItemsBack}
-                  label={tl('stackRail')}
-                  duration="74s"
-                  reverse
-                />
+                <Ribbon items={tapeItemsBack} label={tl('stackRail')} reverse />
               </div>
             </div>
 
@@ -481,20 +536,64 @@ export default async function AiAutomationPage({ params }: Props) {
             </p>
           </section>
 
+          {/* ═══ LA PRUEBA, PENDIENTE DE ARCHIVO ═════════════════
+              Los dos huecos de imagen de este servicio, con su ruta exacta
+              escrita. Mientras el archivo no exista es un RENGLÓN —qué falta,
+              a qué ruta, de qué tamaño— y no una caja de cuatrocientos
+              píxeles de nada. El mismo dato genera docs/MEDIA.md, así que la
+              lista que se entrega y lo que pinta la página no pueden
+              contradecirse. */}
+          <section className="border-t border-hairline px-5 py-16 sm:px-10">
+            <p className="stamp">
+              {en
+                ? 'the proof · file pending'
+                : 'la prueba · pendiente de archivo'}
+            </p>
+            <div className="mt-8 grid gap-x-14 gap-y-4 lg:grid-cols-2">
+              <MediaSlot
+                id="automatizacion-ia-flujo"
+                sizes="(min-width: 1024px) 40vw, 100vw"
+              />
+              <MediaSlot
+                id="automatizacion-ia-chat"
+                sizes="(min-width: 1024px) 40vw, 100vw"
+              />
+            </div>
+          </section>
+
+          {/* ═══ LOS TRES CANALES ════════════════════════════════
+              La misma banda de la portada de contacto, con el mensaje de
+              WhatsApp de ESTA página: quien escribe desde aquí llega con el
+              tema ya nombrado y no hay que interrogarlo. Cada canal degrada
+              solo si no está configurado. */}
+          <section className="border-t border-hairline px-5 py-20 sm:px-10">
+            <ContactChannels
+              locale={locale}
+              waMessage={
+                en
+                  ? 'Hi Carlos — I came from your automation page. The process I want to automate is '
+                  : 'Hola Carlos, vengo de tu página de automatización. El proceso que quiero automatizar es '
+              }
+            />
+          </section>
+
           {/* ═══ CIERRE ══════════════════════════════════════════ */}
           <section className="border-t border-hairline px-5 py-24 sm:px-10">
             <h2 className="max-w-[16ch] text-d1 text-ink">{t('ctaMain')}</h2>
             <p className="mt-6 max-w-[56ch] text-lead text-ink-muted">
               {en
-                ? 'Tell me who runs the process today, how often it runs, and what happens when it goes wrong. I reply within 24 to 48 business hours with whether it is worth automating and what the first step would be.'
-                : 'Cuéntame quién ejecuta el proceso hoy, cada cuánto corre y qué pasa cuando sale mal. Respondo en 24 a 48 horas hábiles con si conviene automatizarlo y cuál sería el primer paso.'}
+                ? 'Tell me who runs the process today, how often it runs, and what happens when it goes wrong. I reply in under 24 hours with whether it is worth automating and what the first step would be.'
+                : 'Cuéntame quién ejecuta el proceso hoy, cada cuánto corre y qué pasa cuando sale mal. Respondo en menos de 24 horas con si conviene automatizarlo y cuál sería el primer paso.'}
             </p>
 
             <p className="mt-10 flex flex-wrap items-baseline gap-x-8 gap-y-3">
               <Link className="link-stylus text-d3" href="/contacto">
                 {t('ctaSecondary')} →
               </Link>
-              <a className="link-stylus font-mono text-sm" href={`mailto:${NAP.email}`}>
+              <a
+                className="link-stylus font-mono text-sm"
+                href={`mailto:${NAP.email}`}
+              >
                 {NAP.email}
               </a>
             </p>

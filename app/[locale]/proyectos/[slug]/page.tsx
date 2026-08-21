@@ -300,9 +300,7 @@ export default async function ProjectPage({ params }: Props) {
     { label: t('countryLabel'), value: t(COUNTRY_KEY[company.country]) },
     // La ciudad solo aparece si está en los datos. Los tres empleos no la
     // tienen registrada y aquí no se rellena con una plausible.
-    ...(company.city
-      ? [{ label: t('cityLabel'), value: company.city }]
-      : []),
+    ...(company.city ? [{ label: t('cityLabel'), value: company.city }] : []),
     {
       label: t('periodLabel'),
       value: sameMonth ? start : `${start} – ${end}`,
@@ -336,62 +334,122 @@ export default async function ProjectPage({ params }: Props) {
               portada generada delante de él ni una composición que espere
               a nada. El hueco del logo se conserva —marca dónde va el
               archivo, con su ruta exacta— pero sin marco y sin sombra. */}
-          <section className="relative px-5 pt-16 sm:px-10">
-            <MediaSlot
-              id={`proyecto-${company.slug}-logo`}
-              compact
-              sizes="176px"
-              className="w-36 sm:w-44"
-            />
+          <section className="hero-in relative px-5 pt-16 sm:px-10">
+            {/* ── LA HOJA TIENE DOS MÁRGENES ── */}
+            <div className="ledger">
+              <div className="min-w-0">
+                <MediaSlot
+                  id={`proyecto-${company.slug}-logo`}
+                  compact
+                  sizes="176px"
+                  className="w-36 sm:w-44"
+                />
 
-            <p className="stamp mt-8">
-              {t(KIND_KEY[company.kind])}
-              {' · '}
-              {t(COUNTRY_KEY[company.country])}
-            </p>
+                <p className="stamp mt-8">
+                  {t(KIND_KEY[company.kind])}
+                  {' · '}
+                  {t(COUNTRY_KEY[company.country])}
+                </p>
 
-            {/* Único h1 de la página. */}
-            <h1 className="mt-6 max-w-[16ch] text-hero text-ink">
-              {company.name}
-            </h1>
+                {/* Único h1 de la página. */}
+                <h1 className="mt-6 max-w-[16ch] text-hero text-ink">
+                  {company.name}
+                </h1>
 
-            <p className="mt-10 max-w-[46ch] font-human text-lead text-ink-muted">
-              {company.summary}
-            </p>
+                <p className="mt-10 max-w-[46ch] font-human text-lead text-ink-muted">
+                  {company.summary}
+                </p>
 
-            {/* Cada extremo del rango es su propio <time>: el elemento no
+                {/* Cada extremo del rango es su propio <time>: el elemento no
                 admite intervalos, así que dos fechas legibles por máquina
                 valen más que una cadena suelta. */}
-            <p className="stamp mt-8 tabular-nums">
-              <span className="sr-only">{t('periodLabel')}: </span>
-              <time dateTime={company.startDate}>{start}</time>
-              {sameMonth ? null : (
-                <>
-                  {' – '}
-                  {company.endDate ? (
-                    <time dateTime={company.endDate}>{end}</time>
-                  ) : (
-                    <span>{end}</span>
+                <p className="stamp mt-8 tabular-nums">
+                  <span className="sr-only">{t('periodLabel')}: </span>
+                  <time dateTime={company.startDate}>{start}</time>
+                  {sameMonth ? null : (
+                    <>
+                      {' – '}
+                      {company.endDate ? (
+                        <time dateTime={company.endDate}>{end}</time>
+                      ) : (
+                        <span>{end}</span>
+                      )}
+                    </>
                   )}
-                </>
-              )}
-            </p>
+                </p>
 
-            <p className="mt-10 flex flex-wrap gap-x-8 gap-y-3">
-              {company.url ? (
-                <a
-                  className="link-stylus"
-                  href={company.url}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                >
-                  {t('externalLink')} ↗
-                </a>
-              ) : null}
-              <Link className="link-stylus" href="/proyectos">
-                ← {t('backToAll')}
-              </Link>
-            </p>
+                <p className="mt-10 flex flex-wrap gap-x-8 gap-y-3">
+                  {company.url ? (
+                    <a
+                      className="link-stylus"
+                      href={company.url}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                    >
+                      {t('externalLink')} ↗
+                    </a>
+                  ) : null}
+                  <Link className="link-stylus" href="/proyectos">
+                    ← {t('backToAll')}
+                  </Link>
+                </p>
+              </div>
+
+              {/* ── EL MARGEN DE ANOTACIÓN ──
+                  La ficha técnica de la pieza. El stack vivía en una lista
+                  larga más abajo; aquí arriba es lo primero que un técnico
+                  quiere saber, y son datos, así que van en la cara de
+                  máquina. */}
+              <aside className="margin margin-sticky">
+                <div className="margin-row">
+                  <span className="margin-key">{en ? 'stack' : 'stack'}</span>
+                  <span className="margin-read">{company.stack.length}</span>
+                  <span className="margin-val">
+                    {en
+                      ? 'technologies on the record.'
+                      : 'tecnologías en el registro.'}
+                  </span>
+                </div>
+
+                <div className="margin-row">
+                  <span className="margin-key">
+                    {en ? 'built with' : 'construido con'}
+                  </span>
+                  <ul className="mt-2 grid gap-1">
+                    {company.stack.map((tech) => (
+                      <li
+                        key={tech}
+                        className="font-mono text-[0.6875rem] leading-[1.4] tracking-[0.04em] text-ink"
+                      >
+                        {tech}
+                      </li>
+                    ))}
+                  </ul>
+                </div>
+
+                {company.docs.length > 0 ? (
+                  <div className="margin-row">
+                    <span className="margin-key">
+                      {en ? 'documents' : 'documentos'}
+                    </span>
+                    <ul className="mt-2 grid gap-1.5">
+                      {company.docs.map((doc) => (
+                        <li key={doc.href}>
+                          <a
+                            className="link-stylus font-mono text-[0.6875rem] tracking-[0.04em]"
+                            href={doc.href}
+                            target="_blank"
+                            rel="noopener noreferrer"
+                          >
+                            {doc.label} ↗
+                          </a>
+                        </li>
+                      ))}
+                    </ul>
+                  </div>
+                ) : null}
+              </aside>
+            </div>
           </section>
 
           {/* ═══ DATOS DEL TRABAJO ═══════════════════════════════
@@ -411,9 +469,7 @@ export default async function ProjectPage({ params }: Props) {
                   <dt className="stamp">{fact.label}</dt>
                   <dd
                     className={
-                      fact.mono
-                        ? 'font-mono tabular-nums text-ink'
-                        : 'text-ink'
+                      fact.mono ? 'font-mono tabular-nums text-ink' : 'text-ink'
                     }
                   >
                     {fact.value}

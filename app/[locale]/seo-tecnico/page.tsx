@@ -3,6 +3,8 @@ import { notFound } from 'next/navigation'
 import { setRequestLocale, getTranslations } from 'next-intl/server'
 import { Link } from '@/i18n/navigation'
 import { Rail } from '@/components/instrument/rail'
+import { Pens } from '@/components/instrument/pens'
+import { ContactChannels } from '@/components/sections/contact-channels'
 import { Ribbon } from '@/components/instrument/ribbon'
 import { MediaSlot } from '@/components/instrument/media-slot'
 import { getServiceById } from '@/data/services'
@@ -162,35 +164,90 @@ export default async function SeoTecnicoPage({ params }: Props) {
               El titular es el LCP y se pinta del servidor: ni una capa
               decorativa por delante, ni una secuencia de entrada que
               esperar. */}
-          <section className="relative px-5 pb-16 pt-16 sm:px-10">
-            <p className="stamp">
-              {en
-                ? 'Technical SEO · Mexico City'
-                : 'SEO Técnico · Ciudad de México'}
-            </p>
+          <section className="hero-in relative px-5 pb-16 pt-16 sm:px-10">
+            {/* ── LA HOJA TIENE DOS MÁRGENES ──
+                El texto a la izquierda, la lectura del operador a la
+                derecha. Por debajo de 80rem el margen cae al flujo y su
+                regla se vuelve horizontal: no hay dos columnas donde no
+                caben dos columnas. */}
+            <div className="ledger">
+              <div className="min-w-0">
+                <p className="stamp">
+                  {en
+                    ? 'Technical SEO · Mexico City'
+                    : 'SEO Técnico · Ciudad de México'}
+                </p>
 
-            <h1 className="mt-6 max-w-[14ch] text-hero text-ink">
-              {t('title')}
-            </h1>
+                <h1 className="mt-6 max-w-[14ch] text-hero text-ink">
+                  {t('title')}
+                </h1>
 
-            <p className="mt-10 max-w-[46ch] font-human text-lead text-ink-muted">
-              {t('subtitle')}
-            </p>
+                <p className="mt-10 max-w-[46ch] font-human text-lead text-ink-muted">
+                  {t('subtitle')}
+                </p>
 
-            <p className="mt-10 flex flex-wrap gap-x-8 gap-y-3">
-              <Link className="link-stylus" href="/contacto">
-                {t('ctaMain')} →
-              </Link>
-              <Link className="link-stylus" href="/servicios">
-                {ts('allServices')} →
-              </Link>
-            </p>
+                <p className="mt-10 flex flex-wrap gap-x-8 gap-y-3">
+                  <Link className="link-stylus" href="/contacto">
+                    {t('ctaMain')} →
+                  </Link>
+                  <Link className="link-stylus" href="/servicios">
+                    {ts('allServices')} →
+                  </Link>
+                </p>
 
-            <p className="mt-8 max-w-[48ch] text-sm text-ink-subtle">
-              {en
-                ? `Based in ${NAP.localityEn}. Remote work with teams in any time zone.`
-                : `Con base en ${NAP.locality}. Trabajo remoto con equipos en cualquier zona horaria.`}
-            </p>
+                <p className="mt-8 max-w-[48ch] text-sm text-ink-subtle">
+                  {en
+                    ? `Based in ${NAP.localityEn}. Remote work with teams in any time zone.`
+                    : `Con base en ${NAP.locality}. Trabajo remoto con equipos en cualquier zona horaria.`}
+                </p>
+              </div>
+
+              {/* ── EL MARGEN DE ANOTACIÓN ──
+                  La segunda columna de la hoja. Medido a 1440: sin ella el
+                  45% derecho de la página estaba muerto en todo offset de
+                  scroll. Lo que va aquí no es relleno — es la LECTURA:
+                  cuántas plumas escriben, cuántos renglones tiene el
+                  alcance y para quién NO es. Todo sale del archivo de datos
+                  del servicio, así que no puede desmentir al cuerpo de la
+                  página. */}
+              <aside className="margin margin-sticky">
+                <Pens
+                  steps={service.process}
+                  label={en ? 'the register' : 'el registro'}
+                  unit={en ? 'pens' : 'plumas'}
+                  legend={
+                    en
+                      ? 'one pen per step. Trace length is the step position in the delivery, not a percentage of anything.'
+                      : 'una pluma por paso. El largo del trazo es la posición del paso en la entrega, no un porcentaje de nada.'
+                  }
+                />
+
+                <div className="margin-row">
+                  <span className="margin-key">
+                    {en ? 'line items' : 'renglones'}
+                  </span>
+                  <span className="margin-read">{service.includes.length}</span>
+                  <span className="margin-val">
+                    {en
+                      ? 'items in the scope, written out below.'
+                      : 'renglones en el alcance, escritos abajo.'}
+                  </span>
+                </div>
+
+                {/* El descalificador, en el margen. Es donde un técnico
+                    anota lo que el aparato NO mide, y es lo que separa una
+                    página de servicio de un folleto. Sale del campo notFor,
+                    que el repo obliga a mantener sincero. */}
+                {service.notFor[0] ? (
+                  <div className="margin-row">
+                    <span className="margin-key">
+                      {en ? 'not a fit' : 'no aplica'}
+                    </span>
+                    <span className="margin-prose">{service.notFor[0]}</span>
+                  </div>
+                ) : null}
+              </aside>
+            </div>
           </section>
 
           {/* ═══ EL PROBLEMA ═════════════════════════════════════ */}
@@ -383,22 +440,20 @@ export default async function SeoTecnicoPage({ params }: Props) {
           >
             <div className="px-5 sm:px-10">
               <p className="stamp">reproducible</p>
-              <h2 id="tools-heading" className="mt-5 max-w-[16ch] text-d1 text-ink">
+              <h2
+                id="tools-heading"
+                className="mt-5 max-w-[16ch] text-d1 text-ink"
+              >
                 {t('toolsTitle')}
               </h2>
             </div>
 
             <div className="mt-10">
-              <Ribbon
-                items={tools}
-                label={t('toolsTitle')}
-                duration="64s"
-              />
+              <Ribbon items={tools} label={t('toolsTitle')} />
               <div className="mt-3">
                 <Ribbon
                   items={tools}
                   label={`${t('toolsTitle')} — ${en ? 'second rail' : 'segundo carril'}`}
-                  duration="78s"
                   reverse
                 />
               </div>
@@ -497,6 +552,47 @@ export default async function SeoTecnicoPage({ params }: Props) {
                 ? ' before deciding where to start.'
                 : ' antes de decidir por dónde empezar.'}
             </p>
+          </section>
+
+          {/* ═══ LA PRUEBA, PENDIENTE DE ARCHIVO ═════════════════
+              Los dos huecos de imagen de este servicio, con su ruta exacta
+              escrita. Mientras el archivo no exista es un RENGLÓN —qué falta,
+              a qué ruta, de qué tamaño— y no una caja de cuatrocientos
+              píxeles de nada. El mismo dato genera docs/MEDIA.md, así que la
+              lista que se entrega y lo que pinta la página no pueden
+              contradecirse. */}
+          <section className="border-t border-hairline px-5 py-16 sm:px-10">
+            <p className="stamp">
+              {en
+                ? 'the proof · file pending'
+                : 'la prueba · pendiente de archivo'}
+            </p>
+            <div className="mt-8 grid gap-x-14 gap-y-4 lg:grid-cols-2">
+              <MediaSlot
+                id="seo-tecnico-proceso"
+                sizes="(min-width: 1024px) 40vw, 100vw"
+              />
+              <MediaSlot
+                id="seo-tecnico-schema"
+                sizes="(min-width: 1024px) 40vw, 100vw"
+              />
+            </div>
+          </section>
+
+          {/* ═══ LOS TRES CANALES ════════════════════════════════
+              La misma banda de la portada de contacto, con el mensaje de
+              WhatsApp de ESTA página: quien escribe desde aquí llega con el
+              tema ya nombrado y no hay que interrogarlo. Cada canal degrada
+              solo si no está configurado. */}
+          <section className="border-t border-hairline px-5 py-20 sm:px-10">
+            <ContactChannels
+              locale={locale}
+              waMessage={
+                en
+                  ? 'Hi Carlos — I came from your technical SEO page. My site is '
+                  : 'Hola Carlos, vengo de tu página de SEO técnico. Mi sitio es '
+              }
+            />
           </section>
 
           {/* ═══ CIERRE ══════════════════════════════════════════ */}

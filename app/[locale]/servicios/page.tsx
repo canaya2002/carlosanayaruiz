@@ -4,6 +4,7 @@ import { Link } from '@/i18n/navigation'
 import type { StaticPathname } from '@/i18n/routing'
 import { Rail } from '@/components/instrument/rail'
 import { Ribbon } from '@/components/instrument/ribbon'
+import { Dial } from '@/components/instrument/dial'
 import { getServices, servicePath, type ServiceId } from '@/data/services'
 import { NAP } from '@/lib/constants'
 import { generatePageMetadata } from '@/lib/seo'
@@ -140,33 +141,74 @@ export default async function ServicesHubPage({ params }: Props) {
           {/* ═══ CABECERA ════════════════════════════════════════
               El h1 es texto del servidor y es el LCP: no espera a ninguna
               secuencia de entrada ni a que se resuelva una imagen. */}
-          <section className="relative px-5 pt-16 pb-20 sm:px-10">
-            <p className="stamp">{t('eyebrow')}</p>
+          <section className="hero-in relative px-5 pt-16 pb-20 sm:px-10">
+            {/* ── LA HOJA TIENE DOS MÁRGENES ──
+                Sin instrumento nuevo: el dial ya vive en la placa de abajo y
+                un segundo aparato en la misma página lo volvería adorno. El
+                margen lleva la LEYENDA del catálogo — cada canal con sus
+                pasos y sus renglones, contados del archivo de datos. */}
+            <div className="ledger">
+              <div className="min-w-0">
+                <p className="stamp">{t('eyebrow')}</p>
 
-            <h1 className="mt-6 max-w-[12ch] text-hero text-ink">
-              {th('title')}
-            </h1>
+                <h1 className="mt-6 max-w-[12ch] text-hero text-ink">
+                  {th('title')}
+                </h1>
 
-            <p className="mt-8 max-w-[44ch] text-lead text-ink-muted">
-              {th('subtitle')}
-            </p>
+                <p className="mt-8 max-w-[44ch] text-lead text-ink-muted">
+                  {th('subtitle')}
+                </p>
 
-            {/* Serif: es la voz en primera persona, y es el único lugar de la
+                {/* Serif: es la voz en primera persona, y es el único lugar de la
                 cabecera donde aparece. */}
-            <p className="mt-6 max-w-[54ch] font-human text-ink-muted">
-              {th('lead')}
-            </p>
+                <p className="mt-6 max-w-[54ch] font-human text-ink-muted">
+                  {th('lead')}
+                </p>
 
-            <p className="mt-10 flex flex-wrap gap-x-8 gap-y-3">
-              <Link className="link-stylus" href="/contacto">
-                {t('ctaPrimary')} →
-              </Link>
-              <Link className="link-stylus" href="/sobre-mi">
-                {t('ctaTertiary')} →
-              </Link>
-            </p>
+                <p className="mt-10 flex flex-wrap gap-x-8 gap-y-3">
+                  <Link className="link-stylus" href="/contacto">
+                    {t('ctaPrimary')} →
+                  </Link>
+                  <Link className="link-stylus" href="/sobre-mi">
+                    {t('ctaTertiary')} →
+                  </Link>
+                </p>
 
-            <p className="stamp mt-8">{t('locationNote')}</p>
+                <p className="stamp mt-8">{t('locationNote')}</p>
+              </div>
+
+              {/* ── EL MARGEN DE ANOTACIÓN ── */}
+              <aside className="margin margin-sticky">
+                <div className="margin-row">
+                  <span className="margin-key">
+                    {en ? 'channels' : 'canales'}
+                  </span>
+                  <span className="margin-read">{services.length}</span>
+                  <span className="margin-val">
+                    {en
+                      ? 'parallel, not steps of a sequence.'
+                      : 'paralelos, no pasos de una secuencia.'}
+                  </span>
+                </div>
+
+                {services.map((service, i) => (
+                  <div key={service.id} className="margin-row">
+                    <span className="margin-key">
+                      ch {String.fromCharCode(97 + i)}
+                    </span>
+                    <span className="margin-val !text-ink">
+                      {service.title}
+                    </span>
+                    <span className="margin-val !text-ink-subtle">
+                      {service.process.length}
+                      {en ? ' steps · ' : ' pasos · '}
+                      {service.includes.length}
+                      {en ? ' line items' : ' renglones'}
+                    </span>
+                  </div>
+                ))}
+              </aside>
+            </div>
           </section>
 
           {/* ═══ CANALES ═════════════════════════════════════════
@@ -183,34 +225,50 @@ export default async function ServicesHubPage({ params }: Props) {
             <h2 className="mt-5 max-w-[18ch] text-d1">{ts('title')}</h2>
             <p className="mt-6 max-w-[52ch] text-lead">{ts('subtitle')}</p>
 
-            <ul className="reveal-stagger mt-12">
-              {services.map((service, i) => (
-                <li key={service.id}>
-                  <Link
-                    href={servicePath(service, locale) as StaticPathname}
-                    className="channel group"
-                  >
-                    <span className="channel-id">ch {channelId(i)}</span>
-                    <span>
-                      <span className="text-d3">{service.title}</span>
-                      <span className="channel-note mt-1 block max-w-[52ch] text-sm">
-                        {service.headline}
-                      </span>
-                      {/* La pluma: al pasar el puntero una línea se escribe de
+            <div className="mt-12 grid gap-x-14 gap-y-16 xl:grid-cols-[minmax(0,54rem)_minmax(14rem,1fr)] xl:items-center">
+              <ul className="reveal-stagger">
+                {services.map((service, i) => (
+                  <li key={service.id}>
+                    <Link
+                      href={servicePath(service, locale) as StaticPathname}
+                      className="channel group"
+                      /* Lo que el dial lee con `:has()` para saber qué anillo
+                       encender. Ver el bloque «EL DIAL» en globals.css. */
+                      data-ch={channelId(i)}
+                    >
+                      <span className="channel-id">ch {channelId(i)}</span>
+                      <span>
+                        <span className="text-d3">{service.title}</span>
+                        <span className="channel-note mt-1 block max-w-[52ch] text-sm">
+                          {service.headline}
+                        </span>
+                        {/* La pluma: al pasar el puntero una línea se escribe de
                           izquierda a derecha bajo la fila. No hay caja que se
                           encienda — avanza el trazo. */}
-                      <span className="channel-pen mt-3" aria-hidden="true" />
-                    </span>
-                    <span
-                      aria-hidden="true"
-                      className="transition-transform duration-150 group-hover:translate-x-1"
-                    >
-                      →
-                    </span>
-                  </Link>
-                </li>
-              ))}
-            </ul>
+                        <span className="channel-pen mt-3" aria-hidden="true" />
+                      </span>
+                      <span
+                        aria-hidden="true"
+                        className="transition-transform duration-150 group-hover:translate-x-1"
+                      >
+                        →
+                      </span>
+                    </Link>
+                  </li>
+                ))}
+              </ul>
+
+              {/* EL DIAL. La misma cara del tambor de la portada: es la
+                  leyenda de esta lista, así que pertenece a donde está la
+                  lista. Ver components/instrument/dial.tsx. */}
+              <Dial
+                channels={services.map((service, i) => ({
+                  id: service.id,
+                  ch: channelId(i),
+                }))}
+                idle={`a–${channelId(services.length - 1)}`}
+              />
+            </div>
           </section>
 
           {/* ═══ LA CINTA DEL ALCANCE ════════════════════════════
@@ -224,12 +282,11 @@ export default async function ServicesHubPage({ params }: Props) {
             <h2 id="scope-heading" className="sr-only">
               {ts('includes')}
             </h2>
-            <Ribbon items={scopeLeft} label={tl('scopeRail')} duration="72s" />
+            <Ribbon items={scopeLeft} label={tl('scopeRail')} />
             <div className="mt-3">
               <Ribbon
                 items={scopeRight}
                 label={`${tl('scopeRail')} · ${en ? 'second rail' : 'segundo carril'}`}
-                duration="86s"
                 reverse
               />
             </div>
@@ -472,8 +529,8 @@ export default async function ServicesHubPage({ params }: Props) {
             </h2>
             <p className="mt-6 max-w-[54ch] font-human text-lead text-ink-muted">
               {en
-                ? 'Send the URL, what changed, and since when. I reply within 24 to 48 business hours with a first read on which of the four — if any — is worth starting with.'
-                : 'Mándame la URL, qué cambió y desde cuándo. Respondo en 24 a 48 horas hábiles con una primera lectura de con cuál de los cuatro conviene empezar, si con alguno.'}
+                ? 'Send the URL, what changed, and since when. I reply in under 24 hours with a first read on which of the four — if any — is worth starting with.'
+                : 'Mándame la URL, qué cambió y desde cuándo. Respondo en menos de 24 horas con una primera lectura de con cuál de los cuatro conviene empezar, si con alguno.'}
             </p>
 
             <p className="mt-10 flex flex-wrap items-baseline gap-x-8 gap-y-3">

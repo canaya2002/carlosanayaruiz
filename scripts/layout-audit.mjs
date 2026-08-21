@@ -78,7 +78,11 @@ const PROBE = `(() => {
   /* Hay ventanas DELIBERADAS: el trazo, las cintas y el retrato recortan
      a proposito —es lo que las hace funcionar— y reportarlas es ruido que
      esconde los cortes de verdad. */
-  const VENTANAS = ['trace', 'ribbon', 'portrait', 'media-slot']
+  /* 'dial' recorta a proposito: sus anillos llevan rotate para repartir las
+     marcas, y rotar un elemento cuadrado agranda su caja alineada a los ejes
+     aunque lo que se ve dentro sea un circulo quieto. Lo que se recorta es
+     caja vacia. */
+  const VENTANAS = ['trace', 'ribbon', 'portrait', 'media-slot', 'dial']
   for (const el of document.querySelectorAll('main *')) {
     const cs = getComputedStyle(el)
     const hidden = cs.overflowY === 'hidden' || cs.overflowY === 'clip'
@@ -174,6 +178,17 @@ const PROBE_SCROLL = `(async () => {
       const b = el.getBoundingClientRect()
       if (b.height < 12) continue
       if (b.top > window.innerHeight * 0.85 || b.bottom < window.innerHeight * 0.15) continue
+      /* El titular que muta es la excepcion legitima: sus cinco frases
+         viven en LA MISMA celda de grid y solo una esta visible a la vez, asi
+         que cuatro en opacity 0 es el mecanismo funcionando, no un reveal
+         roto. Sin esta linea el detector reporta cuatro falsos positivos por
+         ancho en la portada. */
+      /* Dos excepciones LEGITIMAS, y solo dos: el titular que muta y el
+         husillo del dial. En los dos casos varios nodos comparten sitio y
+         solo uno esta visible a la vez, asi que el resto en opacity 0 es el
+         mecanismo funcionando. Todo lo demas invisible dentro del viewport es
+         un reveal roto y hay que verlo. */
+      if (el.closest(".morph") || el.closest(".dial")) continue
       const txt = (el.textContent || "").trim()
       if (txt.length < 4) continue
       const clave = txt.slice(0, 44)
@@ -297,6 +312,10 @@ for (const path of paths) {
       console.log(`    MUDA    ${q.el} — ${q.alturaPx}px con ${q.chars} caracteres y sin medio`)
     for (const a of r.noAlt) console.log(`    SIN ALT ${a.src}`)
     for (const h of r.headings) console.log(`    SALTO   ${h.salto} · «${h.texto}»`)
+    /* Se CONTABAN y no se imprimian: el informe decia «4 hallazgos» sin decir
+       cuales, que es peor que no medirlo. */
+    for (const v of r.invisibles)
+      console.log(`    INVISIBLE «${v.txt}»`)
   }
 }
 

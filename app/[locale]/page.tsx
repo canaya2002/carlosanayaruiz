@@ -3,6 +3,8 @@ import Image from 'next/image'
 import { setRequestLocale, getTranslations } from 'next-intl/server'
 import { Link } from '@/i18n/navigation'
 import { Greeting } from '@/components/instrument/greeting'
+import { Morph } from '@/components/instrument/morph'
+import { Dial } from '@/components/instrument/dial'
 import { Rail } from '@/components/instrument/rail'
 import { Marks } from '@/components/instrument/marks'
 import { Ribbon } from '@/components/instrument/ribbon'
@@ -11,6 +13,7 @@ import { getServices, servicePath } from '@/data/services'
 import { getSkillCategories } from '@/data/skills'
 import { getExperiences, type Experience } from '@/data/experience'
 import { getSiteFaq } from '@/data/faq'
+import { getEducation } from '@/data/education'
 import { SEO_IMAGES, NAP } from '@/lib/constants'
 import { generatePageMetadata } from '@/lib/seo'
 import { generateHomeGraph } from '@/lib/schema'
@@ -114,12 +117,22 @@ export default async function HomePage({ params }: Props) {
   const ts = await getTranslations('services')
   const tr = await getTranslations('trayectoria')
   const tc = await getTranslations('homeCta')
+  const tab = await getTranslations('about')
 
   const lc = locale as Locale
   const en = lc === 'en'
   const services = getServices(lc)
   const experiences = getExperiences(lc)
   const faq = getSiteFaq(lc)
+  /* La placa de datos del operador NO inventa nada: cada renglón sale de un
+     archivo de datos o de NAP. Si un dato no está en el repo, no aparece. */
+  const education = getEducation(lc)
+  /* El índice se reparte en dos columnas. El corte se calcula aquí y no en el
+     JSX porque el ORDEN DEL DOM tiene que quedar 1-2-3-4-5-6: un lector de
+     pantalla recorre la primera columna entera y después la segunda, así que
+     partir la lista es correcto; repartir alternando no lo sería. */
+  const faqCut = Math.ceil(faq.length / 2)
+  const faqColumns = [faq.slice(0, faqCut), faq.slice(faqCut)]
   const { tracks, years } = buildTracks(experiences)
 
   /**
@@ -146,20 +159,29 @@ export default async function HomePage({ params }: Props) {
         className="grid"
         style={{ gridTemplateColumns: 'var(--tape-w) minmax(0,1fr)' }}
       >
-        <Rail endLabel={en ? "end of record" : "fin del registro"} />
+        <Rail />
 
         <div className="min-w-0">
           {/* ═══ HÉROE ═══════════════════════════════════════════
               El saludo es la primera línea del h1 y se pinta desde el
               servidor, así que el LCP es el titular y no espera a que
               termine ninguna secuencia de entrada. */}
-          {/* La altura sale de `--hero-h`, el MISMO token que usa el tramo
-              graduado del riel. Si se separan, el eje deja de coincidir con
-              el contenido y la graduación miente. */}
-          <section
-            className="relative flex flex-col px-5 pt-16 pb-14 sm:px-10"
-            style={{ minHeight: 'var(--hero-h)' }}
-          >
+          {/* ── LA COMPOSICIÓN, Y POR QUÉ ES ASÍ ──
+              El titular manda a todo lo ancho —es el masthead, su escala ES
+              el argumento— y debajo se abre el par de columnas. Constreñirlo
+              a la mitad para dejarle sitio al retrato lo partía en cinco
+              líneas y le quitaba lo único que tiene.
+
+              Así que el retrato va en la banda de abajo, a la derecha, y
+              sangra hasta el canto de la pantalla. Es un recorte con canal
+              alfa, así que no hay caja: se compone sobre el hollín y la
+              retícula del tambor se ve por detrás de él. Por abajo se
+              disuelve con una máscara — no lo corta ningún borde.
+
+              `overflow-hidden` es obligatorio: el sangrado sale de un margen
+              negativo y sin recorte se escaparía al documento. Lo verifica
+              `check:overflow`. */}
+          <section className="relative flex flex-col overflow-hidden px-5 pt-16 pb-16 sm:px-10 lg:pb-28">
             <h1 className="max-w-[20ch] text-hero text-ink">
               <Greeting locale={lc} />{' '}
               {/* El espacio entre los dos `span` de bloque es deliberado: sin
@@ -169,47 +191,92 @@ export default async function HomePage({ params }: Props) {
               <span className="block">
                 {en ? 'I measure what your site' : 'Mido lo que tu sitio'}
               </span>{' '}
+              {/* El cierre MUTA: cinco frases que cierran la misma oración y
+                  cada una dice algo que este trabajo mide de verdad. Viven en
+                  una sola celda de grid, así que el titular no refluye —cero
+                  CLS— y solo la canónica es texto indexable. Ver
+                  components/instrument/morph.tsx. */}
               <span className="block">
-                {en ? 'takes to exist.' : 'tarda en existir.'}
+                <Morph locale={lc} />
               </span>
             </h1>
 
-            {/* El titular manda a todo lo ancho —es el masthead, su escala es
-                el argumento— y debajo se abre el par de columnas. Meterlo en
-                una columna estrecha lo partia en cuatro lineas y perdia la
-                autoridad que da el tamano. */}
-            <div className="mt-14 grid gap-x-14 gap-y-12 lg:grid-cols-[minmax(0,1fr)_minmax(0,26rem)]">
-              <div className="flex flex-col">
-            <p className="max-w-[46ch] font-human text-lead text-ink-muted">
-              {t('lead')}
-            </p>
+            {/* La columna del retrato crece en TRES saltos y no en uno: a
+                1024 exactos, un retrato de 36rem dejaría la columna de texto
+                en 240 px y la pista de la lectura se comprimiría a nada.
+                24rem hasta 1280, 36 hasta 1536, 40 de ahí en adelante. */}
+            <div className="mt-12 grid gap-x-12 gap-y-12 lg:mt-14 lg:grid-cols-[minmax(0,1fr)_minmax(0,26rem)] xl:grid-cols-[minmax(0,1fr)_minmax(0,38rem)] 2xl:grid-cols-[minmax(0,1fr)_minmax(0,44rem)]">
+              {/* `.hero-in` escalona la entrada AL CARGAR y no al scroll: lo
+                  que está en la primera pantalla ya pasó su rango de
+                  `view()` antes de que nadie toque la rueda. El `<h1>` queda
+                  fuera a propósito — es el candidato a LCP. */}
+              <div className="hero-in flex flex-col">
+                <p className="max-w-[46ch] font-human text-lead text-ink-muted">
+                  {t('lead')}
+                </p>
 
-            <p className="mt-10 flex flex-wrap gap-x-8 gap-y-3">
-              <Link className="link-stylus" href="/contacto">
-                {en ? 'ask for a reading' : 'pedir una lectura'} →
-              </Link>
-              <Link className="link-stylus" href="/servicios">
-                {en ? 'see the record' : 'ver el registro'} →
-              </Link>
-            </p>
+                <p className="mt-9 flex flex-wrap gap-x-8 gap-y-3">
+                  <Link className="link-stylus" href="/contacto">
+                    {en ? 'ask for a reading' : 'pedir una lectura'} →
+                  </Link>
+                  <Link className="link-stylus" href="/servicios">
+                    {en ? 'see the record' : 'ver el registro'} →
+                  </Link>
+                </p>
 
-              <p className="stamp mt-auto pt-10">{t('locationNote')}</p>
+                {/* La medición de esta visita. Es el signature del sitio y
+                    vive solo aquí: en cada página sería decoración. */}
+                <div className="mt-11">
+                  <Marks
+                    label={
+                      en ? 'reading · this visit' : 'lectura · esta visita'
+                    }
+                    live={en ? 'live' : 'en vivo'}
+                    note={
+                      en
+                        ? "the rule is Google's threshold. what is left of it is headroom."
+                        : 'la regla es el umbral de Google. lo que sobra es margen.'
+                    }
+                  />
+                </div>
+
+                <p className="stamp mt-auto pt-9">{t('locationNote')}</p>
               </div>
 
-            {/* La columna derecha era el hueco vacío más grande del sitio.
-                Ahora lleva las dos cosas que el visitante vino a ver: el
-                fondo animado —marcado mientras no exista el archivo, con su
-                ruta escrita encima— y la medición en vivo debajo. */}
-              <div className="flex flex-col gap-10">
-              <MediaSlot
-                id="home-hero-loop"
-                sizes="(min-width: 1024px) 45vw, 100vw"
-              />
-                <Marks
-                  label={en ? 'reading · this visit' : 'lectura · esta visita'}
-                  live={en ? 'live' : 'en vivo'}
+              {/* EL RETRATO. `priority` no es opcional: a este tamaño puede
+                  ganarle el LCP al titular, y un candidato a LCP que no está
+                  precargado es exactamente la regresión que este sitio vende
+                  arreglar. Con la precarga entra como AVIF de ~40 KB.
+
+                  El sangrado negativo lo lleva hasta el canto derecho de la
+                  pantalla; abajo cancela el `pb-16` de la sección para que
+                  toque el borde y se disuelva ahí. */}
+              {/* ── POR QUÉ SUBE, Y CUÁNTO ──
+                  Con `align-self: stretch` la caja de MARGEN se ajusta a la
+                  fila, así que un margen negativo hace la caja de borde más
+                  alta SIN cambiar el alto de la fila: por abajo 112 px, por
+                  arriba 96 (160 desde 1536, donde ya hay holgura). El retrato
+                  crece y sube sin abrir un hueco en la columna de texto.
+
+                  Medido antes de decidirlo: la celda del morph llega a x=1093
+                  a 1440 y el retrato arranca en x=792, así que el titular
+                  CRUZA la franja que el retrato gana por arriba. Por eso la
+                  máscara de `.figure-hero` difumina su canto superior — el
+                  texto pasa por encima de píxeles ya desvanecidos y no por
+                  encima de su pelo. Solo a partir de 1920 hay holgura real. */}
+              <figure className="figure-hero m-0 -mr-5 sm:-mr-10 lg:-mb-28 lg:-mt-24 2xl:-mt-40">
+                <Image
+                  src={SEO_IMAGES.portrait}
+                  alt={SEO_IMAGES.avatarAlt[lc]}
+                  width={SEO_IMAGES.portraitWidth}
+                  height={SEO_IMAGES.portraitHeight}
+                  sizes="(min-width: 1536px) 44rem, (min-width: 1280px) 38rem, (min-width: 1024px) 26rem, 100vw"
+                  priority
                 />
-              </div>
+                {/* La aguja escribiéndolo: una línea de papel que baja una
+                    sola vez al cargar. El gesto del sitio, sobre la foto. */}
+                <span className="figure-scan" aria-hidden="true" />
+              </figure>
             </div>
           </section>
 
@@ -245,7 +312,7 @@ export default async function HomePage({ params }: Props) {
                       style={{ left: `${y.left}%` }}
                     >
                       <span
-                        className={`stamp absolute -top-6 ${flip ? 'right-1.5' : 'left-1.5'}`}
+                        className={`stamp axis-year ${flip ? 'right-1.5' : 'left-1.5'}`}
                       >
                         {y.year}
                       </span>
@@ -291,6 +358,17 @@ export default async function HomePage({ params }: Props) {
                   ? 'gaps between bands are real and are not filled in.'
                   : 'los huecos entre bandas son reales y no se rellenan.'}
               </p>
+
+              {/* EL hueco más importante del sitio. Si de toda la lista de
+                  docs/MEDIA.md solo llega un archivo, que sea este: una curva
+                  real con su eje de tiempo es la prueba de todo lo demás que
+                  dice esta página. */}
+              <div className="mt-14 max-w-[54rem]">
+                <MediaSlot
+                  id="home-evidencia"
+                  sizes="(min-width: 1024px) 54rem, 100vw"
+                />
+              </div>
             </div>
           </section>
 
@@ -308,13 +386,11 @@ export default async function HomePage({ params }: Props) {
             <Ribbon
               items={stack}
               label={en ? 'Stack and tools' : 'Stack y herramientas'}
-              duration="64s"
             />
             <div className="mt-3">
               <Ribbon
                 items={stack}
                 label={en ? 'Stack, second rail' : 'Stack, segundo carril'}
-                duration="78s"
                 reverse
               />
             </div>
@@ -323,20 +399,43 @@ export default async function HomePage({ params }: Props) {
           {/* ═══ CANALES ═════════════════════════════════════════
               La placa despejada: el material se invierte entero. Es la
               sección que la aguja limpió. */}
-          <section className="plate px-5 py-20 sm:px-10">
+          {/* `relative` + `overflow-hidden` son para la cara del tambor: se
+              sangra 5rem fuera del canto derecho y sin recorte se escaparía al
+              documento. Lo verifica `check:overflow`. */}
+          <section className="plate relative px-5 py-20 sm:px-10">
             {/* Sin `style` inline: `.plate .stamp` ya lleva la tinta medida
                 para superficie clara. Ver --ink-plate en globals.css. */}
+            {/* El rótulo sale de los DATOS. Decía «a–e» con cuatro canales:
+                un instrumento que rotula cinco plumas y dibuja cuatro está
+                mintiendo, y es el tipo de mentira que nadie revisa. */}
             <p className="stamp">
-              {en ? 'channels a–e · parallel' : 'canales a–e · paralelos'}
+              {en
+                ? `channels a–${channelId(services.length - 1)} · parallel`
+                : `canales a–${channelId(services.length - 1)} · paralelos`}
             </p>
             <h2 className="mt-5 max-w-[18ch] text-d1">{ts('title')}</h2>
 
-            <ul className="mt-12">
+            {/* ── EL DIAL, EN SU PROPIA CELDA ──
+                Antes iba en `position: absolute` con un sangrado negativo de
+                5rem, y de ahí salían los cuatro defectos que se reportaron:
+                se cortaba, quedaba descentrado, no cabía nada dentro y por
+                debajo de 80rem estaba en `display: none`.
+
+                Ahora es una celda de rejilla con `place-items: center`, así
+                que el centrado lo hace el motor. A partir de 80rem va al lado
+                de la lista; por debajo, DEBAJO de ella y más chico. Se ve
+                siempre. */}
+            <div className="mt-12 grid gap-x-14 gap-y-16 xl:grid-cols-[minmax(0,54rem)_minmax(14rem,1fr)] xl:items-center">
+            <ul>
               {services.map((service, i) => (
                 <li key={service.id}>
                   <Link
                     href={servicePath(service, lc) as never}
                     className="channel group"
+                    /* Lo que el dial lee con `:has()` para saber qué anillo
+                       encender. No es decorativo: es el único enlace entre la
+                       fila y el disco, y no cuesta un byte de JavaScript. */
+                    data-ch={channelId(i)}
                   >
                     <span className="channel-id">ch {channelId(i)}</span>
                     <span>
@@ -360,85 +459,238 @@ export default async function HomePage({ params }: Props) {
                 </li>
               ))}
             </ul>
+
+              {/* EL DIAL. La cara del tambor, en SVG en línea: 72 marcas de
+                  bisel, un arco por canal con su etiqueta, retícula polar y el
+                  husillo. Dos velocidades —barrido 7 s, bisel 44 s al revés— y
+                  responde a la lista con `:has()`. Cero JavaScript.
+                  Ver components/instrument/dial.tsx. */}
+              <Dial
+                channels={services.map((service, i) => ({
+                  id: service.id,
+                  ch: channelId(i),
+                }))}
+                idle={`a–${channelId(services.length - 1)}`}
+              />
+            </div>
           </section>
 
           {/* ═══ EL OPERADOR ═════════════════════════════════════ */}
           <section className="border-t border-hairline px-5 py-20 sm:px-10">
             <p className="stamp">{en ? 'the operator' : 'el operador'}</p>
 
-            <div className="mt-10 grid gap-10 md:grid-cols-[minmax(0,18rem)_minmax(0,1fr)] md:gap-14">
+            {/* ── QUÉ CAMBIÓ Y POR QUÉ ──
+                La frase es lo más fuerte que dice el sitio y estaba metida en
+                una columna de 30ch a tamaño d2, con el párrafo al lado y
+                media hoja en negro a la derecha. Se leía vacía porque LO
+                ESTABA: tres columnas de las que dos llevaban una sola cosa.
+
+                Ahora la frase abre la sección a todo el ancho y a escala de
+                titular —es una declaración, no una nota al margen— y debajo
+                van tres columnas con trabajo real: el retrato en media tinta,
+                el cuerpo, y la PLACA DE DATOS.
+
+                La placa es la etiqueta grabada de un instrumento: rótulo mono
+                y valor, una regla por renglón. No es una rejilla de
+                estadísticas —no hay cifra grande ni icono— y todo lo que dice
+                sale de `data/` o de NAP. Si un dato no está en el repo, no
+                aparece. */}
+            {/* La frase anterior —«no vendo posiciones, vendo que el número
+                baje»— prometía un resultado y sonaba a vendedor. Esta dice de
+                dónde sale el trabajo: el sitio ya está registrando lo que le
+                pasa, y lo que se contrata es a alguien que sepa leer el
+                registro. Es la tesis del sitio en una línea, y es lo único de
+                la página en primera persona a escala de titular. */}
+            <blockquote className="m-0 mt-8 max-w-[30ch] font-human text-d1 italic text-ink">
+              {en
+                ? '“Your site is already telling you what slows it down. My job is to read it, and to fix it.”'
+                : '«Tu sitio ya te está diciendo qué lo frena. Mi trabajo es leerlo, y arreglarlo.»'}
+            </blockquote>
+
+            <div className="reveal-stagger mt-14 grid gap-10 md:grid-cols-[minmax(0,16rem)_minmax(0,1fr)] md:gap-12 lg:grid-cols-[minmax(0,15rem)_minmax(0,1fr)_minmax(0,15rem)] lg:gap-14">
               <figure className="m-0">
-                <span className="portrait block">
+                {/* El mismo recorte del héroe, con el duotono de media tinta:
+                    la foto de 800 px con fondo de oficina se retiró, que era
+                    deuda declarada. Aquí el recorte se multiplica contra el
+                    papel y lo que sobrevive es él — un grabado, no un
+                    retrato corporativo suave. */}
+                {/* `data-fit` encuadra la plancha en 4:5 y la figura la
+                    llena. Sin él, el recorte con alfa dejaba tanto papel
+                    alrededor que el rectángulo se leía como una tarjeta.
+
+                    La coordenada ya no va debajo: la dice la placa de la
+                    derecha, y dos veces no es énfasis, es ruido. */}
+                {/* `.figure-bw` y no `.portrait`: la plancha de papel y la
+                    trama de rayas de 3 px existían para salvar una foto de
+                    800 px con fondo de oficina. Llegó una de estudio en blanco
+                    y negro, así que la muleta se retiró y lo que queda es la
+                    regla del sistema — la foto se disuelve en el material, sin
+                    rectángulo y sin rayas encima. */}
+                <span className="figure-bw">
                   <span className="portrait-shutter" aria-hidden="true" />
                   <Image
-                    src={SEO_IMAGES.avatar}
+                    src={SEO_IMAGES.portraitBw}
                     alt={SEO_IMAGES.avatarAlt[lc]}
-                    width={SEO_IMAGES.avatarWidth}
-                    height={SEO_IMAGES.avatarHeight}
-                    sizes="(min-width: 768px) 18rem, 100vw"
+                    width={SEO_IMAGES.portraitBwSize}
+                    height={SEO_IMAGES.portraitBwSize}
+                    sizes="(min-width: 1024px) 15rem, (min-width: 768px) 16rem, 60vw"
                   />
                 </span>
-                <figcaption className="stamp mt-4">
-                  {NAP.locality} · 19.4326 N / 99.1332 W
-                </figcaption>
               </figure>
 
+              {/* Copy PROPIO. Aquí iba `hero.lead`, que es literalmente el
+                  mismo párrafo que ya está en el héroe: la sección se veía
+                  vacía porque no decía nada nuevo. Estos dos salen de
+                  `about`, que vive en otra página. */}
               <div>
-                <blockquote className="m-0 max-w-[26ch] font-human text-d2 italic text-ink">
-                  {en
-                    ? '“I don’t sell rankings. I sell the number going down and staying down.”'
-                    : '«No vendo posiciones. Vendo que el número baje y se quede abajo.»'}
-                </blockquote>
-                <p className="mt-8 max-w-[52ch] text-ink-muted">{t('lead')}</p>
+                <p className="max-w-[56ch] text-ink-muted">{tab('lead')}</p>
+                <p className="mt-5 max-w-[56ch] text-ink-muted">
+                  {tab('philosophyDesc')}
+                </p>
                 <p className="mt-8">
                   <Link className="link-stylus" href="/sobre-mi">
                     {en ? 'full record' : 'el registro completo'} →
                   </Link>
                 </p>
               </div>
+
+              <dl className="m-0">
+                <div className="plaque">
+                  <dt className="plaque-key">{en ? 'base' : 'base'}</dt>
+                  <dd className="plaque-val m-0">
+                    {en ? NAP.localityEn : NAP.locality}
+                    <span className="block tabular-nums text-ink-muted">
+                      GMT−6
+                    </span>
+                  </dd>
+                </div>
+
+                <div className="plaque">
+                  <dt className="plaque-key">
+                    {en ? 'languages' : 'idiomas'}
+                  </dt>
+                  <dd className="plaque-val m-0">
+                    {en ? 'Spanish · English' : 'Español · inglés'}
+                  </dd>
+                </div>
+
+                <div className="plaque">
+                  <dt className="plaque-key">
+                    {en ? 'training' : 'formación'}
+                  </dt>
+                  <dd className="plaque-val m-0">
+                    {education[0]?.institution}
+                    {/* En orden cronológico: el título antes de la
+                        especialización. `data/education.ts` los guarda del
+                        más reciente al más viejo, que es el orden en que se
+                        listan en el CV pero no el orden en que se cuentan. */}
+                    <span className="block text-ink-muted">
+                      {[...education]
+                        .reverse()
+                        .map((e) => e.degree)
+                        .join(' + ')}
+                    </span>
+                  </dd>
+                </div>
+
+                {/* El único renglón de la placa que describe algo EN CURSO,
+                    así que es el único que puede llevar el punto que late. */}
+                <div className="plaque">
+                  <dt className="plaque-key">
+                    {en ? 'reply' : 'respuesta'}
+                  </dt>
+                  <dd className="plaque-val m-0 flex items-center gap-2.5">
+                    <span className="live" aria-hidden="true" />
+                    {en ? 'under 24 hours' : 'menos de 24 horas'}
+                  </dd>
+                </div>
+              </dl>
             </div>
           </section>
 
           {/* ═══ ÍNDICE ══════════════════════════════════════════
               <details> nativo: sin JS, y el contenido está en el HTML del
               servidor, así que un crawler lo lee completo. */}
-          <section className="border-t border-hairline px-5 py-20 sm:px-10">
-            <p className="stamp">{en ? 'index' : 'índice del registro'}</p>
-            <h2 className="mt-5 max-w-[16ch] text-d1 text-ink">
-              {en ? 'Before you write' : 'Antes de escribirme'}
-            </h2>
+          {/* ── DOS BANDAS, LAS DOS A TODO EL ANCHO ──
+              La versión anterior metía el titular en una columna de 18rem al
+              lado del índice, y el índice en una sola columna de mil píxeles:
+              seis preguntas cortas, seis reglas cruzando la hoja entera y el
+              60% derecho de cada fila en negro. Seguía siendo espacio mal
+              usado, solo que en otro sitio.
 
-            <div className="mt-10">
-              {faq.map((item) => (
-                <details key={item.question} className="band group">
-                  <summary className="flex cursor-pointer list-none items-baseline justify-between gap-6 text-ink marker:hidden">
-                    <span>{item.question}</span>
-                    <span
-                      aria-hidden="true"
-                      className="stamp shrink-0 group-open:rotate-45 transition-transform duration-150"
-                    >
-                      +
-                    </span>
-                  </summary>
-                  <p className="mt-3 max-w-[62ch] text-ink-muted">
-                    {item.answer}
-                  </p>
-                </details>
+              Ahora son dos bandas. Arriba, el titular a la izquierda y la nota
+              con su enlace a la derecha. Debajo, el índice en DOS columnas:
+              cada regla mide la mitad, así que la pregunta la llena y su «+»
+              queda a un palmo. Abrir una no reflúa la otra columna porque son
+              dos contenedores independientes, no una sola columna partida. */}
+          <section className="border-t border-hairline px-5 py-20 sm:px-10">
+            <div className="grid gap-x-14 gap-y-8 lg:grid-cols-[minmax(0,1fr)_minmax(0,26rem)] lg:items-end">
+              <div>
+                <p className="stamp">{en ? 'index' : 'índice del registro'}</p>
+                <h2 className="mt-5 max-w-[16ch] text-d1 text-ink">
+                  {en ? 'Before you write' : 'Antes de escribirme'}
+                </h2>
+              </div>
+              <div>
+                <p className="max-w-[40ch] font-human italic text-ink-muted">
+                  {en
+                    ? 'The questions that turn up in every first email. If yours is not here, send it — I answer in under 24 hours.'
+                    : 'Las preguntas que salen en cada primer correo. Si la tuya no está, mándala: contesto en menos de 24 horas.'}
+                </p>
+                <p className="mt-6">
+                  <Link className="link-stylus" href="/contacto">
+                    {en ? 'write to me' : 'escríbeme'} →
+                  </Link>
+                </p>
+              </div>
+            </div>
+
+            <div className="mt-12 grid gap-x-14 md:grid-cols-2">
+              {faqColumns.map((half, col) => (
+                <div className="reveal-stagger" key={col}>
+                  {half.map((item) => (
+                    <details key={item.question} className="band group">
+                      <summary className="flex cursor-pointer list-none items-baseline justify-between gap-4 text-ink marker:hidden">
+                        <span>{item.question}</span>
+                        {/* Gira 45° al abrir: el mismo trazo pasa de «+» a «×»
+                            sin cambiar de nodo ni tocar el layout. */}
+                        <span
+                          aria-hidden="true"
+                          className="stamp shrink-0 transition-transform duration-200 group-open:rotate-45"
+                        >
+                          +
+                        </span>
+                      </summary>
+                      <p className="mt-3 max-w-[62ch] text-ink-muted">
+                        {item.answer}
+                      </p>
+                    </details>
+                  ))}
+                </div>
               ))}
             </div>
           </section>
 
           {/* ═══ CIERRE ══════════════════════════════════════════ */}
-          <section className="border-t border-hairline px-5 py-24 sm:px-10">
-            <h2 className="max-w-[18ch] text-d1 text-ink">{tc('title')}</h2>
-            <p className="mt-6 max-w-[52ch] font-human text-lead text-ink-muted">
-              {tc('lead')}
-            </p>
-            <p className="mt-10">
-              <Link className="link-stylus text-d3" href="/contacto">
-                {t('ctaPrimary')} →
-              </Link>
-            </p>
+          {/* El cierre llevaba el titular, el párrafo y el enlace apilados
+              a la izquierda con `py-24`: media hoja en negro a la derecha y
+              cien píxeles de nada debajo del enlace. Ahora el enlace se va al
+              otro extremo de la hoja, alineado por su base con el párrafo —
+              el gesto de firmar al pie— y el campo del tambor ocupa el fondo. */}
+          <section className="border-t border-hairline px-5 py-20 sm:px-10">
+            <div className="grid items-end gap-x-14 gap-y-10 lg:grid-cols-[minmax(0,1fr)_minmax(0,20rem)]">
+              <div>
+                <h2 className="max-w-[18ch] text-d1 text-ink">{tc('title')}</h2>
+                <p className="mt-6 max-w-[52ch] font-human text-lead text-ink-muted">
+                  {tc('lead')}
+                </p>
+              </div>
+              <p className="lg:text-right">
+                <Link className="link-stylus text-d3" href="/contacto">
+                  {t('ctaPrimary')} →
+                </Link>
+              </p>
+            </div>
           </section>
         </div>
       </div>

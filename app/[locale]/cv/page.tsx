@@ -3,6 +3,7 @@ import Image from 'next/image'
 import { setRequestLocale, getTranslations } from 'next-intl/server'
 import { Link } from '@/i18n/navigation'
 import { Rail } from '@/components/instrument/rail'
+import { Span } from '@/components/instrument/span'
 import { PrintButton } from './print-button'
 import { getPersonalInfo } from '@/data/personal'
 import { getExperiences } from '@/data/experience'
@@ -252,9 +253,10 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
     title: en
       ? 'CV — Engineer, PMP, technical SEO'
       : 'CV — Ingeniero, PMP, SEO técnico',
+    /* 202 caracteres antes: Google recorta en ~160. */
     description: en
-      ? 'Full CV of Carlos Anaya Ruiz: Tec de Monterrey engineer, PMP certified, TOEFL iBT 92, and four years across Amazon, Master Loyalty Group and Wan Hai Lines. Printable to PDF from the page itself.'
-      : 'CV completo de Carlos Anaya Ruiz: ingeniero por el Tec de Monterrey, certificado PMP, TOEFL iBT 92 y cuatro años en Amazon, Master Loyalty Group y Wan Hai Lines. Imprimible a PDF desde la propia página.',
+      ? 'Full CV of Carlos Anaya Ruiz: Tec de Monterrey engineer, PMP, TOEFL iBT 92 and four years at Amazon, Master Loyalty Group and Wan Hai Lines.'
+      : 'CV completo de Carlos Anaya Ruiz: ingeniero por el Tec de Monterrey, PMP, TOEFL iBT 92 y cuatro años en Amazon, Master Loyalty Group y Wan Hai Lines.',
   })
 }
 
@@ -272,6 +274,22 @@ export default async function CvPage({ params }: Props) {
   const personal = getPersonalInfo(locale)
   const experiences = getExperiences(locale)
   const education = getEducation(locale)
+
+  /* EL TRAMO de la trayectoria: los empleos y los estudios en el MISMO
+     eje, que es lo que hace legible una carrera — un grado y un puesto
+     no son categorías distintas cuando lo que se mide es el tiempo.
+     Ninguna fecha está escrita a mano: salen de los dos archivos de
+     datos, así que una entrada nueva aparece sola. */
+  const spanEntries = [
+    ...experiences.map((experience) => ({
+      date: experience.startDate,
+      what: experience.company,
+    })),
+    ...education.map((item) => ({
+      date: item.startDate,
+      what: item.institution,
+    })),
+  ]
   const skillCategories = getSkillCategories(locale)
   const awards = getAwards(locale)
   const companies = getCompanies(locale)
@@ -284,7 +302,9 @@ export default async function CvPage({ params }: Props) {
    * aprobado no es un premio. Las certificaciones van a su sección y solo las
    * distinciones reales quedan en Premios.
    */
-  const certifications = awards.filter((award) => award.kind === 'certification')
+  const certifications = awards.filter(
+    (award) => award.kind === 'certification'
+  )
   const recognitions = awards.filter((award) => award.kind !== 'certification')
 
   /**
@@ -470,7 +490,7 @@ export default async function CvPage({ params }: Props) {
                 Un CV empieza por quién lo firma. El nombre es el h1 —no el
                 cargo, no una frase de venta— y todo lo demás son filas de
                 registro colgando de él. */}
-            <section className="relative px-5 pt-16 sm:px-10">
+            <section className="hero-in relative px-5 pt-16 sm:px-10">
               <p className="stamp">{t('eyebrow')}</p>
 
               <h1 className="mt-6 max-w-[14ch] text-hero text-ink">
@@ -522,18 +542,18 @@ export default async function CvPage({ params }: Props) {
                 </div>
 
                 <div className="min-w-0">
-                  {/* El retrato es la única foto del documento, y va en
-                      duotono de media tinta: el obturador la «imprime» al
-                      entrar a pantalla. */}
+                  {/* El retrato es la única foto del documento. El obturador
+                      la «imprime» al entrar a pantalla y se va al imprimir en
+                      papel, donde quedaría congelado tapándola. */}
                   <figure className="m-0">
-                    <span className="portrait block">
+                    <span className="figure-bw">
                       <span className="portrait-shutter" aria-hidden="true" />
                       <Image
-                        src={SEO_IMAGES.avatar}
+                        src={SEO_IMAGES.portraitBw}
                         alt={SEO_IMAGES.avatarAlt[locale]}
-                        width={SEO_IMAGES.avatarWidth}
-                        height={SEO_IMAGES.avatarHeight}
-                        sizes="(min-width: 768px) 15rem, 100vw"
+                        width={SEO_IMAGES.portraitBwSize}
+                        height={SEO_IMAGES.portraitBwSize}
+                        sizes="(min-width: 768px) 15rem, 60vw"
                         priority
                       />
                     </span>
@@ -561,6 +581,22 @@ export default async function CvPage({ params }: Props) {
                       </div>
                     ))}
                   </dl>
+
+                  {/* EL TRAMO. Se va al imprimir: la hoja de papel ya trae
+                      la trayectoria entera con sus fechas más abajo, así que
+                      en papel esto sería el mismo dato dos veces. */}
+                  <div
+                    data-print-hide=""
+                    className="mt-10 border-t border-hairline pt-5"
+                  >
+                    <Span
+                      entries={spanEntries}
+                      label={en ? 'the span' : 'el tramo'}
+                      spanLabel={
+                        en ? 'jobs and degrees, one axis' : 'empleos y estudios'
+                      }
+                    />
+                  </div>
                 </div>
               </div>
 

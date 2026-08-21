@@ -2,7 +2,9 @@ import type { Metadata } from 'next'
 import { setRequestLocale, getTranslations } from 'next-intl/server'
 import { Link } from '@/i18n/navigation'
 import { Rail } from '@/components/instrument/rail'
-import { ContactForm } from '@/components/sections/contact-form'
+import { LeadForm } from '@/components/sections/lead-form'
+import { MediaSlot } from '@/components/instrument/media-slot'
+import { ContactChannels } from '@/components/sections/contact-channels'
 import { getServices, servicePath } from '@/data/services'
 import { NAP, SOCIAL_LINKS } from '@/lib/constants'
 import { generatePageMetadata } from '@/lib/seo'
@@ -24,8 +26,8 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
       ? 'Contact — Technical SEO Consulting'
       : 'Contacto — SEO técnico y desarrollo',
     description: en
-      ? 'Reach out about a technical SEO audit, a Next.js migration, AI automation or a dashboard. Reply from the engineer himself in 24 to 48 business hours.'
-      : 'Escríbeme para una auditoría SEO técnica, una migración a Next.js, automatización con IA o un dashboard. Te contesto en 24 a 48 horas hábiles.',
+      ? 'Reach out about a technical SEO audit, a Next.js migration, AI automation or a dashboard. Reply from the engineer himself in under 24 hours.'
+      : 'Escríbeme para una auditoría SEO técnica, una migración a Next.js, automatización con IA o un dashboard. Te contesto en menos de 24 horas.',
   })
 }
 
@@ -37,6 +39,10 @@ export default async function ContactPage({ params }: Props) {
   const en = locale === 'en'
 
   const t = await getTranslations('contact')
+  /* Las cadenas del formulario viven en su propio espacio (`lead`) porque las
+     comparte con cualquier página que lo monte: no son del texto de contacto,
+     son del componente. */
+  const tl = await getTranslations('lead')
   const services = getServices(locale)
 
   /** a–d: los mismos canales paralelos que nombra la home. Un servicio se
@@ -197,61 +203,150 @@ export default async function ContactPage({ params }: Props) {
               titular se pinta desde el servidor y los dos canales directos
               están a un renglón de él, sin hacer scroll y sin un botón que
               los encierre. */}
-          <section className="px-5 pt-16 pb-20 sm:px-10">
-            <p className="stamp">
-              {en ? 'contact · mexico city' : 'contacto · ciudad de méxico'}
-            </p>
+          <section className="hero-in px-5 pt-16 pb-20 sm:px-10">
+            {/* ── LA HOJA TIENE DOS MÁRGENES ──
+                Y en esta página el margen hace un trabajo que no es
+                decorativo: SEPARA LAS DOS INTENCIONES. A la izquierda,
+                quien viene a contratar. A la derecha, quien ya es cliente y
+                viene a resolver algo de un trabajo en curso — y a ese se le
+                manda a la otra propiedad en vez de dejarlo competir por el
+                mismo formulario. */}
+            <div className="ledger">
+              <div className="min-w-0">
+                <p className="stamp">
+                  {en ? 'contact · mexico city' : 'contacto · ciudad de méxico'}
+                </p>
 
-            {/* El espacio entre los dos `span` de bloque es deliberado: sin él
+                {/* El espacio entre los dos `span` de bloque es deliberado: sin él
                 `textContent` concatena las dos mitades en una sola palabra al
                 final de la primera línea. */}
-            <h1 className="mt-6 max-w-[22ch] text-hero text-ink">
-              <span className="block">
-                {en ? 'Tell me what’s broken,' : 'Cuéntame qué está roto'}
-              </span>{' '}
-              <span className="block">
-                {en
-                  ? 'or what you want to build.'
-                  : 'o qué quieres construir.'}
-              </span>
-            </h1>
+                <h1 className="mt-6 max-w-[22ch] text-hero text-ink">
+                  <span className="block">
+                    {en ? 'Tell me what’s broken,' : 'Cuéntame qué está roto'}
+                  </span>{' '}
+                  <span className="block">
+                    {en
+                      ? 'or what you want to build.'
+                      : 'o qué quieres construir.'}
+                  </span>
+                </h1>
 
-            <p className="mt-10 max-w-[46ch] font-human text-lead text-ink-muted">
-              {t('lead')}
-            </p>
+                <p className="mt-10 max-w-[46ch] font-human text-lead text-ink-muted">
+                  {t('lead')}
+                </p>
 
-            {/* ⚠ `[overflow-wrap:anywhere]` NO es adorno: un correo es un token
+                {/* ⚠ `[overflow-wrap:anywhere]` NO es adorno: un correo es un token
                 sin espacios, así que su `min-content` es su ancho completo y a
                 360 px se salía de la columna. Dejando que rompa, el
                 min-content baja a un carácter y la fila vuelve a caber. */}
-            <p className="mt-10 flex flex-wrap gap-x-8 gap-y-3">
-              <a
-                className="link-stylus inline-flex min-h-11 items-center [overflow-wrap:anywhere]"
-                href={`mailto:${NAP.email}`}
-              >
-                {NAP.email} →
-              </a>
-              <a
-                className="link-stylus inline-flex min-h-11 items-center"
-                href={`tel:${NAP.phone}`}
-                data-numeric=""
-              >
-                {NAP.phoneDisplay} →
-              </a>
-            </p>
+                <p className="mt-10 flex flex-wrap gap-x-8 gap-y-3">
+                  <a
+                    className="link-stylus inline-flex min-h-11 items-center [overflow-wrap:anywhere]"
+                    href={`mailto:${NAP.email}`}
+                  >
+                    {NAP.email} →
+                  </a>
+                  <a
+                    className="link-stylus inline-flex min-h-11 items-center"
+                    href={`tel:${NAP.phone}`}
+                    data-numeric=""
+                  >
+                    {NAP.phoneDisplay} →
+                  </a>
+                </p>
 
-            <p className="stamp mt-8">{t('responseTime')}</p>
-            <p className="mt-3 max-w-[54ch] text-sm text-ink-subtle">
-              {en
-                ? 'I reply in English or Spanish, and you write to the engineer who does the work.'
-                : 'Respondo en español o inglés, y le escribes al ingeniero que hace el trabajo.'}
-            </p>
+                <p className="stamp mt-8">{t('responseTime')}</p>
+                <p className="mt-3 max-w-[54ch] text-sm text-ink-subtle">
+                  {en
+                    ? 'I reply in English or Spanish, and you write to the engineer who does the work.'
+                    : 'Respondo en español o inglés, y le escribes al ingeniero que hace el trabajo.'}
+                </p>
+              </div>
+
+              {/* ── EL MARGEN DE ANOTACIÓN ── */}
+              <aside className="margin margin-sticky">
+                {/* ¿ERES CLIENTE? La pregunta que reparte el tráfico de esta
+                    página. Va PRIMERA en el margen a propósito: quien ya
+                    trabaja conmigo no tiene que leer una página de venta
+                    para encontrar dónde escribir.
+
+                    Mismo destino en los dos idiomas: es la otra propiedad,
+                    no una traducción de esta. */}
+                <div className="margin-row">
+                  <span className="margin-key">
+                    {en ? 'already a client?' : '¿eres cliente?'}
+                  </span>
+                  <span className="margin-prose">
+                    {en
+                      ? 'If we are already working together, your project lives on the other site — files, invoices and follow-up.'
+                      : 'Si ya estamos trabajando juntos, tu proyecto vive en el otro sitio: archivos, facturas y seguimiento.'}
+                  </span>
+                  <a className="pull-tab mt-4" href={SOCIAL_LINKS.clientPortal}>
+                    {en ? 'Client area' : 'Zona de clientes'}
+                  </a>
+                </div>
+
+                <div className="margin-row">
+                  <span className="margin-key">
+                    {en ? 'reply time' : 'respuesta'}
+                  </span>
+                  <span className="margin-read">
+                    &lt;24
+                    <span className="ml-1.5 text-[0.6875rem] tracking-[0.12em] text-ink-subtle">
+                      h
+                    </span>
+                  </span>
+                  <span className="margin-val">
+                    {en ? 'business days.' : 'en días hábiles.'}
+                  </span>
+                </div>
+
+                <div className="margin-row">
+                  <span className="margin-key">
+                    {en ? 'languages' : 'idiomas'}
+                  </span>
+                  <span className="margin-val !text-ink">
+                    {en ? 'Spanish · English' : 'Español · Inglés'}
+                  </span>
+                </div>
+
+                <div className="margin-row">
+                  <span className="margin-key">
+                    {en ? 'time zone' : 'zona horaria'}
+                  </span>
+                  <span className="margin-val !text-ink">
+                    UTC−6 · {NAP.locality}
+                  </span>
+                </div>
+              </aside>
+            </div>
           </section>
 
           {/* ═══ EL MENSAJE ══════════════════════════════════════
               El formulario trae su propio h2, sus propias regiones aria-live y
               su propia lógica de `mailto:`. La página solo lo coloca en la
               retícula: nada de aquí lo toca. */}
+          {/* ── LOS TRES CANALES, ANTES DEL FORMULARIO ──
+              El formulario no es el único camino y ponerlo primero daba a
+              entender que sí. Quien está comparando proveedores escribe; quien
+              ya decidió agenda; quien tiene una duda de treinta segundos manda
+              un WhatsApp. Las tres filas van arriba y el formulario debajo,
+              que es el orden en que se decide.
+
+              Cada canal degrada solo: si no está configurado, su fila no
+              existe. Un botón que lleva a un 404 es peor que uno que no está.
+              Ver components/sections/contact-channels.tsx. */}
+          <section className="border-t border-hairline px-5 py-20 sm:px-10">
+            <ContactChannels
+              locale={locale}
+              waMessage={
+                en
+                  ? 'Hi Carlos — I found you through your site. I want to talk about '
+                  : 'Hola Carlos, te escribo desde tu sitio. Quiero hablar de '
+              }
+            />
+          </section>
+
           <section className="border-t border-hairline px-5 py-20 sm:px-10">
             <p className="stamp">
               {en
@@ -261,10 +356,44 @@ export default async function ContactPage({ params }: Props) {
 
             <div className="mt-12 grid gap-14 lg:grid-cols-[minmax(0,1fr)_minmax(0,20rem)] lg:gap-20">
               <div className="min-w-0">
-                <ContactForm />
+                {/* El formulario RECIBE de verdad: Server Action → Resend, y
+                    una copia en Supabase solo si está configurado. Antes era
+                    un compositor de `mailto:` y quien no tiene cliente de
+                    correo —la mayoría en móvil— se quedaba sin enviar. */}
+                <LeadForm
+                  locale={locale}
+                  origen={en ? 'Contact page' : 'Página de contacto'}
+                  asuntos={tl.raw('asuntos') as readonly string[]}
+                  copy={{
+                    nombre: tl('nombre'),
+                    email: tl('email'),
+                    asunto: tl('asunto'),
+                    asuntoHint: tl('asuntoHint'),
+                    sitio: tl('sitio'),
+                    sitioHint: tl('sitioHint'),
+                    mensaje: tl('mensaje'),
+                    mensajeHint: tl('mensajeHint'),
+                    submit: tl('submit'),
+                    enviando: tl('enviando'),
+                    nota: tl('nota'),
+                    ok: tl('ok'),
+                    invalido: tl('invalido'),
+                    sinConfigurar: tl('sinConfigurar'),
+                    error: tl('error'),
+                  }}
+                />
               </div>
 
               <aside aria-labelledby="contact-direct" className="min-w-0">
+                {/* La foto de «esta es la persona que va a leer tu mensaje».
+                    En una página de contacto eso hace más que cualquier
+                    argumento: quien escribe quiere saber a quién. */}
+                <MediaSlot
+                  id="contacto-retrato"
+                  className="mb-8"
+                  sizes="(min-width: 1024px) 20rem, 100vw"
+                />
+
                 <h2 id="contact-direct" className="text-d2 text-ink">
                   {t('info')}
                 </h2>
@@ -404,9 +533,7 @@ export default async function ContactPage({ params }: Props) {
               <p className="stamp">
                 {en ? 'scope · channels a–d' : 'alcance · canales a–d'}
               </p>
-              <h2 className="mt-5 max-w-[20ch] text-d1">
-                {t('projectTypes')}
-              </h2>
+              <h2 className="mt-5 max-w-[20ch] text-d1">{t('projectTypes')}</h2>
               <p className="mt-6 max-w-[62ch] text-sm leading-relaxed">
                 {t('projectTypesDesc')}
               </p>
@@ -418,9 +545,7 @@ export default async function ContactPage({ params }: Props) {
                       href={servicePath(service, locale) as '/seo-tecnico'}
                       className="channel group"
                     >
-                      <span className="channel-id">
-                        ch {channelId(index)}
-                      </span>
+                      <span className="channel-id">ch {channelId(index)}</span>
                       <span>
                         <span className="text-d3">{service.title}</span>
                         {/* La pluma: al pasar el puntero se escribe una línea

@@ -140,13 +140,25 @@ const TRAJECTORY_HREFS: readonly Pathname[] = TRAJECTORY_ITEMS.map(
  * desplegable. Verifica con: npm run check:overflow
  */
 /**
- * Un enlace de nav no es una cápsula: es una etiqueta impresa. Sin fondo en
- * hover, sin radio, sin relleno lateral que sugiera un botón. Lo que cambia
- * al pasar el puntero es la TINTA y una regla de un píxel debajo, que es como
- * se marca una entrada en un registro.
+ * Un enlace de nav es una etiqueta impresa con una GOTA encima al pasar el
+ * puntero. La gota es `.drop` y vive en globals.css: óptica pura —remache de
+ * luz arriba, cáustica abajo, cuerpo radial— sin `backdrop-filter`, porque
+ * sobre casi negro el desenfoque no aporta nada visible y sí obliga a volver
+ * a muestrear el fondo en cada frame del hover.
+ *
+ * La regla de 1 px de debajo se quedó SOLO para la página actual. Con la gota
+ * las dos cosas competían por decir lo mismo: una marca el estado, la otra el
+ * puntero.
  */
-const NAV_LINK =
-  'group press relative inline-flex h-11 items-center whitespace-nowrap text-sm text-ink-muted transition-colors hover:text-ink'
+const NAV_LINK_BASE =
+  'group press relative inline-flex h-11 items-center whitespace-nowrap px-1 text-sm text-ink-muted transition-colors hover:text-ink'
+
+/**
+ * Con la gota. Los grupos con desplegable NO la usan aquí: ahí la gota va en
+ * el contenedor, para que cubra la etiqueta y el chevron como un solo control
+ * —que es lo que son— en vez de dejar el chevron fuera del agua.
+ */
+const NAV_LINK = `${NAV_LINK_BASE} drop`
 
 interface GroupLink {
   href: StaticPathname
@@ -386,18 +398,37 @@ export function Header() {
     // pulido en lugar de cortado, y va como sombra en línea porque necesita
     // acompañar a `--lift-2` en la misma declaración.
     <header
-      /* Sin cristal, sin sombra, sin gradiente: el chrome es hollín opaco y
-         una sola regla abajo. En un registrador la cabecera del papel no
-         flota sobre nada — está impresa en la misma hoja. */
-      className={cn(
-        'sticky top-0 z-50 border-b border-hairline',
-        'bg-ground/95 supports-[backdrop-filter]:bg-[color:var(--ground)]/85',
-        'supports-[backdrop-filter]:backdrop-blur-[6px]'
-      )}
+      /* Sin fondo, sin borde y sin sombra EN EL ELEMENTO. El cristal lo
+         pinta `.chrome-glass`, que es un hermano absoluto del contenido:
+         si envolviera al contenido, su máscara de disolución también
+         desvanecería los descendentes de la tipografía del nav.
+
+         Y por eso mismo el cristal va DENTRO de `.sheet` y no aquí: el
+         panel móvil también es hijo del header, así que un `inset: 0` a
+         este nivel le pintaría vidrio encima. */
+      className="sticky top-0 z-50"
     >
 
-      <div className="relative mx-auto w-full max-w-6xl px-5 sm:px-8">
-        <div className="flex h-16 items-center justify-between gap-3 sm:h-18 sm:gap-4">
+      {/* `.sheet` y no `mx-auto max-w-6xl`: el contenido de las páginas va a
+          sangre desde el canto del riel, así que un nav centrado dejaba la
+          marca cien píxeles a la derecha del titular y las dos rejillas no
+          se reconocían como la misma hoja. */}
+      <div className="sheet relative">
+        {/* ══ EL CRISTAL ═══════════════════════════════════════════
+            «Liquid glass sin contenedores, como gota de agua». Un
+            absoluto se mide contra la caja de PADDING, así que
+            `inset: 0` llega a los dos cantos de la pantalla aunque
+            `.sheet` tenga 96 px de sangrado.
+
+            No se ve al llegar: se CONDENSA con el scroll. Ver
+            `chrome-condense` en globals.css. */}
+        <span className="chrome-glass" aria-hidden="true" />
+        <span className="chrome-meniscus" aria-hidden="true" />
+
+        {/* `isolate` no es decorativo: es lo que mantiene el
+            `z-index: -1` de la gota dentro de esta fila. Sin él, el
+            negativo sube hasta el header y el cristal se lo come. */}
+        <div className="isolate flex h-16 items-center justify-between gap-3 sm:h-18 sm:gap-4">
           {/* ══ WORDMARK ═══════════════════════════════════════════
               La marca es un cuadro con el gradiente firma y las iniciales.
               Al hover escala y gira unos grados: nada de eso toca el layout, así
@@ -562,7 +593,12 @@ export function Header() {
         ref={menuPanelRef}
         id={MOBILE_PANEL_ID}
         hidden={!menuOpen}
-        className="relative isolate max-h-[calc(100dvh-4rem)] overflow-y-auto border-t border-[color:var(--glass-border)] bg-ground shadow-lift-4 xl:hidden"
+        /* Sigue OPACO a propósito: es una hoja a pantalla completa con
+           scroll propio, y un panel translúcido sobre texto en movimiento
+           es donde el contraste se pierde de verdad. Lo que cambia es el
+           borde: `--glass-border` era un alias heredado del sistema
+           anterior. */
+        className="relative isolate max-h-[calc(100dvh-4rem)] overflow-y-auto border-t border-hairline bg-ground xl:hidden"
       >
         {/* La cuadrícula no lleva una línea de gradiente encima: la del borde
             inferior del header cae exactamente sobre este borde superior, así
@@ -586,7 +622,7 @@ export function Header() {
         <nav
           aria-label={ta('mobileMenu')}
           style={{ animationDuration: '380ms' }}
-          className="enter-scale relative mx-auto w-full max-w-6xl px-5 py-4 sm:px-8"
+          className="sheet enter-scale relative py-4"
         >
           {/* Filas con divisores finos, el mismo vocabulario de las listas de
               las páginas: nada de una pila de píldoras. */}
@@ -815,7 +851,10 @@ function NavDropdown({
     // avisa de que ahí hay un menú.
     <div
       ref={wrapRef}
-      className="group/nav relative flex items-center"
+      /* La gota envuelve etiqueta + chevron: un solo control, una sola
+         gota. Sustituye al lavado de fondo `bg-brand-wash/70`, que era una
+         cápsula heredada del sistema anterior. */
+      className="drop group/nav relative flex items-center"
       onBlur={handleBlur}
       onPointerEnter={onPointerEnter}
       onPointerLeave={onPointerLeave}
@@ -824,8 +863,8 @@ function NavDropdown({
         href={group.hub}
         aria-current={isCurrent(group.hub) ? 'page' : undefined}
         className={cn(
-          NAV_LINK,
-          'pr-1 group-hover/nav:bg-brand-wash/70',
+          NAV_LINK_BASE,
+          'pr-0.5',
           group.active
             ? 'font-semibold text-ink'
             : 'text-ink-muted hover:text-ink'
@@ -898,10 +937,12 @@ function NavDropdown({
         id={group.panelId}
         hidden={!open}
         style={{ animationDuration: '340ms' }}
+        /* `.drop-panel` en vez de `border + bg-surface + shadow`: es la
+           misma gota del enlace, a otra escala. Un rectángulo opaco con
+           borde de cuatro lados justo debajo de una gota de agua se leía
+           como otra cosa pegada al nav. Ver globals.css. */
         className={cn(
-          'enter absolute left-0 top-full z-10 mt-2.5 origin-top',
-          'border border-hairline bg-surface p-2',
-          'shadow-[0_18px_40px_-24px_rgb(0_0_0/0.9)]',
+          'enter drop-panel absolute left-0 top-full z-10 mt-2 origin-top p-2',
           group.width
         )}
       >
@@ -971,9 +1012,12 @@ function NavDropdown({
 }
 
 /**
- * El subrayado de gradiente del nav de escritorio. Sirve para dos estados con un
- * solo nodo: fijo en el enlace activo, y entrando desde la izquierda en hover
- * para los demás. Solo anima `transform`, así que no toca el layout.
+ * La regla del nav de escritorio: marca la página ACTUAL y nada más.
+ *
+ * Antes entraba también en hover, desde la izquierda. Con la gota eso eran
+ * dos señales para el mismo evento — y la que sobra es la regla, porque un
+ * subrayado que aparece al pasar se lee como estado, no como puntero. Solo
+ * anima `transform`, así que no toca el layout.
  */
 function NavUnderline({
   active,
@@ -987,7 +1031,7 @@ function NavUnderline({
       aria-hidden="true"
       className={cn(
         'pointer-events-none absolute inset-x-1 bottom-2 h-px origin-left bg-paper transition-transform duration-300',
-        active ? 'scale-x-100' : 'scale-x-0 group-hover:scale-x-100',
+        active ? 'scale-x-100' : 'scale-x-0',
         className
       )}
     />

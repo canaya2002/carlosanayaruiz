@@ -2,6 +2,7 @@ import type { Metadata } from 'next'
 import { setRequestLocale, getTranslations } from 'next-intl/server'
 import { Link } from '@/i18n/navigation'
 import { Rail } from '@/components/instrument/rail'
+import { Span } from '@/components/instrument/span'
 import { getAwards, type AwardId, type AwardKind } from '@/data/awards'
 import { getCompanyBySlug } from '@/data/companies'
 import { NAP, routeUrl } from '@/lib/constants'
@@ -31,7 +32,10 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
     // verificable. No dice "premiado" a secas: dos de las tres entradas no son
     // un primer lugar y la tercera no es un premio, es un examen aprobado.
     description: en
-      ? 'NASA Space Apps "Galactic Problem Solver" recognition, first place at a 2022 hackathon, and TOEFL iBT 92. Each one with the organisation that granted it and the date.'
+      // Medía 166 caracteres sobre el HTML servido, uno por encima del límite
+      // de la sonda —Google recorta alrededor de 160—. La segunda frase se
+      // acortó sin perder nada de lo que afirma: 154.
+      ? 'NASA Space Apps "Galactic Problem Solver" recognition, first place at a 2022 hackathon, and TOEFL iBT 92. Each one with its issuing organisation and date.'
       : 'Reconocimiento "Galactic Problem Solver" de NASA Space Apps, primer lugar en hackathon 2022 y TOEFL iBT 92. Cada uno con la organización que lo otorgó y la fecha.',
   })
 }
@@ -60,13 +64,24 @@ export default async function AwardsPage({ params }: Props) {
 
   const awards = getAwards(locale)
 
-  // Todas las cifras se calculan aquí, sobre el arreglo real. Ninguna está
-  // escrita a mano: si mañana entra una cuarta entrada, los tres números
-  // cambian solos.
+  // Las cifras se calculan aquí, sobre el arreglo real. Ninguna está escrita
+  // a mano: si mañana entra una cuarta entrada, los números cambian solos.
+  //
+  // Las variables de «la más reciente» se fueron con la cifra que las usaba:
+  // el TRAMO del margen ordena descendente por su cuenta, así que su primera
+  // marca YA es la entrada más reciente, con su año y su emisor. Dos formas de
+  // calcular lo mismo es una de más.
   const sorted = [...awards].sort((a, b) => b.date.localeCompare(a.date))
-  const latest = sorted[0]
-  const latestYear = latest?.date.slice(0, 4) ?? ''
   const organizations = new Set(awards.map((award) => award.organization)).size
+
+  /* Las entradas para el TRAMO del margen: fecha real y una línea corta.
+     El margen mide 18rem, así que lo que va ahí es la organización —el
+     dato verificable— y no el título completo, que en dos de las tres
+     entradas pasa de cuarenta caracteres. */
+  const spanEntries = sorted.map((award) => ({
+    date: award.date,
+    what: award.organization,
+  }))
 
   /**
    * Qué es cada entrada, dicho con la palabra que le toca.
@@ -83,17 +98,24 @@ export default async function AwardsPage({ params }: Props) {
     certification: t('kindCertification'),
   }
 
-  /** Las tres cifras del encabezado, las tres derivadas del arreglo. */
+  /**
+   * Las cifras del margen, las dos derivadas del arreglo.
+   *
+   * Eran TRES. La del medio —«el más reciente», con su año y su
+   * organización— se fue porque el TRAMO que va justo encima ya lo dice: su
+   * primera marca ES la más reciente, con ese año y ese emisor. Tener las
+   * dos era el mismo dato dos veces en una columna de 18rem, medido en
+   * captura.
+   *
+   * Las dos que quedan responden preguntas distintas: cuántas entradas hay,
+   * y cuántas organizaciones distintas las otorgaron — que es lo que
+   * contesta «¿te las diste tú?».
+   */
   const headerMetrics: { value: string; label: string; hint?: string }[] = [
     {
       value: String(awards.length),
       label: t('metricsTotalLabel'),
       hint: t('metricsTotalHint'),
-    },
-    {
-      value: latestYear,
-      label: t('metricsLatestLabel'),
-      hint: latest?.organization,
     },
     {
       value: String(organizations),
@@ -179,43 +201,61 @@ export default async function AwardsPage({ params }: Props) {
               Sin aurora, sin cristal y sin las tres tarjetas flotando:
               el titular va directo sobre el hollín y las cifras son tres
               filas de un registro, leídas de arriba abajo. */}
-          <section className="relative px-5 pt-16 pb-20 sm:px-10">
-            <p className="stamp">{t('eyebrow')}</p>
+          <section className="hero-in relative px-5 pt-16 pb-20 sm:px-10">
+            {/* ── LA HOJA TIENE DOS MÁRGENES ──
+                Las tres cifras vivían en bandas a todo el ancho: a 1440 el
+                número acababa a mil píxeles de su etiqueta, con la hoja
+                vacía en medio. Aquí se leen juntas, que es lo que hace la
+                placa grabada de un instrumento. */}
+            <div className="ledger">
+              <div className="min-w-0">
+                <p className="stamp">{t('eyebrow')}</p>
 
-            <h1 className="mt-6 max-w-[14ch] text-hero text-ink">
-              {t('h1Lead')}
-              {t('h1Accent')}
-            </h1>
+                <h1 className="mt-6 max-w-[14ch] text-hero text-ink">
+                  {t('h1Lead')}
+                  {t('h1Accent')}
+                </h1>
 
-            <p className="mt-10 max-w-[46ch] text-lead text-ink-muted">
-              {t('lead')}
-            </p>
+                <p className="mt-10 max-w-[46ch] text-lead text-ink-muted">
+                  {t('lead')}
+                </p>
 
-            {/* La nota que evita el inflado: la página dice en voz alta que
+                {/* La nota que evita el inflado: la página dice en voz alta que
                 las tres entradas son cosas distintas antes de listarlas. */}
-            <p className="mt-6 max-w-[68ch] text-ink-muted">{t('honesty')}</p>
+                <p className="mt-6 max-w-[68ch] text-ink-muted">
+                  {t('honesty')}
+                </p>
+              </div>
 
-            <p className="stamp mt-16">{t('railEyebrow')}</p>
+              {/* ── EL MARGEN DE ANOTACIÓN ── */}
+              <aside className="margin margin-sticky">
+                {/* EL TRAMO. Tres entradas contra un eje de años: una fecha
+                    no se lee dentro de una tarjeta, se lee por posición.
+                    La marca larga es la más reciente — graduación mayor, no
+                    color de estado: el minio y el umbral son semánticos. */}
+                <Span
+                  entries={spanEntries}
+                  label={en ? 'the span' : 'el tramo'}
+                  spanLabel={
+                    en ? 'first to latest entry' : 'de la primera a la última'
+                  }
+                />
 
-            <dl className="reveal-stagger mt-6">
-              {headerMetrics.map((metric) => (
-                <div
-                  key={metric.label}
-                  className="band grid grid-cols-[minmax(0,1fr)_auto] items-baseline gap-x-6"
-                >
-                  <dt>
-                    <span className="block text-ink">{metric.label}</span>
-                    {metric.hint ? (
-                      <span className="stamp mt-1.5 block">{metric.hint}</span>
-                    ) : null}
-                  </dt>
-                  {/* Tabular: las tres cifras se comparan en columna. */}
-                  <dd className="font-mono text-d2 tabular-nums text-ink">
-                    {metric.value}
-                  </dd>
-                </div>
-              ))}
-            </dl>
+                <dl className="reveal-stagger">
+                  {headerMetrics.map((metric) => (
+                    <div key={metric.label} className="margin-row">
+                      <dt className="margin-key">{metric.label}</dt>
+                      <dd>
+                        <span className="margin-read">{metric.value}</span>
+                        {metric.hint ? (
+                          <span className="margin-val">{metric.hint}</span>
+                        ) : null}
+                      </dd>
+                    </div>
+                  ))}
+                </dl>
+              </aside>
+            </div>
           </section>
 
           {/* ═══ UNO POR UNO ═════════════════════════════════════

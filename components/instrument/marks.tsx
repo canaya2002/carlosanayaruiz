@@ -6,29 +6,34 @@ import { useEffect, useState } from 'react'
  * ════════════════════════════════════════════════════════════════
  * LECTURA DE ESTA VISITA — el signature del sitio
  *
- * Mide con `PerformanceObserver` la página que el visitante tiene abierta y
- * la contrasta contra los umbrales publicados por Google. No es un efecto:
- * es el trabajo que se vende, funcionando sobre sí mismo.
+ * Mide con `PerformanceObserver` la página que el visitante tiene abierta
+ * y la contrasta contra los umbrales publicados por Google. No es un
+ * efecto: es el trabajo que se vende, funcionando sobre sí mismo.
  *
- * ── POR QUÉ SE REHIZO ──
- * La primera versión colocaba cada marca en su posición absoluta sobre el
- * eje de tiempo del riel. Conceptualmente correcto y visualmente ilegible:
- * este sitio carga en ~200 ms, así que las tres marcas caían dentro de los
- * primeros 60 px y se leían como tres líneas verdes sueltas en una esquina.
- * Sin encabezado, sin escala visible y sin umbral a la vista, no había forma
- * de saber que eran una medición.
+ * ── POR QUÉ SE LIMPIÓ ──
+ * La versión anterior ponía el umbral a la MITAD de cada fila, con su
+ * cifra flotando encima de la primera. El resultado eran tres reglas
+ * rojas a distinta altura visual y una etiqueta huérfana —«800 ms»— que
+ * parecía un dato sin dueño, seguida de otra cifra que sí era el dato.
+ * Se leía roto, y con razón: había dos números por fila y nada que
+ * dijera cuál era cuál.
  *
- * Ahora es un instrumento con todo lo que un instrumento necesita para que
- * se pueda leer: nombre, escala, umbral marcado y unidad. La barra sigue
- * diciendo lo mismo por POSICIÓN —dónde cayó contra el umbral— pero con la
- * referencia dibujada al lado.
+ * Ahora hay UNA regla, en el mismo x de las tres filas, al final de la
+ * pista: el 100% de la pista es el umbral de esa métrica. Y la cifra
+ * medida se lee junto a su presupuesto —`152 / 800 ms`— porque la
+ * relación entre las dos ES el veredicto.
+ *
+ * Lo que queda a la izquierda de la regla no es hueco: es el margen que
+ * sobra, que es exactamente lo que se vende. La leyenda de abajo lo dice
+ * en una línea, porque una línea roja sin explicar es adorno, y adorno
+ * en minio es el instrumento mintiendo.
  *
  * ── POR QUÉ SOLO TRES MÉTRICAS ──
- * TTFB, FCP y LCP son instantes medidos desde el inicio de la navegación.
- * INP es una DURACIÓN: mezclarlo en la misma escala sería mentir sobre lo
- * que la escala significa.
+ * TTFB, FCP y LCP son instantes medidos desde el inicio de la
+ * navegación. INP es una DURACIÓN: mezclarlo en la misma escala sería
+ * mentir sobre lo que la escala significa.
  *
- * Coste: ~1.2 KB. Es el único JavaScript de la firma.
+ * Coste: ~1.3 KB. Es el único JavaScript de la firma.
  * ════════════════════════════════════════════════════════════════
  */
 
@@ -52,17 +57,18 @@ function verdict(key: Key, ms: number): State {
   return 'fail'
 }
 
-function format(ms: number): string {
-  return ms < 1000 ? `${Math.round(ms)} ms` : `${(ms / 1000).toFixed(2)} s`
-}
-
-function formatThreshold(ms: number): string {
-  return ms < 1000 ? `${ms} ms` : `${ms / 1000} s`
-}
-
 type Mark = { key: Key; ms: number }
 
-export function Marks({ label, live }: { label: string; live: string }) {
+export function Marks({
+  label,
+  live,
+  note,
+}: {
+  label: string
+  live: string
+  /** La leyenda de la regla. Sin ella el minio no significa nada. */
+  note: string
+}) {
   const [marks, setMarks] = useState<Mark[]>([])
 
   useEffect(() => {
@@ -131,11 +137,11 @@ export function Marks({ label, live }: { label: string; live: string }) {
           const ms = byKey.get(key) as number
           const state = verdict(key, ms)
           const { good } = THRESHOLDS[key]
-          /* La escala local llega al doble del umbral: así el umbral cae
-             siempre en la mitad exacta y se lee de un vistazo si la marca
-             quedó antes o después, sin tener que comparar cifras. */
-          const scale = good * 2
-          const pct = Math.min(100, (ms / scale) * 100)
+          /* La pista entera es el presupuesto: 100% = el umbral. Así la
+             regla cae en el MISMO x en las tres filas y se lee como una
+             sola regla impresa. Una medición peor que el umbral se topa
+             con la regla y la cifra dice cuánto se pasó. */
+          const pct = Math.min(100, (ms / good) * 100)
 
           return (
             <div className="readout-row" key={key} data-state={state}>
@@ -145,19 +151,31 @@ export function Marks({ label, live }: { label: string; live: string }) {
                   className="readout-fill"
                   style={{ '--pct': `${pct}%` } as React.CSSProperties}
                 />
-                {/* El umbral, siempre a la mitad. Es la referencia contra la
-                    que se lee la barra: sin él, la barra no dice nada. */}
-                <span className="readout-threshold" aria-hidden="true">
-                  <span className="readout-threshold-label">
-                    {formatThreshold(good)}
-                  </span>
-                </span>
+                {/* Donde se detuvo la aguja. Es lo que se lee por
+                    POSICIÓN contra la regla del final. */}
+                <span
+                  className="readout-mark"
+                  style={{ '--pct': `${pct}%` } as React.CSSProperties}
+                />
               </dd>
-              <dd className="readout-value">{format(ms)}</dd>
+              {/* Todo en milisegundos, sin cambiar de unidad a partir de
+                  1 s: con `tabular-nums` la columna no se mueve y las tres
+                  filas se comparan sin releer la unidad. */}
+              <dd className="readout-value">
+                {Math.round(ms)}
+                <span className="readout-budget">{` / ${good} ms`}</span>
+              </dd>
             </div>
           )
         })}
       </dl>
+
+      {/* La leyenda es la regla misma, no la palabra «regla»: un trazo de
+          un píxel en minio, igual que el del final de la pista. */}
+      <p className="readout-foot">
+        <span className="readout-legend" aria-hidden="true" />
+        {note}
+      </p>
     </figure>
   )
 }

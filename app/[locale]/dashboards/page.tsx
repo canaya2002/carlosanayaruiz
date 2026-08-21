@@ -3,6 +3,8 @@ import { notFound } from 'next/navigation'
 import { setRequestLocale, getTranslations } from 'next-intl/server'
 import { Link } from '@/i18n/navigation'
 import { Rail } from '@/components/instrument/rail'
+import { Pens } from '@/components/instrument/pens'
+import { ContactChannels } from '@/components/sections/contact-channels'
 import { Ribbon } from '@/components/instrument/ribbon'
 import { MediaSlot } from '@/components/instrument/media-slot'
 import { getServiceById, getServices, type ServiceId } from '@/data/services'
@@ -110,7 +112,6 @@ export default async function DashboardsPage({ params }: Props) {
         'TypeScript',
         'Node.js',
       ],
-      duration: '58s',
     },
     {
       label: en
@@ -130,7 +131,6 @@ export default async function DashboardsPage({ params }: Props) {
         'Pandas',
         'ETL',
       ],
-      duration: '74s',
     },
   ]
 
@@ -159,35 +159,90 @@ export default async function DashboardsPage({ params }: Props) {
 
         <div className="min-w-0">
           {/* ═══ CABECERA ════════════════════════════════════════ */}
-          <section className="relative px-5 pt-16 sm:px-10">
-            <p className="stamp">
-              {en ? 'Service · Mexico City' : 'Servicio · Ciudad de México'}
-            </p>
+          <section className="hero-in relative px-5 pt-16 sm:px-10">
+            {/* ── LA HOJA TIENE DOS MÁRGENES ──
+                El texto a la izquierda, la lectura del operador a la
+                derecha. Por debajo de 80rem el margen cae al flujo y su
+                regla se vuelve horizontal: no hay dos columnas donde no
+                caben dos columnas. */}
+            <div className="ledger">
+              <div className="min-w-0">
+                <p className="stamp">
+                  {en ? 'Service · Mexico City' : 'Servicio · Ciudad de México'}
+                </p>
 
-            <h1 className="mt-6 max-w-[14ch] text-hero text-ink">
-              {t('title')}
-            </h1>
+                <h1 className="mt-6 max-w-[14ch] text-hero text-ink">
+                  {t('title')}
+                </h1>
 
-            <p className="mt-10 max-w-[46ch] text-lead text-ink-muted">
-              {t('subtitle')}
-            </p>
+                <p className="mt-10 max-w-[46ch] text-lead text-ink-muted">
+                  {t('subtitle')}
+                </p>
 
-            <p className="mt-10 flex flex-wrap gap-x-8 gap-y-3">
-              <Link className="link-stylus" href="/contacto">
-                {t('ctaMain')} →
-              </Link>
-              {/* Anchor normal y no `Link`: un fragmento de la misma página no
+                <p className="mt-10 flex flex-wrap gap-x-8 gap-y-3">
+                  <Link className="link-stylus" href="/contacto">
+                    {t('ctaMain')} →
+                  </Link>
+                  {/* Anchor normal y no `Link`: un fragmento de la misma página no
                   es un pathname enrutado. */}
-              <a className="link-stylus" href="#entregables">
-                {en ? 'See what you get' : 'Ver qué recibes'} →
-              </a>
-            </p>
+                  <a className="link-stylus" href="#entregables">
+                    {en ? 'See what you get' : 'Ver qué recibes'} →
+                  </a>
+                </p>
 
-            <p className="stamp mt-8">
-              {en
-                ? `Remote consulting from ${NAP.localityEn}.`
-                : `Consultoría remota desde ${NAP.locality}.`}
-            </p>
+                <p className="stamp mt-8">
+                  {en
+                    ? `Remote consulting from ${NAP.localityEn}.`
+                    : `Consultoría remota desde ${NAP.locality}.`}
+                </p>
+              </div>
+
+              {/* ── EL MARGEN DE ANOTACIÓN ──
+                  La segunda columna de la hoja. Medido a 1440: sin ella el
+                  45% derecho de la página estaba muerto en todo offset de
+                  scroll. Lo que va aquí no es relleno — es la LECTURA:
+                  cuántas plumas escriben, cuántos renglones tiene el
+                  alcance y para quién NO es. Todo sale del archivo de datos
+                  del servicio, así que no puede desmentir al cuerpo de la
+                  página. */}
+              <aside className="margin margin-sticky">
+                <Pens
+                  steps={service.process}
+                  label={en ? 'the register' : 'el registro'}
+                  unit={en ? 'pens' : 'plumas'}
+                  legend={
+                    en
+                      ? 'one pen per step. Trace length is the step position in the delivery, not a percentage of anything.'
+                      : 'una pluma por paso. El largo del trazo es la posición del paso en la entrega, no un porcentaje de nada.'
+                  }
+                />
+
+                <div className="margin-row">
+                  <span className="margin-key">
+                    {en ? 'line items' : 'renglones'}
+                  </span>
+                  <span className="margin-read">{service.includes.length}</span>
+                  <span className="margin-val">
+                    {en
+                      ? 'items in the scope, written out below.'
+                      : 'renglones en el alcance, escritos abajo.'}
+                  </span>
+                </div>
+
+                {/* El descalificador, en el margen. Es donde un técnico
+                    anota lo que el aparato NO mide, y es lo que separa una
+                    página de servicio de un folleto. Sale del campo notFor,
+                    que el repo obliga a mantener sincero. */}
+                {service.notFor[0] ? (
+                  <div className="margin-row">
+                    <span className="margin-key">
+                      {en ? 'not a fit' : 'no aplica'}
+                    </span>
+                    <span className="margin-prose">{service.notFor[0]}</span>
+                  </div>
+                ) : null}
+              </aside>
+            </div>
           </section>
 
           {/* ═══ CONTEXTO ════════════════════════════════════════ */}
@@ -247,7 +302,9 @@ export default async function DashboardsPage({ params }: Props) {
 
             <div className="mt-16">
               <h3 className="text-d3 text-ink">
-                {en ? 'What changes for your team' : 'Qué cambia para tu equipo'}
+                {en
+                  ? 'What changes for your team'
+                  : 'Qué cambia para tu equipo'}
               </h3>
               <ul className="reveal-stagger mt-6">
                 {service.outcomes.map((outcome) => (
@@ -392,7 +449,6 @@ export default async function DashboardsPage({ params }: Props) {
                     <Ribbon
                       items={rail.tools}
                       label={rail.label}
-                      duration={rail.duration}
                       reverse={i % 2 === 1}
                     />
                   </div>
@@ -503,6 +559,47 @@ export default async function DashboardsPage({ params }: Props) {
             </p>
           </section>
 
+          {/* ═══ LA PRUEBA, PENDIENTE DE ARCHIVO ═════════════════
+              Los dos huecos de imagen de este servicio, con su ruta exacta
+              escrita. Mientras el archivo no exista es un RENGLÓN —qué falta,
+              a qué ruta, de qué tamaño— y no una caja de cuatrocientos
+              píxeles de nada. El mismo dato genera docs/MEDIA.md, así que la
+              lista que se entrega y lo que pinta la página no pueden
+              contradecirse. */}
+          <section className="border-t border-hairline px-5 py-16 sm:px-10">
+            <p className="stamp">
+              {en
+                ? 'the proof · file pending'
+                : 'la prueba · pendiente de archivo'}
+            </p>
+            <div className="mt-8 grid gap-x-14 gap-y-4 lg:grid-cols-2">
+              <MediaSlot
+                id="dashboards-vista"
+                sizes="(min-width: 1024px) 40vw, 100vw"
+              />
+              <MediaSlot
+                id="dashboards-modelo"
+                sizes="(min-width: 1024px) 40vw, 100vw"
+              />
+            </div>
+          </section>
+
+          {/* ═══ LOS TRES CANALES ════════════════════════════════
+              La misma banda de la portada de contacto, con el mensaje de
+              WhatsApp de ESTA página: quien escribe desde aquí llega con el
+              tema ya nombrado y no hay que interrogarlo. Cada canal degrada
+              solo si no está configurado. */}
+          <section className="border-t border-hairline px-5 py-20 sm:px-10">
+            <ContactChannels
+              locale={locale}
+              waMessage={
+                en
+                  ? 'Hi Carlos — I came from your dashboards page. The data I want to see is '
+                  : 'Hola Carlos, vengo de tu página de dashboards. Los datos que quiero ver son '
+              }
+            />
+          </section>
+
           {/* ═══ CIERRE ══════════════════════════════════════════ */}
           <section className="border-t border-hairline px-5 py-24 sm:px-10">
             <h2 className="max-w-[18ch] text-d1 text-ink">
@@ -525,8 +622,8 @@ export default async function DashboardsPage({ params }: Props) {
 
             <p className="mt-8 max-w-[56ch] text-sm text-ink-subtle">
               {en
-                ? 'I reply within 24 to 48 business hours, from Mexico City — or write straight to '
-                : 'Respondo en 24 a 48 horas hábiles, desde Ciudad de México — o escríbeme directo a '}
+                ? 'I reply in under 24 hours, from Mexico City — or write straight to '
+                : 'Respondo en menos de 24 horas, desde Ciudad de México — o escríbeme directo a '}
               <a className="link-stylus" href={`mailto:${NAP.email}`}>
                 {NAP.email}
               </a>

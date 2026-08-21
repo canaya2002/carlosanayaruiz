@@ -151,26 +151,32 @@
   --ease-spring: var(--ease-stylus);
   --ease-press: cubic-bezier(0.4, 0, 0.2, 1);
 
-  /* ── La cinta. Escala FIJA, decidida y no negociable: el juez de
-     ingeniería marcó que una escala variable haría depender la
-     altura del héroe de una variable de runtime. 1 s = 320 px. */
-  --tape-w: 3.5rem;      /* 56 px */
-  --tape-scale: 320px;   /* 1 segundo */
-  --tape-budget: 2.5;    /* el umbral de LCP, en segundos */
-  /* Hasta donde llega el eje graduado. Antes eran los mismos 2.5 s del
-     umbral y el heroe salia de 1024 px con el contenido acabando en 830:
-     casi 200 px de vacio al final. El umbral se lee ahora dentro de la
-     lectura, asi que el eje no tiene que alcanzarlo — y a 1.5 s la
-     graduacion queda mas densa, que es como se ve un registrador real. */
-  --tape-span: 1.5;
-  --needle-y: 42vh;
+  /* ── EL RIEL ────────────────────────────────────────────────
+     Ya NO es un eje de tiempo graduado en segundos con sus cifras al
+     margen. Eso se retiró: la graduación existía solo a lo alto del
+     héroe, se cortaba en seco a media página y dejaba 4000 px de riel
+     negro debajo. Ahora el riel es lo que es materialmente —el margen
+     perforado de la hoja continua— y por eso corre ENTERO, del canto
+     superior del nav al canto inferior del pie, con la misma marca a la
+     misma distancia en toda su longitud.
+
+     Sin cifras y sin punta de flecha. Lo único que se mueve es el trazo
+     del avance, y lo mueve el scroll. */
+  --tape-w: 3.5rem;       /* 56 px */
+  --rail-step: 1rem;      /* distancia entre marcas. Pareja en todas partes. */
+  --rail-tick: 0.6875rem; /* largo de la marca; se apoya en el canto del eje */
+  /* Recorrido de un ciclo del rollo. MÚLTIPLO ENTERO de --rail-step, y no
+     es negociable: es lo único que hace invisible el empalme del bucle.
+     20 × 1rem = 320 px en 24 s ≈ 13 px/s, el arrastre de un tambor. */
+  --rail-run: 20rem;
+
+  /* Ancho del MARGEN DE ANOTACIÓN, la segunda columna de la hoja. Ver
+     «El segundo margen» más abajo. 18rem es lo que pide una cifra mono
+     de lectura (1.375rem) con su rótulo encima sin partirse. */
+  --margin-w: 18rem;
   /* Rango unico de aparicion. Corto y dentro de `entry`, para que nada
      siga invisible con su seccion ya en pantalla. */
   --reveal-range: entry 10% entry 90%;
-  /* Fuente unica de la altura del heroe. La usan la seccion y el eje
-     graduado del riel: si se separan, el eje deja de coincidir con el
-     contenido y la graduacion miente. */
-  --hero-h: calc(var(--tape-span) * var(--tape-scale) + 14rem);
 
   /* ── 3D: fuera. No queda un solo `perspective` en el sistema. */
   --perspective: none;
@@ -193,8 +199,20 @@
 @media (max-width: 40rem) {
   :root {
     --tape-w: 2.25rem;   /* 36 px */
-    --tape-scale: 168px;
-    --needle-y: 38vh;
+    --rail-tick: 0.5rem;
+  }
+}
+
+/* A 320 px —iPhone SE de primera generación, y todavía hay— la fila del nav
+   pedía 326 px: 36 de riel más 20+20 de margen dejaban 244 para la marca, el
+   selector de idioma y el botón del menú. Seis píxeles de desborde horizontal,
+   que es el defecto que ningún chequeo veía porque check:overflow empieza a
+   probar en 360.
+   El riel baja a 28 px y el margen a 16: son 16 px recuperados. La marca del
+   riel sigue midiendo 8 px, así que se ve igual. */
+@media (max-width: 22.5rem) {
+  :root {
+    --tape-w: 1.75rem;   /* 28 px */
   }
 }
 
@@ -324,6 +342,28 @@
     -webkit-text-size-adjust: 100%;
     scroll-behavior: smooth;
     scroll-padding-top: 5.5rem;
+  }
+
+  /* ── LOS TITULARES SE PARTEN CON GUION A 320 px ────────────────
+     «Premios y reconocimientos» a 44 px pide 333 px de ancho y la columna
+     mide 252: 81 px de desborde horizontal del documento entero. Es un
+     defecto ANTERIOR a esta ronda que ningún chequeo veía, porque
+     `check:overflow` empieza a probar en 360 — y a 360 la palabra cabe
+     por doce píxeles.
+
+     `hyphens: auto` y no `break-word` a secas: el documento declara su
+     `lang`, así que el navegador parte por sílabas —re-co-no-ci-mien-tos—
+     que es lo que hace una caja de imprenta, no un corte a la mitad de la
+     palabra. `overflow-wrap` queda de red por si falta el diccionario.
+
+     Solo por debajo de 30rem: en escritorio ningún titular necesita
+     partirse y un guion ahí sería un defecto, no un arreglo. */
+  @media (max-width: 30rem) {
+    h1,
+    h2 {
+      hyphens: auto;
+      overflow-wrap: break-word;
+    }
   }
 
   body {
@@ -1213,6 +1253,30 @@
     animation-iteration-count: 1 !important;
     transition-duration: 0.01ms !important;
   }
+  /* El rollo se para y el riel queda dibujado ENTERO: la degradación de
+     este sistema es la ausencia, nunca un estado a medias. La regla
+     global de arriba ya colapsa toda duración a 0.01 ms, así que esto
+     solo apunta a lo que además tiene que desaparecer. */
+  .drum {
+    clip-path: none !important;
+  }
+  .drum-marks,
+  .sheet-field::before,
+  .dial-sweep,
+  .dial-bezel,
+  .morph > span {
+    animation: none !important;
+    will-change: auto;
+  }
+
+  /* Sin el ciclo, el titular se queda en su frase canónica. */
+  .morph > span:not([data-home]) {
+    opacity: 0 !important;
+  }
+  .figure-scan {
+    display: none;
+  }
+
   .aurora > i,
   .grad-drift::before,
   .float,
@@ -1274,151 +1338,840 @@
     opacity: 1;
   }
 
-  /* ── La cinta ─────────────────────────────────────────────────
-     Escala FIJA: 1 s = var(--tape-scale). Corre con el documento;
-     lo único fijo es la aguja. */
-  /* ── EL RIEL ──────────────────────────────────────────────────
-     Corre por toda la pagina, pero la GRADUACION no: un eje de tiempo
-     solo significa algo donde hay tiempo que medir, y eso es el heroe.
-     Abajo el riel es material —el margen del papel— con una barra de
-     avance que dice cuanto rollo ha pasado. Antes la graduacion seguia
-     hasta abajo, sin etiquetas y sin sentido, y se cortaba en seco. */
+  /* ── EL TITULAR QUE MUTA ──────────────────────────────────────
+     «Mido lo que tu sitio …» y el final va cambiando: cinco frases que
+     todas se sostienen solas. Es el mismo mecanismo del saludo, y por las
+     mismas dos razones:
+
+     1. CERO CLS. Las cinco frases viven en LA MISMA celda de grid, todas
+        presentes a la vez, y solo cambia la opacidad. La celda mide lo que
+        la frase más larga, así que nada refluye nunca. Cambiar el texto de
+        un titular de 120 px con un reflujo sería una regresión de CLS
+        medible en la portada de alguien que vende Core Web Vitals.
+     2. UN SOLO h1 INDEXABLE. Solo la frase canónica es un nodo de texto;
+        las otras cuatro viajan en `data-w` y las pinta `content: attr()`.
+        El contenido generado no entra en el texto indexable, así que el
+        `<h1>` sigue siendo una sola frase y no cinco pegadas.
+
+     El desfase sale de `--i` y de una sola tanda de keyframes: cada frase
+     corre la MISMA animación con un retardo negativo de `(i − n)/n` del
+     ciclo, así que su ventana visible cae donde toca sin escribir cinco
+     tandas. Y `will-change: opacity` las promueve: cinco capas pequeñas
+     animando solo opacidad son compositor puro, cero recálculos en reposo.
+     Sin la promoción, cinco animaciones infinitas se comían el presupuesto. */
+  .morph {
+    display: inline-grid;
+    vertical-align: baseline;
+  }
+
+  .morph > span {
+    grid-area: 1 / 1;
+    opacity: 0;
+    white-space: nowrap;
+    text-align: left;
+  }
+
+  .morph > span[data-w]::after {
+    content: attr(data-w);
+  }
+
+  /* Estado por defecto y estado final son el MISMO: la frase canónica,
+     visible. Sin animaciones —reduced-motion, navegador sin soporte— esto
+     es lo que queda, y es exactamente el titular de siempre. */
+  .morph > span[data-home] {
+    opacity: 1;
+  }
+
+  /* ── EL RIEL, EN UNA SOLA PIEZA ───────────────────────────────
+     `.tape` ya no pinta nada: es el hueco que la rejilla de cada página
+     reserva para el riel. Lo que se ve lo pinta `.drum`, un ÚNICO
+     elemento fijo montado en el layout.
+
+     ── POR QUÉ SE REHIZO ──
+     La versión anterior graduaba el riel en segundos y escribía las
+     cifras al margen (0, .25, .50, .75, 1, 1.25, 1.50), pero solo a lo
+     alto del héroe: la graduación se cortaba en seco a media página y
+     debajo quedaban cuatro mil píxeles de riel negro. Un eje que se
+     detiene no es un eje, y una cifra que nadie va a leer contra nada
+     es ruido.
+
+     Lo que queda es lo que el riel ES materialmente: el margen
+     perforado de la hoja continua. Corre entero, del canto superior del
+     nav al canto inferior del pie, con la misma marca a la misma
+     distancia en toda su longitud. Al ser un solo elemento fijo, la
+     fase de la marca no se puede reiniciar entre secciones.
+
+     Sin cifras. Sin punta de flecha. */
   .tape {
     position: relative;
     width: var(--tape-w);
     flex: none;
-    background: var(--soot);
-    border-right: 1px solid var(--hairline);
   }
 
-  /* El tramo graduado: exactamente la altura del heroe, ni un pixel mas. */
-  .tape-axis {
-    position: relative;
-    height: var(--hero-h);
-    background-image: repeating-linear-gradient(
+  /* `z-index: 30` lo deja DEBAJO del header (50) y de sus menús, y
+     ENCIMA del pie, que es la única superficie del sitio con fondo
+     opaco propio. Sin eso el riel se cortaba justo donde empieza el
+     pie, que es la mitad del defecto que se reportó. */
+  .drum {
+    position: fixed;
+    inset-block: 0;
+    left: 0;
+    width: var(--tape-w);
+    z-index: 30;
+    pointer-events: none;
+    background-color: var(--soot);
+    background-image:
+      /* El canto DERECHO: la línea del eje, a un píxel del borde. */
+      linear-gradient(
+        to right,
+        transparent calc(100% - 1px),
+        var(--hairline-strong) calc(100% - 1px)
+      ),
+      /* El canto IZQUIERDO: la pista por la que corre el trazo del avance.
+         Tiene que estar dibujada entera desde el principio — si solo
+         existiera la parte recorrida, el avance se leería como una línea
+         que se para a media pantalla, que es exactamente el defecto que
+         este rediseño vino a quitar. */
+      linear-gradient(
+        to right,
+        var(--hairline-strong) 0 2px,
+        transparent 2px
+      ),
+      /* Volumen: el papel envuelve un cilindro. Es pintura, no una
+         capa compuesta — coste cero. */
+      linear-gradient(
+        to right,
+        rgb(0 0 0 / 0.55) 0%,
+        rgb(0 0 0 / 0) 38%,
+        rgb(255 255 255 / 0.035) 62%,
+        rgb(0 0 0 / 0.42) 100%
+      );
+  }
+
+  /* Las marcas. Un gradiente en mosaico: una línea de 1 px cada
+     `--rail-step`, apoyada contra el canto del eje. `--hairline-strong`
+     y no `--hairline`: con el tono de divisor apenas se veían, y lo que
+     se pidió es justamente que se vean.
+
+     `--rail-run` de sobrante ARRIBA es lo que permite el bucle: la
+     animación desplaza el elemento exactamente `--rail-run`, que es un
+     múltiplo entero de `--rail-step`, así que al cerrar el ciclo cada
+     marca cae donde estaba la de arriba y el empalme no existe. Sin el
+     sobrante, el desplazamiento descubriría el canto superior. */
+  .drum-marks {
+    position: absolute;
+    inset-block: calc(var(--rail-run) * -1) 0;
+    right: 1px;
+    width: var(--rail-tick);
+    background-image: linear-gradient(
       to bottom,
-      var(--hairline) 0 1px,
-      transparent 1px calc(var(--tape-scale) / 20)
+      var(--hairline-strong) 0 1px,
+      transparent 1px 100%
     );
+    background-size: 100% var(--rail-step);
+    background-repeat: repeat-y;
+    /* Puntual y justificado: es la única capa del sitio que se mueve en
+       bucle permanente, y promoverla es lo que la deja en el compositor
+       —igual que las cintas, que cuestan 0 recálculos en reposo. */
+    will-change: transform;
   }
 
-  /* Cierre del eje: una doble regla, como el final de una escala impresa.
-     Es lo que faltaba — antes la graduacion simplemente dejaba de existir. */
-  .tape-axis::after {
-    content: "";
-    position: absolute;
-    inset-inline: 0;
-    bottom: 0;
-    height: 3px;
-    border-top: 1px solid var(--ash);
-    border-bottom: 1px solid var(--ash);
-  }
-
-  /* Barra de avance: cuanto papel ha pasado bajo la aguja. Le da sentido
-     al riel en TODA su longitud y es una sola animacion compuesta. */
-  /* Marca de fin de registro. Cierra el riel en vez de dejarlo cortado. */
-  .tape-end {
-    position: absolute;
-    left: 50%;
-    bottom: 2.5rem;
-    transform: translateX(-50%) rotate(180deg);
-    writing-mode: vertical-rl;
-    font-family: var(--font-mono);
-    font-size: var(--text-grad);
-    letter-spacing: 0.22em;
-    text-transform: uppercase;
-    color: var(--ink-subtle);
-    white-space: nowrap;
-  }
-
-  .tape-end::after {
-    content: "";
-    position: absolute;
-    left: 50%;
-    bottom: -1.5rem;
-    width: 0.75rem;
-    height: 1px;
-    background: var(--ash);
-    transform: translateX(-50%);
-  }
-
-  .tape-progress {
+  /* El avance: cuánto rollo ha pasado. Lo único que se mueve en el
+     riel, y lo mueve el SCROLL — no un bucle, así que en reposo cuesta
+     cero. Sin soporte se queda dibujado entero, que es el canto de la
+     hoja y es un estado correcto. */
+  .drum-trace {
     position: absolute;
     left: 0;
     top: 0;
-    bottom: 0;
     width: 2px;
+    height: 100%;
     background: var(--paper);
-    opacity: 0.5;
+    opacity: 0.4;
     transform-origin: top center;
-    transform: scaleY(0);
   }
 
-  .tape-label {
+  /* ── LA HOJA ──────────────────────────────────────────────────
+     Un solo margen para todo el documento.
+
+     El nav y el pie iban centrados en `max-w-6xl` mientras el
+     contenido va a sangre, así que la marca del nav caía cien píxeles
+     a la derecha del titular y las dos rejillas no se reconocían como
+     la misma hoja. Ahora las tres superficies arrancan en el mismo x:
+     el canto del riel más el margen.
+
+     `padding-inline` con dos valores es start / end. */
+  .sheet {
+    width: 100%;
+    padding-inline: calc(var(--tape-w) + 1.25rem) 1.25rem;
+  }
+
+  /* Ver el bloque de tokens: a 320 px la fila del nav desbordaba 6 px. */
+  @media (max-width: 22.5rem) {
+    .sheet {
+      padding-inline: calc(var(--tape-w) + 1rem) 1rem;
+    }
+  }
+
+  @media (min-width: 40rem) {
+    .sheet {
+      padding-inline: calc(var(--tape-w) + 2.5rem) 2.5rem;
+    }
+  }
+
+  /* ── EL CRISTAL DEL NAV ───────────────────────────────────────
+     El brief pidió «liquid glass y glassmorfismo SIN contenedores, como
+     gota de agua». Se hace, y ahora el sistema lo aguanta: lo que
+     cambió no es el cristal, es lo que hay DETRÁS. Con el retrato y la
+     retícula del tambor en el héroe hay algo que refractar. Sobre el
+     hollín pelado el cristal era invisible — es el mismo fallo que está
+     documentado arriba de este archivo, con el color al revés.
+
+     Tres decisiones para que NO sea un contenedor:
+
+       1. No hay borde. La regla de 1 px de abajo se fue.
+       2. El cristal se DISUELVE hacia abajo con una máscara: no tiene
+          canto inferior, se acaba en el aire.
+       3. No envuelve al contenido, es un hermano absoluto. Si
+          envolviera, la máscara desvanecería también los descendentes
+          de la tipografía del nav.
+
+     El scrim del 88% arriba no es timidez, es contraste medido: sobre
+     un píxel claro del retrato, papel sin scrim da 3.63 y no pasa. Con
+     0.88 da 11.1. El vidrio vive en el 12% que queda, difuminado y
+     saturado — y por ahí se ven pasar las marcas del riel, que es
+     exactamente lo que un cristal tiene que hacer.
+
+     Se posiciona contra la caja de PADDING de `.sheet`, así que
+     `inset: 0` llega a los dos cantos de la pantalla. */
+  .chrome-glass {
     position: absolute;
-    right: 0.375rem;
-    /* Posición REAL sobre el eje. Se calcula una vez en layout; no se
-       anima, así que no cuesta un solo frame. */
-    top: calc(var(--t) * var(--tape-scale));
-    transform: translateY(-50%);
-    font-family: var(--font-mono);
-    font-size: var(--text-grad);
-    letter-spacing: 0.09em;
-    color: var(--ink-subtle);
-    font-variant-numeric: tabular-nums;
+    /* 2.5 rem por debajo del canto: el borde duro del desenfoque cae
+       donde el scrim ya es cero, así que no se ve. */
+    inset: 0 0 -2.5rem 0;
+    pointer-events: none;
+    background: linear-gradient(
+      to bottom,
+      rgb(18 16 14 / 0.88) 0%,
+      rgb(18 16 14 / 0.76) 44%,
+      rgb(18 16 14 / 0.22) 76%,
+      rgb(18 16 14 / 0) 100%
+    );
+    -webkit-backdrop-filter: blur(11px) saturate(190%) brightness(1.05);
+    backdrop-filter: blur(11px) saturate(190%) brightness(1.05);
+    mask-image: linear-gradient(
+      to bottom,
+      #000 0%,
+      #000 42%,
+      transparent 100%
+    );
+    /* Puntual, y medido. El cristal entra por `opacity` desde 0 con la línea
+       de tiempo del scroll, y mientras es invisible Chrome no monta el
+       desenfoque: al primer frame de scroll tenía que crear la superficie y
+       difuminarla de golpe, y ahí salía una tarea larga de ~55 ms en dos de
+       cada tres corridas de `check:perf`. Declararlo deja la capa viva desde
+       el principio y el coste se reparte.
+
+       El radio bajó de 18 a 11 px por lo mismo: el coste de un desenfoque
+       crece con el cuadrado del radio y a 11 px la refracción se lee igual
+       —lo que hay detrás son marcas de 1 px y una foto, no texto. */
+    will-change: opacity;
   }
 
-  /* Los segundos enteros llevan más peso: son las divisiones mayores. */
-  .tape-label[data-whole] {
-    color: var(--ink-muted);
+  /* En móvil el desenfoque cuesta más por menos fill-rate, y el nav ocupa una
+     franja proporcionalmente mayor de la pantalla. */
+  @media (max-width: 40rem) {
+    .chrome-glass {
+      -webkit-backdrop-filter: blur(7px) saturate(170%);
+      backdrop-filter: blur(7px) saturate(170%);
+    }
   }
-  .tape-label[data-whole]::after {
+
+  /* El MENISCO: la línea de luz donde el agua toca la superficie. Se
+     apaga en los dos cantos, así que no cierra ninguna caja — es un
+     brillo, no un borde. Es lo que queda de la regla que se quitó. */
+  .chrome-meniscus {
+    position: absolute;
+    inset-inline: 0;
+    bottom: 0;
+    height: 1px;
+    pointer-events: none;
+    background: linear-gradient(
+      to right,
+      transparent 0%,
+      rgb(235 230 217 / 0.14) 16%,
+      rgb(235 230 217 / 0.14) 84%,
+      transparent 100%
+    );
+  }
+
+  /* ── LA GOTA ──────────────────────────────────────────────────
+     El estado de hover de un enlace del nav. No lleva
+     `backdrop-filter`: sobre casi negro el desenfoque no aporta nada
+     visible y sí obliga a volver a muestrear en cada frame del hover.
+     Lo que hace leer una gota es su ÓPTICA — el remache de luz arriba,
+     la cáustica abajo y el cuerpo radial — y eso es pintura pura.
+
+     `z-index: -1` funciona porque la fila del nav lleva `isolate`: el
+     negativo se queda dentro de ella, encima de su fondo y debajo de su
+     texto. Sin ese `isolate` subiría hasta el header y el cristal se lo
+     comería. */
+  .drop::before {
     content: "";
     position: absolute;
-    right: -0.375rem;
-    top: 50%;
-    width: 0.3125rem;
-    height: 1px;
-    background: var(--ink-muted);
+    inset: -0.4375rem -0.8125rem;
+    z-index: -1;
+    border-radius: 999px;
+    opacity: 0;
+    transform: scale(0.84) translateY(1px);
+    pointer-events: none;
+    background: radial-gradient(
+      118% 150% at 50% -22%,
+      rgb(235 230 217 / 0.17),
+      rgb(235 230 217 / 0.05) 46%,
+      transparent 74%
+    );
+    box-shadow:
+      inset 0 1px 0 0 rgb(235 230 217 / 0.34),
+      inset 0 -7px 12px -8px rgb(235 230 217 / 0.32);
   }
 
-  /* La aguja: pegada mientras el eje graduado esta en pantalla, y se va
-     con el. Antes era `fixed` y seguia dibujada sobre el footer, donde no
-     habia nada que medir — se veia como una linea suelta y rota. */
-  .needle {
-    position: sticky;
-    top: var(--needle-y);
-    z-index: 2;
+  /* La GOTA QUE CRECIÓ: el panel del desplegable. Era un rectángulo
+     opaco con borde de cuatro lados y una sombra dura — el vocabulario
+     del sistema anterior, y justo debajo de una gota de agua se veía
+     como otra cosa pegada.
+
+     Ahora es la misma óptica a otra escala: mismo scrim, mismo
+     desenfoque, mismo remache de luz arriba, y el canto inferior más
+     redondo que el superior porque el agua cae. Sin borde. La sombra
+     que queda no dibuja un marco: es la penumbra que deja un cuerpo
+     translúcido sobre el papel. */
+  .drop-panel {
+    border-radius: 0.25rem 0.25rem 1.5rem 1.5rem;
+    background: linear-gradient(
+      to bottom,
+      rgb(35 32 28 / 0.9) 0%,
+      rgb(24 21 18 / 0.86) 62%,
+      rgb(18 16 14 / 0.9) 100%
+    );
+    -webkit-backdrop-filter: blur(13px) saturate(180%);
+    backdrop-filter: blur(13px) saturate(180%);
+    box-shadow:
+      inset 0 1px 0 0 rgb(235 230 217 / 0.16),
+      inset 0 -14px 22px -18px rgb(235 230 217 / 0.22),
+      0 26px 50px -28px rgb(0 0 0 / 0.92);
+  }
+
+  /* ── LA HOJA VIVA ─────────────────────────────────────────────  /* ── LA HOJA VIVA ─────────────────────────────────────────────
+     «Quiero que el fondo tenga algo de vida, algo bonito y libre que se
+     mueva.» Esto es eso, y no es una aurora: es el papel.
+
+     ── POR QUÉ REEMPLAZÓ A `.drum-field` ──
+     Antes cada sección pintaba su propio campo con una máscara que lo
+     apagaba arriba y abajo. Dos problemas, los dos reportados:
+
+       1. Solo lo llevaban dos secciones, así que el resto de la página
+          se veía en negro pelado.
+       2. La máscara terminaba el degradado en una última línea visible
+          de la retícula, y esa última línea se leía como una REGLA DE
+          SEPARACIÓN a ocho píxeles del borde del último renglón de la
+          lectura. La «línea duplicada» que rompía la estética no era un
+          borde de nadie: era el canto de una máscara.
+
+     Ahora es UN solo elemento fijo al viewport, sin máscara, uniforme de
+     canto a canto: no hay última línea que pueda leerse como regla.
+
+     ── Y ES EL MISMO PAPEL QUE EL RIEL ──
+     Misma graduación (`--rail-step`), mismo recorrido por ciclo
+     (`--rail-run`) y misma duración (24 s) que `.drum-marks`. No es una
+     coincidencia estética: el riel es el margen perforado de esta hoja y
+     la hoja es su superficie. Corren juntos porque son la misma cosa. */
+  .sheet-field {
+    position: fixed;
+    inset: 0;
+    /* Detrás del contenido en flujo y delante del fondo del body. El riel
+       va en 30 y el header en 50, así que los dos quedan encima. */
+    z-index: -1;
+    pointer-events: none;
+    overflow: hidden;
+  }
+
+  /* Capa 1 — la retícula. CORRE. El sobrante de arriba es lo que permite
+     que el ciclo cierre sin empalme visible. */
+  .sheet-field::before {
+    content: "";
+    position: absolute;
+    inset: calc(var(--rail-run) * -1) 0 0;
+    background-image: linear-gradient(
+      to bottom,
+      rgb(235 230 217 / 0.036) 0 1px,
+      transparent 1px 100%
+    );
+    background-size: 100% var(--rail-step);
+    background-repeat: repeat;
+    will-change: transform;
+  }
+
+  /* Capa 2 — las divisiones mayores y el cilindro. QUIETA: es el bastidor
+     de la máquina, no el papel. Que una capa se mueva y la otra no es de
+     donde sale la profundidad, sin una sola sombra. */
+  .sheet-field::after {
+    content: "";
+    position: absolute;
+    inset: 0;
+    background-image:
+      repeating-linear-gradient(
+        to right,
+        rgb(235 230 217 / 0.026) 0 1px,
+        transparent 1px 7rem
+      ),
+      radial-gradient(
+        130% 80% at 50% 0%,
+        rgb(235 230 217 / 0.022),
+        transparent 60%
+      ),
+      linear-gradient(
+        to right,
+        rgb(0 0 0 / 0.4) 0%,
+        rgb(0 0 0 / 0) 22%,
+        rgb(0 0 0 / 0) 78%,
+        rgb(0 0 0 / 0.4) 100%
+      );
+  }
+
+  /* ── EL DIAL ──────────────────────────────────────────────────
+     La cara del tambor, y ahora un instrumento de verdad. Las tres
+     versiones anteriores eran degradados de CSS y ahí estaba el techo: un
+     `repeating-radial-gradient` no puede dar una marca de bisel nítida, ni
+     una etiqueta, ni un arco que empiece y acabe donde quieras — de ahí
+     que se reportara soso, sin vida y sin nada dentro.
+
+     El dibujo vive en `components/instrument/dial.tsx`, en SVG en línea.
+     SVG no es una librería: es marcado, va en el HTML del servidor y no
+     manda un byte de JavaScript. Lo que se gana: 72 marcas de bisel
+     nítidas a cualquier tamaño, un arco por canal con su ángulo, una
+     etiqueta legible junto a cada uno y retícula a 1 px real.
+
+     Aquí queda el material —qué tinta, qué grosor, qué se mueve y qué se
+     enciende— y el barrido, que sigue en CSS porque un `conic-gradient` da
+     la cola que se desvanece con una declaración. */
+  .dial-wrap {
+    display: grid;
+    place-items: center;
+  }
+
+  .dial {
+    /* El tope bajó de 30rem a 27: a 1440 el disco llenaba su celda hasta el
+       margen del texto y se leía cortado, además de dejar la lista en 768 px.
+       El mínimo baja a 14 para que a 1280 quepa sin apretar. */
+    --face: clamp(14rem, 8rem + 24vw, 27rem);
+    position: relative;
+    width: min(var(--face), 100%);
+    aspect-ratio: 1;
+    flex: none;
+    isolation: isolate;
+  }
+
+  .dial-svg {
+    position: relative;
+    z-index: 1;
     display: block;
     width: 100%;
-    height: 1px;
-    background: var(--paper);
-    pointer-events: none;
+    height: 100%;
+    overflow: visible;
   }
 
-  .needle::after {
-    content: "";
+  /* EL BISEL. 72 marcas radiales, y son dos gradientes cónicos repetidos
+     recortados a un anillo por una máscara: cada 5° una marca corta, cada 30°
+     una larga. Un bisel grabado no es otra cosa.
+
+     Va en un `<span>` y no en el SVG por una regresión medida: ni un `<g>`
+     ni un `<svg>` con contenido reciben capa propia, así que su transform no
+     se compone —179 layouts y 181 recálculos en reposo, de un presupuesto de
+     20—. Una capa con `background` sí, igual que el barrido. */
+  .dial-bezel {
     position: absolute;
-    right: -0.3125rem;
-    top: -0.25rem;
-    border-top: 0.25rem solid transparent;
-    border-bottom: 0.25rem solid transparent;
-    border-left: 0.375rem solid var(--paper);
+    inset: 0;
+    /* Por ENCIMA del SVG (que va en 1) y no debajo: el cuerpo del disco es un
+       `<circle>` opaco y, a igual z-index, gana el que va después en el DOM.
+       Con el bisel en 1 estaba dibujado y tapado — 72 marcas invisibles. Las
+       marcas viven en el canto y los arcos no pasan de 0.73 del radio, así que
+       no se estorban. */
+    z-index: 2;
+    display: block;
+    border-radius: 50%;
+    pointer-events: none;
+    background-image:
+      /* divisiones mayores, cada 30°: más anchas Y más claras. Una sola
+         máscara vale para las dos capas, así que la jerarquía se hace con
+         grosor y tinta y no con longitud — que es la misma regla que el
+         resto del sistema usa para la tipografía. */
+      repeating-conic-gradient(
+        from 0deg,
+        rgb(235 230 217 / 0.5) 0deg 1deg,
+        transparent 1deg 30deg
+      ),
+      /* graduación, cada 5° */
+      repeating-conic-gradient(
+        from 0deg,
+        rgb(235 230 217 / 0.24) 0deg 0.45deg,
+        transparent 0.45deg 5deg
+      );
+    /* `closest-side` es OBLIGATORIO. Sin él, un `radial-gradient(circle)`
+       resuelve su 100% a `farthest-corner`, o sea 0.707 del ancho — y el
+       radio del disco es 0.5. El anillo del 86% al 96.5% caía ENTERO fuera
+       del disco y el bisel no se veía: 72 marcas dibujadas y ni una visible.
+       Con `closest-side`, el 100% es el radio del disco. */
+    mask-image: radial-gradient(
+      circle closest-side at 50% 50%,
+      transparent 0 84%,
+      #000 86%,
+      #000 97.5%,
+      transparent 99%
+    );
   }
 
-  /* ── Una marca de medición real ───────────────────────────────
-     `--y` lo escribe PerformanceObserver, una vez, en píxeles ya
-     resueltos contra la escala. Se posiciona con transform, nunca
-     con `top`, para no tocar layout. */
+  /* El canto del bisel. Un aro de 1 px, no un borde: el borde de un SVG no
+     escala con el viewBox y a 30rem se vería el doble de grueso que a 15. */
+  .dial-rim {
+    fill: none;
+    stroke: rgb(235 230 217 / 0.16);
+    stroke-width: 1;
+  }
+
+  /* Las marcas del bisel. `vector-effect` mantiene el grosor en 1 px de
+     PANTALLA a cualquier tamaño del disco, que es como se ve una marca
+     grabada de verdad. */
+  .dial-tick {
+    stroke: rgb(235 230 217 / 0.22);
+    stroke-width: 1;
+    vector-effect: non-scaling-stroke;
+  }
+
+  .dial-tick-major {
+    stroke: rgb(235 230 217 / 0.45);
+  }
+
+  .dial-grid line,
+  .dial-grid circle {
+    fill: none;
+    stroke: rgb(235 230 217 / 0.07);
+    stroke-width: 1;
+    vector-effect: non-scaling-stroke;
+  }
+
+  /* ── LOS CANALES ──
+     Cada grupo lleva sus tres tintas en variables, así que encenderlo es
+     cambiar tres valores en el grupo y no seis reglas por pieza. */
+  .dial-ch {
+    --arc: rgb(235 230 217 / 0.2);
+    --blip: rgb(235 230 217 / 0.42);
+    --lbl: rgb(235 230 217 / 0.34);
+    --blip-r: 1;
+  }
+
+  .dial-arc {
+    fill: none;
+    stroke: var(--arc);
+    stroke-width: 1.5;
+    stroke-linecap: round;
+    vector-effect: non-scaling-stroke;
+    transition: stroke 300ms var(--ease-stylus);
+  }
+
+  .dial-blip {
+    fill: var(--blip);
+    transform-box: fill-box;
+    transform-origin: center;
+    scale: var(--blip-r);
+    transition:
+      fill 300ms var(--ease-stylus),
+      scale 300ms var(--ease-stylus);
+  }
+
+  .dial-label {
+    fill: var(--lbl);
+    font-family: var(--font-mono);
+    font-size: 7px;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+    transition: fill 300ms var(--ease-stylus);
+  }
+
+  /* ── EL HUSILLO ──
+     Un `<text>` por estado, porque el contenido de un `<text>` no se puede
+     cambiar con `content`. Se pintan todos y CSS apaga los que no tocan. */
+  .dial-hub-ring {
+    fill: rgb(18 16 14 / 0.7);
+    stroke: rgb(235 230 217 / 0.2);
+    stroke-width: 1;
+    vector-effect: non-scaling-stroke;
+  }
+
+  .dial-hub-text {
+    fill: var(--paper);
+    font-family: var(--font-mono);
+    font-size: 9px;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    opacity: 0;
+    transition: opacity 240ms var(--ease-stylus);
+  }
+
+  .dial-hub-text[data-hub="idle"] {
+    opacity: 1;
+  }
+
+  /* El barrido: la cuña que da la vuelta. Debajo del SVG, así que pasa por
+     detrás de los arcos y las marcas — como la luz de un radar detrás del
+     cristal grabado. */
+  .dial-sweep {
+    position: absolute;
+    inset: 3%;
+    z-index: 0;
+    border-radius: 50%;
+    pointer-events: none;
+    background-image: conic-gradient(
+      from 0deg,
+      rgb(235 230 217 / 0.17) 0deg,
+      rgb(235 230 217 / 0.06) 18deg,
+      rgb(235 230 217 / 0) 44deg,
+      rgb(235 230 217 / 0) 360deg
+    );
+  }
+
+  /* ── EL DIAL RESPONDE A LA LISTA ──────────────────────────────
+     `:has()` mirando hacia arriba: al pasar el puntero por una fila de
+     canal, la PLACA entera sabe cuál es y se lo dice al dial. Enciende su
+     arco, agranda su marca, sube su etiqueta a tinta plena y el husillo
+     escribe su identificador.
+
+     Cada regla lleva su gemela en `:focus-visible`: un efecto de hover que
+     no existe para quien tabula no es un efecto, es una trampa. */
+  .plate:has(.channel[data-ch="a"]:hover) .dial-ch[data-ch="a"],
+  .plate:has(.channel[data-ch="a"]:focus-visible) .dial-ch[data-ch="a"] {
+    --arc: rgb(235 230 217 / 0.62);
+    --blip: var(--paper);
+    --lbl: rgb(235 230 217 / 0.95);
+    --blip-r: 1.9;
+  }
+
+  .plate:has(.channel[data-ch="a"]:hover) .dial-hub-text[data-hub="idle"],
+  .plate:has(.channel[data-ch="a"]:focus-visible)
+    .dial-hub-text[data-hub="idle"] {
+    opacity: 0;
+  }
+
+  .plate:has(.channel[data-ch="a"]:hover) .dial-hub-text[data-hub="a"],
+  .plate:has(.channel[data-ch="a"]:focus-visible)
+    .dial-hub-text[data-hub="a"] {
+    opacity: 1;
+  }
+
+  .plate:has(.channel[data-ch="b"]:hover) .dial-ch[data-ch="b"],
+  .plate:has(.channel[data-ch="b"]:focus-visible) .dial-ch[data-ch="b"] {
+    --arc: rgb(235 230 217 / 0.62);
+    --blip: var(--paper);
+    --lbl: rgb(235 230 217 / 0.95);
+    --blip-r: 1.9;
+  }
+
+  .plate:has(.channel[data-ch="b"]:hover) .dial-hub-text[data-hub="idle"],
+  .plate:has(.channel[data-ch="b"]:focus-visible)
+    .dial-hub-text[data-hub="idle"] {
+    opacity: 0;
+  }
+
+  .plate:has(.channel[data-ch="b"]:hover) .dial-hub-text[data-hub="b"],
+  .plate:has(.channel[data-ch="b"]:focus-visible)
+    .dial-hub-text[data-hub="b"] {
+    opacity: 1;
+  }
+
+  .plate:has(.channel[data-ch="c"]:hover) .dial-ch[data-ch="c"],
+  .plate:has(.channel[data-ch="c"]:focus-visible) .dial-ch[data-ch="c"] {
+    --arc: rgb(235 230 217 / 0.62);
+    --blip: var(--paper);
+    --lbl: rgb(235 230 217 / 0.95);
+    --blip-r: 1.9;
+  }
+
+  .plate:has(.channel[data-ch="c"]:hover) .dial-hub-text[data-hub="idle"],
+  .plate:has(.channel[data-ch="c"]:focus-visible)
+    .dial-hub-text[data-hub="idle"] {
+    opacity: 0;
+  }
+
+  .plate:has(.channel[data-ch="c"]:hover) .dial-hub-text[data-hub="c"],
+  .plate:has(.channel[data-ch="c"]:focus-visible)
+    .dial-hub-text[data-hub="c"] {
+    opacity: 1;
+  }
+
+  .plate:has(.channel[data-ch="d"]:hover) .dial-ch[data-ch="d"],
+  .plate:has(.channel[data-ch="d"]:focus-visible) .dial-ch[data-ch="d"] {
+    --arc: rgb(235 230 217 / 0.62);
+    --blip: var(--paper);
+    --lbl: rgb(235 230 217 / 0.95);
+    --blip-r: 1.9;
+  }
+
+  .plate:has(.channel[data-ch="d"]:hover) .dial-hub-text[data-hub="idle"],
+  .plate:has(.channel[data-ch="d"]:focus-visible)
+    .dial-hub-text[data-hub="idle"] {
+    opacity: 0;
+  }
+
+  .plate:has(.channel[data-ch="d"]:hover) .dial-hub-text[data-hub="d"],
+  .plate:has(.channel[data-ch="d"]:focus-visible)
+    .dial-hub-text[data-hub="d"] {
+    opacity: 1;
+  }
+
+  .plate:has(.channel[data-ch="e"]:hover) .dial-ch[data-ch="e"],
+  .plate:has(.channel[data-ch="e"]:focus-visible) .dial-ch[data-ch="e"] {
+    --arc: rgb(235 230 217 / 0.62);
+    --blip: var(--paper);
+    --lbl: rgb(235 230 217 / 0.95);
+    --blip-r: 1.9;
+  }
+
+  .plate:has(.channel[data-ch="e"]:hover) .dial-hub-text[data-hub="idle"],
+  .plate:has(.channel[data-ch="e"]:focus-visible)
+    .dial-hub-text[data-hub="idle"] {
+    opacity: 0;
+  }
+
+  .plate:has(.channel[data-ch="e"]:hover) .dial-hub-text[data-hub="e"],
+  .plate:has(.channel[data-ch="e"]:focus-visible)
+    .dial-hub-text[data-hub="e"] {
+    opacity: 1;
+  }
+
+  /* ── EL RETRATO DEL HÉROE ─────────────────────────────────────  /* ── EL RETRATO DEL HÉROE ─────────────────────────────────────  /* ── EL RETRATO DEL HÉROE ─────────────────────────────────────
+     El archivo es un recorte con canal alfa de verdad, y eso es lo que
+     permite meter una foto de medio cuerpo en un sistema que prohíbe
+     las cajas: no hay rectángulo. La retícula del tambor se ve por
+     detrás de él y el hollín es su fondo real.
+
+     Se sangra hasta el canto derecho de la pantalla y se disuelve por
+     abajo con una máscara, así que no lo corta ningún borde — se acaba
+     en el material, como el trazo de una plancha. */
+  .figure-hero {
+    position: relative;
+    min-height: 26rem;
+    overflow: hidden;
+    /* La disolución tiene que llegar a CERO antes del canto de la caja,
+       no en el canto. Terminando en 100% el último 10% seguía a media
+       opacidad y `overflow: hidden` lo cortaba en seco: se veía una banda
+       clara y una línea dura justo encima de la regla de la sección. Con
+       el cero en 94% quedan 6% de hoja limpia y la foto se acaba en el
+       material, que es la idea. */
+    /* Difumina los DOS cantos, y el de arriba es lo que permite subirlo.
+       Medido: a 1440 la celda del morph llega a x=1093 y el retrato arranca
+       en x=792, así que el titular cruza la franja que el retrato gana por
+       arriba. Con el canto superior desvanecido, el texto pasa por encima de
+       píxeles ya apagados. Y encima cae donde el recorte solo tiene aire
+       —el pelo empieza más abajo—, así que no se pierde nada de él. */
+    mask-image: linear-gradient(
+      to bottom,
+      transparent 0%,
+      rgb(0 0 0 / 0.35) 5%,
+      #000 13%,
+      #000 76%,
+      rgb(0 0 0 / 0.42) 90%,
+      transparent 97%
+    );
+  }
+
+  /* La imagen va ABSOLUTA, y eso es lo que arregla el hueco.
+     En flujo, un recorte de 1000×1663 a 26 rem de ancho pide 692 px de
+     alto y se los impone a la fila, así que la columna de texto —que
+     mide unos 500— quedaba con doscientos píxeles de vacío en medio.
+     Fuera del flujo la figura no aporta alto: a partir de 64rem lo manda
+     la columna de texto y la foto se estira a lo que haya. */
+  .figure-hero img {
+    position: absolute;
+    inset: 0;
+    display: block;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    /* Arriba: la cabeza cabe entera y el recorte se lo lleva el torso. */
+    object-position: 50% 4%;
+    /* El remache de luz del hombro es AZUL y este sistema no tiene
+       azules — el negro es cálido a propósito. Un desaturado parcial lo
+       lleva al neutro sin apagar el tono de piel, que es lo único que
+       la foto tiene que decir. */
+    filter: grayscale(0.32) contrast(1.06) saturate(0.9);
+  }
+
+  /* A partir de 64rem el alto lo manda la columna de texto (la imagen va
+     absoluta, así que no aporta alto). El `min-height` vuelve más arriba
+     que el texto para que el retrato sea el que fija la fila: es lo que lo
+     hace más grande sin abrir un hueco, porque la nota de ubicación lleva
+     `mt-auto` y absorbe la diferencia. */
+  /* `align-self: stretch` dimensiona la caja de MARGEN a la fila, así que
+     un margen inferior negativo hace la caja de borde más alta sin cambiar
+     el alto de la fila. Es lo que deja crecer el retrato sin abrir un hueco
+     en la columna de texto: la sección lo recorta por abajo y la máscara lo
+     disuelve antes de llegar ahí. */
+  @media (min-width: 64rem) {
+    .figure-hero {
+      align-self: stretch;
+      min-height: clamp(28rem, 13rem + 26vw, 42rem);
+    }
+  }
+
+  /* La aguja escribiéndolo. Una línea de papel dentro de una capa a
+     toda altura, barrida de arriba abajo UNA vez al cargar: así el
+     gesto no depende de la altura del encuadre y solo mueve un
+     transform. */
+  /* La línea va al PIE de la capa y el barrido termina en `translateY(0)`,
+     no en `100%`. Con la línea en medio y el final abajo, la capa acababa
+     546 px por debajo del encuadre: nada se veía —`overflow: hidden`— pero
+     el `scrollHeight` de la figura quedaba al doble de su alto, y eso lo
+     reporta `check:layout` como un corte. Un desbordamiento invisible sigue
+     siendo un desbordamiento. El de arriba no cuenta: `scrollHeight` solo
+     mide lo que sobra por abajo. */
+  .figure-scan {
+    position: absolute;
+    inset: 0;
+    pointer-events: none;
+    background: linear-gradient(
+      to bottom,
+      transparent 0%,
+      transparent 96.4%,
+      rgb(235 230 217 / 0.5) 98.2%,
+      rgb(235 230 217 / 0.5) 99.2%,
+      transparent 100%
+    );
+  }
+
   /* ── LA LECTURA ───────────────────────────────────────────────
      Un instrumento con todo lo que hace falta para leerlo: nombre,
-     escala, umbral marcado y unidad. La version anterior eran tres
-     reglas colocadas por tiempo absoluto en una columna suelta, y en
-     un sitio que carga en 200 ms las tres caian en los primeros 60 px
-     — se leian como lineas rotas, no como una medicion. */
+     pista, regla del presupuesto y unidad.
+
+     ── POR QUÉ SE LIMPIÓ ──
+     La versión anterior ponía el umbral a la MITAD de cada fila, con su
+     cifra flotando encima de la primera: tres reglas rojas a distinta
+     altura visual y una etiqueta huérfana («800 MS») que parecía un
+     dato sin dueño. Se leía roto.
+
+     Ahora la regla es UNA, en el mismo x de las tres filas, al final de
+     la pista: 100% de la pista = el umbral que publica Google para esa
+     métrica. Lo que queda a la izquierda de la regla no es hueco, es el
+     MARGEN que sobra — que es exactamente el producto que se vende. Y la
+     cifra medida se lee junto a su presupuesto (`152 / 800 ms`), porque
+     la relación entre las dos ES el veredicto.
+
+     ── POR QUÉ SOLO TRES MÉTRICAS ──
+     TTFB, FCP y LCP son instantes medidos desde el inicio de la
+     navegación. INP es una DURACIÓN: mezclarlo en la misma escala sería
+     mentir sobre lo que la escala significa. */
   .readout {
     margin: 0;
-    max-width: 26rem;
+    max-width: 30rem;
   }
 
   .readout-head {
@@ -1445,16 +2198,25 @@
 
   .readout-row {
     display: grid;
-    grid-template-columns: 2.75rem minmax(0, 1fr) auto;
+    grid-template-columns: 2.5rem minmax(0, 1fr) auto;
     align-items: center;
     gap: 0.875rem;
-    padding: 0.6875rem 0;
+    padding: 0.75rem 0;
     border-bottom: 1px solid var(--hairline);
     font-family: var(--font-mono);
     font-size: var(--text-grad);
     letter-spacing: 0.09em;
     text-transform: uppercase;
     color: var(--ink-subtle);
+  }
+
+  /* El último renglón NO lleva regla. Una regla debajo de la última fila
+     no separa nada: solo queda flotando encima de la leyenda, y a ocho
+     píxeles del canto de la retícula del fondo se leía como una segunda
+     línea de separación. Es la mitad de la «línea duplicada» que se
+     reportó; la otra mitad era la máscara del campo por sección. */
+  .readout-row:last-child {
+    border-bottom: 0;
   }
 
   .readout-key {
@@ -1464,51 +2226,90 @@
   .readout-track {
     position: relative;
     margin: 0;
-    height: 3px;
-    background: var(--smoke);
+    height: 0.75rem;
   }
 
+  /* La línea de base impresa: la pista por la que corre la aguja.
+     `--hairline-strong` y no `--smoke`: con el tono de superficie el tramo
+     vacío no se dibujaba, y sin tramo vacío no hay margen que leer. */
+  .readout-track::before {
+    content: "";
+    position: absolute;
+    left: 0;
+    right: 0;
+    top: 50%;
+    height: 1px;
+    background: var(--hairline-strong);
+  }
+
+  /* La regla del presupuesto. Alineada en las tres filas, así que se
+     lee como una sola regla impresa y no como tres marcas sueltas. */
+  .readout-track::after {
+    content: "";
+    position: absolute;
+    right: 0;
+    top: 0;
+    bottom: 0;
+    width: 1px;
+    background: var(--minium);
+  }
+
+  /* El raspado: de cero a donde cayó la medición. */
   .readout-fill {
     position: absolute;
-    inset: 0 auto 0 0;
+    left: 0;
+    top: 50%;
+    height: 1px;
     width: var(--pct, 0%);
     background: currentColor;
     transform-origin: left center;
   }
 
-  /* El umbral cae SIEMPRE a la mitad: la escala local llega al doble.
-     Asi se lee de un vistazo si la marca quedo antes o despues, sin
-     comparar cifras. */
-  .readout-threshold {
+  /* La marca. Es lo que se lee por POSICIÓN contra la regla. */
+  .readout-mark {
     position: absolute;
-    left: 50%;
-    top: -4px;
-    bottom: -4px;
+    top: 0.0625rem;
+    bottom: 0.0625rem;
+    left: var(--pct, 0%);
     width: 1px;
-    background: var(--minium);
-  }
-
-  .readout-threshold-label {
-    position: absolute;
-    top: -1.1rem;
-    left: 0;
-    transform: translateX(-50%);
-    color: var(--minium);
-    font-size: 0.625rem;
-    letter-spacing: 0.08em;
-    white-space: nowrap;
-  }
-
-  /* Solo la primera fila muestra la etiqueta del umbral: repetirla tres
-     veces es ruido, y las tres estan a la misma altura visual. */
-  .readout-row:not(:first-child) .readout-threshold-label {
-    display: none;
+    background: currentColor;
   }
 
   .readout-value {
     margin: 0;
     font-variant-numeric: tabular-nums;
     color: var(--ink);
+    white-space: nowrap;
+  }
+
+  /* El presupuesto va pegado a la cifra medida y en tinta secundaria:
+     es la referencia, no el dato. */
+  .readout-budget {
+    color: var(--ink-subtle);
+  }
+
+  /* La leyenda de la regla. Sin esto la línea roja era un adorno
+     inexplicado, que es como el instrumento empieza a mentir. */
+  .readout-foot {
+    margin: 0.875rem 0 0;
+    font-family: var(--font-mono);
+    font-size: var(--text-grad);
+    letter-spacing: 0.09em;
+    line-height: 1.5;
+    color: var(--ink-subtle);
+  }
+
+  /* La leyenda es la REGLA, no la palabra «regla»: el mismo trazo de un
+     píxel en minio que cierra la pista. Un color solo puede explicarse
+     mostrándose. A tinta plena — atenuarlo con `opacity` lo tumbaría a
+     2.86 y ya se probó una vez. */
+  .readout-legend {
+    display: inline-block;
+    width: 1px;
+    height: 0.6875rem;
+    margin-right: 0.5rem;
+    vertical-align: -0.1rem;
+    background: var(--minium);
   }
 
   .readout-row[data-state="pass"] {
@@ -1519,38 +2320,6 @@
   }
   .readout-row[data-state="fail"] {
     color: var(--minium);
-  }
-
-  /* ── La regla de 2.5 s, impresa en minio ──────────────────────
-     Es el único elemento del sitio que puede llevar ese rojo sin
-     una medición detrás, porque ES el umbral. */
-  /* La regla pertenece a la lectura POR POSICIÓN, y esa lectura solo
-     existe donde hay columna para las marcas. Abajo de 64rem el eje se
-     sustituye por barras, así que una línea cruzando el texto a los 2.5 s
-     no significaría nada — solo taparía el párrafo. Aparece con su eje. */
-  .budget-rule {
-    display: none;
-    position: absolute;
-    left: 0;
-    right: 0;
-    /* `top: 0` es obligatorio: sin él un absoluto arranca en su posición
-       ESTÁTICA —donde cayó en el flujo— y el desplazamiento deja de
-       medirse desde el origen del eje. La regla acababa sobre el párrafo. */
-    top: 0;
-    transform: translateY(calc(var(--tape-budget) * var(--tape-scale)));
-    border-top: 1px solid var(--minium);
-    color: var(--minium);
-    font-family: var(--font-mono);
-    font-size: var(--text-grad);
-    letter-spacing: 0.22em;
-    text-transform: uppercase;
-    padding-top: 0.375rem;
-  }
-
-  @media (min-width: 64rem) {
-    .budget-rule {
-      display: block;
-    }
   }
 
   /* ── Bandas ───────────────────────────────────────────────────
@@ -1572,12 +2341,45 @@
     transform-origin: left center;
   }
 
+  /* El resumen de una banda desplegable se acota, y no es capricho: con
+     justify-between sobre una fila de mil trescientos píxeles, el «+»
+     quedaba a media pantalla de su propia pregunta y dejaba de leerse como
+     parte del mismo control. Se reportó en la portada y estaba igual en siete
+     páginas más, así que se arregla aquí y no siete veces.
+
+     La REGLA de la banda sigue cruzando toda la hoja: eso es lo que le da la
+     anchura a la sección. Lo que se acota es el contenido, no el trazo. */
+  .band > summary {
+    max-width: 46rem;
+  }
+
   /* Un evento puntual no es una banda: es una espiga. */
   .spike {
     display: block;
     width: 2px;
     height: 1.25rem;
     background: var(--ash);
+  }
+
+  /* ── LA GRADUACIÓN DE AÑOS ────────────────────────────────────
+     Por debajo de 48rem, cinco etiquetas de cuatro cifras no caben en los
+     248 px de eje que quedan a 320: se pisaban entre ellas —medido, 18 px
+     de solape— y se leía «20221». Giradas, cada una ocupa 14 px de ancho
+     y no se tocan nunca. Es lo que hace un instrumento cuando el eje va
+     justo, y cabe en el margen que la sección ya reservaba. */
+  .axis-year {
+    position: absolute;
+    top: -1.5rem;
+  }
+
+  @media (max-width: 48rem) {
+    .axis-year {
+      top: auto;
+      bottom: calc(100% + 0.3125rem);
+      writing-mode: vertical-rl;
+      rotate: 180deg;
+      letter-spacing: 0.1em;
+    }
   }
 
   /* Un hueco en el registro es un DATO, y se dibuja como hueco. */
@@ -1589,7 +2391,13 @@
   /* ── Canales ──────────────────────────────────────────────────
      Los servicios son canales PARALELOS de un registrador
      multipluma (a–e), no una secuencia 01/02/03. */
+  /* La flecha se iba al canto de la hoja porque la fila medía toda la
+     hoja. Con la medida acotada, la flecha queda a un palmo de lo que
+     abre — que es donde tiene que estar para leerse como parte de la
+     misma fila. Y en la placa, lo que queda a la derecha es donde vive la
+     cara del tambor. */
   .channel {
+    max-width: 54rem;
     display: grid;
     grid-template-columns: 2.5rem 1fr auto;
     align-items: baseline;
@@ -1604,6 +2412,29 @@
     letter-spacing: 0.14em;
     text-transform: uppercase;
     opacity: 0.6;
+  }
+
+  /* A partir de 64rem la fila se abre en dos plumas: el nombre a la
+     izquierda y lo que hace a su derecha. Apiladas en una columna de
+     52ch sobraba más de la mitad del ancho de la placa, y eso era el
+     hueco más grande de la página. */
+  @media (min-width: 64rem) {
+    .channel {
+      grid-template-columns: 3rem minmax(0, 1fr) auto;
+      gap: 0 1.5rem;
+    }
+
+    .channel > :nth-child(2) {
+      display: grid;
+      grid-template-columns: minmax(0, 20rem) minmax(0, 1fr);
+      gap: 0 2.5rem;
+      align-items: baseline;
+    }
+
+    /* La pluma escribe bajo la fila COMPLETA, no bajo el nombre. */
+    .channel > :nth-child(2) > .channel-pen {
+      grid-column: 1 / -1;
+    }
   }
 
   /* ── Placa despejada ──────────────────────────────────────────
@@ -1631,48 +2462,284 @@
     color: var(--ink-plate);
   }
 
-  /* ── El retrato ───────────────────────────────────────────────
-     Duotono hollín↔papel más trama horizontal de 3 px. Una foto de
-     800 px se vuelve un artefacto de impresión deliberado en vez de
-     un retrato corporativo suave. */
-  /* Duotono sobre PAPEL, no sobre hollín.
-     Con `screen` sobre hollín el fondo de oficina se iluminaba y competía
-     con la cara. Con `multiply` sobre papel pasa lo contrario: los claros
-     se funden con el papel y desaparecen, y solo sobrevive lo oscuro —que
-     es él. Es el mismo principio de un grabado a media tinta, y es la
-     única superficie del sitio donde el papel se ve entero. */
-  .portrait {
+  /* ── EL RETRATO EN BLANCO Y NEGRO ─────────────────────────────
+     Aquí vivía `.portrait`: una plancha de papel con la foto en duotono
+     de media tinta y una trama de rayas de 3 px encima. Existía para
+     salvar una foto de 800 px con fondo de oficina — la convertía en un
+     artefacto de imprenta deliberado en vez de una limitación de
+     resolución.
+
+     Llegó una foto en blanco y negro de estudio, así que la muleta se
+     retiró: «quita esas líneas sobre mi imagen». Sin las rayas, la
+     plancha clara tampoco tiene sentido —el fondo oscuro de la foto
+     contra papel sería un rectángulo negro— así que lo que queda es la
+     misma regla que el retrato del héroe: se DISUELVE en el material.
+
+     La máscara radial está descentrada (42% / 34%) porque ahí está la
+     cara: se mantiene nítida y lo que se va son las esquinas. Y el
+     `sepia` mínimo existe porque la foto es gris neutro y el negro de
+     este sistema es cálido; sin él, la foto se lee azulada al lado del
+     hollín. */
+  /* ── POR QUÉ LA VIÑETA NO ESTÁ AQUÍ ──
+     Estaba, y no funcionaba. Sobre un CUADRADO, un degradado radial que
+     llegue a cero en las esquinas se come también los bordes medios —solo
+     están 1.41 veces más cerca del centro—, así que en CSS había que
+     elegir entre dejar el rectángulo visible o comerse los hombros. Con
+     140% de extensión las esquinas seguían al 60% de opacidad y el
+     rectángulo se veía entero.
+
+     Así que la viñeta va HORNEADA en el canal alfa del `.webp`, con la
+     curva exacta que hace falta (opaco hasta el 52% del radio, 0 al
+     100%). Ahí también va el ajuste de niveles que baja el fondo de
+     estudio al nivel del hollín. El archivo llega listo y el CSS no tiene
+     que pelear con la geometría de un cuadrado.
+
+     Lo único que queda en CSS es el matiz: la foto es gris NEUTRO y el
+     negro de este sistema es cálido. Sin el sepia mínimo se lee azulada
+     al lado del hollín. */
+  /* El difuminado va TAMBIÉN en CSS, y no es cinturón y tirantes: el alfa
+     horneado en el archivo pasa por el optimizador de imágenes de Next, y ahí
+     medí que no siempre llega intacto —una variante del srcset volvía opaca y
+     el canto duro reaparecía. Un doble degradado con  difumina los CUATRO cantos por igual sin depender de nada más
+     que del navegador.
+
+     Y tiene que ser RECTANGULAR, no radial: sobre un cuadrado, un radial que
+     llegue a cero en las esquinas deja los bordes medios al 86% de opacidad
+     —solo están 1.41 veces más cerca del centro— así que el rectángulo se
+     seguía viendo entero. Ya se probó. */
+  /* El difuminado va TAMBIÉN en CSS, y no es cinturón y tirantes: el alfa
+     horneado en el archivo pasa por el optimizador de imágenes de Next y ahí
+     medí que no llega intacto — una variante del srcset volvía opaca y el
+     canto duro reaparecía. Un doble degradado con `mask-composite: intersect`
+     difumina los CUATRO cantos por igual sin depender de nada más que del
+     navegador.
+
+     Y tiene que ser RECTANGULAR, no radial. Sobre un cuadrado, un degradado
+     radial que llegue a cero en las esquinas deja los bordes medios al 86% de
+     opacidad —solo están 1.41 veces más cerca del centro— así que el
+     rectángulo se seguía viendo entero. Ya se probó dos veces. */
+  .figure-bw {
     position: relative;
-    overflow: hidden;
-    background: var(--paper);
-    isolation: isolate;
+    display: block;
+    mask-image:
+      linear-gradient(
+        to right,
+        transparent 0%,
+        #000 12%,
+        #000 88%,
+        transparent 100%
+      ),
+      linear-gradient(
+        to bottom,
+        transparent 0%,
+        #000 11%,
+        #000 89%,
+        transparent 100%
+      );
+    mask-composite: intersect;
+    -webkit-mask-composite: source-in;
   }
 
-  .portrait img {
+  .figure-bw img {
     display: block;
     width: 100%;
     height: auto;
-    /* Medido a ojo contra la foto real: por encima de ~1.15 de contraste
-       la cara pierde los rasgos y queda una mancha. El origen de 800 px
-       no da para más agresividad — con la sesión nueva se puede subir. */
-    filter: grayscale(1) contrast(1.14) brightness(1.02);
-    mix-blend-mode: multiply;
+    filter: sepia(0.13) contrast(1.04);
   }
 
-  /* La trama de impresión: líneas de papel que rompen los oscuros cada
-     3 px. Es un fondo estático —no se anima, así que no repinta nunca— y
-     es lo que convierte una foto de 800 px en una decisión de material en
-     vez de una limitación de resolución. */
-  .portrait::after {
-    content: "";
-    position: absolute;
-    inset: 0;
-    pointer-events: none;
-    background: repeating-linear-gradient(
-      to bottom,
-      var(--paper) 0 1px,
-      transparent 1px 4px
-    );
+  /* ── LA PLACA DE DATOS ────────────────────────────────────────
+     La etiqueta grabada de un instrumento: rótulo mono arriba, valor
+     debajo, una regla por renglón. No es una tarjeta de estadística —
+     no hay cifra grande ni icono— y todo lo que dice sale de datos que
+     ya viven en el repo. Es lo que llena el tercio de hoja que la
+     sección del operador tenía en negro. */
+  .plaque {
+    display: block;
+    border-top: 1px solid var(--hairline);
+    padding-block: 0.75rem;
+  }
+
+  .plaque-key {
+    display: block;
+    font-family: var(--font-mono);
+    font-size: var(--text-grad);
+    letter-spacing: 0.16em;
+    text-transform: uppercase;
+    color: var(--ink-subtle);
+  }
+
+  .plaque-val {
+    display: block;
+    margin-top: 0.375rem;
+    font-size: 0.875rem;
+    line-height: 1.4;
+    color: var(--ink);
+  }
+
+  /* ── EL CAMPO DE ESCRITURA ────────────────────────────────────
+     Un input en este sistema no es una caja: es un RENGLÓN. Regla abajo, el
+     texto encima y el botón al final de la misma línea — como la casilla de
+     un formulario impreso, donde lo que te dice dónde escribir es la raya y
+     no un rectángulo.
+
+     La regla se enciende al enfocar. Es la única señal que hace falta y la
+     única que no rompe la regla de «no queda un borde de cuatro lados».
+
+     `--control` (ceniza, 5.30 sobre hollín) y no `--hairline`: WCAG 1.4.11
+     pide 3:1 para el borde de un COMPONENTE y un divisor decorativo no llega
+     ahí. Es la misma distinción que ya está documentada en los tokens. */
+  .field-line {
+    display: flex;
+    align-items: baseline;
+    gap: 1rem;
+    border-bottom: 1px solid var(--control);
+    padding-bottom: 0.625rem;
+    transition: border-color 180ms var(--ease-stylus);
+  }
+
+  .field-line:focus-within {
+    border-color: var(--paper);
+  }
+
+  .field-input {
+    flex: 1 1 auto;
+    min-width: 0;
+    background: none;
+    border: 0;
+    padding: 0;
+    color: var(--ink);
+    font-family: var(--font-mono);
+    font-size: 0.875rem;
+    letter-spacing: 0.04em;
+  }
+
+  .field-input::placeholder {
+    color: var(--ink-subtle);
+  }
+
+  /* El foco lo marca la regla del renglón, no un anillo alrededor del texto:
+     un anillo aquí dibujaría exactamente la caja que este sistema no tiene.
+     Sigue habiendo indicación de foco visible, que es el requisito. */
+  .field-input:focus-visible {
+    outline: none;
+  }
+
+  .field-input:disabled {
+    color: var(--ink-subtle);
+  }
+
+  .field-send {
+    flex: none;
+    font-family: var(--font-mono);
+    font-size: var(--text-grad);
+    letter-spacing: 0.16em;
+    text-transform: uppercase;
+    color: var(--paper);
+    cursor: pointer;
+    transition: color 160ms var(--ease-stylus);
+  }
+
+  .field-send:hover {
+    color: var(--brand-strong);
+  }
+
+  .field-send:disabled {
+    color: var(--ink-subtle);
+    cursor: default;
+  }
+
+  .field-note {
+    font-family: var(--font-mono);
+    font-size: var(--text-grad);
+    letter-spacing: 0.09em;
+    line-height: 1.5;
+    color: var(--ink-subtle);
+  }
+
+  /* Un alta que quedó ES una medición que pasó su umbral, así que lleva el
+     mismo verde; lo que no quedó lleva minio. Los dos siguen siendo
+     semánticos: hay un resultado real detrás, no un adorno. */
+  .field-note[data-state="pass"] {
+    color: var(--threshold);
+  }
+
+  .field-note[data-state="fail"] {
+    color: var(--minium);
+  }
+
+  /* ── EL FORMULARIO: CINCO RENGLONES ───────────────────────────
+     Un campo de este sistema no es una caja: es un renglón con su rótulo
+     mono encima y su regla debajo, como la casilla de un formulario
+     impreso. `.field-line` de arriba es la versión de una sola línea —el
+     boletín—; esto es la de un formulario con varios campos.
+
+     No hay un solo borde de cuatro lados. El foco lo marca la regla al
+     encenderse, que es indicación visible y no dibuja la caja que este
+     sistema no tiene.
+
+     `--control` (ceniza, 5.30 sobre hollín) y no `--hairline`: WCAG 1.4.11
+     pide 3:1 para el borde de un COMPONENTE y un divisor decorativo no
+     llega. Es la distinción que ya está en los tokens. */
+  .field-row {
+    display: block;
+    border-bottom: 1px solid var(--control);
+    padding-block: 0.875rem 0.625rem;
+    transition: border-color 180ms var(--ease-stylus);
+  }
+
+  .field-row:focus-within {
+    border-color: var(--paper);
+  }
+
+  .field-label {
+    display: block;
+    margin-bottom: 0.4375rem;
+    font-family: var(--font-mono);
+    font-size: var(--text-grad);
+    letter-spacing: 0.16em;
+    text-transform: uppercase;
+    color: var(--ink-subtle);
+  }
+
+  /* La pista va en la MISMA línea que el rótulo y sin versalitas: es una
+     aclaración, no una etiqueta, y en versalitas competiría con ella. */
+  .field-hint {
+    margin-left: 0.75rem;
+    letter-spacing: 0.04em;
+    text-transform: none;
+    color: var(--ink-subtle);
+  }
+
+  .field-row .field-input {
+    display: block;
+    width: 100%;
+    min-width: 0;
+    background: none;
+    border: 0;
+    padding: 0;
+    color: var(--ink);
+    font-family: var(--font-sans);
+    font-size: 1rem;
+    line-height: 1.5;
+    letter-spacing: -0.004em;
+  }
+
+  .field-area {
+    resize: vertical;
+    min-height: 6.5rem;
+  }
+
+  /* El desplegable nativo hereda el hollín del sistema operativo en su
+     lista, así que la lista se declara aparte: sin esto, en Windows sale
+     una lista blanca con texto papel — invisible. */
+  .field-row select.field-input {
+    appearance: none;
+    cursor: pointer;
+  }
+
+  .field-row select.field-input option {
+    background: var(--surface);
+    color: var(--ink);
   }
 
   /* ── Etiqueta mono ────────────────────────────────────────────
@@ -1685,17 +2752,28 @@
     color: var(--ink-subtle);
   }
 
-  /* Enlaces: papel con subrayado que se despinta al pasar. */
+  /* Enlaces: papel con un subrayado que es una PLUMA APOYÁNDOSE. Al pasar
+     el puntero la línea se acerca a la base y engorda, como el trazo de una
+     punta que baja. Sigue siendo `text-decoration` y no un pseudo-elemento
+     a propósito: un pseudo no sabe partirse en dos cuando el enlace ocupa
+     dos líneas, y `text-decoration` no toca el layout, así que la pluma no
+     puede mover nada. */
   .link-stylus {
     color: var(--paper);
     text-decoration: underline;
     text-underline-offset: 0.25em;
     text-decoration-thickness: 1px;
     text-decoration-color: var(--ash);
-    transition: text-decoration-color 140ms var(--ease-stylus);
+    transition:
+      text-decoration-color 160ms var(--ease-stylus),
+      text-decoration-thickness 200ms var(--ease-stylus),
+      text-underline-offset 240ms var(--ease-stylus);
   }
-  .link-stylus:hover {
+  .link-stylus:hover,
+  .link-stylus:focus-visible {
     text-decoration-color: var(--paper);
+    text-decoration-thickness: 2px;
+    text-underline-offset: 0.17em;
   }
 }
 
@@ -1741,22 +2819,40 @@
     animation-delay: calc(var(--i) * 110ms);
   }
 
-  /* ── La autoprueba de la aguja: recorre y vuelve a cero,
-     sincronizada al milisegundo con el barrido de idiomas. ────── */
-  @keyframes needle-selftest {
+  /* ── EL CICLO DEL TITULAR ─────────────────────────────────────
+     17.5 s ÷ 5 frases = 3.5 s por frase. La ventana visible ocupa el 20%
+     del ciclo con 350 ms de entrada y 350 ms de salida, y la salida de una
+     acaba justo donde empieza la entrada de la siguiente: nunca hay dos
+     frases legibles a la vez sobre la misma celda —eso se ve como texto
+     sucio— y sí hay un pestañeo corto entre las dos, que es exactamente lo
+     que hace un contador mecánico. */
+  @keyframes morph-slot {
     0% {
-      transform: translate3d(0, 0, 0);
+      opacity: 0;
     }
-    62% {
-      transform: translate3d(0, 38vh, 0);
+    2% {
+      opacity: 1;
+    }
+    18% {
+      opacity: 1;
+    }
+    20% {
+      opacity: 0;
     }
     100% {
-      transform: translate3d(0, 0, 0);
+      opacity: 0;
     }
   }
 
-  .needle {
-    animation: needle-selftest 990ms var(--ease-stylus) both;
+  .morph > span {
+    animation: morph-slot var(--morph-dur, 17.5s) linear infinite;
+    /* Retardo NEGATIVO: adelanta la animación hasta la fase que le toca.
+       Con retardo positivo, el relleno hacia atrás dejaría las cinco
+       frases visibles a la vez durante la espera. */
+    animation-delay: calc(
+      (var(--i, 0) - var(--n, 5)) * var(--morph-dur, 17.5s) / var(--n, 5)
+    );
+    will-change: opacity;
   }
 
   /* ── La escritura de una marca ─────────────────────────────────
@@ -1778,12 +2874,126 @@
     animation: readout-write 420ms var(--ease-stylus) both;
   }
 
+  /* La marca aparece cuando la barra termina de escribirse: primero el
+     trazo, después dónde se detuvo la aguja. */
+  .readout-mark {
+    animation: readout-in 240ms var(--ease-stylus) 380ms both;
+  }
+
   @keyframes readout-in {
     from {
       opacity: 0;
     }
     to {
       opacity: 1;
+    }
+  }
+
+  /* ── LA ENTRADA DEL HÉROE ─────────────────────────────────────
+     Escalonada y AL CARGAR, no al scroll: lo que está en la primera
+     pantalla ya pasó su rango de `view()` antes de que nadie toque la
+     rueda, así que `.reveal-stagger` ahí no anima nada.
+
+     El `<h1>` NO entra en esto, y no es un olvido: es el candidato a
+     LCP. Retrasar su pintado por un efecto es exactamente la regresión
+     que este sitio vende arreglar. */
+  @keyframes hero-rise {
+    from {
+      opacity: 0;
+      transform: translate3d(0, 0.875rem, 0);
+    }
+    to {
+      opacity: 1;
+      transform: none;
+    }
+  }
+
+  .hero-in > * {
+    animation: hero-rise 600ms var(--ease-stylus) both;
+  }
+
+  /* El TITULAR queda fuera, y no es un olvido: en las trece páginas que no
+     llevan retrato, el `<h1>` ES el elemento LCP. Retrasar su pintado por
+     un efecto de entrada es exactamente la regresión que este sitio vende
+     arreglar. Se queda quieto y lo demás llega alrededor. */
+  .hero-in > h1 {
+    animation: none;
+  }
+
+  .hero-in > *:nth-child(1) {
+    animation-delay: 120ms;
+  }
+  .hero-in > *:nth-child(2) {
+    animation-delay: 200ms;
+  }
+  .hero-in > *:nth-child(3) {
+    animation-delay: 280ms;
+  }
+  .hero-in > *:nth-child(4) {
+    animation-delay: 360ms;
+  }
+  .hero-in > *:nth-child(5) {
+    animation-delay: 440ms;
+  }
+  .hero-in > *:nth-child(6) {
+    animation-delay: 520ms;
+  }
+  .hero-in > *:nth-child(7) {
+    animation-delay: 600ms;
+  }
+  .hero-in > *:nth-child(n + 8) {
+    animation-delay: 680ms;
+  }
+
+  /* El barrido del retrato: la aguja escribe la foto una vez, después
+     del despliegue del riel. Un transform, y se acabó. */
+  @keyframes figure-scan {
+    from {
+      transform: translate3d(0, -100%, 0);
+    }
+    to {
+      transform: translate3d(0, 0, 0);
+    }
+  }
+
+  .figure-scan {
+    animation: figure-scan 1500ms var(--ease-stylus) 420ms both;
+  }
+
+  /* La gota se forma con un rebote corto y se va sin rebote: el agua
+     no sale saltando. */
+  .drop::before {
+    transition:
+      opacity 190ms var(--ease-stylus),
+      transform 400ms cubic-bezier(0.2, 1.5, 0.42, 1);
+  }
+  .drop:hover::before,
+  .drop:focus-visible::before {
+    opacity: 1;
+    transform: scale(1) translateY(0);
+  }
+
+  /* ── EL ÍNDICE QUE SE ABRE ────────────────────────────────────
+     `::details-content` deja transicionar el cuerpo de un `<details>`
+     nativo sin una línea de JavaScript. `content-visibility` con
+     `allow-discrete` es lo que lo mantiene en el DOM mientras sale;
+     sin eso desaparece de golpe en el primer frame.
+
+     No se anima el alto: eso es layout, y layout por interacción es lo
+     que este proyecto no hace. */
+  @supports selector(::details-content) {
+    details::details-content {
+      opacity: 0;
+      translate: 0 -0.375rem;
+      transition:
+        opacity 240ms var(--ease-stylus),
+        translate 240ms var(--ease-stylus),
+        content-visibility 240ms allow-discrete;
+    }
+
+    details[open]::details-content {
+      opacity: 1;
+      translate: 0 0;
     }
   }
 
@@ -2001,26 +3211,14 @@
    ═══════════════════════════════════════════════════════════════ */
 
 @layer components {
-  /* ── VOLUMEN 1: la curvatura del tambor ──────────────────────
+  /* ── VOLUMEN: la curvatura del tambor ────────────────────────
      El papel no es una superficie plana: envuelve un cilindro. Un
      gradiente lateral —oscuro en los cantos, abierto donde pega la
      luz— da esa lectura sin una sola sombra y sin una sola caja.
-     Coste: cero. Es pintura, no una capa compuesta. */
-  /* Solo el VOLUMEN. La graduacion vive en `.tape-axis`, acotada a la
-     altura del heroe: un eje de tiempo a lo largo de toda la pagina no
-     mide nada. */
-  .tape {
-    background-image: linear-gradient(
-      to right,
-      rgb(0 0 0 / 0.55) 0%,
-      rgb(0 0 0 / 0) 38%,
-      rgb(255 255 255 / 0.035) 62%,
-      rgb(0 0 0 / 0.42) 100%
-    );
-  }
+     Coste: cero. Es pintura, no una capa compuesta.
 
-  /* La placa de papel también es una hoja curvada, no un rectángulo
-     pegado. Mismo cilindro, invertido: el papel refleja. */
+     El del riel vive en `.drum`. Este es el de la placa: la hoja de
+     papel es el mismo cilindro, invertido, porque refleja. */
   .plate {
     background-image: linear-gradient(
       to right,
@@ -2060,40 +3258,11 @@
     );
   }
 
-  /* ── LA LÍNEA VIVA ────────────────────────────────────────────
-     Lo que el brief llamó «algo que palpite». En un registrador de
-     verdad la pluma nunca está quieta: en reposo dibuja una línea
-     de base con ruido. Eso es exactamente esto.
-
-     El trazo es un SVG repetido verticalmente y la animación mueve
-     el ELEMENTO con `translateY`, no `background-position` —animar
-     la posición de un fondo repinta cada frame y está prohibido en
-     este proyecto por medición, no por gusto. */
-  .trace {
-    position: sticky;
-    top: calc(var(--needle-y) - 7.5rem);
-    display: block;
-    width: 100%;
-    height: 15rem;
-    margin-bottom: -15rem;
-    overflow: hidden;
-    pointer-events: none;
-    mask-image: linear-gradient(to bottom, transparent, #000 22%, #000 78%, transparent);
-  }
-
-  .trace-ink {
-    position: absolute;
-    inset-inline: 0;
-    top: 0;
-    height: calc(100% + 140px);
-    opacity: 0.55;
-    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='36' height='140' viewBox='0 0 36 140'%3E%3Cpath d='M18 0 C25 12 11 20 18 32 C26 46 9 52 18 66 C27 80 12 88 18 100 C24 112 13 126 18 140' fill='none' stroke='%238c877a' stroke-width='1.1'/%3E%3C/svg%3E");
-    background-repeat: repeat-y;
-    background-size: 100% 140px;
-    /* En el pseudo-elemento, que es el que anima. Estaba en `.trace`, que
-       no se mueve, y por eso no promovía nada: 23 recálculos en reposo. */
-    will-change: transform;
-  }
+  /* NOTA: aquí vivía `.trace`, una línea de base con ruido pegada al
+     riel. Se retiró con la graduación: el riel es ahora una marca
+     PAREJA de arriba abajo, y una línea temblorosa en medio de eso se
+     leía como un defecto, no como una pluma en reposo. Lo que palpita
+     en el sitio es `.live`, junto a la medición que de verdad corre. */
 
   /* ── EL CARRUSEL CONTINUO ─────────────────────────────────────
      Lo que el brief pidió como «carrusel», resuelto como lo que es
@@ -2108,6 +3277,9 @@
   .ribbon {
     position: relative;
     overflow: hidden;
+    /* Ni hover, ni selección, ni arrastre. Ver la nota del bucle abajo. */
+    pointer-events: none;
+    user-select: none;
     /* Se desvanece en los cantos en vez de cortarse contra un borde:
        la cinta entra y sale del tambor, no de una caja. */
     mask-image: linear-gradient(
@@ -2222,21 +3394,81 @@
    Todas `transform` u `opacity`. Todas mueren con `reduce`.
    ═══════════════════════════════════════════════════════════════ */
 @media (prefers-reduced-motion: no-preference) {
-  /* La cinta corre. Un tile completo, en bucle lineal: sin easing,
-     porque un tambor gira a velocidad constante. */
-  @keyframes trace-run {
-    from {
-      transform: translate3d(0, 0, 0);
-    }
-    to {
-      transform: translate3d(0, -140px, 0);
-    }
-  }
-
   /* El trazo NO se anima, y es una decisión medida: costaba 25 recálculos en
      reposo de un presupuesto de 20, y el movimiento que el ojo registra en
      esta página lo dan las cintas —que salieron gratis— y el latido. Un
      trazo impreso sigue diciendo lo mismo: la aguja pasó por aquí. */
+
+  /* ── EL ROLLO CORRE ───────────────────────────────────────────
+     Lo que se pidió: «que se sienta como que se despliega para abajo,
+     como algo real». Un registrador de verdad arrastra papel a
+     velocidad constante mientras esté encendido, y eso es esto.
+
+     Mueve el ELEMENTO con `translate3d`, nunca `background-position`:
+     animar la posición de un fondo repinta cada frame y en este
+     proyecto está prohibido por medición. Desplazar una capa ya
+     rasterizada 320 px cuesta lo mismo que las cintas — o sea nada. */
+  @keyframes drum-feed {
+    from {
+      transform: translate3d(0, 0, 0);
+    }
+    to {
+      transform: translate3d(0, var(--rail-run), 0);
+    }
+  }
+
+  .drum-marks,
+  .sheet-field::before {
+    animation: drum-feed 24s linear infinite;
+  }
+
+  /* La cara del tambor. Una vuelta cada 90 s: en el borde del disco eso
+     son ~10 px/s, del mismo orden que el arrastre del papel. La máquina
+     va a una sola velocidad. */
+  @keyframes drum-spin {
+    from {
+      rotate: 0deg;
+    }
+    to {
+      rotate: 360deg;
+    }
+  }
+
+  /* El barrido del dial. Siete segundos por vuelta: en el canto de un
+     disco de 23rem eso son ~165 px/s, la velocidad a la que una aguja
+     recorre un cuadrante. Es `rotate` y no `transform` porque el anillo
+     usa `translate` para centrarse y las propiedades individuales componen
+     sin pisarse. */
+  .dial-sweep {
+    animation: drum-spin 7s linear infinite;
+    will-change: rotate;
+  }
+
+  /* El bisel gira al REVÉS y seis veces más despacio. Dos velocidades es
+     lo que separa un aparato encendido de un dibujo de un aparato — y son
+     dos capas promovidas rotando, o sea compositor puro. */
+  .dial-bezel {
+    animation: drum-spin 44s linear infinite reverse;
+    will-change: rotate;
+  }
+
+  /* ── EL PRIMER DESPLIEGUE ─────────────────────────────────────
+     Al cargar, la hoja SALE de la máquina: el riel entero se dibuja de
+     arriba abajo una sola vez. Es `clip-path` y no `opacity` porque lo
+     que tiene que leerse es la dirección, no una aparición. Recorta una
+     tira de 11 px durante 1.1 s y después no vuelve a costar nada. */
+  @keyframes drum-unroll {
+    from {
+      clip-path: inset(0 0 100% 0);
+    }
+    to {
+      clip-path: inset(0 0 0 0);
+    }
+  }
+
+  .drum {
+    animation: drum-unroll 1100ms var(--ease-stylus) both;
+  }
 
   /* El carrusel. La pista lleva el contenido duplicado, así que
      desplazar exactamente el 50% devuelve al punto de partida. */
@@ -2253,11 +3485,19 @@
     animation: ribbon-run var(--ribbon-dur, 42s) linear infinite;
   }
 
-  /* Al pasar el puntero la cinta no se congela de golpe: sigue
-     corriendo. Frenarla en seco delataría que es una animación. */
-  .ribbon:hover .ribbon-track {
-    animation-duration: calc(var(--ribbon-dur, 42s) * 2.6);
-  }
+  /* NOTA: aquí había un `.ribbon:hover .ribbon-track` que multiplicaba la
+     duración por 2.6 para frenar la cinta al pasar el puntero. Estaba MAL y
+     es el defecto que se reportó como «se traba y se rompe».
+
+     Cambiar `animation-duration` a mitad de vuelo no cambia la velocidad:
+     el navegador recalcula el progreso de la iteración como
+     tiempo-transcurrido ÷ duración-nueva, así que la pista SALTA a otra
+     posición en el frame siguiente. Con 240 nombres y una duración de siete
+     minutos, ese salto son cientos de píxeles.
+
+     La cinta ahora ignora el puntero por completo: `pointer-events: none`
+     en `.ribbon` y ninguna regla de hover. Una cinta de registro no
+     responde a un ratón. */
 
   .ribbon-reverse .ribbon-track {
     animation-direction: reverse;
@@ -2327,17 +3567,8 @@
    ═══════════════════════════════════════════════════════════════ */
 @supports (animation-timeline: scroll()) {
   @media (prefers-reduced-motion: no-preference) {
-    @keyframes drift-behind {
-      from {
-        transform: translate3d(0, 0, 0);
-      }
-      to {
-        transform: translate3d(0, -7rem, 0);
-      }
-    }
-
-    /* Cuanto rollo ha pasado bajo la aguja. Es lo que le da sentido al
-       riel en toda su longitud, no solo en el heroe. */
+    /* Cuánto rollo ha pasado. Le da sentido al riel en TODA su
+       longitud, que ahora es el documento entero. */
     @keyframes tape-advance {
       from {
         transform: scaleY(0);
@@ -2347,15 +3578,40 @@
       }
     }
 
-    .tape-progress {
+    .drum-trace {
       animation: tape-advance 1ms linear both;
       animation-timeline: scroll(root block);
     }
 
-    .parallax-back {
-      animation: drift-behind 1ms linear both;
-      animation-timeline: scroll(root block);
+    /* ── EL CRISTAL SE CONDENSA ──────────────────────────────────
+       Arriba del todo no hay cristal: el nav flota sobre el material y
+       el titular es lo único que se lee. En cuanto la hoja empieza a
+       correr, el vidrio se forma. Es lo que hace que se sienta líquido
+       en vez de ser una barra con blur puesta desde el primer frame.
+
+       Sin soporte de `scroll()` se queda en su estado final —el cristal
+       puesto—, que es el estado seguro para el contraste. */
+    @keyframes chrome-condense {
+      from {
+        opacity: 0;
+      }
+      to {
+        opacity: 1;
+      }
     }
+
+    .chrome-glass,
+    .chrome-meniscus {
+      animation: chrome-condense 1ms linear both;
+      animation-timeline: scroll(root block);
+      animation-range: 0 5rem;
+    }
+
+    /* NOTA: el parálax por sección (`drum-turn` sobre `.drum-field`) se
+       retiró con el campo por sección. La hoja de fondo es ahora un solo
+       elemento FIJO, así que el parálax es máximo por construcción —el
+       contenido corre y la hoja no— y encima lleva su propio arrastre. Dos
+       velocidades sin una sola línea de tiempo de scroll.
 
     /* NOTA: aquí iba un `widen-on-scroll` que animaba el eje `wdth` del
        masthead con el scroll. Se retiró antes de usarse: cambiar el ancho
@@ -2454,6 +3710,55 @@
    components/instrument/media-slot.tsx para el porqué.
    ═══════════════════════════════════════════════════════════════ */
 @layer components {
+  /* ── EL HUECO, EN UN RENGLÓN ──────────────────────────────────
+     Un hueco de 1920×1080 sin archivo dibujaba una caja de 400 px de
+     alto llena de nada. Eso era, literalmente, el «espacio enorme
+     vacío» que se reportó: no faltaba diseño, sobraba una caja
+     esperando un archivo.
+
+     La instrucción es lo único que de verdad hacía falta ahí, así que
+     ahora es un renglón: qué falta, a qué ruta y de qué tamaño. Sigue
+     saliendo de `data/media-slots.ts` —el mismo dato que genera
+     `docs/MEDIA.md`— y la ruta sigue siendo texto seleccionable.
+
+     Los huecos de PORTADA (`compact`) conservan la caja marcada: ahí
+     el hueco es estructural —una miniatura dentro de una rejilla— y un
+     renglón dejaría la celda descuadrada. */
+  .media-note {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: baseline;
+    gap: 0.375rem 1rem;
+    margin: 0;
+    padding-block: 0.75rem;
+    border-top: 1px dashed var(--hairline-strong);
+    font-family: var(--font-mono);
+    font-size: var(--text-grad);
+    letter-spacing: 0.09em;
+    color: var(--ink-subtle);
+  }
+
+  .media-note-kind {
+    text-transform: uppercase;
+    letter-spacing: 0.16em;
+    color: var(--ink-muted);
+  }
+
+  /* La ruta es lo que se copia. Tinta plena y seleccionable. */
+  .media-note-path {
+    color: var(--ink);
+    user-select: all;
+    word-break: break-all;
+  }
+
+  .plate .media-note,
+  .plate .media-note-kind {
+    color: var(--ink-plate);
+  }
+  .plate .media-note-path {
+    color: var(--soot);
+  }
+
   .media-slot {
     position: relative;
     display: flex;
@@ -2522,13 +3827,6 @@
     color: var(--paper);
   }
 
-  .media-slot-what {
-    margin: 0.5rem 0 0;
-    font-size: 0.875rem;
-    line-height: 1.45;
-    color: var(--ink-muted);
-  }
-
   /* La ruta es lo que se copia. Va en tinta plena y seleccionable. */
   .media-slot-path {
     margin: 0.625rem 0 0;
@@ -2542,11 +3840,387 @@
 
   /* Dentro de la placa de papel el material se invierte. */
   .plate .media-slot-kind { color: var(--ink-plate); }
-  .plate .media-slot-what { color: var(--ink-plate); }
   .plate .media-slot-path { color: var(--soot); }
   .plate .media-mark::before,
   .plate .media-mark::after { background: rgb(18 16 14 / 0.45); }
 }
 
 
-/* build: papel-ahumado v2 */
+
+/* ═══════════════════════════════════════════════════════════════
+   EL SEGUNDO MARGEN — «la hoja tiene dos márgenes»
+
+   Diagnóstico, medido con capturas a 1440: en las catorce páginas que
+   no son la portada el contenido vivía en UNA columna izquierda de
+   unos 800 px, así que el 45% derecho de la hoja estaba muerto en todo
+   offset de scroll. No era falta de diseño: era falta de SEGUNDA
+   COLUMNA. Y el ritmo vertical era idéntico en las catorce, así que
+   ninguna se distinguía de otra.
+
+   Una gráfica de registrador real tiene DOS márgenes: el perforado a la
+   izquierda —que aquí es el riel, y ya existía— y el MARGEN DE
+   ANOTACIÓN a la derecha, donde el operador escribe a mano la escala,
+   el rango del canal y la lectura en cifras. Ese margen es lo que
+   faltaba, y no es adorno: en una gráfica de verdad es DONDE VA LA
+   LECTURA.
+
+   Un solo token nuevo, `--margin-w`. Ninguna cara nueva y ningún color
+   nuevo: esto EXTIENDE «Papel Ahumado», no lo rediseña.
+   ═══════════════════════════════════════════════════════════════ */
+@layer components {
+  /* ── LA REJILLA DE DOS MÁRGENES ───────────────────────────────
+     Por debajo de 80rem NO hay dos columnas: el margen cae al flujo
+     detrás del texto y su regla se vuelve horizontal. Se eligió 80rem
+     y no 64rem porque a 1024 la columna de texto se queda en 46rem y
+     las descripciones de canal caen a ocho líneas — es exactamente el
+     error que ya se midió una vez con el dial comiéndose la lista. */
+  .ledger {
+    display: grid;
+    gap: 3.5rem 0;
+  }
+
+  @media (min-width: 80rem) {
+    .ledger {
+      grid-template-columns: minmax(0, 54rem) minmax(0, var(--margin-w));
+      column-gap: 4rem;
+      align-items: start;
+    }
+  }
+
+  /* ── EL MARGEN ────────────────────────────────────────────────
+     Su canto es UNA regla de 1 px: vertical cuando es columna,
+     horizontal cuando cae al flujo. Es el mismo trazo girando, que es
+     lo que hace un cuaderno cuando se le acaba el ancho. */
+  .margin {
+    min-width: 0;
+    border-top: 1px solid var(--hairline);
+    padding-top: 1.25rem;
+  }
+
+  @media (min-width: 80rem) {
+    .margin {
+      border-top: 0;
+      border-left: 1px solid var(--hairline);
+      padding-top: 0;
+      padding-left: 2rem;
+    }
+
+    /* Pegajoso: el margen ACOMPAÑA la lectura mientras la columna de
+       texto corre. Es lo que hace la leyenda de un instrumento — se
+       queda a la vista mientras lees la traza. `top` sale del alto del
+       nav (4rem) más aire. */
+    .margin-sticky {
+      position: sticky;
+      top: 5.5rem;
+    }
+  }
+
+  /* Un renglón del margen: rótulo mono arriba, valor debajo. Es
+     `.plaque` a otra escala y a propósito comparte su gramática — el
+     margen y la placa son la misma mano escribiendo. */
+  .margin-row {
+    margin-top: 1.125rem;
+    border-top: 1px solid var(--hairline);
+    padding-top: 1.125rem;
+  }
+
+  /* Al PRIMER renglón del margen se le quita: el canto del margen ya es
+     su línea, y dos reglas a un centímetro se leen como un error. Las dos
+     formas cubren las dos maneras en que se monta un renglón —suelto o
+     dentro de un <dl>— porque una regla que depende del hermano anterior
+     desaparece en cuanto algo los agrupa. Eso es exactamente el defecto
+     que se midió. */
+  .margin > .margin-row:first-child,
+  .margin > :first-child > .margin-row:first-child {
+    margin-top: 0;
+    border-top: 0;
+    padding-top: 0;
+  }
+
+  .margin-key {
+    display: block;
+    font-family: var(--font-mono);
+    font-size: var(--text-grad);
+    letter-spacing: 0.16em;
+    text-transform: uppercase;
+    color: var(--ink-subtle);
+  }
+
+  .margin-val {
+    display: block;
+    margin-top: 0.375rem;
+    font-family: var(--font-mono);
+    font-size: 0.8125rem;
+    font-variant-numeric: tabular-nums;
+    line-height: 1.45;
+    color: var(--ink);
+  }
+
+  /* Un valor que es una CIFRA DE LECTURA y no una etiqueta: sube de
+     tamaño y se queda en mono tabular. La jerarquía se hace con tamaño
+     y grosor, nunca con opacidad — ya se midió que atenuar tumba el
+     contraste. */
+  .margin-read {
+    display: block;
+    margin-top: 0.25rem;
+    font-family: var(--font-mono);
+    font-size: 1.375rem;
+    font-variant-numeric: tabular-nums;
+    letter-spacing: -0.01em;
+    line-height: 1.1;
+    color: var(--paper);
+  }
+
+  /* Una FRASE en el margen NO va en mono. Medido: el descalificador de
+     una página de servicio son seis líneas, y a 13 px de cara de máquina
+     eso se come el margen entero. La regla del sistema ya lo dice — el
+     mono es para toda cifra y etiqueta— y una anotación escrita a mano
+     es prosa, no una etiqueta. */
+  .margin-prose {
+    display: block;
+    margin-top: 0.4375rem;
+    font-size: 0.8125rem;
+    line-height: 1.5;
+    color: var(--ink-muted);
+    text-wrap: pretty;
+  }
+
+  .plate .margin-prose { color: var(--ink-plate); }
+
+  /* Dentro de la placa el material se invierte, igual que todo lo demás. */
+  .plate .margin { border-color: rgb(18 16 14 / 0.22); }
+  .plate .margin-row { border-color: rgb(18 16 14 / 0.22); }
+  .plate .margin-key { color: var(--ink-plate); }
+  .plate .margin-val,
+  .plate .margin-read { color: var(--soot); }
+
+  /* ═══ INSTRUMENTO 1 · LAS PLUMAS ═══════════════════════════════
+     El registro multicanal: una pluma por paso del proceso, cada una
+     escribiendo su traza en la misma hoja. Es el aparato que le faltaba
+     a las cuatro páginas de servicio, y lo que dibuja sale de
+     `service.process` — si un servicio gana un paso, aparece una pluma
+     sola.
+
+     TODO son elementos con `background`, ni un nodo dentro de un SVG.
+     Está medido en este repo: un `<g>` girando costaba 179 layouts en
+     reposo porque ni un `<g>` ni un `<svg>` con contenido reciben capa
+     propia. Aquí no gira nada, pero la regla se respeta igual. */
+  /* Un INSTRUMENTO tiene su tamaño, y no el del hueco donde cae.
+     Medido a 1279 —justo por debajo de 80rem, donde el margen se pone en
+     flujo—: las cuatro trazas se estiraban a 1150 px y dejaban de leerse
+     como un aparato para leerse como una gráfica de barras. Con el tope
+     puesto, el margen se recoloca y el instrumento conserva su escala. Es
+     la misma razón por la que el dial va con `width: min(var(--face),
+     100%)` en vez de un alto fijo. */
+  .pens,
+  .span-axis {
+    max-width: var(--margin-w);
+  }
+
+  .pens {
+    display: grid;
+    gap: 0.875rem;
+  }
+
+  .pen {
+    display: grid;
+    grid-template-columns: 1.5rem minmax(0, 1fr);
+    align-items: center;
+    column-gap: 0.75rem;
+  }
+
+  .pen-id {
+    font-family: var(--font-mono);
+    font-size: var(--text-grad);
+    letter-spacing: 0.1em;
+    color: var(--ink-subtle);
+  }
+
+  /* La traza. El canto está dibujado entero desde el principio —una
+     regla de 1 px— y encima corre el trazo grueso. Sin el canto, una
+     pluma que aún no ha escrito se lee como un hueco y no como un
+     canal en reposo. Es la misma lección de `.drum-trace`. */
+  .pen-track {
+    position: relative;
+    height: 0.625rem;
+    background:
+      linear-gradient(var(--hairline-strong), var(--hairline-strong))
+      left center / 100% 1px no-repeat;
+  }
+
+  .pen-track::before {
+    content: '';
+    position: absolute;
+    inset-block: 0;
+    left: 0;
+    width: var(--pen-len, 60%);
+    background:
+      linear-gradient(var(--paper), var(--paper))
+      left center / 100% 2px no-repeat;
+    /* El TOPE de la pluma: la punta que dejó de escribir. */
+    border-right: 1px solid var(--paper);
+  }
+
+  /* Escribe una vez al cargar, de izquierda a derecha, escalonada por
+     `--i`. Se recorta con `clip-path`, que es compositor puro: animar
+     `width` sería animar layout. */
+  @supports (animation-timeline: view()) {
+    @media (prefers-reduced-motion: no-preference) {
+      .pen-track::before {
+        animation: pen-write 900ms var(--ease-stylus) backwards;
+        animation-delay: calc(220ms + var(--i, 0) * 110ms);
+      }
+    }
+  }
+
+  @keyframes pen-write {
+    from { clip-path: inset(0 100% 0 0); }
+    to { clip-path: inset(0 0 0 0); }
+  }
+
+  /* ═══ INSTRUMENTO 2 · EL TRAMO ═════════════════════════════════
+     Un eje de tiempo con las entradas marcadas POR POSICIÓN. Es la
+     tesis del sitio aplicada a una credencial: una fecha no se lee en
+     una tarjeta, se lee contra una regla.
+
+     Va en /cv, /premios y /certificaciones, que es donde el dato son
+     fechas de verdad. NO va en /libros: hay UN libro, y una regla con
+     una sola marca no es una medición. */
+  .span-axis {
+    position: relative;
+    /* El eje, dibujado entero. Vertical: el tiempo baja, igual que el
+       rollo del riel. */
+    padding-left: 1.25rem;
+    background:
+      linear-gradient(var(--hairline-strong), var(--hairline-strong))
+      left top / 1px 100% no-repeat;
+  }
+
+  .span-mark {
+    position: relative;
+    display: block;
+    padding-block: 0.5rem;
+  }
+
+  /* La marca: un trazo corto que cruza el eje. */
+  .span-mark::before {
+    content: '';
+    position: absolute;
+    top: 1.05rem;
+    left: -1.25rem;
+    width: 0.6875rem;
+    height: 1px;
+    background: var(--ash);
+  }
+
+  /* La entrada MÁS RECIENTE lleva marca larga y a tinta plena. Es la
+     graduación mayor del eje, no un color de estado: el minio y el
+     umbral son SEMÁNTICOS y no se gastan aquí. */
+  .span-mark[data-latest]::before {
+    width: 1.25rem;
+    height: 2px;
+    background: var(--paper);
+  }
+
+  .span-year {
+    display: block;
+    font-family: var(--font-mono);
+    font-size: var(--text-grad);
+    font-variant-numeric: tabular-nums;
+    letter-spacing: 0.08em;
+    color: var(--ink-subtle);
+  }
+
+  .span-what {
+    display: block;
+    margin-top: 0.1875rem;
+    font-size: 0.8125rem;
+    line-height: 1.4;
+    color: var(--ink);
+  }
+
+  .plate .span-axis {
+    background-image: linear-gradient(
+      rgb(18 16 14 / 0.3),
+      rgb(18 16 14 / 0.3)
+    );
+  }
+  .plate .span-mark::before { background: var(--ink-plate); }
+  .plate .span-mark[data-latest]::before { background: var(--soot); }
+  .plate .span-year { color: var(--ink-plate); }
+  .plate .span-what { color: var(--soot); }
+
+  /* ── LA PESTAÑA DE ARRASTRE ───────────────────────────────────
+     El brief pidió un botón y este sistema no tiene botones: no queda un
+     borde de cuatro lados en el sitio. Pero un registrador SÍ tiene un
+     control que se tira —la pestaña perforada con la que se hace avanzar el
+     papel— y eso es exactamente lo que hace este enlace: te lleva a otra
+     parte.
+
+     Una regla arriba, el rótulo y la flecha. Al apuntar, la regla pasa de
+     ceniza a papel y la flecha se desplaza: la pestaña tirando. Sin caja,
+     sin radio y sin sombra.
+
+     `--control` y no `--hairline` porque esto ES un control, y WCAG 1.4.11
+     pide 3:1 para el borde de un componente; un divisor decorativo no llega
+     ahí. Es la misma distinción que ya está en `.field-line`.
+
+     El alto mínimo es 2.75rem, o sea 44 px de objetivo táctil. Un rótulo
+     mono de 11 px mide 15 px de caja: sin esto sería imposible de tocar en
+     un móvil, y un botón que no se puede tocar no es un botón. */
+  .pull-tab {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.75rem;
+    min-height: 2.75rem;
+    border-top: 1px solid var(--control);
+    padding-top: 0.75rem;
+    font-family: var(--font-mono);
+    font-size: var(--text-grad);
+    letter-spacing: 0.16em;
+    text-transform: uppercase;
+    color: var(--paper);
+    text-decoration: none;
+    transition: border-color 160ms var(--ease-stylus);
+  }
+
+  .pull-tab::after {
+    content: '→';
+    transition: translate 160ms var(--ease-stylus);
+  }
+
+  .pull-tab:hover,
+  .pull-tab:focus-visible {
+    border-top-color: var(--paper);
+  }
+
+  .pull-tab:hover::after,
+  .pull-tab:focus-visible::after {
+    translate: 0.3125rem 0;
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .pull-tab::after { transition: none; }
+    .pull-tab:hover::after,
+    .pull-tab:focus-visible::after { translate: none; }
+  }
+}
+
+
+/* ═══════════════════════════════════════════════════════════════
+   FUERA DE TODA CAPA, A PROPÓSITO
+
+   Una capa le gana a otra ANTES de que se compare la especificidad, así
+   que `@layer components` nunca puede vencer a una utilidad escrita en
+   el markup. Estas dos reglas tienen que hacerlo: `mt-1` y
+   `max-w-[52ch]` viven en los 15 archivos de página y son de cuando la
+   fila del canal era una sola columna.
+   ═══════════════════════════════════════════════════════════════ */
+@media (min-width: 64rem) {
+  .channel > :nth-child(2) > .channel-note {
+    margin-top: 0;
+    max-width: 62ch;
+  }
+}
+
+/* build: papel-ahumado v3 */

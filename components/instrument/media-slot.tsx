@@ -5,30 +5,48 @@ import { slotById } from '@/data/media-slots'
  * ════════════════════════════════════════════════════════════════
  * HUECO DE MEDIO — dónde va una imagen, un video o un fondo
  *
- * El brief fue explícito: «no hay indicaciones de dónde van las imágenes,
- * por lo mismo no sé si en algunas debe ir algo y tal vez el espacio vacío
- * enorme es por eso». Esto lo resuelve.
+ * El brief original fue explícito: «no hay indicaciones de dónde van las
+ * imágenes, por lo mismo no sé si en algunas debe ir algo y tal vez el
+ * espacio vacío enorme es por eso». Esto lo resolvía.
  *
- * Mientras no exista el archivo, el hueco dibuja MARCAS DE REGISTRO —las
- * cruces que lleva un pliego de imprenta para alinear las tintas— y escribe
- * encima, en mono, tres cosas: qué va ahí, la ruta EXACTA del archivo que
- * falta, y el tamaño esperado. Nada de eso es adorno: es la instrucción.
+ * ── POR QUÉ CAMBIÓ ──
+ * Lo resolvía DEMASIADO. Un hueco de 1920×1080 sin archivo reservaba su
+ * relación de aspecto real, así que dibujaba una caja de cuatrocientos
+ * píxeles de alto llena de nada — y eso volvió a reportarse, con razón,
+ * como «espacios enormes vacíos y sin nada». La caja que iba a resolver
+ * el hueco ERA el hueco.
+ *
+ * Ahora hay dos formas, y cada una hace un trabajo distinto:
+ *
+ *   · POR DEFECTO — un RENGLÓN. Qué falta, a qué ruta y de qué tamaño.
+ *     Es toda la instrucción que hacía falta, en 24 px de alto en vez de
+ *     400. Cero espacio muerto.
+ *
+ *   · `compact` — la caja marcada de siempre. Se usa donde el hueco es
+ *     ESTRUCTURAL: una portada dentro de una rejilla, un logo en una
+ *     columna de 176 px. Ahí un renglón dejaría la celda descuadrada y
+ *     el vacío no es un defecto, es la miniatura que todavía no llegó.
+ *
+ * Cuando el archivo existe (`filled: true`) las dos formas son la imagen
+ * real, con su relación de aspecto reservada: cero CLS al llenarse.
  *
  * ── POR QUÉ NO ES UNA CAJA ──
- * Porque el brief también pidió quitar cajas. Un hueco con borde de cuatro
- * lados es exactamente lo que se acaba de eliminar del sitio. Las marcas de
- * registro cumplen la misma función —delimitan el área— y pertenecen al
- * mundo del papel impreso, que es el del sistema.
- *
- * ── POR QUÉ NO SE MUEVE NADA AL LLENARLO ──
- * El hueco reserva la relación de aspecto real del archivo con `aspect-ratio`
- * a partir de `width`/`height` del registro. Cuando la imagen llega, entra
- * exactamente en el mismo espacio: cero CLS.
+ * Porque el brief pidió quitar cajas. El renglón se marca con una regla
+ * superior punteada, que es el vocabulario que este sistema ya usa para
+ * un hueco en el registro (`.gap`). Un hueco es un DATO, y se dibuja
+ * como hueco.
  *
  * El estado vive en `data/media-slots.ts`, que es también lo que genera
- * `docs/MEDIA.md`. Un solo dato, dos salidas, imposible que se contradigan.
+ * `docs/MEDIA.md`. Un solo dato, dos salidas, imposible que se
+ * contradigan.
  * ════════════════════════════════════════════════════════════════
  */
+
+const KIND_LABEL: Record<string, string> = {
+  image: 'imagen',
+  video: 'video',
+  loop: 'fondo animado',
+}
 
 export function MediaSlot({
   id,
@@ -42,10 +60,9 @@ export function MediaSlot({
   sizes?: string
   priority?: boolean
   /**
-   * Sin la descripción larga. Para huecos chicos —una portada de 320 px en
-   * un listado— donde el párrafo no cabe y se recortaba: la instrucción
-   * completa vive en `docs/MEDIA.md` y la ruta sigue estando aquí, que es
-   * lo único que hace falta para saber qué archivo poner.
+   * El hueco es estructural: una portada o un logo dentro de una rejilla.
+   * Dibuja la caja marcada con la relación de aspecto reservada, sin la
+   * descripción larga — la instrucción completa vive en `docs/MEDIA.md`.
    */
   compact?: boolean
 }) {
@@ -73,6 +90,24 @@ export function MediaSlot({
     )
   }
 
+  const kind = KIND_LABEL[slot.kind] ?? slot.kind
+
+  /* La forma por defecto: un renglón, no un hueco de 400 px. */
+  if (!compact) {
+    return (
+      <p className={`media-note ${className ?? ''}`}>
+        <span className="media-note-kind">
+          {`pendiente · ${kind} ${slot.width}×${slot.height}`}
+        </span>
+        {/* La ruta en UNA sola plantilla. Con dos hijos de texto adyacentes
+            React mete un comentario en medio y la ruta deja de existir como
+            texto: no se puede copiar ni encontrar con Ctrl+F, que es
+            justamente para lo que está. */}
+        <span className="media-note-path">{`public${slot.path}`}</span>
+      </p>
+    )
+  }
+
   return (
     <div
       className={`media-slot ${className ?? ''}`}
@@ -89,19 +124,8 @@ export function MediaSlot({
 
       <div className="media-slot-body">
         <p className="media-slot-kind">
-          {slot.kind === 'image'
-            ? 'imagen'
-            : slot.kind === 'video'
-              ? 'video'
-              : 'fondo animado'}
-          {' · '}
-          {slot.width}×{slot.height}
+          {`${kind} · ${slot.width}×${slot.height}`}
         </p>
-        {compact ? null : <p className="media-slot-what">{slot.what}</p>}
-        {/* La ruta en UNA sola plantilla. Con dos hijos de texto adyacentes
-            React mete un comentario en medio y la ruta deja de existir como
-            texto: no se puede copiar ni encontrar con Ctrl+F, que es
-            justamente para lo que está. */}
         <p className="media-slot-path">{`public${slot.path}`}</p>
       </div>
     </div>

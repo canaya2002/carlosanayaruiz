@@ -131,7 +131,7 @@
     "stackLabel": "Stack",
     "periodLabel": "Period",
     "ctaTitle": "Want the next entry on this list to be yours?",
-    "ctaLead": "Tell me what you are building or what broke. I reply within 24 to 48 business hours with a first read on where I would start.",
+    "ctaLead": "Tell me what you are building or what broke. I reply in under 24 hours with a first read on where I would start.",
     "railNote": "Drag the rail or use the arrows. Every card opens the full project page, with what I did and the stack it actually used.",
     "coverAlt": "Cover image for the {name} project",
     "statEntries": "Entries in total",
@@ -180,7 +180,7 @@
       "relatedTitle": "Related services",
       "ctaMain": "Request an audit",
       "ctaSecondary": "Book a call",
-      "ctaNote": "I reply within 24-48 business hours, Mexico City time."
+      "ctaNote": "I reply in under 24 hours, Mexico City time."
     },
     "desarrolloWeb": {
       "title": "Web Development with Next.js and Firebase",
@@ -260,7 +260,7 @@
     "consentLink": "Privacy notice",
     "send": "Open my message in email",
     "location": "Location",
-    "responseTime": "Reply within 24-48 business hours",
+    "responseTime": "Reply in under 24 hours",
     "directEmail": "Direct email",
     "projectTypes": "Project types",
     "projectTypesDesc": "Standalone audits of one to two weeks, builds of four to eight, and ongoing monthly work for teams that need an in-house SEO engineer.",
@@ -288,6 +288,56 @@
     "freeResources": "Free resources",
     "freeResourcesDesc": "In the meantime, this is already public and free:"
   },
+  "canales": {
+    "eyebrow": "three channels · parallel",
+    "title": "How you reach me",
+    "formTitle": "The form",
+    "formNote": "Five fields, and the URL is the one that helps most. If the site comes with it, my first reply already has a reading in it.",
+    "waTitle": "WhatsApp",
+    "waNote": "For a thirty-second question. It opens with the subject already written, so nothing has to be explained twice.",
+    "calTitle": "Book a call",
+    "calNote": "Thirty minutes, calendar open. Pick the slot that works and turn up with nothing prepared."
+  },
+  "lead": {
+    "nombre": "Your name",
+    "email": "Your email",
+    "asunto": "What it is about",
+    "asuntoHint": "if you are not sure, leave it on «not sure yet»",
+    "sitio": "The URL",
+    "sitioHint": "optional, and the most useful of the five",
+    "mensaje": "What is happening",
+    "mensajeHint": "and since when",
+    "submit": "Send",
+    "enviando": "Sending…",
+    "nota": "I reply in under 24 hours, from Mexico City. Your email goes on no list.",
+    "ok": "It arrived. I will reply in under 24 hours.",
+    "invalido": "Something is missing, or the email does not look right. Check the name, the email and the message.",
+    "sinConfigurar": "Form delivery is not connected yet. Send me a WhatsApp or write to me directly and it still reaches me.",
+    "error": "Something broke on my side. Try again in a moment, or send a WhatsApp.",
+    "asuntos": [
+      "Not sure yet",
+      "Technical SEO",
+      "Web development",
+      "AI automation",
+      "Dashboards",
+      "Something else"
+    ]
+  },
+  "newsletter": {
+    "eyebrow": "newsletter · in the works",
+    "title": "When I write something, you get it",
+    "lead": "Notes on technical SEO and performance: what I find auditing real sites, with the numbers. No fixed cadence — I write when there is something worth reading.",
+    "label": "Your email",
+    "placeholder": "you@email.com",
+    "submit": "Subscribe",
+    "consent": "For the newsletter only. No spam, no third parties, and one click to unsubscribe.",
+    "privacy": "How I handle your data",
+    "ok": "Done. I will write when the first one is out.",
+    "yaEstaba": "You were already on the list. Nothing to do.",
+    "invalido": "That email does not look right. Check it and try again.",
+    "sinConfigurar": "The list is not connected yet. Write to me directly and I will add you by hand.",
+    "error": "Something broke on my side. Try again in a moment, or write to me."
+  },
   "legal": {
     "privacyTitle": "Privacy Notice",
     "privacyLead": "What data this site collects, what I use it for, who it's shared with, and how you can exercise your ARCO rights under Mexico's federal data protection law (LFPDPPP).",
@@ -297,6 +347,7 @@
   },
   "footer": {
     "description": "Technical SEO consulting and web development from Mexico City. Audits, migrations, Next.js, and structured data, so your site is legible to search engines and to language models alike.",
+    "clientArea": "Already a client? Client area",
     "navigation": "Navigation",
     "contactTitle": "Contact",
     "services": "Services",
@@ -345,7 +396,7 @@
     "stackNote": "Tools and technologies by group. No self-assessed levels: the record does not hold them, and adding them would be inventing them.",
     "languages": "Languages",
     "ctaTitle": "Useful so far?",
-    "ctaDesc": "Tell me what you need and by when. I reply within 24 to 48 business hours with a first read.",
+    "ctaDesc": "Tell me what you need and by when. I reply in under 24 hours with a first read.",
     "ctaLink": "Get in touch",
     "contact": {
       "email": "Email",
@@ -430,7 +481,7 @@
     "cvDesc": "The full track record on a single page: education, experience, certifications, and languages.",
     "cvCta": "See the CV",
     "ctaTitle": "Want someone who documents what he claims?",
-    "ctaLead": "Describe the site and what changed. I reply within 24 to 48 business hours with a first read on what is likely going on.",
+    "ctaLead": "Describe the site and what changed. I reply in under 24 hours with a first read on what is likely going on.",
     "ctaButton": "Write to me",
     "railEyebrow": "At a glance",
     "railTitle": "The three of them, as cards",
@@ -485,7 +536,7 @@
   },
   "homeCta": {
     "title": "Tell me where the traffic is leaking.",
-    "lead": "Describe the site and what changed. I reply within 24 to 48 business hours with a first read on what is likely going on.",
+    "lead": "Describe the site and what changed. I reply in under 24 hours with a first read on what is likely going on.",
     "alsoOn": "Also on",
     "and": "and"
   }

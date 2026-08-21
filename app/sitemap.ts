@@ -41,7 +41,7 @@ import type { Locale } from '@/data/types'
  */
 
 /** W3C date. See the warning above before touching this. */
-const CONTENT_UPDATED = '2026-08-19'
+const CONTENT_UPDATED = '2026-08-21'
 
 type ChangeFrequency = NonNullable<
   MetadataRoute.Sitemap[number]['changeFrequency']

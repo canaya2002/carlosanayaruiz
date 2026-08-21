@@ -496,14 +496,32 @@ export function generateProfessionalServiceSchema(locale: Locale): JsonLdNode {
     availableLanguage: AVAILABLE_LANGUAGES,
     knowsAbout: KNOWS_ABOUT,
     knowsLanguage: AVAILABLE_LANGUAGES,
-    contactPoint: {
-      '@type': 'ContactPoint',
-      contactType: locale === 'en' ? 'Sales enquiries' : 'Consultas de negocio',
-      email: `mailto:${NAP.email}`,
-      telephone: NAP.phone,
-      url: routeUrl('contacto', locale),
-      availableLanguage: AVAILABLE_LANGUAGES,
-    },
+    /* DOS puntos de contacto y no uno, porque no son el mismo canal.
+       WhatsApp no es «el teléfono»: tiene su propia URL, su propio uso —una
+       duda corta— y es como llega la mayoría desde un móvil en México. Un
+       solo nodo que mezcla correo y teléfono describe mal la realidad, y un
+       asistente que lee ese grafo no puede ofrecer el canal correcto.
+
+       `contactOption` no lleva `TollFree` ni nada parecido: no aplica, y
+       marcar lo que no es cierto es peor que no marcar. */
+    contactPoint: [
+      {
+        '@type': 'ContactPoint',
+        contactType:
+          locale === 'en' ? 'Sales enquiries' : 'Consultas de negocio',
+        email: `mailto:${NAP.email}`,
+        telephone: NAP.phone,
+        url: routeUrl('contacto', locale),
+        availableLanguage: AVAILABLE_LANGUAGES,
+      },
+      {
+        '@type': 'ContactPoint',
+        contactType: locale === 'en' ? 'Instant messaging' : 'Mensajería',
+        telephone: NAP.phone,
+        url: `https://wa.me/${NAP.phone.replace(/\D/g, '')}`,
+        availableLanguage: AVAILABLE_LANGUAGES,
+      },
+    ],
     hasOfferCatalog: offerCatalog(locale),
     sameAs: SAME_AS,
   }
