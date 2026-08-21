@@ -1,5 +1,5 @@
 import type { Metadata, Viewport } from 'next'
-import { Archivo, IBM_Plex_Mono, Newsreader } from 'next/font/google'
+import { Archivo, Chivo_Mono, Fraunces } from 'next/font/google'
 import { NextIntlClientProvider } from 'next-intl'
 import { getMessages, setRequestLocale, getTranslations } from 'next-intl/server'
 import { notFound } from 'next/navigation'
@@ -18,19 +18,34 @@ import { SpeedInsights } from '@vercel/speed-insights/next'
 import { Analytics } from '@vercel/analytics/react'
 
 /**
- * Tres caras, tres roles — el sistema «Papel Ahumado».
+ * ════════════════════════════════════════════════════════════════
+ * TRES CARAS, TRES ROLES — el sistema «Papel Ahumado»
  *
- * ⚠ SUSTITUTOS. Las caras reales del sistema son GT Pressura y GT Pressura
- * Mono (Grilli Type) y Arlt (PampaType), las tres comerciales y todavía no
- * licenciadas. Estas tres son gratuitas y sostienen los mismos roles
- * mientras llegan.
+ * Las tres son GRATUITAS y son la elección definitiva, no un sustituto: se
+ * descartó comprar GT Pressura y Arlt.
+ *
+ * Y no es una renuncia. Archivo la dibujó Omnibus-Type expresamente para
+ * REPRODUCCIÓN IMPRESA —viene de las góticas americanas de periódico, hechas
+ * para sobrevivir a una impresión mala—, que es exactamente la tesis de este
+ * sitio. GT Pressura persigue ese mismo carácter industrial; Archivo lo tiene
+ * de origen.
+ *
+ * Chivo Mono es de la MISMA CASA, así que las dos están dibujadas para
+ * convivir: mismos ejes, mismo esqueleto, misma altura de x. Eso es algo que
+ * dos familias de foundries distintas casi nunca dan, y aquí importa porque
+ * la oposición máquina/humano es el concepto.
+ *
+ * Acreditar a una foundry de Buenos Aires en un sitio hecho desde Ciudad de
+ * México es una posición, no un ahorro.
  *
  * El sitio NO nombra ninguna de estas variables directamente: todo apunta a
- * `--face-display`, `--face-mono` y `--face-human` en globals.css. Cambiar de
- * cara es editar esas tres líneas, no tocar componentes.
+ * `--face-display`, `--face-mono` y `--face-human` en globals.css.
  *
  * `latin-ext` es obligatorio: el copy en español usa á é í ó ú ñ ¿ ¡.
+ * ════════════════════════════════════════════════════════════════
  */
+
+/** Display y cuerpo. El eje `wdth` da la condensación industrial del masthead. */
 const archivo = Archivo({
   subsets: ['latin', 'latin-ext'],
   variable: '--font-archivo',
@@ -40,9 +55,9 @@ const archivo = Archivo({
 })
 
 /** La voz de la máquina: toda cifra, unidad, graduación y etiqueta. */
-const plexMono = IBM_Plex_Mono({
+const chivoMono = Chivo_Mono({
   subsets: ['latin', 'latin-ext'],
-  variable: '--font-plex-mono',
+  variable: '--font-chivo-mono',
   display: 'swap',
   weight: ['400', '500'],
   adjustFontFallback: true,
@@ -52,12 +67,16 @@ const plexMono = IBM_Plex_Mono({
  * La voz humana, y solo eso: frases en primera persona. Nunca navegación,
  * nunca datos, nunca un titular. Alrededor del 3% del tipo del sitio — la
  * oposición es el concepto, así que si crece deja de significar.
+ *
+ * Solo la itálica. Una serifa recta aquí competiría con el display; inclinada
+ * se lee como algo escrito a mano al margen, que es el registro que se busca.
  */
-const newsreader = Newsreader({
+const fraunces = Fraunces({
   subsets: ['latin', 'latin-ext'],
-  variable: '--font-newsreader',
+  variable: '--font-fraunces',
   display: 'swap',
-  style: ['normal', 'italic'],
+  style: ['italic'],
+  axes: ['SOFT', 'WONK', 'opsz'],
   adjustFontFallback: true,
 })
 
@@ -187,7 +206,7 @@ export default async function LocaleLayout({
      */
     <html
       lang={locale}
-      className={`${archivo.variable} ${plexMono.variable} ${newsreader.variable}`}
+      className={`${archivo.variable} ${chivoMono.variable} ${fraunces.variable}`}
     >
       <head>
         {/* Person + ProfessionalService + WebSite. Los hechos de la entidad

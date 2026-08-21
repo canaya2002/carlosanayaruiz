@@ -154,6 +154,49 @@ const PROBE = `(() => {
   return out
 })()`
 
+const PROBE_SCROLL = `(async () => {
+  /* ── CONTENIDO INVISIBLE DENTRO DEL VIEWPORT ────────────────────
+     El defecto que este probe no veia y que se reportaba como
+     «espacios vacios enormes»: un elemento con un reveal ligado al
+     scroll que se queda en opacity 0 aunque su seccion ya este en
+     pantalla. El contenido esta ahi, ocupa su sitio, y no se ve.
+     Solo se detecta DESPLAZANDOSE de verdad. */
+  const paso = Math.round(window.innerHeight * 0.7)
+  const alto = document.body.scrollHeight
+  const sospechosos = new Map()
+  const espera = (ms) => new Promise((r) => setTimeout(r, ms))
+
+  for (let y = 0; y <= alto; y += paso) {
+    window.scrollTo(0, y)
+    await espera(420)
+    for (const el of document.querySelectorAll("main *")) {
+      if (el.querySelector("*")) continue
+      const b = el.getBoundingClientRect()
+      if (b.height < 12) continue
+      if (b.top > window.innerHeight * 0.85 || b.bottom < window.innerHeight * 0.15) continue
+      const txt = (el.textContent || "").trim()
+      if (txt.length < 4) continue
+      const clave = txt.slice(0, 44)
+      /* La opacidad EFECTIVA es el producto de la cadena: un hijo de un
+         elemento en opacity 0 sigue reportando 1 en su propio estilo
+         computado. Medir solo el elemento era la razon por la que este
+         detector no disparaba ni con el rango roto a proposito. */
+      let efectiva = 1
+      for (let p = el; p && p !== document.body; p = p.parentElement) {
+        efectiva *= Number(getComputedStyle(p).opacity)
+        if (efectiva < 0.15) break
+      }
+      if (efectiva < 0.15) {
+        if (!sospechosos.has(clave)) sospechosos.set(clave, { txt: clave })
+      } else {
+        sospechosos.delete(clave)
+      }
+    }
+  }
+  window.scrollTo(0, 0)
+  return [...sospechosos.values()].slice(0, 12)
+})()`
+
 async function cdp(ws, id, method, params) {
   return new Promise((resolve, reject) => {
     const onMessage = (event) => {
@@ -221,6 +264,16 @@ for (const path of paths) {
       returnByValue: true,
     })
     const r = result.value
+
+    /* Segunda pasada: recorre la pagina de verdad. Sin esto, todo reveal
+       ligado al scroll se mide en su estado inicial y el probe da un falso
+       «OK» sobre una pagina que el visitante ve vacia. */
+    const { result: invisRes } = await cdp(ws, ++id, "Runtime.evaluate", {
+      expression: PROBE_SCROLL,
+      returnByValue: true,
+      awaitPromise: true,
+    })
+    r.invisibles = invisRes.value || []
     const issues =
       r.gaps.length +
       r.clipped.length +
@@ -228,6 +281,7 @@ for (const path of paths) {
       r.quiet.length +
       r.noAlt.length +
       r.headings.length +
+      r.invisibles.length +
       (r.h1Count === 1 ? 0 : 1)
     total += issues
 

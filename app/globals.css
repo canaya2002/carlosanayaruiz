@@ -164,6 +164,9 @@
      graduacion queda mas densa, que es como se ve un registrador real. */
   --tape-span: 1.5;
   --needle-y: 42vh;
+  /* Rango unico de aparicion. Corto y dentro de `entry`, para que nada
+     siga invisible con su seccion ya en pantalla. */
+  --reveal-range: entry 10% entry 90%;
   /* Fuente unica de la altura del heroe. La usan la seccion y el eje
      graduado del riel: si se separan, el eje deja de coincidir con el
      contenido y la graduacion miente. */
@@ -179,8 +182,8 @@
      variables y a nada más: cuando lleguen los .woff2, se cambian
      estas tres líneas y el sitio entero cambia de voz. */
   --face-display: var(--font-archivo);
-  --face-mono: var(--font-plex-mono);
-  --face-human: var(--font-newsreader);
+  --face-mono: var(--font-chivo-mono);
+  --face-human: var(--font-fraunces);
 }
 
 /* En móvil la cinta se estrecha y la escala se comprime. La proporción
@@ -1124,31 +1127,25 @@
  */
 @supports (animation-timeline: view()) {
   @media (prefers-reduced-motion: no-preference) {
-    .reveal {
-      animation: enter-up 1s var(--ease-out) both;
-      animation-timeline: view();
-      animation-range: entry 0% entry 38%;
-    }
+    /* `.reveal` y `.reveal-stagger` del sistema anterior se retiraron de
+       aquí: había DOS definiciones de las mismas clases, con rangos
+       distintos y con `animation-delay` en segundos —que una línea de
+       tiempo de scroll ignora—. Dos definiciones compitiendo es
+       literalmente la causa de que las animaciones se sintieran
+       inconsistentes entre páginas.
+
+       La única definición vive más abajo, en el bloque «UN SOLO RANGO
+       PARA TODO LO QUE APARECE AL SCROLL». */
     .reveal-scale {
       animation: enter-scale 1s var(--ease-out) both;
       animation-timeline: view();
-      animation-range: entry 0% entry 42%;
+      animation-range: var(--reveal-range);
     }
     .reveal-3d {
       animation: enter-3d 1s var(--ease-out) both;
       animation-timeline: view();
-      animation-range: entry 0% entry 45%;
+      animation-range: var(--reveal-range);
     }
-    .reveal-stagger > * {
-      animation: enter-up 1s var(--ease-out) both;
-      animation-timeline: view();
-      animation-range: entry 0% entry 45%;
-    }
-    .reveal-stagger > *:nth-child(2) { animation-delay: 0.08s; }
-    .reveal-stagger > *:nth-child(3) { animation-delay: 0.16s; }
-    .reveal-stagger > *:nth-child(4) { animation-delay: 0.24s; }
-    .reveal-stagger > *:nth-child(5) { animation-delay: 0.32s; }
-    .reveal-stagger > *:nth-child(6) { animation-delay: 0.4s; }
 
     /* Paralaje al hacer scroll. Se mueve más despacio que la página, lo que da
        profundidad sin costar nada: es una animación de scroll compuesta. */
@@ -1815,9 +1812,26 @@
     .spike {
       animation: band-draw 1ms linear both;
       animation-timeline: view();
-      animation-range: entry 8% cover 22%;
+      animation-range: var(--reveal-range);
     }
 
+    /* ── UN SOLO RANGO PARA TODO LO QUE APARECE AL SCROLL ──────
+       Antes cada hijo de `.reveal-stagger` llevaba su propio
+       `animation-range` desplazado para escalonar la entrada. Estaba
+       mal y produjo el defecto que se reportó como «espacios vacíos
+       enormes»: con la seccion entera en pantalla, las filas 3 y 4
+       seguian en opacity 0 —medido— porque su rango exigia mucho mas
+       scroll del que hace falta para ver el bloque completo.
+
+       El escalonado no se hace con el rango: cada elemento tiene su
+       PROPIA linea de tiempo `view()`, basada en su propia posicion,
+       asi que los de mas abajo entran despues por si solos. Un rango
+       unico y corto da el escalonado natural y garantiza que nada se
+       quede invisible con la seccion a la vista.
+
+       Un rango, una curva, un solo comportamiento en todo el sitio:
+       tambien resuelve la queja de que las animaciones no eran
+       consistentes entre paginas. */
     @keyframes line-rise {
       from {
         opacity: 0;
@@ -1829,31 +1843,11 @@
       }
     }
 
-    .reveal {
-      animation: line-rise 1ms linear both;
-      animation-timeline: view();
-      animation-range: entry 4% cover 18%;
-    }
-
+    .reveal,
     .reveal-stagger > * {
       animation: line-rise 1ms linear both;
       animation-timeline: view();
-      animation-range: entry 4% cover 22%;
-    }
-    .reveal-stagger > *:nth-child(2) {
-      animation-range: entry 6% cover 24%;
-    }
-    .reveal-stagger > *:nth-child(3) {
-      animation-range: entry 8% cover 26%;
-    }
-    .reveal-stagger > *:nth-child(4) {
-      animation-range: entry 10% cover 28%;
-    }
-    .reveal-stagger > *:nth-child(5) {
-      animation-range: entry 12% cover 30%;
-    }
-    .reveal-stagger > *:nth-child(6) {
-      animation-range: entry 14% cover 32%;
+      animation-range: var(--reveal-range);
     }
 
     /* El obturador que IMPRIME el retrato al entrar: baja fuera del
@@ -1875,7 +1869,7 @@
       border-bottom: 1px solid var(--paper);
       animation: shutter-lift 1ms linear both;
       animation-timeline: view();
-      animation-range: entry 0% cover 34%;
+      animation-range: var(--reveal-range);
     }
   }
 }
@@ -2553,3 +2547,6 @@
   .plate .media-mark::before,
   .plate .media-mark::after { background: rgb(18 16 14 / 0.45); }
 }
+
+
+/* build: papel-ahumado v2 */

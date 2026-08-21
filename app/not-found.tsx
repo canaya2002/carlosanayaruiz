@@ -1,5 +1,5 @@
 import Link from 'next/link'
-import { Archivo, IBM_Plex_Mono, Newsreader } from 'next/font/google'
+import { Archivo, Chivo_Mono, Fraunces } from 'next/font/google'
 
 // Importado por precaución: app/layout.tsx ya trae globals.css, pero este es
 // el único archivo que renderiza un documento completo por su cuenta, y un 404
@@ -48,19 +48,20 @@ const archivo = Archivo({
   adjustFontFallback: true,
 })
 
-const plexMono = IBM_Plex_Mono({
+const chivoMono = Chivo_Mono({
   subsets: ['latin', 'latin-ext'],
-  variable: '--font-plex-mono',
+  variable: '--font-chivo-mono',
   display: 'swap',
   weight: ['400', '500'],
   adjustFontFallback: true,
 })
 
-const newsreader = Newsreader({
+const fraunces = Fraunces({
   subsets: ['latin', 'latin-ext'],
-  variable: '--font-newsreader',
+  variable: '--font-fraunces',
   display: 'swap',
-  style: ['normal', 'italic'],
+  style: ['italic'],
+  axes: ['SOFT', 'WONK', 'opsz'],
   adjustFontFallback: true,
 })
 
@@ -75,7 +76,7 @@ export default function NotFound() {
   return (
     <html
       lang="es"
-      className={`${archivo.variable} ${plexMono.variable} ${newsreader.variable}`}
+      className={`${archivo.variable} ${chivoMono.variable} ${fraunces.variable}`}
     >
       <head>
         <meta name="robots" content="noindex, nofollow" />

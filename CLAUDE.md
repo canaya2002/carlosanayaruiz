@@ -167,16 +167,28 @@ papel**, que es la única superficie clara. `--ink-subtle` mide 2.88 ahí y no p
 
 ## Tipografía — ratio 10.9
 
-Tres roles detrás de **tres variables y nada más**: `--face-display`, `--face-mono`,
-`--face-human`. Las caras reales son GT Pressura, GT Pressura Mono (Grilli Type) y Arlt
-(PampaType), las tres comerciales. Hoy corren sustitutos gratuitos —Archivo, IBM Plex Mono,
-Newsreader— y cambiarlas es editar esas tres líneas en `globals.css`.
+Tres roles detrás de **tres variables y nada más**: `--face-display`,
+`--face-mono`, `--face-human`. Las tres caras son **gratuitas y definitivas** —
+se descartó comprar GT Pressura y Arlt.
+
+| Rol | Cara | Foundry |
+|---|---|---|
+| Display y cuerpo | **Archivo** (eje `wdth`) | Omnibus-Type, Buenos Aires |
+| Máquina: toda cifra y etiqueta | **Chivo Mono** | Omnibus-Type, Buenos Aires |
+| Voz humana, solo itálica | **Fraunces** (ejes SOFT, WONK, opsz) | Undercase |
+
+No es una renuncia. Archivo se dibujó expresamente para **reproducción impresa** —
+viene de las góticas americanas de periódico, hechas para sobrevivir a una
+impresión mala—, que es exactamente la tesis del sitio. Chivo Mono es de la misma
+casa, así que comparten esqueleto y altura de x: la oposición máquina/humano
+descansa en dos caras diseñadas para convivir.
 
 - Masthead `clamp(2.75rem, 1.35rem + 6.2vw, 7.5rem)`, `wdth` 88, tracking −0.032em
 - Graduación de la cinta `0.6875rem`. 120 px ÷ 11 px = **10.9**
-- `font-human` **solo** en frases en primera persona. ~3% del tipo del sitio. La oposición
-  es el concepto: la máquina imprime en mono, el operador escribe en serifa.
+- `font-human` **solo** en frases en primera persona. ~3% del tipo. Solo itálica:
+  recta competiría con el display; inclinada se lee como algo escrito al margen.
 - Toda cifra en `font-mono` con `tabular-nums`
+
 
 ## Signature — no lo dupliques
 
@@ -283,8 +295,6 @@ npm run check:overflow http://localhost:PUERTO/es
 
 ## Deuda conocida
 
-- Las caras reales (GT Pressura, Arlt) están aprobadas pero **no compradas**. Corren
-  sustitutos.
 - **Hay una sola foto**, 800×800 con fondo de oficina. El duotono de media tinta la
   convierte en material deliberado, pero hay una sesión nueva pendiente.
 - `data/experience.ts` termina en abril 2025. La cinta muestra ese hueco tal cual porque el

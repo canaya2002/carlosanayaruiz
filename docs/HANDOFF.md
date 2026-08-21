@@ -51,14 +51,16 @@ comentarios que documentan qué se quitó.
 
 ## Lo que está BLOQUEADO esperando al dueño
 
+> Las tipografías ya no bloquean: se resolvieron con caras gratuitas.
+
 Nada de esto lo puede resolver un agente. Si el dueño no los ha mandado, el
 sitio funciona igual pero incompleto.
 
-1. **Las dos tipografías de pago.** GT Pressura (Grilli Type) y Arlt
-   (PampaType) están aprobadas y NO compradas. Corren sustitutos gratuitos.
-   Cuando lleguen los `.woff2`, van en `assets/fonts/` y se cambian **tres
-   líneas** en `app/globals.css`: `--face-display`, `--face-mono`,
-   `--face-human`. Nada más. Ningún componente nombra una fuente directamente.
+1. ~~Las dos tipografías de pago.~~ **RESUELTO.** El dueño decidió no comprarlas.
+   El sistema corre con **Archivo + Chivo Mono** (Omnibus-Type, Buenos Aires) y
+   **Fraunces** itálica, las tres gratuitas y **definitivas**. Archivo se dibujó
+   para reproducción impresa, que es la tesis del sitio, y Chivo Mono es de la
+   misma casa. No hay nada pendiente aquí.
 
 2. **La sesión de fotos.** Hoy hay UNA foto: `public/carlos-anaya-ruiz.jpg`,
    800×800, con fondo de oficina desenfocado. El duotono de media tinta la

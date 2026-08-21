@@ -851,14 +851,23 @@ function NavDropdown({
         aria-controls={group.panelId}
         aria-label={`${group.label}: ${submenuLabel}`}
         className={cn(
-          'press inline-flex size-11 items-center justify-center text-ink-subtle transition-colors hover:text-ink',
-          'group-hover/nav:bg-brand-wash/70 group-hover/nav:text-brand-strong',
-          open && 'bg-brand-wash text-brand-strong shadow-[inset_0_1px_2px_0_var(--glass-edge)]'
+          /* El chevron es parte de SU etiqueta, no un control suelto.
+             Medido: como botón de 44px pegado al enlace, el hueco óptico
+             entre textos era 28 · 76 · 76 · 28 · 28 — los dos grupos con
+             desplegable quedaban al triple de separación que el resto y la
+             fila se leía descuadrada.
+
+             Ahora ocupa 1rem de ancho visual y conserva los 44px de alto,
+             así que el objetivo táctil sigue cumpliendo el piso sin robarle
+             espacio horizontal a la fila. */
+          'press -ml-0.5 inline-flex h-11 w-4 items-center justify-center text-ink-subtle transition-colors hover:text-ink',
+          'group-hover/nav:text-ink',
+          open && 'text-ink'
         )}
       >
         <ChevronDown
           className={cn(
-            'size-4 transition-transform duration-300',
+            'size-3.5 shrink-0 transition-transform duration-300',
             open && 'rotate-180'
           )}
           aria-hidden="true"
