@@ -2,30 +2,8 @@ import type { Metadata } from 'next'
 import { notFound } from 'next/navigation'
 import { setRequestLocale, getTranslations } from 'next-intl/server'
 import { Link } from '@/i18n/navigation'
-import {
-  ArrowLeft,
-  ArrowRight,
-  ArrowUpRight,
-  Briefcase,
-  CalendarRange,
-  FileText,
-  Globe,
-  Images,
-  Layers,
-  MapPin,
-  Rocket,
-  UserRound,
-  type LucideIcon,
-} from 'lucide-react'
-import { Breadcrumbs } from '@/components/layout/breadcrumbs'
-import { ProjectCover } from '@/components/map/project-cover'
-import { Badge } from '@/components/ui/badge'
-import { Button } from '@/components/ui/button'
-import { Carousel } from '@/components/ui/carousel'
-import { GlassPanel } from '@/components/ui/glass-panel'
-import { ImageSlot } from '@/components/ui/image-slot'
-import { PointerGlow } from '@/components/motion/pointer-glow'
-import { Tilt3D } from '@/components/motion/tilt-3d'
+import { Rail } from '@/components/instrument/rail'
+import { MediaSlot } from '@/components/instrument/media-slot'
 import {
   getCompanies,
   getCompanyBySlug,
@@ -91,18 +69,15 @@ function projectUrl(locale: Locale, slug: string): string {
    Los dos campos cerrados de `Company` (kind y country) se traducen por
    tabla, no con ternarios sueltos: si mañana entra un cuarto `kind`, el
    compilador exige su clave en lugar de dejar la etiqueta en blanco.
+
+   Sin iconos: en este sistema una etiqueta es texto mono sobre una regla,
+   no un símbolo dentro de una cápsula.
    ══════════════════════════════════════════════════════════════════════ */
 
 const KIND_KEY: Record<CompanyKind, string> = {
   empleo: 'kindEmpleo',
   cliente: 'kindCliente',
   propio: 'kindPropio',
-}
-
-const KIND_ICON: Record<CompanyKind, LucideIcon> = {
-  empleo: Briefcase,
-  cliente: UserRound,
-  propio: Rocket,
 }
 
 const COUNTRY_KEY: Record<CountryCode, string> = {
@@ -116,8 +91,11 @@ const COUNTRY_KEY: Record<CountryCode, string> = {
  *
  * Fijas y en este orden para las diez páginas: captura principal, detalle y
  * resultado. Es lo que hace que el hueco sirva de instrucción — el dueño pidió
- * "algo que las referencie para yo entender dónde van", y un hueco que siempre
+ * "algo que las referencee para yo entender dónde van", y un hueco que siempre
  * está en la misma posición con la misma ruta se puede llenar sin preguntar.
+ *
+ * Son una secuencia REAL —1, 2, 3 significan algo—, así que aquí la
+ * numeración sí se escribe.
  *
  * El `hint` va en español a secas, como en el resto de los huecos del sitio: es
  * una nota para quien pega el archivo, no texto de la página. Lo que sí se
@@ -133,53 +111,6 @@ const GALLERY_SLOTS: readonly { file: string; hint: string }[] = [
   { file: 'captura-2.png', hint: 'Detalle' },
   { file: 'captura-3.png', hint: 'Resultado' },
 ]
-
-/**
- * Iniciales para la portada generada. Se derivan del nombre, no se inventan:
- * dos o tres palabras dan sus iniciales, una sola palabra da sus dos primeras
- * letras.
- */
-function initials(name: string): string {
-  const words = name.split(/\s+/).filter(Boolean)
-  if (words.length === 0) return '·'
-  if (words.length === 1) return words[0].slice(0, 2).toUpperCase()
-  return words
-    .slice(0, 3)
-    .map((word) => word[0])
-    .join('')
-    .toUpperCase()
-}
-
-/**
- * ════════════════════════════════════════════════════════════════
- * CAPAS DE FONDO
- *
- * Aurora + grano + cuadrícula. Los cuatro <i> son obligatorios: cada uno es un
- * campo de color distinto, y son lo que hace VISIBLE el cristal. Sobre el fondo
- * casi blanco del sitio un panel translúcido se ve igual que un panel blanco.
- *
- * Dos secciones con aurora en esta página —la cabecera y la galería—, más la
- * del pie, que ya existe. El límite medido está en cinco: ahí el navegador
- * devuelve las animaciones al hilo principal y cada bucle empieza a costar un
- * recálculo de estilo por frame.
- * Verifica: node scripts/perf-probe.mjs http://localhost:3000/es/proyectos/amazon
- * ════════════════════════════════════════════════════════════════
- */
-function Backdrop({ glow = false }: { glow?: boolean }) {
-  return (
-    <>
-      <div className="aurora" aria-hidden="true">
-        <i />
-        <i />
-        <i />
-        <i />
-      </div>
-      <div className="grain" aria-hidden="true" />
-      <div className="grid-fade" aria-hidden="true" />
-      {glow ? <PointerGlow /> : null}
-    </>
-  )
-}
 
 export async function generateMetadata({ params }: Props): Promise<Metadata> {
   const { locale: rawLocale, slug } = await params
@@ -325,7 +256,6 @@ export default async function ProjectPage({ params }: Props) {
   const tc = await getTranslations('common')
   const tn = await getTranslations('nav')
   const tb = await getTranslations('breadcrumbs')
-  const tl = await getTranslations('a11y')
 
   /**
    * Vecinos en el orden del archivo de datos. Sin ciclo: el primero no tiene
@@ -340,26 +270,12 @@ export default async function ProjectPage({ params }: Props) {
       ? companies[index + 1]
       : undefined
 
-  const KindIcon = KIND_ICON[company.kind]
-
   const start = formatShortDate(company.startDate, locale)
   const end = company.endDate
     ? formatShortDate(company.endDate, locale)
     : tc('present')
   /** Un hackathon empieza y termina el mismo mes: ahí va una sola fecha. */
   const sameMonth = company.startDate === company.endDate
-
-  /**
-   * La portada del héroe usa la primera captura real si existe; si no, el
-   * patrón determinista por slug de `ProjectCover`.
-   *
-   * La galería recorre las TRES posiciones desde el índice 0, así que cuando
-   * `shots[0]` existe la captura principal se ve dos veces: enmarcada arriba
-   * como portada y otra vez como primer elemento de la galería. Es deliberado —
-   * la portada es la presentación y la galería es el inventario completo, y
-   * saltarse la primera posición dejaría un hueco con la ruta equivocada.
-   */
-  const cover = company.shots[0]
 
   const gallery = GALLERY_SLOTS.map((slot, i) => {
     const shot = company.shots[i]
@@ -373,19 +289,25 @@ export default async function ProjectPage({ params }: Props) {
     }
   })
 
-  const facts: { label: string; value: string; icon: LucideIcon }[] = [
-    { label: t('rolLabel'), value: company.role, icon: Briefcase },
-    { label: t('kindLabel'), value: t(KIND_KEY[company.kind]), icon: Layers },
-    {
-      label: t('countryLabel'),
-      value: t(COUNTRY_KEY[company.country]),
-      icon: Globe,
-    },
+  /**
+   * Los datos duros, en filas. Un diagnóstico es una tabla: etiqueta mono a
+   * la izquierda, valor a la derecha, una regla entre cada par. Ninguna
+   * tarjeta, ningún icono dentro de un círculo.
+   */
+  const facts: { label: string; value: string; mono?: boolean }[] = [
+    { label: t('rolLabel'), value: company.role },
+    { label: t('kindLabel'), value: t(KIND_KEY[company.kind]) },
+    { label: t('countryLabel'), value: t(COUNTRY_KEY[company.country]) },
     // La ciudad solo aparece si está en los datos. Los tres empleos no la
     // tienen registrada y aquí no se rellena con una plausible.
     ...(company.city
-      ? [{ label: t('cityLabel'), value: company.city, icon: MapPin }]
+      ? [{ label: t('cityLabel'), value: company.city }]
       : []),
+    {
+      label: t('periodLabel'),
+      value: sameMonth ? start : `${start} – ${end}`,
+      mono: true,
+    },
   ]
 
   return (
@@ -402,473 +324,308 @@ export default async function ProjectPage({ params }: Props) {
         }}
       />
 
-      {/* ══ CABECERA ═══════════════════════════════════════════════
-          Aurora, grano, cuadrícula y el resplandor que sigue al puntero, todos
-          en -z-10 dentro de un contenedor `relative isolate`. Ninguno captura
-          eventos. La aurora es lo que difumina el panel de cristal de los datos
-          duros: sin color detrás, ese panel se ve como un rectángulo blanco. */}
-      <section className="relative isolate overflow-hidden border-b border-hairline">
-        <Backdrop glow />
+      <div
+        className="grid"
+        style={{ gridTemplateColumns: 'var(--tape-w) minmax(0,1fr)' }}
+      >
+        <Rail />
 
-        <div className="mx-auto w-full max-w-6xl px-5 py-14 sm:px-8 sm:py-16">
-          {/* Tres niveles: Inicio (lo dibuja el componente) → Proyectos →
-              nombre. El mismo orden que el BreadcrumbList de arriba. */}
-          <Breadcrumbs
-            items={[
-              { label: tn('projects'), href: '/proyectos' },
-              { label: company.name },
-            ]}
-          />
+        <div className="min-w-0">
+          {/* ═══ CABECERA ════════════════════════════════════════
+              El titular es el LCP y se pinta desde el servidor: no hay
+              portada generada delante de él ni una composición que espere
+              a nada. El hueco del logo se conserva —marca dónde va el
+              archivo, con su ruta exacta— pero sin marco y sin sombra. */}
+          <section className="relative px-5 pt-16 sm:px-10">
+            <MediaSlot
+              id={`proyecto-${company.slug}-logo`}
+              compact
+              sizes="176px"
+              className="w-36 sm:w-44"
+            />
 
-          <div className="mt-10 grid items-start gap-10 lg:grid-cols-[minmax(0,1.1fr)_minmax(0,0.9fr)] lg:gap-14">
-            <div>
-              <p className="eyebrow enter-scale">
-                <KindIcon className="size-3.5" aria-hidden="true" />
-                {t(KIND_KEY[company.kind])}
-              </p>
+            <p className="stamp mt-8">
+              {t(KIND_KEY[company.kind])}
+              {' · '}
+              {t(COUNTRY_KEY[company.country])}
+            </p>
 
-              {/* Único h1 de la página, y cae DIRECTO sobre la aurora: por eso
-                  es `text-ink` (10.2:1) y no una variante apagada. */}
-              <h1 className="enter-blur step-1 mt-6 text-d1 text-ink">
-                {company.name}
-              </h1>
+            {/* Único h1 de la página. */}
+            <h1 className="mt-6 max-w-[16ch] text-hero text-ink">
+              {company.name}
+            </h1>
 
-              <span
-                className="grad-deco enter step-1 mt-7 block h-1 w-12 rounded-full"
-                aria-hidden="true"
-              />
+            <p className="mt-10 max-w-[46ch] font-human text-lead text-ink-muted">
+              {company.summary}
+            </p>
 
-              {/* Rol, periodo y resumen van DENTRO de cristal. Medido:
-                  `ink-muted` sobre el campo azul de la aurora cae a 3.83:1;
-                  sobre `.glass-strong` mide 5.1:1. Y el texto sobre cristal es
-                  SIEMPRE tinta, nunca blanco (1.96:1). */}
-              <div className="glass glass-strong glass-spec enter step-2 mt-7 p-6 sm:p-7">
-                <p className="text-lead font-semibold text-ink">
-                  {company.role}
-                </p>
-
-                {/* Cada extremo del rango es su propio <time>: el elemento no
-                    admite intervalos, así que dos fechas legibles por máquina
-                    valen más que una cadena suelta. */}
-                <p className="mt-3 flex flex-wrap items-center gap-2 text-sm font-semibold text-ink-muted">
-                  <CalendarRange
-                    className="size-4 text-sky-ink"
-                    aria-hidden="true"
-                  />
-                  <time dateTime={company.startDate} data-numeric="">
-                    {start}
-                  </time>
-                  {sameMonth ? null : (
-                    <>
-                      <span aria-hidden="true">–</span>
-                      {company.endDate ? (
-                        <time dateTime={company.endDate} data-numeric="">
-                          {end}
-                        </time>
-                      ) : (
-                        <span>{end}</span>
-                      )}
-                    </>
+            {/* Cada extremo del rango es su propio <time>: el elemento no
+                admite intervalos, así que dos fechas legibles por máquina
+                valen más que una cadena suelta. */}
+            <p className="stamp mt-8 tabular-nums">
+              <span className="sr-only">{t('periodLabel')}: </span>
+              <time dateTime={company.startDate}>{start}</time>
+              {sameMonth ? null : (
+                <>
+                  {' – '}
+                  {company.endDate ? (
+                    <time dateTime={company.endDate}>{end}</time>
+                  ) : (
+                    <span>{end}</span>
                   )}
-                </p>
+                </>
+              )}
+            </p>
 
-                <p className="mt-5 max-w-[60ch] text-ink-muted">
-                  {company.summary}
-                </p>
-              </div>
-
-              <div className="enter step-4 mt-9 flex flex-wrap items-center gap-4">
-                {company.url ? (
-                  <Button asChild className="sheen shadow-glow-brand">
-                    <a
-                      href={company.url}
-                      target="_blank"
-                      rel="noopener noreferrer"
-                    >
-                      {t('externalLink')}
-                      <ArrowUpRight className="size-4" aria-hidden="true" />
-                    </a>
-                  </Button>
-                ) : null}
-                <Button
-                  asChild
-                  className="press"
-                  variant={company.url ? 'outline' : 'default'}
+            <p className="mt-10 flex flex-wrap gap-x-8 gap-y-3">
+              {company.url ? (
+                <a
+                  className="link-stylus"
+                  href={company.url}
+                  target="_blank"
+                  rel="noopener noreferrer"
                 >
-                  <Link href="/proyectos">
-                    <ArrowLeft className="size-4" aria-hidden="true" />
-                    {t('backToAll')}
-                  </Link>
-                </Button>
-              </div>
-            </div>
+                  {t('externalLink')} ↗
+                </a>
+              ) : null}
+              <Link className="link-stylus" href="/proyectos">
+                ← {t('backToAll')}
+              </Link>
+            </p>
+          </section>
 
-            {/* ── COMPOSICIÓN EN PROFUNDIDAD ──
-                `.scene` pone la perspectiva en el CONTENEDOR y `<Tilt3D>` la
-                rotación en el hijo: separarlas es lo que hace que la portada y
-                el logo compartan un punto de fuga en lugar de girar cada uno
-                por su cuenta.
+          {/* ═══ DATOS DEL TRABAJO ═══════════════════════════════
+              Una tabla de registro. Rol, tipo, país, ciudad y periodo, cada
+              uno en su fila con su regla. */}
+          <section className="border-t border-hairline px-5 py-20 sm:px-10">
+            <p className="stamp">{en ? 'record' : 'registro'}</p>
 
-                `transform-style: preserve-3d` en el nodo interno es lo que
-                permite que las clases `.depth-*` levanten de verdad: sin él el
-                subárbol se aplana y el logo quedaría pegado a la portada. Por
-                lo mismo NO hay `overflow-hidden` en ese nodo — recortar fuerza
-                el aplanado; el recorte vive en la portada. */}
-            <div className="enter-scale step-3">
-              <div className="relative mx-auto mb-10 w-full max-w-[30rem]">
-                {/* Halo que se desplaza, detrás de todo. `.grad-drift` fija
-                    `position: relative` desde fuera de `@layer` y le ganaría a
-                    la utilidad `absolute`, así que el posicionamiento vive en
-                    el envoltorio y el gradiente en el hijo. */}
-                <div className="absolute -inset-5 opacity-60" aria-hidden="true">
-                  <div className="grad-drift float-slow size-full rounded-[3rem]" />
+            <h2 className="mt-5 text-d1 text-ink">{t('factsTitle')}</h2>
+
+            <dl className="reveal-stagger mt-10 max-w-3xl">
+              {facts.map((fact) => (
+                <div
+                  key={fact.label}
+                  className="band grid gap-1 sm:grid-cols-[minmax(0,12rem)_minmax(0,1fr)] sm:gap-8"
+                >
+                  <dt className="stamp">{fact.label}</dt>
+                  <dd
+                    className={
+                      fact.mono
+                        ? 'font-mono tabular-nums text-ink'
+                        : 'text-ink'
+                    }
+                  >
+                    {fact.value}
+                  </dd>
                 </div>
-
-                <div className="scene relative">
-                  <Tilt3D>
-                    <div className="relative [transform-style:preserve-3d]">
-                      <ProjectCover
-                        seed={company.slug}
-                        label={initials(company.name)}
-                        shot={cover}
-                        shotAlt={
-                          cover
-                            ? t('shotAlt', { n: 1, name: company.name })
-                            : undefined
-                        }
-                        priority
-                        className="depth-1 aspect-[16/10] w-full overflow-hidden rounded-3xl shadow-lift-4"
-                      />
-
-                      {/* El logo, en el plano más adelantado y asomando por
-                          debajo del borde de la portada. Va FUERA de la portada
-                          —no dentro— porque su etiqueta de hueco es a su vez un
-                          panel de cristal: un `backdrop-filter` dentro de otro
-                          difumina dos veces. Aquí abajo solo tiene el patrón
-                          del propio hueco detrás. */}
-                      <div className="depth-3 absolute -bottom-8 left-5 w-28 sm:w-32">
-                        <ImageSlot
-                          path={`/logos/${company.slug}.png`}
-                          alt={t('logoAlt', { name: company.name })}
-                          hint="Logo"
-                          width={400}
-                          height={400}
-                          sizes="128px"
-                          className="lift aspect-square w-full overflow-hidden rounded-2xl border-2 border-surface shadow-lift-3"
-                        />
-                      </div>
-                    </div>
-                  </Tilt3D>
-                </div>
-              </div>
-            </div>
-          </div>
-
-          {/* Panel protagonista: los datos duros de una sola mirada.
-              `strong` es OBLIGATORIO porque los `dt` son `text-ink-subtle`, que
-              sobre el cristal por defecto mide 4.30 y no pasa; sobre el fuerte,
-              4.54. `rim` le pone el borde recorrido por el gradiente — el
-              componente ya corrige por dentro que la imagen de `rim` no tape la
-              opacidad de `strong`. */}
-          <GlassPanel
-            as="aside"
-            strong
-            rim
-            className="enter step-5 mt-16 p-6 sm:p-8"
-            aria-labelledby="datos-del-trabajo"
-          >
-            <h2
-              id="datos-del-trabajo"
-              className="font-display text-d3 text-ink"
-            >
-              {t('factsTitle')}
-            </h2>
-
-            <dl className="mt-6 grid gap-6 sm:grid-cols-2 lg:grid-cols-4">
-              {facts.map((fact) => {
-                const Icon = fact.icon
-                return (
-                  <div key={fact.label}>
-                    <dt className="flex items-center gap-2 text-xs font-bold uppercase tracking-wide text-ink-subtle">
-                      <Icon className="size-3.5" aria-hidden="true" />
-                      {fact.label}
-                    </dt>
-                    <dd className="mt-2 font-semibold text-ink">
-                      {fact.value}
-                    </dd>
-                  </div>
-                )
-              })}
-
-              <div>
-                <dt className="flex items-center gap-2 text-xs font-bold uppercase tracking-wide text-ink-subtle">
-                  <CalendarRange className="size-3.5" aria-hidden="true" />
-                  {t('periodLabel')}
-                </dt>
-                <dd data-numeric="" className="mt-2 font-semibold text-ink">
-                  {sameMonth ? start : `${start} – ${end}`}
-                </dd>
-              </div>
+              ))}
             </dl>
 
-            <h3 className="mt-8 flex items-center gap-2 text-xs font-bold uppercase tracking-wide text-ink-subtle">
-              <Layers className="size-3.5" aria-hidden="true" />
-              {t('stackTitle')}
-            </h3>
-            {/* Badges `sky` y no `glass`: un badge de cristal dentro de un
-                panel de cristal es cristal sobre cristal. `--sky` a secas es
-                decorativo (2.70:1); el texto va con `--sky-ink`, 5.8:1. */}
-            <ul className="mt-3 flex flex-wrap gap-2">
+            <h3 className="stamp mt-12 block">{t('stackTitle')}</h3>
+            <ul className="mt-4 flex flex-wrap gap-x-7 gap-y-2">
               {company.stack.map((item) => (
-                <li key={item}>
-                  <Badge variant="sky">{item}</Badge>
+                <li key={item} className="font-mono text-sm text-ink">
+                  {item}
                 </li>
               ))}
             </ul>
-          </GlassPanel>
-        </div>
-      </section>
+          </section>
 
-      {/* ══ EL TRABAJO ═════════════════════════════════════════════ */}
-      <section className="defer-paint border-b border-hairline bg-ground-tint">
-        <div className="mx-auto w-full max-w-6xl px-5 py-20 sm:px-8 sm:py-24">
-          {/* El h2 va FUERA de `.prose-rich`: esa clase está escrita fuera de
-              toda `@layer`, así que su regla `h2 { margin-top: 2.4em }` le gana
-              a cualquier utilidad de Tailwind y le metería 2.4em de aire al
-              primer encabezado del bloque. Dentro solo van los párrafos. */}
-          <h2 className="reveal text-d1 text-ink">{t('bodyTitle')}</h2>
+          {/* ═══ LA PLACA: QUÉ HICE ══════════════════════════════
+              El material se invierte entero para el único bloque que se lee
+              de corrido. Una sola placa por página, y en una ficha le toca
+              al relato. Dentro no va `.link-stylus`: su color es papel y
+              sobre papel desaparecería. */}
+          <section className="plate relative px-5 py-20 sm:px-10">
+            <p className="stamp">{en ? 'the work' : 'el trabajo'}</p>
 
-          {/* Entra girando desde atrás. Sobre superficie opaca el cuerpo puede
-              ser `ink-muted` sin panel de cristal de por medio. */}
-          <div className="reveal-3d prose-rich mt-8">
-            {company.detail.map((paragraph) => (
-              <p key={paragraph.slice(0, 48)}>{paragraph}</p>
-            ))}
-          </div>
-        </div>
-      </section>
+            <h2 className="mt-5 max-w-[18ch] text-d1">{t('bodyTitle')}</h2>
 
-      {/* ══ GALERÍA ════════════════════════════════════════════════
-          Las tres posiciones SIEMPRE se dibujan, con captura real o con el
-          hueco etiquetado. Un hueco que dice la ruta exacta donde va el archivo
-          es contenido útil; una sección que desaparece porque el array está
-          vacío no le dice a nadie qué falta.
+            <div className="mt-10 max-w-[68ch]">
+              {company.detail.map((paragraph, i) => (
+                <p key={paragraph.slice(0, 48)} className={i > 0 ? 'mt-6' : ''}>
+                  {paragraph}
+                </p>
+              ))}
+            </div>
+          </section>
 
-          Carrusel y no rejilla: el imán y el arrastre son nativos
-          (`scroll-snap`), así que si el JS no corre el carril sigue funcionando
-          y los tres elementos completos están en el HTML del servidor.      */}
-      <section className="relative isolate overflow-hidden border-b border-hairline">
-        <Backdrop />
+          {/* ═══ CAPTURAS ════════════════════════════════════════
+              Las tres posiciones SIEMPRE se dibujan, con captura real o con
+              el hueco etiquetado. Un hueco que dice la ruta exacta donde va
+              el archivo es contenido útil; una sección que desaparece
+              porque el array está vacío no le dice a nadie qué falta. */}
+          <section className="border-t border-hairline px-5 py-20 sm:px-10">
+            <p className="stamp">{company.name}</p>
 
-        <div className="mx-auto w-full max-w-6xl px-5 py-20 sm:px-8 sm:py-24">
-          {/* La píldora lleva el nombre del proyecto y no el título de la
-              sección: repetir "Capturas" dos veces seguidas no informa. */}
-          <p className="eyebrow reveal">
-            <Images className="size-3.5" aria-hidden="true" />
-            {company.name}
-          </p>
+            <h2 className="mt-5 text-d1 text-ink">{t('galleryTitle')}</h2>
 
-          <h2 className="reveal mt-6 text-d1 text-ink">{t('galleryTitle')}</h2>
+            <p className="mt-6 max-w-[74ch] text-ink-muted">
+              {t('galleryLead')}
+            </p>
 
-          {/* La nota explicativa va en cristal: es `ink-muted` y cae sobre la
-              aurora. Cuando no hay ni una captura se añade el aviso honesto de
-              `noShots` en lugar de fingir una galería. */}
-          <div className="glass glass-strong glass-spec reveal mt-6 max-w-[74ch] p-5 sm:p-6">
-            <p className="text-ink-muted">{t('galleryLead')}</p>
+            {/* Cuando no hay ni una captura se escribe el aviso honesto en
+                lugar de fingir una galería. Es un hueco declarado del
+                registro, así que se dibuja como hueco. */}
             {company.shots.length === 0 ? (
-              <p className="mt-4 text-sm text-ink-muted">{t('noShots')}</p>
+              <p className="gap mt-6 max-w-[74ch] pt-4 text-sm">
+                {t('noShots')}
+              </p>
             ) : null}
-          </div>
 
-          <Carousel
-            label={`${tl('galleryRail')} — ${company.name}`}
-            prevLabel={tl('prevSlide')}
-            nextLabel={tl('nextSlide')}
-            className="mt-10"
-          >
-            {gallery.map((item, i) => (
-              /* `.scene` ya está en el riel del carrusel, así que las tres
-                 láminas comparten punto de fuga. */
-              <Tilt3D
-                key={item.key}
-                className="w-[19rem] sm:w-[26rem] lg:w-[30rem]"
-              >
-                {/* Superficie OPACA. La etiqueta del hueco es un panel de
-                    cristal, y meterla dentro de otro difuminaría dos veces. */}
-                <figure className="card lift flex h-full flex-col p-3 [transform-style:preserve-3d]">
-                  <ImageSlot
-                    path={item.path}
-                    filled={item.filled}
-                    alt={item.caption}
-                    hint={item.hint}
-                    width={1200}
-                    height={750}
-                    sizes="(min-width: 1024px) 448px, (min-width: 640px) 384px, 280px"
-                    className="sheen depth-1 aspect-[16/10] w-full overflow-hidden rounded-xl shadow-lift-2"
-                  />
-
-                  <figcaption className="depth-2 mt-4 flex items-center gap-3 px-2 pb-1">
-                    <Badge variant="neutral" data-numeric="">
-                      {i + 1}
-                    </Badge>
-                    <span className="text-sm font-semibold text-ink">
-                      {item.caption}
-                    </span>
-                  </figcaption>
-                </figure>
-              </Tilt3D>
-            ))}
-          </Carousel>
-
-          {/* Cae directo sobre la aurora: `text-ink`, no `ink-subtle`. */}
-          <p className="reveal mt-8 text-sm text-ink">{tc('dragHint')}</p>
-        </div>
-      </section>
-
-      {/* ══ DOCUMENTOS ═════════════════════════════════════════════
-          `docs` está vacío en las cinco entradas y public/pdf no tiene
-          archivos, así que la sección entera se omite en lugar de listar
-          enlaces a PDFs que no existen. Aquí sí se omite —y en la galería no—
-          porque un enlace a un archivo inexistente es un 404, mientras que un
-          hueco de imagen etiquetado es una instrucción.                     */}
-      {company.docs.length > 0 ? (
-        <section className="defer-paint border-b border-hairline">
-          <div className="mx-auto w-full max-w-6xl px-5 py-20 sm:px-8 sm:py-24">
-            <h2 className="reveal text-d1 text-ink">{t('docsTitle')}</h2>
-
-            <ul className="reveal-stagger scene mt-10 grid gap-4 sm:grid-cols-2">
-              {company.docs.map((doc) => (
-                <li key={doc.href}>
-                  <a
-                    href={doc.href}
-                    className="card tilt-hover press group flex items-center gap-4 p-5"
-                  >
-                    <span
-                      className="grad-deco inline-flex size-11 shrink-0 items-center justify-center rounded-xl text-white shadow-glow-brand"
-                      aria-hidden="true"
-                    >
-                      <FileText className="size-5" />
-                    </span>
-                    <span className="font-semibold text-ink transition-colors group-hover:text-brand-strong">
-                      {doc.label}
-                    </span>
-                    <ArrowUpRight
-                      className="ml-auto size-4 shrink-0 text-ink-subtle transition-transform duration-300 group-hover:-translate-y-1 group-hover:translate-x-1"
-                      aria-hidden="true"
+            <ol className="reveal-stagger mt-12 grid gap-10 sm:grid-cols-2 lg:grid-cols-3">
+              {gallery.map((item, i) => (
+                <li key={item.key}>
+                  <figure className="m-0">
+                    <MediaSlot
+                      id={`proyecto-${company.slug}-captura-${i + 1}`}
+                      compact
+                      sizes="(min-width: 1024px) 30vw, (min-width: 640px) 45vw, 90vw"
+                      className="w-full"
                     />
-                  </a>
+                    <figcaption className="mt-4 flex items-baseline gap-3">
+                      <span className="stamp tabular-nums">{i + 1}</span>
+                      <span className="text-sm text-ink">{item.caption}</span>
+                    </figcaption>
+                  </figure>
                 </li>
               ))}
-            </ul>
-          </div>
-        </section>
-      ) : null}
+            </ol>
+          </section>
 
-      {/* ══ ANTERIOR / SIGUIENTE ═══════════════════════════════════
-          `.tilt-hover` y no `.lift`: las dos escriben `transform` sobre el
-          mismo nodo y `.lift` está después en globals.css, así que juntas la
-          inclinación no se vería. `.press` sí convive — solo actúa en `:active`
-          y es lo que da la sensación de clic. */}
-      <section className="defer-paint mx-auto w-full max-w-6xl px-5 py-20 sm:px-8 sm:py-24">
-        <h2 className="reveal text-d3 text-ink">{t('navTitle')}</h2>
+          {/* ═══ DOCUMENTOS ══════════════════════════════════════
+              `docs` está vacío en las cinco entradas y public/pdf no tiene
+              archivos, así que la sección entera se omite en lugar de
+              listar enlaces a PDFs que no existen. Aquí sí se omite —y en
+              la galería no— porque un enlace a un archivo inexistente es un
+              404, mientras que un hueco de imagen etiquetado es una
+              instrucción. */}
+          {company.docs.length > 0 ? (
+            <section className="border-t border-hairline px-5 py-20 sm:px-10">
+              <p className="stamp">{en ? 'attached' : 'anexos'}</p>
 
-        <div className="reveal scene mt-8 grid gap-4 sm:grid-cols-2">
-          {previous ? (
-            <Link
-              href={{
-                pathname: '/proyectos/[slug]',
-                params: { slug: previous.slug },
-              }}
-              className="card tilt-hover press group flex flex-col p-6"
-            >
-              <span className="inline-flex items-center gap-1.5 text-xs font-bold uppercase tracking-wide text-ink-subtle">
-                <ArrowLeft
-                  className="size-3.5 transition-transform duration-300 group-hover:-translate-x-1"
-                  aria-hidden="true"
-                />
-                {t('prev')}
-              </span>
-              <span className="mt-3 font-display text-d3 text-ink transition-colors group-hover:text-brand-strong">
-                {previous.name}
-              </span>
-              <span className="mt-1 text-sm text-ink-muted">
-                {previous.role}
-              </span>
-            </Link>
-          ) : (
-            /* Hueco para que el "siguiente" conserve su columna cuando no
-               hay anterior. Decorativo y vacío: no anuncia nada. */
-            <span aria-hidden="true" className="hidden sm:block" />
-          )}
+              <h2 className="mt-5 text-d1 text-ink">{t('docsTitle')}</h2>
 
-          {next ? (
-            <Link
-              href={{
-                pathname: '/proyectos/[slug]',
-                params: { slug: next.slug },
-              }}
-              className="card tilt-hover press group flex flex-col p-6 sm:items-end sm:text-right"
-            >
-              <span className="inline-flex items-center gap-1.5 text-xs font-bold uppercase tracking-wide text-ink-subtle">
-                {t('next')}
-                <ArrowRight
-                  className="size-3.5 transition-transform duration-300 group-hover:translate-x-1"
-                  aria-hidden="true"
-                />
-              </span>
-              <span className="mt-3 font-display text-d3 text-ink transition-colors group-hover:text-brand-strong">
-                {next.name}
-              </span>
-              <span className="mt-1 text-sm text-ink-muted">{next.role}</span>
-            </Link>
+              <ul className="reveal-stagger mt-10 max-w-3xl">
+                {company.docs.map((doc) => (
+                  <li key={doc.href} className="band">
+                    <a
+                      href={doc.href}
+                      className="group flex items-baseline justify-between gap-6"
+                    >
+                      <span className="link-stylus">{doc.label}</span>
+                      <span
+                        aria-hidden="true"
+                        className="stamp shrink-0 transition-transform duration-150 group-hover:translate-x-1"
+                      >
+                        ↗
+                      </span>
+                    </a>
+                  </li>
+                ))}
+              </ul>
+            </section>
           ) : null}
-        </div>
 
-        <Link
-          href="/proyectos"
-          className="mt-8 inline-flex items-center gap-2 text-sm font-semibold text-brand-strong hover:underline"
-        >
-          <ArrowLeft className="size-4" aria-hidden="true" />
-          {t('backToAll')}
-        </Link>
-      </section>
+          {/* ═══ SEGUIR VIENDO ═══════════════════════════════════
+              Dos filas del mismo registro, no dos tarjetas enfrentadas. */}
+          <section className="border-t border-hairline px-5 py-20 sm:px-10">
+            <h2 className="text-d1 text-ink">{t('navTitle')}</h2>
 
-      {/* ══ CTA FINAL ══════════════════════════════════════════════ */}
-      <section className="defer-paint mx-auto w-full max-w-6xl px-5 pb-20 sm:px-8 sm:pb-24">
-        <div className="grad-drift reveal-scale rounded-3xl px-6 py-14 shadow-lift-3 sm:px-12 sm:py-20">
-          <div className="relative max-w-2xl">
-            <h2 className="text-d1 text-white">{t('ctaTitle')}</h2>
-            <p className="mt-5 text-lead text-white/85">{t('ctaLead')}</p>
+            <ul className="reveal-stagger mt-8 max-w-3xl">
+              {previous ? (
+                <li>
+                  <Link
+                    href={{
+                      pathname: '/proyectos/[slug]',
+                      params: { slug: previous.slug },
+                    }}
+                    className="band group block"
+                  >
+                    <span className="stamp flex items-center gap-2">
+                      <span
+                        aria-hidden="true"
+                        className="inline-block transition-transform duration-150 group-hover:-translate-x-1"
+                      >
+                        ←
+                      </span>
+                      {t('prev')}
+                    </span>
+                    <span className="mt-2 block text-d3 text-ink">
+                      {previous.name}
+                    </span>
+                    <span className="mt-1 block text-sm text-ink-muted">
+                      {previous.role}
+                    </span>
+                  </Link>
+                </li>
+              ) : null}
 
-            <div className="mt-9 flex flex-wrap items-center gap-4">
-              {/* Sobre el gradiente el botón se invierte: superficie blanca
-                  con texto de marca. Un relleno de marca desaparecería. */}
-              <Button
-                asChild
-                size="lg"
-                className="sheen bg-none bg-surface text-brand-strong hover:opacity-95"
-              >
-                <Link href="/contacto">
-                  {t('ctaButton')}
-                  <ArrowRight className="size-4" aria-hidden="true" />
-                </Link>
-              </Button>
+              {next ? (
+                <li>
+                  <Link
+                    href={{
+                      pathname: '/proyectos/[slug]',
+                      params: { slug: next.slug },
+                    }}
+                    className="band group block"
+                  >
+                    <span className="stamp flex items-center gap-2">
+                      {t('next')}
+                      <span
+                        aria-hidden="true"
+                        className="inline-block transition-transform duration-150 group-hover:translate-x-1"
+                      >
+                        →
+                      </span>
+                    </span>
+                    <span className="mt-2 block text-d3 text-ink">
+                      {next.name}
+                    </span>
+                    <span className="mt-1 block text-sm text-ink-muted">
+                      {next.role}
+                    </span>
+                  </Link>
+                </li>
+              ) : null}
+            </ul>
+
+            <p className="mt-10">
+              <Link className="link-stylus" href="/proyectos">
+                ← {t('backToAll')}
+              </Link>
+            </p>
+          </section>
+
+          {/* ═══ CIERRE ══════════════════════════════════════════ */}
+          <section className="border-t border-hairline px-5 py-24 sm:px-10">
+            <h2 className="max-w-[18ch] text-d1 text-ink">{t('ctaTitle')}</h2>
+
+            <p className="mt-6 max-w-[52ch] font-human text-lead text-ink-muted">
+              {t('ctaLead')}
+            </p>
+
+            <p className="mt-10 flex flex-wrap items-baseline gap-x-8 gap-y-3">
+              <Link className="link-stylus text-d3" href="/contacto">
+                {t('ctaButton')} →
+              </Link>
               <a
+                className="link-stylus font-mono text-sm"
                 href={`mailto:${NAP.email}`}
-                className="text-sm font-semibold text-white underline decoration-white/50 underline-offset-4 hover:decoration-white"
               >
                 {NAP.email}
               </a>
-            </div>
+            </p>
 
-            <p className="mt-6 text-sm text-white/80">
+            <p className="gap mt-12 max-w-[74ch] pt-4 text-sm">
               {en
                 ? 'This page is written from what the data file actually records: role, dates, country. Nothing here is a client I cannot name.'
                 : 'Esta página está escrita con lo que consta en el archivo de datos: rol, fechas, país. Nada de aquí es un cliente que no pueda nombrar.'}
             </p>
-          </div>
+          </section>
         </div>
-      </section>
+      </div>
     </>
   )
 }

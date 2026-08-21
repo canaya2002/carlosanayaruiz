@@ -1,5 +1,5 @@
 import Link from 'next/link'
-import { Sora, Plus_Jakarta_Sans } from 'next/font/google'
+import { Archivo, IBM_Plex_Mono, Newsreader } from 'next/font/google'
 
 // Importado por precaución: app/layout.tsx ya trae globals.css, pero este es
 // el único archivo que renderiza un documento completo por su cuenta, y un 404
@@ -33,17 +33,34 @@ import './globals.css'
  * ════════════════════════════════════════════════════════════════
  */
 
-const sora = Sora({
+/**
+ * Las mismas tres caras que `app/[locale]/layout.tsx`, y por la misma razón:
+ * este es el único archivo que renderiza un documento completo por su cuenta,
+ * así que si no las declara aquí, la 404 raíz sale en la pila del sistema —
+ * un 404 en Segoe UI dentro de un sitio compuesto en otra cosa se lee como
+ * una página rota, que es justo lo contrario de lo que tiene que transmitir.
+ */
+const archivo = Archivo({
   subsets: ['latin', 'latin-ext'],
-  variable: '--font-sora',
+  variable: '--font-archivo',
   display: 'swap',
+  axes: ['wdth'],
   adjustFontFallback: true,
 })
 
-const jakarta = Plus_Jakarta_Sans({
+const plexMono = IBM_Plex_Mono({
   subsets: ['latin', 'latin-ext'],
-  variable: '--font-jakarta',
+  variable: '--font-plex-mono',
   display: 'swap',
+  weight: ['400', '500'],
+  adjustFontFallback: true,
+})
+
+const newsreader = Newsreader({
+  subsets: ['latin', 'latin-ext'],
+  variable: '--font-newsreader',
+  display: 'swap',
+  style: ['normal', 'italic'],
   adjustFontFallback: true,
 })
 
@@ -56,26 +73,42 @@ const jakarta = Plus_Jakarta_Sans({
  */
 export default function NotFound() {
   return (
-    <html lang="es" className={`${sora.variable} ${jakarta.variable}`}>
+    <html
+      lang="es"
+      className={`${archivo.variable} ${plexMono.variable} ${newsreader.variable}`}
+    >
       <head>
         <meta name="robots" content="noindex, nofollow" />
         <title>404 — Página no encontrada | Carlos Anaya Ruiz</title>
       </head>
       <body className="min-h-screen bg-ground font-sans text-ink antialiased">
         <div className="relative isolate min-h-screen overflow-hidden">
-          <div className="mesh" aria-hidden="true" />
-
           <main
             id="main-content"
             className="mx-auto flex min-h-screen w-full max-w-6xl flex-col justify-center px-5 py-20 sm:px-8"
           >
-            <p className="eyebrow enter-scale">Error 404</p>
+            <p className="stamp">Error 404</p>
 
-            <h1 className="enter-blur step-1 mt-6 text-d1">
-              Esta página <span className="grad-text">no existe</span>
+            <h1 className="mt-6 max-w-[16ch] text-hero text-ink">
+              Esta página no existe
             </h1>
 
-            <div className="enter step-2 mt-7 max-w-[62ch]">
+            {/* El trazo plano: la aguja no encontró nada. Es lo contrario de
+                `.trace`, que en el resto del sitio nunca para, y es la misma
+                idea que en la 404 localizada. */}
+            <div
+              className="mt-12 flex items-center gap-4"
+              role="img"
+              aria-label="Sin señal / No signal"
+            >
+              <span className="stamp shrink-0">sin señal · no signal</span>
+              <span
+                className="h-px flex-1 bg-hairline-strong"
+                aria-hidden="true"
+              />
+            </div>
+
+            <div className="mt-10 max-w-[56ch]">
               <p className="text-lead text-ink-muted">
                 La dirección que abriste no corresponde a ninguna página de este
                 sitio. Puede que el enlace esté mal escrito, o que la página
@@ -89,40 +122,40 @@ export default function NotFound() {
 
             <nav
               aria-label="Enlaces principales / Primary links"
-              className="enter step-3 mt-10 flex flex-wrap gap-3"
+              className="mt-10 flex flex-wrap gap-x-8 gap-y-3"
             >
               <Link
                 href="/es"
-                className="grad-fill sheen inline-flex min-h-[44px] items-center rounded-lg px-5 py-3 text-sm font-semibold shadow-glow-brand transition-opacity hover:opacity-95"
+                className="link-stylus inline-flex min-h-[44px] items-center text-sm"
               >
                 Ir al inicio
               </Link>
               <Link
                 href="/en"
                 lang="en"
-                className="inline-flex min-h-[44px] items-center rounded-lg border border-control bg-surface px-5 py-3 text-sm font-semibold text-ink transition-colors hover:bg-ground-tint"
+                className="link-stylus inline-flex min-h-[44px] items-center text-sm"
               >
                 Go to homepage
               </Link>
             </nav>
 
-            <div className="enter step-4 mt-8 flex flex-wrap items-center gap-x-5 gap-y-1 text-sm">
+            <div className="mt-8 flex flex-wrap items-center gap-x-8 gap-y-1 text-sm">
               <Link
                 href="/es/servicios"
-                className="inline-flex min-h-[44px] items-center font-medium text-brand-strong underline underline-offset-4"
+                className="link-stylus inline-flex min-h-[44px] items-center"
               >
                 Servicios
               </Link>
               <Link
                 href="/es/contacto"
-                className="inline-flex min-h-[44px] items-center font-medium text-brand-strong underline underline-offset-4"
+                className="link-stylus inline-flex min-h-[44px] items-center"
               >
                 Contacto
               </Link>
               <Link
                 href="/en/contact"
                 lang="en"
-                className="inline-flex min-h-[44px] items-center font-medium text-brand-strong underline underline-offset-4"
+                className="link-stylus inline-flex min-h-[44px] items-center"
               >
                 Contact
               </Link>

@@ -37,7 +37,6 @@ export interface PersonalInfo {
   linkedin: string
   /** Both GitHub accounts, primary first. Sourced from SOCIAL_LINKS. */
   github: readonly string[]
-  fiverr: string
   website: string
   certsDriveLink: string
   languages: Language[]
@@ -57,7 +56,6 @@ const identity = {
   phoneDisplay: NAP.phoneDisplay,
   linkedin: SOCIAL_LINKS.linkedin,
   github: [SOCIAL_LINKS.github, SOCIAL_LINKS.githubAlt] as const,
-  fiverr: SOCIAL_LINKS.fiverr,
   website: SITE_CONFIG.url,
   certsDriveLink: SOCIAL_LINKS.certsDrive,
 } as const

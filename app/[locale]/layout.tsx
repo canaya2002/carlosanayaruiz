@@ -1,5 +1,5 @@
 import type { Metadata, Viewport } from 'next'
-import { Sora, Plus_Jakarta_Sans } from 'next/font/google'
+import { Archivo, IBM_Plex_Mono, Newsreader } from 'next/font/google'
 import { NextIntlClientProvider } from 'next-intl'
 import { getMessages, setRequestLocale, getTranslations } from 'next-intl/server'
 import { notFound } from 'next/navigation'
@@ -18,25 +18,46 @@ import { SpeedInsights } from '@vercel/speed-insights/next'
 import { Analytics } from '@vercel/analytics/react'
 
 /**
- * Dos archivos de fuente, ambos variables.
+ * Tres caras, tres roles — el sistema «Papel Ahumado».
  *
- * Sora para títulos: su geometría marcada se ve muy bien recortada con
- * gradiente, que es la firma visual del sitio. Plus Jakarta Sans para el
- * texto corrido.
+ * ⚠ SUSTITUTOS. Las caras reales del sistema son GT Pressura y GT Pressura
+ * Mono (Grilli Type) y Arlt (PampaType), las tres comerciales y todavía no
+ * licenciadas. Estas tres son gratuitas y sostienen los mismos roles
+ * mientras llegan.
+ *
+ * El sitio NO nombra ninguna de estas variables directamente: todo apunta a
+ * `--face-display`, `--face-mono` y `--face-human` en globals.css. Cambiar de
+ * cara es editar esas tres líneas, no tocar componentes.
  *
  * `latin-ext` es obligatorio: el copy en español usa á é í ó ú ñ ¿ ¡.
  */
-const sora = Sora({
+const archivo = Archivo({
   subsets: ['latin', 'latin-ext'],
-  variable: '--font-sora',
+  variable: '--font-archivo',
   display: 'swap',
+  axes: ['wdth'],
   adjustFontFallback: true,
 })
 
-const jakarta = Plus_Jakarta_Sans({
+/** La voz de la máquina: toda cifra, unidad, graduación y etiqueta. */
+const plexMono = IBM_Plex_Mono({
   subsets: ['latin', 'latin-ext'],
-  variable: '--font-jakarta',
+  variable: '--font-plex-mono',
   display: 'swap',
+  weight: ['400', '500'],
+  adjustFontFallback: true,
+})
+
+/**
+ * La voz humana, y solo eso: frases en primera persona. Nunca navegación,
+ * nunca datos, nunca un titular. Alrededor del 3% del tipo del sitio — la
+ * oposición es el concepto, así que si crece deja de significar.
+ */
+const newsreader = Newsreader({
+  subsets: ['latin', 'latin-ext'],
+  variable: '--font-newsreader',
+  display: 'swap',
+  style: ['normal', 'italic'],
   adjustFontFallback: true,
 })
 
@@ -55,7 +76,7 @@ export const viewport: Viewport = {
    * el sistema en oscuro recibía una versión casi negra.
    */
   themeColor: PALETTE_HEX.light.ground,
-  colorScheme: 'light',
+  colorScheme: 'dark',
 }
 
 export async function generateMetadata({
@@ -164,7 +185,10 @@ export default async function LocaleLayout({
      * hay nada que mutar antes del primer pintado, porque no hay tema que
      * resolver. Un archivo menos que ejecutar antes de pintar.
      */
-    <html lang={locale} className={`${sora.variable} ${jakarta.variable}`}>
+    <html
+      lang={locale}
+      className={`${archivo.variable} ${plexMono.variable} ${newsreader.variable}`}
+    >
       <head>
         {/* Person + ProfessionalService + WebSite. Los hechos de la entidad
             viven aquí para que cada URL los lleve. */}

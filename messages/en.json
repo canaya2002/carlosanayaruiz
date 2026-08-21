@@ -160,7 +160,6 @@
     "benefits": "Key benefits",
     "includes": "What's included",
     "cta": "Request a quote",
-    "ctaFiverr": "Hire on Fiverr",
     "viewAll": "View this service"
   },
   "servicesHub": {
@@ -270,7 +269,6 @@
     "social": "Profiles and social",
     "connect": "Connect with me",
     "seeProjects": "See my projects",
-    "fiverr": "Hire me on Fiverr",
     "mailtoNote": "Sending opens your email app with the message already written. Nothing is stored in any database.",
     "noMailClient": "Email app did not open?",
     "copyEmail": "Copy my email",

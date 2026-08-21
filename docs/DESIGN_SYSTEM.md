@@ -1,3 +1,21 @@
+> ⚠ SUPERADO — no sigas este documento.
+>
+> Describe el sistema «aurora, cristal y profundidad», reemplazado por
+> **«Papel Ahumado»** en agosto de 2026. Se conserva como registro de qué se midió
+> y por qué, no como guía de construcción.
+>
+> El motivo del reemplazo está medido, no es una opinión: los ocho colores de marca
+> de este sistema eran valores default de Tailwind sin una sola modificación
+> (`--brand` era `blue-600`, `--sky` era `sky-500`, `--cyan` era `cyan-400`,
+> `--positive` era `emerald-700`), y la sección de servicios era literalmente lo que
+> el propio `CLAUDE.md` del proyecto lista como default prohibido de IA: tarjetas
+> `rounded-2xl` en rejilla de tres con iconos de lucide dentro de círculos.
+>
+> **El sistema vigente vive en `CLAUDE.md`, sección «Papel Ahumado». Su referencia
+> canónica es `app/[locale]/page.tsx`.**
+
+---
+
 # Sistema de diseño — aurora, cristal y profundidad
 
 Lenguaje visual con **color saturado en movimiento, cristal real y 3D con punto

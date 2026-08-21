@@ -139,8 +139,14 @@ const TRAJECTORY_HREFS: readonly Pathname[] = TRAJECTORY_ITEMS.map(
  * Si hace falta un septimo enlace, no se aprieta mas: se mueve a un grupo
  * desplegable. Verifica con: npm run check:overflow
  */
+/**
+ * Un enlace de nav no es una cápsula: es una etiqueta impresa. Sin fondo en
+ * hover, sin radio, sin relleno lateral que sugiera un botón. Lo que cambia
+ * al pasar el puntero es la TINTA y una regla de un píxel debajo, que es como
+ * se marca una entrada en un registro.
+ */
 const NAV_LINK =
-  'group press relative inline-flex h-11 items-center whitespace-nowrap rounded-xl px-2.5 text-sm hover:bg-brand-wash/70'
+  'group press relative inline-flex h-11 items-center whitespace-nowrap text-sm text-ink-muted transition-colors hover:text-ink'
 
 interface GroupLink {
   href: StaticPathname
@@ -380,40 +386,16 @@ export function Header() {
     // pulido en lugar de cortado, y va como sombra en línea porque necesita
     // acompañar a `--lift-2` en la misma declaración.
     <header
+      /* Sin cristal, sin sombra, sin gradiente: el chrome es hollín opaco y
+         una sola regla abajo. En un registrador la cabecera del papel no
+         flota sobre nada — está impresa en la misma hoja. */
       className={cn(
-        'glass-spec sticky top-0 z-50 border-b border-hairline',
-        'bg-surface/92 backdrop-blur-[var(--glass-blur)] backdrop-saturate-[var(--glass-sat)]',
-        'supports-[backdrop-filter]:bg-[color:var(--glass-bg-strong)]',
-        'supports-[backdrop-filter]:border-[color:var(--glass-border)]',
-        'shadow-[inset_0_1px_0_0_var(--glass-highlight),var(--lift-2)]'
+        'sticky top-0 z-50 border-b border-hairline',
+        'bg-ground/95 supports-[backdrop-filter]:bg-[color:var(--ground)]/85',
+        'supports-[backdrop-filter]:backdrop-blur-[6px]'
       )}
     >
-      {/* La línea de gradiente del borde inferior. Dos píxeles que hacen que el
-          chrome se lea como parte del sistema y no como una barra prestada.
-          Va absoluta sobre el borde, así que no ocupa alto ni mueve el layout. */}
-      <span
-        aria-hidden="true"
-        className="grad-fill pointer-events-none absolute inset-x-0 bottom-0 h-0.5 opacity-80"
-      />
 
-      {/* Un segundo velo de gradiente, muy tenue, sobre el ancho de la barra. No
-          es lo mismo que el reflejo de `.glass-spec`: aquel es una banda
-          diagonal blanca y este es color de marca. Juntos son lo que separa
-          "translúcido" de "cristal teñido".
-
-          Va acotado al alto de la fila (`h-16 sm:h-18`, el mismo de abajo) y no
-          a `inset-0`: el panel móvil es hijo de este header, así que con el menú
-          abierto un velo a inset-0 se extendería por debajo de él. No se vería
-          —el panel es opaco y se pinta encima— pero sería una capa pintando un
-          área que no le toca. */}
-      <span
-        aria-hidden="true"
-        className="grad-soft pointer-events-none absolute inset-x-0 top-0 h-16 opacity-40 sm:h-18"
-      />
-
-      {/* `relative` no es decorativo: el reflejo especular de `.glass-spec` es un
-          ::before absoluto, y solo los hijos posicionados se pintan encima de
-          él. Sin esto, un blanco al 50% caería sobre el wordmark. */}
       <div className="relative mx-auto w-full max-w-6xl px-5 sm:px-8">
         <div className="flex h-16 items-center justify-between gap-3 sm:h-18 sm:gap-4">
           {/* ══ WORDMARK ═══════════════════════════════════════════
@@ -423,20 +405,26 @@ export function Header() {
               no en el enlace completo porque `.sheen:hover::after` se dispara
               con el hover del propio elemento — sobre el enlace entero barrería
               también el nombre. */}
+          {/* El cuadro «CA» se retiró: era exactamente el cuadrado con algo
+              dentro que el brief pidió quitar, y encima llevaba gradiente y
+              resplandor, dos cosas que este sistema no tiene. La marca es el
+              nombre compuesto, que es más fuerte y no necesita contenedor.
+
+              En su lugar va el punto en línea: late porque hay una medición
+              corriendo del otro lado, y es el mismo indicador que el resto
+              del sitio usa para «esto está vivo». */}
           <Link
             href="/"
-            className="group press inline-flex h-11 items-center gap-2.5 rounded-2xl pr-1.5 text-ink"
+            className="group press inline-flex h-11 items-center gap-2.5 text-ink"
           >
+            {/* Punto quieto, no `.live`: el latido vive UNA sola vez por
+                página, en el héroe, junto a la medición que de verdad está
+                corriendo. Dos latidos costaban el doble de presupuesto y
+                competían entre sí por la atención. */}
             <span
               aria-hidden="true"
-              // `rotate` y `scale`, no `transform`: en Tailwind v4 las
-              // utilidades `rotate-*` y `scale-*` escriben esas propiedades
-              // individuales, y una `transition-property` que dijera
-              // `transform` no animaría ninguna de las dos.
-              className="sheen grad-fill grid size-8 place-items-center rounded-xl font-display text-[0.8125rem] font-bold shadow-glow-brand transition-[rotate,scale,box-shadow] duration-300 group-hover:-rotate-6 group-hover:scale-110 group-hover:shadow-glow-cyan sm:size-9 sm:text-sm"
-            >
-              CA
-            </span>
+              className="size-[0.4375rem] shrink-0 rounded-full bg-threshold"
+            />
             {/* `text-base` en el ancho mas estrecho y `text-xl` desde sm.
                 A 360px la fila tiene 320px utiles y con text-lg pedia 336:
                 el nombre medía 157px y el grupo de controles 119, mas 12 de
@@ -465,9 +453,7 @@ export function Header() {
               // una fila de 960 → 154px de desborde en todas las páginas.
               // El nav pide ~1139px de contenido, así que no cabe en lg (1024)
               // aunque los dos no chocaran; el primer ancho donde entra es xl.
-              'hidden items-center rounded-2xl px-1 xl:flex',
-              'border border-[color:var(--glass-border)] bg-[color:var(--glass-bg-tint)]',
-              'shadow-[inset_0_1px_0_0_var(--glass-highlight)]'
+              'hidden items-center gap-7 xl:flex'
             )}
           >
             <Link
@@ -518,8 +504,8 @@ export function Header() {
           <div className="flex items-center gap-1 sm:gap-2">
             <LanguageSwitcher />
 
-            {/* El clic de mayor intención se queda en el dominio. Fiverr es un
-                enlace de pie de página, nada más.
+            {/* El clic de mayor intención se queda en el dominio: el CTA del
+                header lleva a /contacto y no a ningún perfil externo.
 
                 No lleva `.press`: el botón ya trae su propia
                 `transition-property` y la clase, al estar sin capa, se la
@@ -530,7 +516,7 @@ export function Header() {
                 esta, que la incluye. */}
             <Button
               asChild
-              className="sheen hidden shadow-glow-brand transition-[translate,scale,background-color,border-color,color,box-shadow,opacity] active:scale-[0.97] sm:inline-flex"
+              className="hidden active:scale-[0.98] sm:inline-flex"
             >
               <Link href="/contacto">
                 {t('hireMe')}
@@ -546,8 +532,8 @@ export function Header() {
               aria-controls={MOBILE_PANEL_ID}
               aria-label={menuOpen ? t('closeMenu') : t('openMenu')}
               className={cn(
-                'press inline-flex size-11 items-center justify-center rounded-xl border border-[color:var(--glass-border)] bg-[color:var(--glass-bg-tint)] text-ink-muted hover:bg-brand-wash hover:text-brand-strong xl:hidden',
-                menuOpen && 'bg-brand-wash text-brand-strong'
+                'press inline-flex size-11 items-center justify-center text-ink-muted transition-colors hover:text-ink xl:hidden',
+                menuOpen && 'text-ink'
               )}
             >
               {menuOpen ? (
@@ -636,7 +622,7 @@ export function Header() {
                             isCurrent(item.href) ? 'page' : undefined
                           }
                           className={cn(
-                            'group/row press flex min-h-11 items-center gap-3 rounded-xl px-2 text-sm',
+                            'group/row press flex min-h-11 items-center gap-3 text-sm',
                             isCurrent(item.href)
                               ? 'bg-brand-wash font-semibold text-ink'
                               : 'text-ink-muted hover:bg-brand-wash/60'
@@ -675,7 +661,7 @@ export function Header() {
           <Button
             asChild
             size="lg"
-            className="sheen mt-6 w-full shadow-glow-brand transition-[translate,scale,background-color,border-color,color,box-shadow,opacity] active:scale-[0.97]"
+            className="mt-6 w-full active:scale-[0.98]"
           >
             <Link href="/contacto" onClick={() => setMenuOpen(false)}>
               {t('hireMe')}
@@ -865,7 +851,7 @@ function NavDropdown({
         aria-controls={group.panelId}
         aria-label={`${group.label}: ${submenuLabel}`}
         className={cn(
-          'press inline-flex size-11 items-center justify-center rounded-xl text-ink-subtle hover:bg-brand-wash hover:text-brand-strong',
+          'press inline-flex size-11 items-center justify-center text-ink-subtle transition-colors hover:text-ink',
           'group-hover/nav:bg-brand-wash/70 group-hover/nav:text-brand-strong',
           open && 'bg-brand-wash text-brand-strong shadow-[inset_0_1px_2px_0_var(--glass-edge)]'
         )}
@@ -904,29 +890,12 @@ function NavDropdown({
         hidden={!open}
         style={{ animationDuration: '340ms' }}
         className={cn(
-          'enter-3d absolute left-0 top-full z-10 mt-2.5 origin-top rounded-2xl',
+          'enter absolute left-0 top-full z-10 mt-2.5 origin-top',
           'border border-hairline bg-surface p-2',
-          'shadow-[inset_0_1px_0_0_var(--glass-highlight),var(--lift-4)]',
+          'shadow-[0_18px_40px_-24px_rgb(0_0_0/0.9)]',
           group.width
         )}
       >
-        {/* Dos capas decorativas. NO hay `overflow-hidden` que las recorte, y es
-            deliberado: el anillo de :focus-visible se dibuja 2px por fuera de
-            cada renglón y recortarlo al radio del panel le comería las esquinas.
-            En vez de eso, cada capa lleva su propia forma — el lavado hereda el
-            radio del panel y la línea de gradiente va con los extremos metidos,
-            así ninguna asoma por la silueta.
-
-            Los stops de `--grad-soft` son todos casi blancos, así que
-            `text-ink-muted` encima sigue por arriba de 5:1. */}
-        <span
-          aria-hidden="true"
-          className="grad-soft pointer-events-none absolute inset-0 rounded-2xl opacity-70"
-        />
-        <span
-          aria-hidden="true"
-          className="grad-fill pointer-events-none absolute inset-x-6 top-0 h-0.5 rounded-full opacity-90"
-        />
 
         <ul className="relative">
           {group.items.map((item, index) => {
@@ -950,7 +919,7 @@ function NavDropdown({
                   onClick={onClose}
                   aria-current={isCurrent(item.href) ? 'page' : undefined}
                   className={cn(
-                    'group/item press flex min-h-11 items-center gap-3 rounded-xl px-3 text-sm',
+                    'group/item press flex min-h-11 items-center gap-3 text-sm',
                     isCurrent(item.href)
                       ? 'bg-brand-wash font-semibold text-ink'
                       : 'text-ink-muted hover:bg-brand-wash/70 hover:text-ink'
@@ -977,7 +946,7 @@ function NavDropdown({
             <Link
               href={group.all.href}
               onClick={onClose}
-              className="group/all press flex min-h-11 items-center gap-2 rounded-xl px-3 text-sm font-semibold text-brand-strong hover:bg-brand-wash"
+              className="group/all press flex min-h-11 items-center gap-2 text-sm font-semibold text-ink transition-colors hover:text-paper"
             >
               {group.all.label}
               <ArrowRight
@@ -1008,7 +977,7 @@ function NavUnderline({
     <span
       aria-hidden="true"
       className={cn(
-        'grad-fill pointer-events-none absolute inset-x-3 bottom-1.5 h-0.5 origin-left rounded-full transition-transform duration-300',
+        'pointer-events-none absolute inset-x-1 bottom-2 h-px origin-left bg-paper transition-transform duration-300',
         active ? 'scale-x-100' : 'scale-x-0 group-hover:scale-x-100',
         className
       )}
@@ -1043,7 +1012,7 @@ function MobileLink({
       {current && (
         <span
           aria-hidden="true"
-          className="grad-fill h-1 w-6 shrink-0 rounded-full"
+          className="h-px w-6 shrink-0 bg-ash"
         />
       )}
     </Link>

@@ -262,7 +262,6 @@ const SAME_AS: string[] = [
   SOCIAL_LINKS.linkedin,
   SOCIAL_LINKS.github,
   SOCIAL_LINKS.githubAlt,
-  SOCIAL_LINKS.fiverr,
 ]
 
 /** Topical expertise. Shared by #person and #business so they never drift. */

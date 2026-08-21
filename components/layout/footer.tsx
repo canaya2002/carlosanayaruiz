@@ -1,6 +1,6 @@
 import { getLocale, getTranslations } from 'next-intl/server'
 import { Link } from '@/i18n/navigation'
-import { ArrowUpRight, Github, Linkedin, Mail, MapPin, Phone } from 'lucide-react'
+import { Github, Linkedin, Mail, MapPin, Phone } from 'lucide-react'
 import { NAP, SOCIAL_LINKS } from '@/lib/constants'
 import type { StaticPathname } from '@/i18n/routing'
 
@@ -92,47 +92,17 @@ export async function Footer() {
    * correcto.
    */
   const linkClass =
-    'press -mx-2 inline-flex min-h-10 items-center rounded-lg px-2 text-sm text-ink hover:bg-surface hover:text-brand-strong hover:shadow-lift-1'
+    'press inline-flex min-h-10 items-center text-sm text-ink-muted transition-colors hover:text-ink'
 
   return (
     <footer className="relative isolate overflow-hidden border-t border-hairline bg-ground-tint">
-      {/* ══ CAPAS DE FONDO ═══════════════════════════════════════════
-          El pie tiene aurora propia. No es adorno: sin nada de color detrás, el
-          panel de cristal del bloque de contacto se ve como un rectángulo
-          blanco sobre un fondo casi blanco — el cristal existe solo si hay algo
-          que difuminar.
-
-          ⚠ VA A PLENA INTENSIDAD, Y EL PRECIO ES QUE TODO EL TEXTO QUE CAE
-          DIRECTO SOBRE ELLA ES `text-ink`. Antes de fijarlo así probé bajarle la
-          opacidad para poder conservar `text-ink-muted` en los enlaces, y NO
-          FUNCIONA: el peor caso no es un campo suelto sino el solape de los tres
-          campos de color, que se acumulan. Medido sobre --ground-tint con los
-          tres en su pico:
-
-            opacidad  aurora    ink    ink-muted
-              100%    #53c2f0   7.94     2.98
-               45%    #99d7f6  10.30     3.86
-               25%    #bce3fa  11.91     4.47   ← sigue sin pasar
-
-          O sea: no hay opacidad útil que salve a ink-muted. Los cuatro campos se
-          quedan a plena fuerza —que es lo que hace visible el cristal del panel
-          de contacto— y el texto secundario del pie o es `ink`, o vive dentro de
-          un panel de cristal. Ese es el reparto de abajo.
-
-          No lleva <PointerGlow />: el pie está en TODAS las páginas y casi todas
-          ya montan uno en su cabecera. Dos escuchas de `pointermove` en cada
-          página para un resplandor que vive bajo el pliegue no se paga. */}
-      <div className="aurora" aria-hidden="true">
-        <i />
-        <i />
-        <i />
-        <i />
-      </div>
+      
+      
       <div className="grain" aria-hidden="true" />
       <div className="grid-fade" aria-hidden="true" />
       <span
         aria-hidden="true"
-        className="grad-fill pointer-events-none absolute inset-x-0 top-0 h-0.5 opacity-80"
+        className="pointer-events-none absolute inset-x-0 top-0 h-px bg-hairline-strong"
       />
 
       <div className="mx-auto w-full max-w-6xl px-5 py-16 sm:px-8 sm:py-20">
@@ -151,7 +121,7 @@ export async function Footer() {
           <div>
             <Link
               href="/"
-              className="group press -mx-2 inline-flex items-center gap-2.5 rounded-2xl px-2 py-1"
+              className="group press inline-flex items-center gap-2.5 py-1"
             >
               <span
                 aria-hidden="true"
@@ -174,20 +144,6 @@ export async function Footer() {
             <p className="mt-5 max-w-sm text-sm leading-relaxed text-ink">
               {t('description')}
             </p>
-
-            {/* rel="me" en los dos perfiles que sí pertenecen a la persona es lo
-                que los amarra al nodo Person del grafo del layout. Fiverr es un
-                listado de marketplace, no una identidad: nofollow y sin
-                rel="me".
-
-                Los tres chips usan `.lift` en lugar de una transición a mano, y
-                no es un cambio cosmético: la versión anterior declaraba
-                `transition-[transform,...]` y movía el chip con
-                `hover:-translate-y-0.5`, que en Tailwind v4 escribe la propiedad
-                `translate` — la transición nombraba una propiedad que nadie
-                tocaba, así que el salto era instantáneo. `.lift` sube, hunde al
-                pulsar y sube la sombra al segundo plano, todo desde globals.css
-                y con las curvas del sistema. */}
             <ul
               aria-label={ta('socialLinks')}
               className="mt-7 flex flex-wrap items-center gap-2"
@@ -198,7 +154,7 @@ export async function Footer() {
                   target="_blank"
                   rel="me noopener noreferrer"
                   aria-label={`${NAP.name} · LinkedIn`}
-                  className="lift inline-flex size-11 items-center justify-center rounded-xl border border-hairline bg-surface text-ink-muted shadow-lift-1 hover:text-brand-strong"
+                  className="press inline-flex size-11 items-center justify-center text-ink-muted transition-colors hover:text-ink"
                 >
                   <Linkedin className="size-5" aria-hidden="true" />
                 </a>
@@ -209,24 +165,12 @@ export async function Footer() {
                   target="_blank"
                   rel="me noopener noreferrer"
                   aria-label={`${NAP.name} · GitHub`}
-                  className="lift inline-flex size-11 items-center justify-center rounded-xl border border-hairline bg-surface text-ink-muted shadow-lift-1 hover:text-brand-strong"
+                  className="press inline-flex size-11 items-center justify-center text-ink-muted transition-colors hover:text-ink"
                 >
                   <Github className="size-5" aria-hidden="true" />
                 </a>
               </li>
               <li>
-                <a
-                  href={SOCIAL_LINKS.fiverr}
-                  target="_blank"
-                  rel="nofollow noopener noreferrer"
-                  className="group lift sheen inline-flex h-11 items-center gap-1.5 rounded-xl border border-hairline bg-surface px-3.5 text-sm font-medium text-ink-muted shadow-lift-1 hover:text-brand-strong"
-                >
-                  Fiverr
-                  <ArrowUpRight
-                    className="size-3.5 transition-[translate] duration-300 group-hover:-translate-y-0.5 group-hover:translate-x-0.5"
-                    aria-hidden="true"
-                  />
-                </a>
               </li>
             </ul>
 

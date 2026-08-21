@@ -160,7 +160,6 @@
     "benefits": "Beneficios clave",
     "includes": "Qué incluye",
     "cta": "Solicitar cotización",
-    "ctaFiverr": "Contratar en Fiverr",
     "viewAll": "Ver el servicio"
   },
   "servicesHub": {
@@ -270,7 +269,6 @@
     "social": "Redes y perfiles",
     "connect": "Conecta conmigo",
     "seeProjects": "Ve mis proyectos",
-    "fiverr": "Contrátame en Fiverr",
     "mailtoNote": "Al enviar se abre tu aplicación de correo con el mensaje ya escrito. No guardo nada en ninguna base de datos.",
     "noMailClient": "¿No se abrió tu correo?",
     "copyEmail": "Copiar mi correo",

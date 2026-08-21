@@ -1,23 +1,9 @@
 import type { Metadata } from 'next'
 import { setRequestLocale, getTranslations } from 'next-intl/server'
 import { Link } from '@/i18n/navigation'
-import {
-  ArrowRight,
-  ArrowUpRight,
-  Building2,
-  FolderKanban,
-  Handshake,
-  Info,
-  Rocket,
-  type LucideIcon,
-} from 'lucide-react'
-import { Breadcrumbs } from '@/components/layout/breadcrumbs'
-import { Button } from '@/components/ui/button'
-import { Badge } from '@/components/ui/badge'
-import { Carousel } from '@/components/ui/carousel'
-import { ImageSlot } from '@/components/ui/image-slot'
-import { PointerGlow } from '@/components/motion/pointer-glow'
-import { Tilt3D } from '@/components/motion/tilt-3d'
+import { Rail } from '@/components/instrument/rail'
+import { Ribbon } from '@/components/instrument/ribbon'
+import { MediaSlot } from '@/components/instrument/media-slot'
 import { PresenceMap } from '@/components/map/presence-map'
 import {
   getCompanies,
@@ -59,59 +45,39 @@ const COUNTRY_NAME: Record<CountryCode, Record<Locale, string>> = {
 }
 
 /**
- * El badge de `kind`. Ninguno usa el gradiente decorativo: un badge es texto y
- * sobre los stops --sky / --cyan el blanco mide 2.77:1 y 1.68:1. El variant
- * `gradient` del componente usa `.grad-fill`, cuyos stops pasan 5.3:1.
+ * El tipo de entrada es una ETIQUETA MONO en la fila, no una cápsula de color.
+ * Se resuelve por tabla y no con ternarios: si mañana entra un cuarto `kind`,
+ * el compilador exige su clave en lugar de dejar la etiqueta en blanco.
  */
-const KIND_BADGE: Record<
-  CompanyKind,
-  { variant: 'default' | 'sky' | 'gradient'; icon: LucideIcon; key: string }
-> = {
-  empleo: { variant: 'default', icon: Building2, key: 'kindEmpleo' },
-  cliente: { variant: 'sky', icon: Handshake, key: 'kindCliente' },
-  propio: { variant: 'gradient', icon: Rocket, key: 'kindPropio' },
+const KIND_KEY: Record<CompanyKind, string> = {
+  empleo: 'kindEmpleo',
+  cliente: 'kindCliente',
+  propio: 'kindPropio',
 }
 
-/**
- * ════════════════════════════════════════════════════════════════
- * CAPAS DE FONDO
- *
- * Aurora + grano + cuadrícula. Van juntas y los cuatro <i> son obligatorios:
- * cada uno es un campo de color distinto (azul de marca, cian, cielo y un
- * brillo blanco para que la mezcla no se vea plana). Todo se mueve con
- * `transform`, así que mientras el navegador las pueda componer cuestan cero
- * recálculos de estilo.
- *
- * Y no son adorno: el cristal solo existe si hay algo saturado detrás que
- * difuminar. Sobre el fondo casi blanco del sitio un panel translúcido se ve
- * exactamente igual que un panel blanco — que es justo lo que pasaba antes.
- *
- * ── CUÁNTAS CABEN, MEDIDO ──
- * Esta página monta DOS, más la del pie, que ya existe. El límite medido está
- * en cinco: ahí se agota el presupuesto de capas compuestas, el navegador
- * devuelve las animaciones al hilo principal y toda animación en bucle empieza
- * a costar un recálculo de estilo por frame.
- * Verifica: node scripts/perf-probe.mjs http://localhost:3000/es/proyectos
- *
- * `glow` monta el resplandor que sigue al puntero. Solo en la cabecera: cada
- * instancia añade un listener de `pointermove` y una lectura de geometría por
- * frame, así que repetirlo en todas las secciones no es gratis.
- * ════════════════════════════════════════════════════════════════
- */
-function Backdrop({ glow = false }: { glow?: boolean }) {
-  return (
-    <>
-      <div className="aurora" aria-hidden="true">
-        <i />
-        <i />
-        <i />
-        <i />
-      </div>
-      <div className="grain" aria-hidden="true" />
-      <div className="grid-fade" aria-hidden="true" />
-      {glow ? <PointerGlow /> : null}
-    </>
-  )
+/* ════════════════════════════════════════════════════════════════
+   DURACIÓN REAL
+
+   Cada fila lleva una barra con la longitud que le toca por sus fechas
+   verdaderas, medida contra el trabajo más largo de la lista. No es
+   decoración: es la única magnitud comparable que hay en estos datos, y en
+   un instrumento las magnitudes se dibujan.
+   ════════════════════════════════════════════════════════════════ */
+
+/** `YearMonth` («2023-11») a meses absolutos, para poder restar. */
+function toMonths(ym: string): number {
+  const [y, m] = ym.split('-').map(Number)
+  return y * 12 + (m - 1)
+}
+
+/** El mes en curso, para cerrar los periodos que siguen abiertos. */
+function currentYearMonth(): string {
+  const now = new Date()
+  return `${now.getFullYear()}-${String(now.getMonth() + 1).padStart(2, '0')}`
+}
+
+function monthsBetween(from: string, to: string | null): number {
+  return Math.max(1, toMonths(to ?? currentYearMonth()) - toMonths(from))
 }
 
 export async function generateMetadata({ params }: Props): Promise<Metadata> {
@@ -142,7 +108,6 @@ export default async function ProyectosPage({ params }: Props) {
   const t = await getTranslations('proyectos')
   const ttr = await getTranslations('trayectoria')
   const tc = await getTranslations('common')
-  const tl = await getTranslations('a11y')
 
   const companies = getCompanies(locale)
 
@@ -160,16 +125,23 @@ export default async function ProyectosPage({ params }: Props) {
   const ordered = groups.flatMap((group) => group.items)
 
   /**
-   * La portada de la primera tarjeta es la candidata a LCP del carril, así que
+   * La portada de la primera fila es la candidata a LCP de la lista, así que
    * es la única con `priority`. Solo importa cuando exista una captura real:
    * sin ella el hueco es SVG en línea y no hay imagen que precargar.
    */
   const firstSlug = ordered[0]?.slug
 
+  /** El trabajo más largo fija la escala de las barras. */
+  const longest = Math.max(
+    ...companies.map((company) =>
+      monthsBetween(company.startDate, company.endDate)
+    )
+  )
+
   /**
-   * Los tres números del panel de la cabecera. Se cuentan de los datos, no se
-   * escriben a mano: si mañana entra un cliente a data/companies.ts los tres se
-   * mueven solos y ninguno puede quedar desactualizado.
+   * Los tres números de la cabecera. Se cuentan de los datos, no se escriben
+   * a mano: si mañana entra un cliente a data/companies.ts los tres se mueven
+   * solos y ninguno puede quedar desactualizado.
    */
   const stats: { value: number; label: string }[] = [
     { value: companies.length, label: t('statEntries') },
@@ -179,6 +151,17 @@ export default async function ProyectosPage({ params }: Props) {
       label: t('statOwn'),
     },
   ]
+
+  /**
+   * Las dos cintas. Nombres en un carril y stack en el otro, corriendo en
+   * direcciones opuestas: el cruce es lo que da profundidad, sin una sola
+   * sombra y sin una sola caja. El stack va deduplicado —`Ribbon` usa el
+   * texto como clave— y aplanado de las cinco entradas.
+   */
+  const names = ordered.map((company) => company.name)
+  const stack = Array.from(
+    new Set(companies.flatMap((company) => company.stack))
+  )
 
   const pageUrl = routeUrl('proyectos', locale)
   const listId = `${pageUrl}#lista`
@@ -235,315 +218,290 @@ export default async function ProyectosPage({ params }: Props) {
         dangerouslySetInnerHTML={{ __html: JSON.stringify(schema) }}
       />
 
-      {/* ══ CABECERA + MAPA ════════════════════════════════════════
-          La aurora no es decoración aquí: es lo que el panel de cristal del
-          mapa difumina, y sin nada de color detrás el cristal se lee como
-          plástico translúcido.                                          */}
-      <section className="relative isolate overflow-hidden border-b border-hairline">
-        <Backdrop glow />
+      <div
+        className="grid"
+        style={{ gridTemplateColumns: 'var(--tape-w) minmax(0,1fr)' }}
+      >
+        <Rail />
 
-        <div className="mx-auto w-full max-w-6xl px-5 py-14 sm:px-8 sm:py-16">
-          <Breadcrumbs items={[{ label: t('title') }]} />
+        <div className="min-w-0">
+          {/* ═══ CABECERA ════════════════════════════════════════
+              Sin instrumento en vivo: el que mide la página abierta vive
+              en la home y duplicarlo aquí lo volvería decoración. Lo que
+              esta página mide son duraciones, y eso se ve más abajo. */}
+          <section className="relative px-5 pt-16 sm:px-10">
+            <p className="stamp">{ttr('eyebrow')}</p>
 
-          <div className="mt-10 max-w-3xl">
-            <p className="eyebrow enter-scale">
-              <FolderKanban className="size-3.5" aria-hidden="true" />
-              {ttr('eyebrow')}
-            </p>
-
-            {/* El h1 se compone en línea para que el gradiente caiga solo sobre
-                las dos últimas palabras: un titular completo recortado pierde
-                legibilidad. El texto que resulta es idéntico a
-                `proyectos.title`. */}
-            <h1 className="enter-blur step-1 mt-6 text-d1 text-ink">
-              {en ? 'Projects ' : 'Proyectos '}
-              <span className="grad-text">
-                {en ? 'and companies' : 'y empresas'}
-              </span>
+            <h1 className="mt-6 max-w-[14ch] text-hero text-ink">
+              {t('title')}
             </h1>
 
-            <span
-              className="grad-deco enter step-1 mt-7 block h-1 w-12 rounded-full"
-              aria-hidden="true"
-            />
+            <p className="mt-10 max-w-[46ch] font-human text-lead text-ink-muted">
+              {t('subtitle')}
+            </p>
 
-            {/* Los dos párrafos van DENTRO de cristal, no directos sobre la
-                aurora. Medido: `ink-muted` sobre el campo azul de la aurora cae
-                a 3.83:1 y no pasa; sobre `.glass-strong` mide 5.1:1. Y el texto
-                sobre cristal es SIEMPRE tinta, nunca blanco (1.96:1). */}
-            <div className="glass glass-strong glass-spec enter step-2 mt-7 p-6 sm:p-7">
-              <p className="text-lead text-ink-muted">{t('subtitle')}</p>
-              <p className="mt-4 max-w-[68ch] text-ink-muted">{t('lead')}</p>
+            <p className="mt-8 max-w-[62ch] text-ink-muted">{t('lead')}</p>
 
-              {/* Los tres números, contados de los datos. Un borde los separa
-                  en lugar de otra superficie: un segundo panel aquí dentro
-                  sería cristal sobre cristal. */}
-              <dl className="mt-7 grid grid-cols-3 gap-4 border-t border-hairline pt-6">
-                {stats.map((stat) => (
-                  <div key={stat.label}>
-                    <dt className="text-xs font-bold uppercase tracking-wide text-ink-muted">
-                      {stat.label}
-                    </dt>
-                    <dd
-                      data-numeric=""
-                      className="mt-1 font-display text-d2 text-brand-strong"
-                    >
-                      {stat.value}
-                    </dd>
-                  </div>
-                ))}
-              </dl>
+            {/* Los tres números, contados de los datos. Tres filas medidas,
+                no tres tarjetas: la jerarquía la da la regla, no una caja. */}
+            <dl className="reveal-stagger mt-14 max-w-md">
+              {stats.map((stat) => (
+                <div
+                  key={stat.label}
+                  className="band flex items-baseline justify-between gap-6"
+                >
+                  <dt className="stamp">{stat.label}</dt>
+                  <dd className="font-mono text-d3 tabular-nums text-ink">
+                    {stat.value}
+                  </dd>
+                </div>
+              ))}
+            </dl>
+          </section>
+
+          {/* ═══ EL MAPA ═════════════════════════════════════════
+              Geografía real —contornos de Natural Earth—, no un SVG
+              decorativo de un continente. Cada pin es un enlace de verdad
+              a la ficha de esa empresa. */}
+          <section
+            className="border-t border-hairline px-5 py-20 sm:px-10"
+            aria-labelledby="mapa-heading"
+          >
+            <h2 id="mapa-heading" className="sr-only">
+              {en ? 'Presence map' : 'Mapa de presencia'}
+            </h2>
+
+            <p className="stamp">
+              {en
+                ? 'coordinates · natural earth'
+                : 'coordenadas · natural earth'}
+            </p>
+
+            <div className="reveal mt-8">
+              <PresenceMap locale={locale} />
             </div>
-          </div>
 
-          {/* El mapa, a todo el ancho del contenedor. Ya es un panel de cristal
-              por dentro, así que NO va envuelto en otro: cristal sobre cristal
-              desenfoca dos veces y es el efecto más caro del sistema. */}
-          <div className="enter step-4 mt-12 sm:mt-14">
-            <PresenceMap locale={locale} />
-          </div>
-
-          {/* Nota de transparencia sobre los dos tipos de marcador. Caja OPACA a
-              propósito: el protagonista de esta sección es el cristal del mapa,
-              y una segunda superficie translúcida pegada debajo le quitaría
-              jerarquía además de costar otro difuminado. Al ser opaca, su
-              `ink-muted` no compite contra la aurora. */}
-          <div className="enter step-5 mt-5 flex max-w-[80ch] gap-3 rounded-xl border border-hairline bg-surface-alt p-4 sm:p-5">
-            <Info
-              className="mt-0.5 size-4 shrink-0 text-sky-ink"
-              aria-hidden="true"
-            />
-            <p className="text-sm leading-relaxed text-ink-muted">
+            {/* La nota de transparencia sobre los dos tipos de marcador. Es
+                un hueco declarado del registro, así que se dibuja como
+                hueco: regla punteada, sin caja. */}
+            <p className="gap mt-8 max-w-[80ch] pt-4 text-sm">
               {t('mapNote')}
             </p>
-          </div>
-        </div>
-      </section>
+          </section>
 
-      {/* ══ CARRILES POR PAÍS ══════════════════════════════════════
-          Carrusel, no rejilla. El desplazamiento y el imán son nativos
-          (`scroll-snap`): si el JS del componente no corre el carril sigue
-          arrastrándose, y las tarjetas completas están en el HTML del servidor,
-          así que un crawler las lee todas — un carrusel con estado en JS solo
-          expone la primera lámina.
-
-          Esta sección NO lleva `.defer-paint`: aquí viven los anclas #pais-MEX
-          y #pais-USA a los que enlaza el mapa, y aislar el layout de un destino
-          de salto es pedirle al navegador que aterrice en el lugar equivocado.
-      */}
-      <section className="relative isolate overflow-hidden border-b border-hairline">
-        <Backdrop />
-
-        <div className="mx-auto w-full max-w-6xl px-5 py-20 sm:px-8 sm:py-24">
-          {/* La etiqueta de la sección es un párrafo, no un encabezado: los
-              encabezados de este bloque son los de país, y meter un h2 arriba
-              los empujaría a h3 sin que la jerarquía real cambiara. */}
-          <p className="eyebrow reveal">{t('byCountry')}</p>
-
-          {/* `.eyebrow` ya es una superficie de cristal, así que la nota va en
-              su propio panel y no envolviendo a la píldora. */}
-          <div className="glass glass-strong glass-spec reveal mt-6 max-w-[70ch] px-5 py-4">
-            <p className="text-ink-muted">{t('railNote')}</p>
-          </div>
-
-          {groups.map((group, groupIndex) => (
-            <div
-              key={group.iso}
-              className={groupIndex === 0 ? 'mt-12' : 'mt-16 sm:mt-20'}
-            >
-              {/* El id es el destino del enlace del mapa. El desplazamiento lo
-                  resuelve `:target { scroll-margin-top }` de globals.css.
-
-                  El h2 cae DIRECTO sobre la aurora, así que es `text-ink`
-                  (10.2:1) y el contador va en un badge de cristal: como
-                  `text-ink-subtle` suelto medía 3.23:1 y no pasaba. */}
-              <h2
-                id={`pais-${group.iso}`}
-                className="reveal flex flex-wrap items-center gap-x-4 gap-y-2 text-d2 text-ink"
-              >
-                {COUNTRY_NAME[group.iso][locale]}
-                <Badge variant="glass" data-numeric="">
-                  {group.items.length}{' '}
-                  {group.items.length === 1
-                    ? en
-                      ? 'entry'
-                      : 'registro'
-                    : en
-                      ? 'entries'
-                      : 'registros'}
-                </Badge>
-              </h2>
-
-              <Carousel
-                label={`${tl('projectsRail')} — ${COUNTRY_NAME[group.iso][locale]}`}
-                prevLabel={tl('prevSlide')}
-                nextLabel={tl('nextSlide')}
-                className="mt-6"
-              >
-                {group.items.map((company) => {
-                  const kind = KIND_BADGE[company.kind]
-                  const KindIcon = kind.icon
-
-                  /**
-                   * `portada.png` es la ruta acordada del hueco. Si algún día
-                   * hay una captura real registrada en data/companies.ts, esa
-                   * gana y el hueco desaparece sin tocar este archivo.
-                   */
-                  const shot = company.shots[0]
-
-                  return (
-                    /* La inclinación sigue al puntero. `.scene` —la
-                       perspectiva— ya está en el riel del carrusel, así que
-                       todas las tarjetas comparten un mismo punto de fuga, que
-                       es lo que separa un 3D creíble de varias tarjetas girando
-                       cada una por su cuenta. */
-                    <Tilt3D
-                      key={company.slug}
-                      className="w-[19rem] sm:w-[23rem]"
-                    >
-                      {/* La tarjeta entera es el enlace: un objetivo de clic
-                          grande y un solo destino, en vez de un enlace-título
-                          de 200 px al que hay que apuntar.
-
-                          Superficie OPACA (`.card`) y no cristal, por dos
-                          razones: la etiqueta del hueco de imagen ya es un
-                          panel de cristal, y un `backdrop-filter` dentro de otro
-                          difumina dos veces y se paga doble. Además, sobre la
-                          aurora una superficie opaca es lo que deja leer el
-                          `ink-muted` del cuerpo.
-
-                          Nada de `overflow-hidden` ni `.sheen` en este nodo:
-                          las dos cosas fuerzan el aplanado del 3D y las clases
-                          `.depth-*` de dentro dejarían de levantar. El recorte
-                          y el barrido especular viven en la portada. */}
-                      <Link
-                        href={{
-                          pathname: '/proyectos/[slug]',
-                          params: { slug: company.slug },
-                        }}
-                        className="card lift group flex h-full flex-col p-3 [transform-style:preserve-3d]"
-                      >
-                        <ImageSlot
-                          path={
-                            shot ?? `/proyectos/${company.slug}/portada.png`
-                          }
-                          filled={Boolean(shot)}
-                          alt={t('coverAlt', { name: company.name })}
-                          hint="Portada del proyecto"
-                          width={1200}
-                          height={750}
-                          priority={company.slug === firstSlug}
-                          sizes="(min-width: 640px) 344px, 280px"
-                          className="sheen depth-1 aspect-[16/10] w-full overflow-hidden rounded-xl shadow-lift-2"
-                        />
-
-                        <div className="flex flex-1 flex-col p-3 pt-5 [transform-style:preserve-3d]">
-                          <div className="depth-2 flex flex-wrap items-center gap-2">
-                            <Badge variant={kind.variant}>
-                              <KindIcon className="size-3" aria-hidden="true" />
-                              {t(kind.key)}
-                            </Badge>
-                          </div>
-
-                          <h3 className="depth-2 mt-4 text-d3 text-ink transition-colors duration-300 group-hover:text-brand-strong">
-                            {company.name}
-                          </h3>
-
-                          <p className="depth-1 mt-1.5 text-sm font-semibold text-ink-muted">
-                            {company.role}
-                          </p>
-
-                          {/* Fechas legibles por máquina: dos <time> reales.
-                              `endDate: null` significa en curso, y ahí no se
-                              escribe una fecha inventada. */}
-                          <p
-                            data-numeric=""
-                            className="depth-1 mt-3 text-sm font-semibold text-brand-strong"
-                          >
-                            <span className="sr-only">
-                              {t('periodLabel')}:{' '}
-                            </span>
-                            <time dateTime={company.startDate}>
-                              {formatShortDate(company.startDate, locale)}
-                            </time>
-                            {' – '}
-                            {company.endDate ? (
-                              <time dateTime={company.endDate}>
-                                {formatShortDate(company.endDate, locale)}
-                              </time>
-                            ) : (
-                              <span>{tc('present')}</span>
-                            )}
-                          </p>
-
-                          <p className="mt-4 flex-1 text-sm leading-relaxed text-ink-muted">
-                            {company.summary}
-                          </p>
-
-                          <div className="mt-5">
-                            <p className="text-xs font-bold uppercase tracking-wide text-ink-subtle">
-                              {t('stackLabel')}
-                            </p>
-                            <div className="mt-2 flex flex-wrap gap-1.5">
-                              {company.stack.map((tech) => (
-                                <Badge key={tech} variant="neutral">
-                                  {tech}
-                                </Badge>
-                              ))}
-                            </div>
-                          </div>
-
-                          <span className="depth-2 mt-6 inline-flex items-center gap-1.5 text-sm font-semibold text-brand-strong">
-                            {t('viewProject')}
-                            <ArrowUpRight
-                              className="size-4 transition-transform duration-300 group-hover:-translate-y-1 group-hover:translate-x-1"
-                              aria-hidden="true"
-                            />
-                          </span>
-                        </div>
-                      </Link>
-                    </Tilt3D>
-                  )
-                })}
-              </Carousel>
+          {/* ═══ LAS CINTAS ══════════════════════════════════════
+              Los nombres en un carril y el stack en el otro, en
+              direcciones opuestas. Sin flechas y sin puntos: no hay nada
+              que encuadrar, es texto impreso que corre. */}
+          <section
+            className="overflow-hidden border-t border-hairline py-10"
+            aria-labelledby="cintas-heading"
+          >
+            <h2 id="cintas-heading" className="sr-only">
+              {en ? 'Companies and stack' : 'Empresas y stack'}
+            </h2>
+            <Ribbon
+              items={names}
+              label={t('title')}
+              duration="58s"
+              large
+            />
+            <div className="mt-4">
+              <Ribbon
+                items={stack}
+                label={t('stackLabel')}
+                duration="76s"
+                reverse
+              />
             </div>
-          ))}
+          </section>
 
-          {/* Cae directo sobre la aurora: `text-ink`, no `ink-subtle`. */}
-          <p className="reveal mt-10 text-sm text-ink">{tc('dragHint')}</p>
-        </div>
-      </section>
+          {/* ═══ EL REGISTRO POR PAÍS ════════════════════════════
+              Una lista de filas medidas, no una rejilla de tarjetas. Los
+              id de país son el destino de los enlaces del mapa. */}
+          <section className="border-t border-hairline px-5 py-20 sm:px-10">
+            <p className="stamp">{t('byCountry')}</p>
 
-      {/* ══ CTA FINAL ══════════════════════════════════════════════ */}
-      <section className="defer-paint mx-auto w-full max-w-6xl px-5 py-20 sm:px-8 sm:py-24">
-        <div className="grad-drift reveal-scale rounded-3xl px-6 py-14 shadow-lift-3 sm:px-12 sm:py-20">
-          <div className="relative max-w-2xl">
-            <h2 className="text-d1 text-white">{t('ctaTitle')}</h2>
-            <p className="mt-5 text-lead text-white/85">{t('ctaLead')}</p>
-
-            <div className="mt-9 flex flex-wrap items-center gap-4">
-              {/* Sobre el gradiente el botón se invierte: superficie blanca con
-                  texto de marca. Un relleno de marca aquí desaparecería. */}
-              <Button
-                asChild
-                size="lg"
-                className="sheen bg-none bg-surface text-brand-strong hover:opacity-95"
+            {groups.map((group, groupIndex) => (
+              <div
+                key={group.iso}
+                className={groupIndex === 0 ? 'mt-10' : 'mt-20'}
               >
-                <Link href="/contacto">
-                  {en ? 'Start a project' : 'Empezar un proyecto'}
-                  <ArrowRight className="size-4" aria-hidden="true" />
-                </Link>
-              </Button>
+                {/* El desplazamiento del salto lo resuelve
+                    `:target { scroll-margin-top }` de globals.css. */}
+                <h2
+                  id={`pais-${group.iso}`}
+                  className="flex flex-wrap items-baseline gap-x-5 gap-y-2 text-d1 text-ink"
+                >
+                  {COUNTRY_NAME[group.iso][locale]}
+                  <span className="stamp tabular-nums">
+                    {group.items.length}{' '}
+                    {group.items.length === 1
+                      ? en
+                        ? 'entry'
+                        : 'registro'
+                      : en
+                        ? 'entries'
+                        : 'registros'}
+                  </span>
+                </h2>
+
+                <ol className="reveal-stagger mt-8">
+                  {group.items.map((company) => {
+                    /**
+                     * `portada.png` es la ruta acordada del hueco. Si algún
+                     * día hay una captura real registrada en
+                     * data/companies.ts, esa gana y el hueco desaparece sin
+                     * tocar este archivo.
+                     */
+                    /* La portada la resuelve <MediaSlot> desde el registro de medios. */
+                    const months = monthsBetween(
+                      company.startDate,
+                      company.endDate
+                    )
+
+                    return (
+                      <li key={company.slug}>
+                        {/* La fila entera es el enlace: un objetivo de clic
+                            grande y un solo destino. Sin borde de cuatro
+                            lados — la fila la define su regla superior. */}
+                        <Link
+                          href={{
+                            pathname: '/proyectos/[slug]',
+                            params: { slug: company.slug },
+                          }}
+                          className="band group grid gap-5 py-8 sm:grid-cols-[minmax(0,20rem)_minmax(0,1fr)] sm:gap-8"
+                        >
+                          {/* El hueco marca dónde va la portada con su ruta
+                              exacta. Lo resuelve el registro de medios, que
+                              es el mismo dato que genera `docs/MEDIA.md`: si
+                              el archivo existe en `public/`, entra; si no, se
+                              dibuja el hueco. Un solo lugar decide.
+
+                              A 176 px de ancho la etiqueta no cabía y se
+                              recortaba 16–28 px —lo detectó `check:layout`—,
+                              así que la columna subió a 20rem y el hueco va
+                              en modo compacto. */}
+                          <MediaSlot
+                            id={`proyecto-${company.slug}-captura-1`}
+                            compact
+                            priority={company.slug === firstSlug}
+                            sizes="(min-width: 640px) 320px, 100vw"
+                            className="w-full"
+                          />
+
+                          <div className="min-w-0">
+                            {/* Fechas legibles por máquina: dos <time>
+                                reales. `endDate: null` significa en curso, y
+                                ahí no se escribe una fecha inventada. */}
+                            <p className="stamp tabular-nums">
+                              {t(KIND_KEY[company.kind])}
+                              {' · '}
+                              <span className="sr-only">
+                                {t('periodLabel')}:{' '}
+                              </span>
+                              <time dateTime={company.startDate}>
+                                {formatShortDate(company.startDate, locale)}
+                              </time>
+                              {' – '}
+                              {company.endDate ? (
+                                <time dateTime={company.endDate}>
+                                  {formatShortDate(company.endDate, locale)}
+                                </time>
+                              ) : (
+                                <span>{tc('present')}</span>
+                              )}
+                              {' · '}
+                              {months} {en ? 'mo' : 'm'}
+                            </p>
+
+                            <h3 className="mt-3 text-d3 text-ink">
+                              {company.name}
+                            </h3>
+
+                            <p className="mt-1 text-sm text-ink-muted">
+                              {company.role}
+                            </p>
+
+                            <p className="mt-4 max-w-[62ch] text-ink-muted">
+                              {company.summary}
+                            </p>
+
+                            <p className="stamp mt-4">
+                              {t('stackLabel')}
+                              {': '}
+                              {company.stack.join(' · ')}
+                            </p>
+
+                            {/* La barra lleva la duración REAL, medida
+                                contra el trabajo más largo de la lista. */}
+                            <span
+                              className="mt-5 block"
+                              style={{ width: `${(months / longest) * 100}%` }}
+                              aria-hidden="true"
+                            >
+                              <span className="band-fill" />
+                            </span>
+
+                            <span className="mt-5 flex items-center gap-2 text-ink">
+                              {t('viewProject')}
+                              <span
+                                aria-hidden="true"
+                                className="transition-transform duration-150 group-hover:translate-x-1"
+                              >
+                                →
+                              </span>
+                            </span>
+
+                            {/* La pluma: al pasar el puntero, un trazo se
+                                escribe de izquierda a derecha bajo la fila.
+                                Solo `transform`, así que no repinta. */}
+                            <span
+                              aria-hidden="true"
+                              className="mt-4 block h-px origin-left scale-x-0 bg-ink transition-transform duration-200 ease-stylus group-hover:scale-x-100"
+                            />
+                          </div>
+                        </Link>
+                      </li>
+                    )
+                  })}
+                </ol>
+              </div>
+            ))}
+          </section>
+
+          {/* ═══ LA PLACA ════════════════════════════════════════
+              La sección que la aguja limpió: el material se invierte
+              entero. Una sola vez por página, y aquí le toca al cierre.
+              Ojo: dentro de la placa NO va `.link-stylus` —su color es
+              papel y sobre papel desaparece—; los enlaces heredan hollín
+              y se subrayan con currentColor. */}
+          <section className="plate px-5 py-20 sm:px-10">
+            <p className="stamp">{en ? 'next entry' : 'siguiente registro'}</p>
+
+            <h2 className="mt-5 max-w-[20ch] text-d1">{t('ctaTitle')}</h2>
+
+            <p className="mt-6 max-w-[56ch] font-human text-lead">
+              {t('ctaLead')}
+            </p>
+
+            <p className="mt-10 flex flex-wrap items-baseline gap-x-8 gap-y-3">
+              <Link
+                href="/contacto"
+                className="text-d3 underline decoration-1 underline-offset-[0.3em] transition-opacity hover:opacity-80"
+              >
+                {en ? 'Start a project' : 'Empezar un proyecto'} →
+              </Link>
               <a
                 href={`mailto:${NAP.email}`}
-                className="text-sm font-semibold text-white underline decoration-white/50 underline-offset-4 hover:decoration-white"
+                className="font-mono text-sm underline decoration-1 underline-offset-[0.3em] transition-opacity hover:opacity-80"
               >
                 {NAP.email}
               </a>
-            </div>
-          </div>
+            </p>
+          </section>
         </div>
-      </section>
+      </div>
     </>
   )
 }

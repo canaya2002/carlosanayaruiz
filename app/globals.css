@@ -29,115 +29,170 @@
    ═══════════════════════════════════════════════════════════════ */
 
 :root {
-  color-scheme: light;
+  color-scheme: dark;
+
+  /* ═══════════════════════════════════════════════════════════
+     SISTEMA: «PAPEL AHUMADO»
+
+     Un registrador de papel ahumado: un tambor cubierto de hollín
+     corre bajo una aguja, y la aguja RASPA. Todo lo claro de esta
+     página es hollín que la medición ya quitó. Por eso el fondo es
+     un negro CÁLIDO de carbón y nunca un gris azulado.
+
+     Seis materiales. Dos de ellos no son decoración: --minium y
+     --threshold son los hex exactos que Google publica para «fail»
+     y «good» en Core Web Vitals. Solo pueden aparecer sobre una
+     medición real. Si los usas para adornar, el instrumento miente
+     y el sitio pierde lo único que lo hace distinto.
+     ═══════════════════════════════════════════════════════════ */
+
+  /* ── Los seis materiales, con su superficie de diseño ─────── */
+  --soot: #12100e;      /* hollín  · 50%  · fondo dominante        */
+  --paper: #ebe6d9;     /* papel   · 26%  · el trazo               */
+  --smoke: #23201c;     /* humo    · 15%  · hollín delgado         */
+  --ash: #8c877a;       /* ceniza  ·  7%  · raspado parcial        */
+  --minium: #ff4e42;    /* minio   · 1.5% · la regla de 2.5 s      */
+  --threshold: #0cce6b; /* umbral  · 0.5% · una medición que pasa  */
 
   /* ── Fondos ────────────────────────────────────────────────── */
-  --ground: #fbfcfe;
-  --ground-tint: #eff6fe;
-  --surface: #ffffff;
-  --surface-alt: #f5fafe;
+  --ground: var(--soot);
+  --ground-tint: #171410;
+  --surface: var(--smoke);
+  --surface-alt: #2b2721;
 
-  /* ── Tinta. Contraste medido sobre --ground:
-     ink 15.7 · ink-muted 5.9 · ink-subtle 5.0. Los tres pasan 4.5. */
-  --ink: #16203a;
-  --ink-muted: #56618a;
-  --ink-subtle: #626d92;
+  /* ── Tinta. Contraste MEDIDO sobre --ground (#12100e):
+     ink 15.24 · ink-muted 8.57 · ink-subtle 5.30.
+     Los tres pasan 4.5. No hay tinta por debajo de ese piso. */
+  --ink: var(--paper);
+  --ink-muted: #b3aea0;
+  --ink-subtle: var(--ash);
 
-  /* ── Estructura. Dos trabajos, dos pisos.
-     --hairline es DECORATIVO (1.2:1): divisores, bordes de tarjeta.
-     --control es un COMPONENTE (3.4:1): inputs, botones outline. WCAG 1.4.11.
-     Nunca --hairline en un input, nunca --control en un divisor. */
-  --hairline: #e3ebf5;
-  --hairline-strong: #cfdcea;
-  --control: #7c89a6;
+  /* Tinta secundaria SOBRE LA PLACA de papel, que es la única superficie
+     clara del sitio. `--ink-subtle` (ceniza) mide 2.88 ahí y no pasa: la
+     placa invierte el material, así que necesita su propia tinta.
+     Sólido y no `opacity`, por la misma razón que las marcas: atenuar
+     texto con opacidad es cómo se cuelan los fallos de contraste. */
+  --ink-plate: #5c564a;
 
-  /* ── Marca: azul → cielo → cian, sin morado.
-     ⚠ --sky mide 2.70:1 y --cyan 1.76:1 sobre fondo claro, y blanco sobre
-     --sky da 2.77:1. Son DECORATIVOS: stops de gradiente, auroras,
-     resplandores. Nunca texto, nunca borde con significado, nunca relleno de
-     botón. Para texto: --sky-ink (5.8:1) o --cyan-ink (5.2:1). */
-  --brand: #2563eb;
-  --brand-strong: #1d4ed8;
-  --brand-ink: #ffffff;
-  --brand-wash: #eef3fe;
+  /* ── Estructura. Dos pisos, dos trabajos.
+     --hairline es DECORATIVO: divisores, la graduación fina.
+     --control es un COMPONENTE (5.30:1): inputs, botones outline.
+     WCAG 1.4.11 pide 3:1 y ceniza lo pasa con holgura. */
+  --hairline: #2a2620;
+  --hairline-strong: #3d3830;
+  --control: var(--ash);
 
-  --sky: #0ea5e9;
-  --sky-ink: #0369a1;
-  --sky-wash: #e6f4fd;
+  /* ── Acción. En este sistema un enlace es PAPEL, no un color de
+     marca: el trazo de la aguja es lo que se lee. El único croma
+     reservado vive en --minium y --threshold, y ninguno de los dos
+     puede usarse aquí. */
+  --brand: var(--paper);
+  --brand-strong: #f7f4ec;
+  --brand-ink: var(--soot);
+  --brand-wash: var(--smoke);
 
-  --cyan: #22d3ee;
-  --cyan-ink: #0e7490;
-  --cyan-wash: #e5fafe;
+  /* ── Legado neutralizado. Estos tokens siguen existiendo porque
+     15 páginas todavía los nombran; ya no son azules. Se van
+     borrando conforme cada página se migre. */
+  --sky: var(--ash);
+  --sky-ink: var(--ink-muted);
+  --sky-wash: var(--smoke);
+  --cyan: var(--ash);
+  --cyan-ink: var(--ink-muted);
+  --cyan-wash: var(--smoke);
 
-  --positive: #047857;
-  --positive-wash: #e7f6f0;
-  --danger: #be123c;
-  --danger-wash: #fdeaee;
+  /* ── Semántica de medición. NO son colores de marca. ───────── */
+  --positive: var(--threshold);
+  --positive-wash: #10251a;
+  --danger: var(--minium);
+  --danger-wash: #2a1512;
 
-  --ring: var(--brand);
+  --ring: var(--paper);
 
-  /* ── Los tres gradientes. No son intercambiables.
-     --grad       DECORATIVO. Fondos, auroras, la marca. Sin texto encima.
-     --grad-fill  RELLENO CON TEXTO BLANCO. Stops ≥5.3:1 contra blanco.
-     --grad-ink   TEXTO RECORTADO. Se detiene en cielo oscuro, ≥5.7:1. */
-  --grad: linear-gradient(118deg, #2563eb 0%, #0ea5e9 55%, #22d3ee 100%);
-  --grad-fill: linear-gradient(118deg, #1d4ed8 0%, #0369a1 58%, #0e7490 100%);
-  --grad-ink: linear-gradient(100deg, #1d4ed8 0%, #0369a1 100%);
-  --grad-soft: linear-gradient(118deg, #eef3fe 0%, #e6f4fd 55%, #e5fafe 100%);
+  /* ── Gradientes: en este sistema no existen.
+     El material es plano —hollín raspado no degrada. Se conservan
+     los nombres como color sólido para que nada explote durante la
+     migración, y desaparecen cuando la última página se migre. */
+  --grad: var(--smoke);
+  --grad-fill: var(--smoke);
+  --grad-ink: var(--paper);
+  --grad-soft: var(--ground-tint);
 
-  /* ── Cristal ──────────────────────────────────────────────────
-     Tres reglas, todas medidas contra el campo de aurora MAS oscuro
-     (azul de marca al 30% sobre el fondo, que da #bbcef8):
+  /* ── Cristal: tampoco existe. Un instrumento no lleva vidrio
+     esmerilado encima. Neutralizado a hollín delgado opaco. */
+  --glass-bg: var(--smoke);
+  --glass-bg-strong: var(--surface-alt);
+  --glass-bg-tint: var(--ground-tint);
+  --glass-border: var(--hairline);
+  --glass-edge: var(--hairline);
+  --glass-highlight: transparent;
+  --glass-blur: 0px;
+  --glass-sat: 100%;
 
-       1. Texto sobre cristal es SIEMPRE tinta, nunca blanco. El blanco
-          sobre un panel de cristal mide 1.96:1.
+  /* ── Profundidad. El papel es plano: no hay elevación, hay
+     SEPARACIÓN por material. Las sombras quedan casi anuladas
+     porque una sombra suave sobre hollín no se ve y sí cuesta. */
+  --lift-1: none;
+  --lift-2: none;
+  --lift-3: 0 1px 0 0 var(--hairline);
+  --lift-4: 0 1px 0 0 var(--hairline-strong);
+  --glow-brand: none;
+  --glow-cyan: none;
 
-       2. Texto DIRECTO sobre la aurora, sin cristal de por medio, solo
-          puede ser --ink (10.2:1). --ink-muted cae a 3.83 y --ink-subtle a
-          3.23. Los titulares del heroe cumplen esto porque son --ink.
+  /* Cantos vivos: el papel se corta, no se redondea. */
+  --radius: 0.125rem;
 
-       3. Un panel que contenga --ink-subtle necesita .glass-strong, no
-          .glass. Sobre el cristal por defecto (62%) ink-subtle mide 4.30 y
-          no pasa; sobre .glass-strong (74%) mide 4.54 y si.
-          En .glass (62%): ink 13.6, ink-muted 5.1, brand-strong 5.7.
-
-     npm run palette:check verifica los tres casos compuestos. */
-  --glass-bg: rgb(255 255 255 / 0.62);
-  --glass-bg-strong: rgb(255 255 255 / 0.74);
-  --glass-bg-tint: rgb(239 246 254 / 0.5);
-  --glass-border: rgb(255 255 255 / 0.75);
-  --glass-edge: rgb(37 99 235 / 0.1);
-  --glass-highlight: rgb(255 255 255 / 0.9);
-  --glass-blur: 28px;
-  --glass-sat: 180%;
-
-  /* ── Profundidad, en escala 3D.
-     Cada nivel sube el desenfoque y la separación, así que apilar dos niveles
-     se lee como dos planos distintos y no como "una sombra más grande". */
-  --lift-1: 0 1px 2px -1px rgb(22 32 58 / 0.07), 0 2px 6px -2px rgb(22 32 58 / 0.05);
-  --lift-2: 0 2px 4px -2px rgb(22 32 58 / 0.06), 0 10px 24px -6px rgb(22 32 58 / 0.1);
-  --lift-3: 0 4px 8px -3px rgb(22 32 58 / 0.07), 0 22px 48px -12px rgb(22 32 58 / 0.15);
-  --lift-4: 0 8px 16px -6px rgb(22 32 58 / 0.08), 0 40px 80px -20px rgb(22 32 58 / 0.22);
-  --glow-brand: 0 10px 34px -10px rgb(37 99 235 / 0.45);
-  --glow-cyan: 0 10px 36px -10px rgb(14 165 233 / 0.42);
-
-  --radius: 0.875rem;
-
-  /* ── Curvas.
-     `--ease-spring` rebota lo justo para sentirse físico sin parecer barato.
-     `--ease-press` es casi instantánea: un control tiene que responder antes
-     de que el dedo se levante, o se siente lento aunque no lo sea. */
-  --ease-out: cubic-bezier(0.22, 1, 0.36, 1);
-  --ease-spring: cubic-bezier(0.34, 1.46, 0.64, 1);
+  /* ── Curvas. La aguja de un registrador arranca y frena rápido y
+     recorre el medio a velocidad constante: por eso la curva
+     principal es simétrica y agresiva en los extremos, no un
+     ease-out blando de UI. */
+  --ease-stylus: cubic-bezier(0.7, 0, 0.3, 1);
+  --ease-out: var(--ease-stylus);
+  --ease-spring: var(--ease-stylus);
   --ease-press: cubic-bezier(0.4, 0, 0.2, 1);
 
-  /* ── 3D ──────────────────────────────────────────────────────
-     La perspectiva vive en el contenedor (`.scene`) y las rotaciones en el
-     hijo (`.tilt`). Separarlas es lo que hace que varias tarjetas en una
-     rejilla compartan un mismo punto de fuga en vez de tener cada una el suyo,
-     que es lo que delata un 3D falso. */
-  --perspective: 1200px;
-  --tilt-max: 9deg;
+  /* ── La cinta. Escala FIJA, decidida y no negociable: el juez de
+     ingeniería marcó que una escala variable haría depender la
+     altura del héroe de una variable de runtime. 1 s = 320 px. */
+  --tape-w: 3.5rem;      /* 56 px */
+  --tape-scale: 320px;   /* 1 segundo */
+  --tape-budget: 2.5;    /* el umbral de LCP, en segundos */
+  /* Hasta donde llega el eje graduado. Antes eran los mismos 2.5 s del
+     umbral y el heroe salia de 1024 px con el contenido acabando en 830:
+     casi 200 px de vacio al final. El umbral se lee ahora dentro de la
+     lectura, asi que el eje no tiene que alcanzarlo — y a 1.5 s la
+     graduacion queda mas densa, que es como se ve un registrador real. */
+  --tape-span: 1.5;
+  --needle-y: 42vh;
+  /* Fuente unica de la altura del heroe. La usan la seccion y el eje
+     graduado del riel: si se separan, el eje deja de coincidir con el
+     contenido y la graduacion miente. */
+  --hero-h: calc(var(--tape-span) * var(--tape-scale) + 14rem);
+
+  /* ── 3D: fuera. No queda un solo `perspective` en el sistema. */
+  --perspective: none;
+  --tilt-max: 0deg;
+
+  /* ── Caras tipográficas ─────────────────────────────────────
+     GT Pressura (Grilli Type) y Arlt (PampaType) son de pago y aún
+     no están compradas. Todo el sistema apunta a estas TRES
+     variables y a nada más: cuando lleguen los .woff2, se cambian
+     estas tres líneas y el sitio entero cambia de voz. */
+  --face-display: var(--font-archivo);
+  --face-mono: var(--font-plex-mono);
+  --face-human: var(--font-newsreader);
+}
+
+/* En móvil la cinta se estrecha y la escala se comprime. La proporción
+   entre marcas se conserva —que es lo único que el eje tiene que decir—
+   pero 56 px de riel se comen el 15% de una pantalla de 375, y 3 s a
+   320 px/s darían un héroe de 960 px de alto. */
+@media (max-width: 40rem) {
+  :root {
+    --tape-w: 2.25rem;   /* 36 px */
+    --tape-scale: 168px;
+    --needle-y: 38vh;
+  }
 }
 
 @theme inline {
@@ -146,9 +201,17 @@
   --color-surface: var(--surface);
   --color-surface-alt: var(--surface-alt);
 
+  --color-soot: var(--soot);
+  --color-paper: var(--paper);
+  --color-smoke: var(--smoke);
+  --color-ash: var(--ash);
+  --color-minium: var(--minium);
+  --color-threshold: var(--threshold);
+
   --color-ink: var(--ink);
   --color-ink-muted: var(--ink-muted);
   --color-ink-subtle: var(--ink-subtle);
+  --color-ink-plate: var(--ink-plate);
 
   --color-hairline: var(--hairline);
   --color-hairline-strong: var(--hairline-strong);
@@ -174,46 +237,62 @@
 
   --color-ring: var(--ring);
 
-  --font-sans: var(--font-jakarta), ui-sans-serif, system-ui, -apple-system,
-    "Segoe UI", sans-serif;
-  --font-display: var(--font-sora), var(--font-jakarta), ui-sans-serif,
-    system-ui, sans-serif;
-  --font-mono: ui-monospace, "SF Mono", "Cascadia Mono", Menlo, monospace;
+  /* `@theme inline` es OBLIGATORIO aquí: el valor lleva var(). Con
+     `@theme` a secas el token no resuelve, font-sans cae a la pila
+     del sistema y el sitio se renderiza en Segoe UI. Ya pasó una vez. */
+  --font-sans: var(--face-display), "Segoe UI", ui-sans-serif, system-ui,
+    sans-serif;
+  --font-display: var(--face-display), "Segoe UI", ui-sans-serif, system-ui,
+    sans-serif;
+  --font-mono: var(--face-mono), ui-monospace, "Cascadia Mono", Menlo, monospace;
+  --font-human: var(--face-human), Georgia, "Times New Roman", serif;
 
-  --text-eyebrow: 0.75rem;
-  --text-eyebrow--line-height: 1.2;
-  --text-eyebrow--letter-spacing: 0.12em;
-  --text-eyebrow--font-weight: 700;
+  /* ── Escala. Ratio 10.9 = masthead 120 px ÷ graduación 11 px.
+     El extremo alto es enorme a propósito: la referencia llega a
+     15:1 y es de donde sale su autoridad. */
+  --text-grad: 0.6875rem;
+  --text-grad--line-height: 1;
+  --text-grad--letter-spacing: 0.09em;
 
-  --text-hero: clamp(2.35rem, 1.5rem + 3.1vw, 4.25rem);
-  --text-hero--line-height: 1.06;
-  --text-hero--letter-spacing: -0.035em;
+  --text-eyebrow: 0.6875rem;
+  --text-eyebrow--line-height: 1.1;
+  --text-eyebrow--letter-spacing: 0.14em;
+  --text-eyebrow--font-weight: 500;
+
+  --text-masthead: clamp(2.75rem, 1.35rem + 6.2vw, 7.5rem);
+  --text-masthead--line-height: 0.92;
+  --text-masthead--letter-spacing: -0.032em;
+  --text-masthead--font-weight: 700;
+
+  --text-hero: clamp(2.75rem, 1.35rem + 6.2vw, 7.5rem);
+  --text-hero--line-height: 0.92;
+  --text-hero--letter-spacing: -0.032em;
   --text-hero--font-weight: 700;
 
-  --text-d1: clamp(2rem, 1.4rem + 2.6vw, 3.5rem);
-  --text-d1--line-height: 1.06;
-  --text-d1--letter-spacing: -0.03em;
+  --text-d1: clamp(1.75rem, 1.25rem + 2.2vw, 3rem);
+  --text-d1--line-height: 1.02;
+  --text-d1--letter-spacing: -0.026em;
   --text-d1--font-weight: 700;
 
-  --text-d2: clamp(1.625rem, 1.3rem + 1.5vw, 2.5rem);
-  --text-d2--line-height: 1.14;
-  --text-d2--letter-spacing: -0.025em;
-  --text-d2--font-weight: 600;
+  --text-d2: clamp(1.5rem, 1.1rem + 1.9vw, 2.25rem);
+  --text-d2--line-height: 1.06;
+  --text-d2--letter-spacing: -0.018em;
+  --text-d2--font-weight: 700;
 
-  --text-d3: clamp(1.25rem, 1.1rem + 0.7vw, 1.625rem);
-  --text-d3--line-height: 1.25;
-  --text-d3--letter-spacing: -0.018em;
-  --text-d3--font-weight: 600;
+  --text-d3: clamp(1.125rem, 1.02rem + 0.5vw, 1.375rem);
+  --text-d3--line-height: 1.2;
+  --text-d3--letter-spacing: -0.012em;
+  --text-d3--font-weight: 700;
 
-  --text-lead: clamp(1.0625rem, 1rem + 0.5vw, 1.3125rem);
-  --text-lead--line-height: 1.6;
-  --text-lead--letter-spacing: -0.011em;
+  --text-lead: clamp(1.125rem, 1.02rem + 0.62vw, 1.4375rem);
+  --text-lead--line-height: 1.44;
+  --text-lead--letter-spacing: -0.008em;
 
-  --radius-md: calc(var(--radius) - 0.375rem);
+  --radius-md: var(--radius);
   --radius-lg: var(--radius);
-  --radius-xl: calc(var(--radius) + 0.5rem);
-  --radius-2xl: calc(var(--radius) + 1rem);
-  --radius-3xl: calc(var(--radius) + 1.75rem);
+  --radius-xl: var(--radius);
+  --radius-2xl: var(--radius);
+  --radius-3xl: var(--radius);
 
   --shadow-lift-1: var(--lift-1);
   --shadow-lift-2: var(--lift-2);
@@ -225,6 +304,7 @@
   --ease-out-soft: var(--ease-out);
   --ease-spring: var(--ease-spring);
   --ease-press: var(--ease-press);
+  --ease-stylus: var(--ease-stylus);
 }
 
 /* ═══════════════════════════════════════════════════════════════
@@ -1156,4 +1236,1320 @@
   .rail {
     scroll-behavior: auto;
   }
+}
+
+/* ═══════════════════════════════════════════════════════════════
+   «PAPEL AHUMADO» — VOCABULARIO
+
+   No hay tarjetas. No hay iconos en círculos. No hay rejillas de
+   tres. Hay una CINTA en el margen, y bandas escritas a lo ancho
+   de ella con desplazamiento y longitud reales.
+   ═══════════════════════════════════════════════════════════════ */
+
+@layer components {
+  /* ── El saludo ────────────────────────────────────────────────
+     Nueve palabras apiladas en UNA celda de grid. La del idioma de
+     la ruta se pinta en el primer frame desde el HTML del servidor
+     —es parte del H1, así que el LCP no espera a nadie— y las otras
+     ocho pasan por encima. Sin JS, sin timers, sin array. */
+  .greet {
+    display: inline-grid;
+    vertical-align: baseline;
+  }
+
+  .greet > span {
+    grid-area: 1 / 1;
+    opacity: 0;
+    white-space: nowrap;
+  }
+
+  /* Las palabras de paso se pintan como contenido generado para que no
+     entren en el texto indexable del <h1>. Ver components/instrument/
+     greeting.tsx para el porqué. */
+  .greet > span[data-w]::after {
+    content: attr(data-w);
+  }
+
+  /* Estado por defecto y estado final son el MISMO: el idioma de la
+     ruta, visible. Si no hay animaciones —reduced-motion, navegador
+     sin soporte, JS caído— esto es lo que queda, y es correcto. */
+  .greet > span[data-home] {
+    opacity: 1;
+  }
+
+  /* ── La cinta ─────────────────────────────────────────────────
+     Escala FIJA: 1 s = var(--tape-scale). Corre con el documento;
+     lo único fijo es la aguja. */
+  /* ── EL RIEL ──────────────────────────────────────────────────
+     Corre por toda la pagina, pero la GRADUACION no: un eje de tiempo
+     solo significa algo donde hay tiempo que medir, y eso es el heroe.
+     Abajo el riel es material —el margen del papel— con una barra de
+     avance que dice cuanto rollo ha pasado. Antes la graduacion seguia
+     hasta abajo, sin etiquetas y sin sentido, y se cortaba en seco. */
+  .tape {
+    position: relative;
+    width: var(--tape-w);
+    flex: none;
+    background: var(--soot);
+    border-right: 1px solid var(--hairline);
+  }
+
+  /* El tramo graduado: exactamente la altura del heroe, ni un pixel mas. */
+  .tape-axis {
+    position: relative;
+    height: var(--hero-h);
+    background-image: repeating-linear-gradient(
+      to bottom,
+      var(--hairline) 0 1px,
+      transparent 1px calc(var(--tape-scale) / 20)
+    );
+  }
+
+  /* Cierre del eje: una doble regla, como el final de una escala impresa.
+     Es lo que faltaba — antes la graduacion simplemente dejaba de existir. */
+  .tape-axis::after {
+    content: "";
+    position: absolute;
+    inset-inline: 0;
+    bottom: 0;
+    height: 3px;
+    border-top: 1px solid var(--ash);
+    border-bottom: 1px solid var(--ash);
+  }
+
+  /* Barra de avance: cuanto papel ha pasado bajo la aguja. Le da sentido
+     al riel en TODA su longitud y es una sola animacion compuesta. */
+  /* Marca de fin de registro. Cierra el riel en vez de dejarlo cortado. */
+  .tape-end {
+    position: absolute;
+    left: 50%;
+    bottom: 2.5rem;
+    transform: translateX(-50%) rotate(180deg);
+    writing-mode: vertical-rl;
+    font-family: var(--font-mono);
+    font-size: var(--text-grad);
+    letter-spacing: 0.22em;
+    text-transform: uppercase;
+    color: var(--ink-subtle);
+    white-space: nowrap;
+  }
+
+  .tape-end::after {
+    content: "";
+    position: absolute;
+    left: 50%;
+    bottom: -1.5rem;
+    width: 0.75rem;
+    height: 1px;
+    background: var(--ash);
+    transform: translateX(-50%);
+  }
+
+  .tape-progress {
+    position: absolute;
+    left: 0;
+    top: 0;
+    bottom: 0;
+    width: 2px;
+    background: var(--paper);
+    opacity: 0.5;
+    transform-origin: top center;
+    transform: scaleY(0);
+  }
+
+  .tape-label {
+    position: absolute;
+    right: 0.375rem;
+    /* Posición REAL sobre el eje. Se calcula una vez en layout; no se
+       anima, así que no cuesta un solo frame. */
+    top: calc(var(--t) * var(--tape-scale));
+    transform: translateY(-50%);
+    font-family: var(--font-mono);
+    font-size: var(--text-grad);
+    letter-spacing: 0.09em;
+    color: var(--ink-subtle);
+    font-variant-numeric: tabular-nums;
+  }
+
+  /* Los segundos enteros llevan más peso: son las divisiones mayores. */
+  .tape-label[data-whole] {
+    color: var(--ink-muted);
+  }
+  .tape-label[data-whole]::after {
+    content: "";
+    position: absolute;
+    right: -0.375rem;
+    top: 50%;
+    width: 0.3125rem;
+    height: 1px;
+    background: var(--ink-muted);
+  }
+
+  /* La aguja: pegada mientras el eje graduado esta en pantalla, y se va
+     con el. Antes era `fixed` y seguia dibujada sobre el footer, donde no
+     habia nada que medir — se veia como una linea suelta y rota. */
+  .needle {
+    position: sticky;
+    top: var(--needle-y);
+    z-index: 2;
+    display: block;
+    width: 100%;
+    height: 1px;
+    background: var(--paper);
+    pointer-events: none;
+  }
+
+  .needle::after {
+    content: "";
+    position: absolute;
+    right: -0.3125rem;
+    top: -0.25rem;
+    border-top: 0.25rem solid transparent;
+    border-bottom: 0.25rem solid transparent;
+    border-left: 0.375rem solid var(--paper);
+  }
+
+  /* ── Una marca de medición real ───────────────────────────────
+     `--y` lo escribe PerformanceObserver, una vez, en píxeles ya
+     resueltos contra la escala. Se posiciona con transform, nunca
+     con `top`, para no tocar layout. */
+  /* ── LA LECTURA ───────────────────────────────────────────────
+     Un instrumento con todo lo que hace falta para leerlo: nombre,
+     escala, umbral marcado y unidad. La version anterior eran tres
+     reglas colocadas por tiempo absoluto en una columna suelta, y en
+     un sitio que carga en 200 ms las tres caian en los primeros 60 px
+     — se leian como lineas rotas, no como una medicion. */
+  .readout {
+    margin: 0;
+    max-width: 26rem;
+  }
+
+  .readout-head {
+    display: flex;
+    align-items: center;
+    gap: 0.625rem;
+    font-family: var(--font-mono);
+    font-size: var(--text-grad);
+    letter-spacing: 0.16em;
+    text-transform: uppercase;
+    color: var(--ink-subtle);
+    padding-bottom: 0.75rem;
+    border-bottom: 1px solid var(--hairline);
+  }
+
+  .readout-live {
+    margin-left: auto;
+    color: var(--threshold);
+  }
+
+  .readout-rows {
+    margin: 0;
+  }
+
+  .readout-row {
+    display: grid;
+    grid-template-columns: 2.75rem minmax(0, 1fr) auto;
+    align-items: center;
+    gap: 0.875rem;
+    padding: 0.6875rem 0;
+    border-bottom: 1px solid var(--hairline);
+    font-family: var(--font-mono);
+    font-size: var(--text-grad);
+    letter-spacing: 0.09em;
+    text-transform: uppercase;
+    color: var(--ink-subtle);
+  }
+
+  .readout-key {
+    margin: 0;
+  }
+
+  .readout-track {
+    position: relative;
+    margin: 0;
+    height: 3px;
+    background: var(--smoke);
+  }
+
+  .readout-fill {
+    position: absolute;
+    inset: 0 auto 0 0;
+    width: var(--pct, 0%);
+    background: currentColor;
+    transform-origin: left center;
+  }
+
+  /* El umbral cae SIEMPRE a la mitad: la escala local llega al doble.
+     Asi se lee de un vistazo si la marca quedo antes o despues, sin
+     comparar cifras. */
+  .readout-threshold {
+    position: absolute;
+    left: 50%;
+    top: -4px;
+    bottom: -4px;
+    width: 1px;
+    background: var(--minium);
+  }
+
+  .readout-threshold-label {
+    position: absolute;
+    top: -1.1rem;
+    left: 0;
+    transform: translateX(-50%);
+    color: var(--minium);
+    font-size: 0.625rem;
+    letter-spacing: 0.08em;
+    white-space: nowrap;
+  }
+
+  /* Solo la primera fila muestra la etiqueta del umbral: repetirla tres
+     veces es ruido, y las tres estan a la misma altura visual. */
+  .readout-row:not(:first-child) .readout-threshold-label {
+    display: none;
+  }
+
+  .readout-value {
+    margin: 0;
+    font-variant-numeric: tabular-nums;
+    color: var(--ink);
+  }
+
+  .readout-row[data-state="pass"] {
+    color: var(--threshold);
+  }
+  .readout-row[data-state="watch"] {
+    color: var(--ink-muted);
+  }
+  .readout-row[data-state="fail"] {
+    color: var(--minium);
+  }
+
+  /* ── La regla de 2.5 s, impresa en minio ──────────────────────
+     Es el único elemento del sitio que puede llevar ese rojo sin
+     una medición detrás, porque ES el umbral. */
+  /* La regla pertenece a la lectura POR POSICIÓN, y esa lectura solo
+     existe donde hay columna para las marcas. Abajo de 64rem el eje se
+     sustituye por barras, así que una línea cruzando el texto a los 2.5 s
+     no significaría nada — solo taparía el párrafo. Aparece con su eje. */
+  .budget-rule {
+    display: none;
+    position: absolute;
+    left: 0;
+    right: 0;
+    /* `top: 0` es obligatorio: sin él un absoluto arranca en su posición
+       ESTÁTICA —donde cayó en el flujo— y el desplazamiento deja de
+       medirse desde el origen del eje. La regla acababa sobre el párrafo. */
+    top: 0;
+    transform: translateY(calc(var(--tape-budget) * var(--tape-scale)));
+    border-top: 1px solid var(--minium);
+    color: var(--minium);
+    font-family: var(--font-mono);
+    font-size: var(--text-grad);
+    letter-spacing: 0.22em;
+    text-transform: uppercase;
+    padding-top: 0.375rem;
+  }
+
+  @media (min-width: 64rem) {
+    .budget-rule {
+      display: block;
+    }
+  }
+
+  /* ── Bandas ───────────────────────────────────────────────────
+     Un bloque de contenido es una banda escrita a lo ancho, con
+     longitud REAL. Nunca una tarjeta. */
+  .band {
+    display: block;
+    border-top: 1px solid var(--hairline);
+    padding-block: 1rem;
+  }
+
+  /* Ceniza, no humo: la banda ES el raspado de la aguja, así que tiene
+     que leerse contra el hollín. Con `--smoke` era casi invisible. */
+  .band-fill {
+    display: block;
+    height: 0.625rem;
+    background: var(--ash);
+    border-left: 2px solid var(--paper);
+    transform-origin: left center;
+  }
+
+  /* Un evento puntual no es una banda: es una espiga. */
+  .spike {
+    display: block;
+    width: 2px;
+    height: 1.25rem;
+    background: var(--ash);
+  }
+
+  /* Un hueco en el registro es un DATO, y se dibuja como hueco. */
+  .gap {
+    border-top: 1px dashed var(--hairline-strong);
+    color: var(--ink-subtle);
+  }
+
+  /* ── Canales ──────────────────────────────────────────────────
+     Los servicios son canales PARALELOS de un registrador
+     multipluma (a–e), no una secuencia 01/02/03. */
+  .channel {
+    display: grid;
+    grid-template-columns: 2.5rem 1fr auto;
+    align-items: baseline;
+    gap: 0 1rem;
+    padding-block: 1.125rem;
+    border-top: 1px solid currentColor;
+  }
+
+  .channel-id {
+    font-family: var(--font-mono);
+    font-size: var(--text-grad);
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+    opacity: 0.6;
+  }
+
+  /* ── Placa despejada ──────────────────────────────────────────
+     La sección que la aguja limpió: el material se invierte entero.
+     No es una «banda de sección» con otro fondo — es papel. */
+  .plate {
+    background: var(--paper);
+    color: var(--soot);
+  }
+  .plate .channel {
+    border-color: rgb(18 16 14 / 0.22);
+  }
+
+  /* Toda tinta secundaria dentro de la placa pasa por un token medido.
+     Sin esto, `.stamp` heredaba ceniza (2.88 sobre papel) y había que
+     acordarse de sobrescribirla a mano en cada uso, que es exactamente
+     como se pierde. */
+  .plate .stamp,
+  .plate .channel-id {
+    color: var(--ink-plate);
+    opacity: 1;
+  }
+
+  .plate .channel-note {
+    color: var(--ink-plate);
+  }
+
+  /* ── El retrato ───────────────────────────────────────────────
+     Duotono hollín↔papel más trama horizontal de 3 px. Una foto de
+     800 px se vuelve un artefacto de impresión deliberado en vez de
+     un retrato corporativo suave. */
+  /* Duotono sobre PAPEL, no sobre hollín.
+     Con `screen` sobre hollín el fondo de oficina se iluminaba y competía
+     con la cara. Con `multiply` sobre papel pasa lo contrario: los claros
+     se funden con el papel y desaparecen, y solo sobrevive lo oscuro —que
+     es él. Es el mismo principio de un grabado a media tinta, y es la
+     única superficie del sitio donde el papel se ve entero. */
+  .portrait {
+    position: relative;
+    overflow: hidden;
+    background: var(--paper);
+    isolation: isolate;
+  }
+
+  .portrait img {
+    display: block;
+    width: 100%;
+    height: auto;
+    /* Medido a ojo contra la foto real: por encima de ~1.15 de contraste
+       la cara pierde los rasgos y queda una mancha. El origen de 800 px
+       no da para más agresividad — con la sesión nueva se puede subir. */
+    filter: grayscale(1) contrast(1.14) brightness(1.02);
+    mix-blend-mode: multiply;
+  }
+
+  /* La trama de impresión: líneas de papel que rompen los oscuros cada
+     3 px. Es un fondo estático —no se anima, así que no repinta nunca— y
+     es lo que convierte una foto de 800 px en una decisión de material en
+     vez de una limitación de resolución. */
+  .portrait::after {
+    content: "";
+    position: absolute;
+    inset: 0;
+    pointer-events: none;
+    background: repeating-linear-gradient(
+      to bottom,
+      var(--paper) 0 1px,
+      transparent 1px 4px
+    );
+  }
+
+  /* ── Etiqueta mono ────────────────────────────────────────────
+     Sustituye a `.eyebrow`: sin píldora, sin punto de gradiente. */
+  .stamp {
+    font-family: var(--font-mono);
+    font-size: var(--text-grad);
+    letter-spacing: 0.16em;
+    text-transform: uppercase;
+    color: var(--ink-subtle);
+  }
+
+  /* Enlaces: papel con subrayado que se despinta al pasar. */
+  .link-stylus {
+    color: var(--paper);
+    text-decoration: underline;
+    text-underline-offset: 0.25em;
+    text-decoration-thickness: 1px;
+    text-decoration-color: var(--ash);
+    transition: text-decoration-color 140ms var(--ease-stylus);
+  }
+  .link-stylus:hover {
+    text-decoration-color: var(--paper);
+  }
+}
+
+/* ═══════════════════════════════════════════════════════════════
+   MOVIMIENTO
+   Cero librerías. Todo corre en el compositor.
+   La degradación es la AUSENCIA: sin soporte o con reduced-motion,
+   el contenido queda en su estado final. No hay estado oculto que
+   dependa de que algo se ejecute.
+   ═══════════════════════════════════════════════════════════════ */
+@media (prefers-reduced-motion: no-preference) {
+  /* ── El barrido de idiomas: 9 × 110 ms = 990 ms ─────────────── */
+  @keyframes greet-flash {
+    from {
+      opacity: 1;
+    }
+    to {
+      opacity: 1;
+    }
+  }
+
+  @keyframes greet-home {
+    0% {
+      opacity: 1;
+    }
+    11.12% {
+      opacity: 0;
+    }
+    99.99% {
+      opacity: 0;
+    }
+    100% {
+      opacity: 1;
+    }
+  }
+
+  .greet > span[data-home] {
+    animation: greet-home 990ms steps(1) both;
+  }
+
+  .greet > span:not([data-home]) {
+    animation: greet-flash 110ms steps(1);
+    animation-delay: calc(var(--i) * 110ms);
+  }
+
+  /* ── La autoprueba de la aguja: recorre y vuelve a cero,
+     sincronizada al milisegundo con el barrido de idiomas. ────── */
+  @keyframes needle-selftest {
+    0% {
+      transform: translate3d(0, 0, 0);
+    }
+    62% {
+      transform: translate3d(0, 38vh, 0);
+    }
+    100% {
+      transform: translate3d(0, 0, 0);
+    }
+  }
+
+  .needle {
+    animation: needle-selftest 990ms var(--ease-stylus) both;
+  }
+
+  /* ── La escritura de una marca ─────────────────────────────────
+     La regla crece de 0 al ancho de la columna. `--w` la fija el
+     componente; el disparo lo da PerformanceObserver al añadir
+     [data-state]. */
+  /* La lectura se escribe al aparecer: la barra crece de izquierda a
+     derecha, como la escribiria una pluma. Solo transform y opacity. */
+  @keyframes readout-write {
+    from {
+      transform: scale3d(0, 1, 1);
+    }
+    to {
+      transform: scale3d(1, 1, 1);
+    }
+  }
+
+  .readout-fill {
+    animation: readout-write 420ms var(--ease-stylus) both;
+  }
+
+  @keyframes readout-in {
+    from {
+      opacity: 0;
+    }
+    to {
+      opacity: 1;
+    }
+  }
+
+  .readout-value {
+    animation: readout-in 300ms var(--ease-stylus) 200ms both;
+  }
+
+}
+
+/* Las animaciones ligadas al scroll van en su propio bloque porque
+   dependen de `animation-timeline`, que Firefox e iOS Safari <26
+   todavía no tienen. Sin soporte, el @supports no aplica y el
+   contenido ya está en su estado final. */
+@supports (animation-timeline: view()) {
+  @media (prefers-reduced-motion: no-preference) {
+    @keyframes band-draw {
+      from {
+        transform: scale3d(0, 1, 1);
+      }
+      to {
+        transform: scale3d(1, 1, 1);
+      }
+    }
+
+    .band-fill,
+    .spike {
+      animation: band-draw 1ms linear both;
+      animation-timeline: view();
+      animation-range: entry 8% cover 22%;
+    }
+
+    @keyframes line-rise {
+      from {
+        opacity: 0;
+        transform: translate3d(0, 1.25rem, 0);
+      }
+      to {
+        opacity: 1;
+        transform: none;
+      }
+    }
+
+    .reveal {
+      animation: line-rise 1ms linear both;
+      animation-timeline: view();
+      animation-range: entry 4% cover 18%;
+    }
+
+    .reveal-stagger > * {
+      animation: line-rise 1ms linear both;
+      animation-timeline: view();
+      animation-range: entry 4% cover 22%;
+    }
+    .reveal-stagger > *:nth-child(2) {
+      animation-range: entry 6% cover 24%;
+    }
+    .reveal-stagger > *:nth-child(3) {
+      animation-range: entry 8% cover 26%;
+    }
+    .reveal-stagger > *:nth-child(4) {
+      animation-range: entry 10% cover 28%;
+    }
+    .reveal-stagger > *:nth-child(5) {
+      animation-range: entry 12% cover 30%;
+    }
+    .reveal-stagger > *:nth-child(6) {
+      animation-range: entry 14% cover 32%;
+    }
+
+    /* El obturador que IMPRIME el retrato al entrar: baja fuera del
+       encuadre llevando en el borde una línea de papel. */
+    @keyframes shutter-lift {
+      from {
+        transform: translate3d(0, 0, 0);
+      }
+      to {
+        transform: translate3d(0, 100%, 0);
+      }
+    }
+
+    .portrait-shutter {
+      position: absolute;
+      inset: 0;
+      z-index: 2;
+      background: var(--soot);
+      border-bottom: 1px solid var(--paper);
+      animation: shutter-lift 1ms linear both;
+      animation-timeline: view();
+      animation-range: entry 0% cover 34%;
+    }
+  }
+}
+
+/* Sin soporte de scroll-driven animations el obturador no debe
+   tapar el retrato para siempre. */
+@supports not (animation-timeline: view()) {
+  .portrait-shutter {
+    display: none;
+  }
+}
+@media (prefers-reduced-motion: reduce) {
+  .portrait-shutter {
+    display: none;
+  }
+}
+
+/* ═══════════════════════════════════════════════════════════════
+   PUENTE DE MIGRACIÓN
+
+   15 páginas todavía nombran el vocabulario de «aurora + cristal».
+   Estas reglas lo apagan para que hereden el material nuevo en vez
+   de quedar en blanco sobre blanco. Van SIN `@layer` y al final del
+   archivo a propósito: tienen que ganarle a las definiciones
+   originales, que también están fuera de capa.
+
+   Se borra entera cuando la última página esté migrada.
+   ═══════════════════════════════════════════════════════════════ */
+.aurora,
+.aurora > i,
+.grain,
+.grid-fade,
+.pointer-glow,
+.glass-spec::before,
+.glass-rim,
+.sheen::after {
+  display: none !important;
+}
+
+.glass,
+.glass-strong,
+.glass-tint {
+  background: var(--smoke) !important;
+  backdrop-filter: none !important;
+  -webkit-backdrop-filter: none !important;
+  border: 1px solid var(--hairline) !important;
+  border-radius: var(--radius) !important;
+  box-shadow: none !important;
+}
+
+.card {
+  background: var(--smoke) !important;
+  border: 1px solid var(--hairline) !important;
+  border-radius: var(--radius) !important;
+  box-shadow: none !important;
+}
+
+.grad-deco,
+.grad-fill,
+.grad-soft,
+.grad-drift {
+  background: var(--smoke) !important;
+  color: var(--ink) !important;
+}
+.grad-drift::before {
+  display: none !important;
+}
+
+.grad-text,
+.grad-ink {
+  background: none !important;
+  -webkit-background-clip: border-box !important;
+  background-clip: border-box !important;
+  -webkit-text-fill-color: var(--paper) !important;
+  color: var(--paper) !important;
+}
+
+/* El 3D se retira: la perspectiva contradice el papel plano. */
+.scene,
+.tilt,
+.tilt-hover,
+.stack-3d > *,
+.depth-1,
+.depth-2,
+.depth-3 {
+  perspective: none !important;
+  transform: none !important;
+  transform-style: flat !important;
+}
+
+/* `.eyebrow` traía píldora y punto de gradiente. Se queda como
+   etiqueta mono seca, igual que `.stamp`. */
+.eyebrow {
+  background: none !important;
+  border: 0 !important;
+  padding: 0 !important;
+  border-radius: 0 !important;
+  font-family: var(--font-mono) !important;
+  font-size: var(--text-grad) !important;
+  font-weight: 400 !important;
+  letter-spacing: 0.16em !important;
+  color: var(--ink-subtle) !important;
+}
+.eyebrow::before {
+  display: none !important;
+}
+
+/* build: papel-ahumado */
+
+/* ═══════════════════════════════════════════════════════════════
+   EL TAMBOR — volumen y movimiento continuo
+
+   El brief pidió tres cosas que se contradicen entre sí si se
+   resuelven con el default: «volumen / 3D», «quitar cajas y bordes»
+   y «que palpite». Sombras y tarjetas dan volumen y son cajas; las
+   animaciones sueltas dan vida y matan el INP que este sitio vende.
+
+   La salida está en el sujeto. Un registrador tiene volumen porque
+   el papel va ENROLLADO EN UN TAMBOR, y tiene movimiento porque el
+   tambor NUNCA PARA. De ahí sale todo lo de abajo:
+
+     · profundidad  → curvatura cilíndrica + parálax entre capas
+     · movimiento   → la cinta corre y la aguja dibuja su ruido
+     · sin cajas    → nada de lo de aquí tiene borde ni sombra
+
+   Presupuesto: cada animación permanente es `transform` u `opacity`
+   y nada más, así que corren en el compositor a 0 recálculos.
+   Verificado con `npm run check:perf`.
+   ═══════════════════════════════════════════════════════════════ */
+
+@layer components {
+  /* ── VOLUMEN 1: la curvatura del tambor ──────────────────────
+     El papel no es una superficie plana: envuelve un cilindro. Un
+     gradiente lateral —oscuro en los cantos, abierto donde pega la
+     luz— da esa lectura sin una sola sombra y sin una sola caja.
+     Coste: cero. Es pintura, no una capa compuesta. */
+  /* Solo el VOLUMEN. La graduacion vive en `.tape-axis`, acotada a la
+     altura del heroe: un eje de tiempo a lo largo de toda la pagina no
+     mide nada. */
+  .tape {
+    background-image: linear-gradient(
+      to right,
+      rgb(0 0 0 / 0.55) 0%,
+      rgb(0 0 0 / 0) 38%,
+      rgb(255 255 255 / 0.035) 62%,
+      rgb(0 0 0 / 0.42) 100%
+    );
+  }
+
+  /* La placa de papel también es una hoja curvada, no un rectángulo
+     pegado. Mismo cilindro, invertido: el papel refleja. */
+  .plate {
+    background-image: linear-gradient(
+      to right,
+      rgb(18 16 14 / 0.09) 0%,
+      rgb(18 16 14 / 0) 34%,
+      rgb(255 255 255 / 0.5) 60%,
+      rgb(18 16 14 / 0.07) 100%
+    );
+  }
+
+  /* ── VOLUMEN 2: el canto del papel ───────────────────────────
+     Donde la placa se encuentra con el hollín hay un canto de hoja,
+     no un borde de CSS: dos líneas de un píxel, una clara y una
+     oscura, que es como se ve el grosor de un papel real. */
+  .plate::before,
+  .plate::after {
+    content: "";
+    position: absolute;
+    inset-inline: 0;
+    height: 2px;
+    pointer-events: none;
+  }
+  .plate::before {
+    top: 0;
+    background: linear-gradient(
+      to bottom,
+      rgb(255 255 255 / 0.55),
+      rgb(18 16 14 / 0.28)
+    );
+  }
+  .plate::after {
+    bottom: 0;
+    background: linear-gradient(
+      to top,
+      rgb(0 0 0 / 0.45),
+      rgb(255 255 255 / 0.18)
+    );
+  }
+
+  /* ── LA LÍNEA VIVA ────────────────────────────────────────────
+     Lo que el brief llamó «algo que palpite». En un registrador de
+     verdad la pluma nunca está quieta: en reposo dibuja una línea
+     de base con ruido. Eso es exactamente esto.
+
+     El trazo es un SVG repetido verticalmente y la animación mueve
+     el ELEMENTO con `translateY`, no `background-position` —animar
+     la posición de un fondo repinta cada frame y está prohibido en
+     este proyecto por medición, no por gusto. */
+  .trace {
+    position: sticky;
+    top: calc(var(--needle-y) - 7.5rem);
+    display: block;
+    width: 100%;
+    height: 15rem;
+    margin-bottom: -15rem;
+    overflow: hidden;
+    pointer-events: none;
+    mask-image: linear-gradient(to bottom, transparent, #000 22%, #000 78%, transparent);
+  }
+
+  .trace-ink {
+    position: absolute;
+    inset-inline: 0;
+    top: 0;
+    height: calc(100% + 140px);
+    opacity: 0.55;
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='36' height='140' viewBox='0 0 36 140'%3E%3Cpath d='M18 0 C25 12 11 20 18 32 C26 46 9 52 18 66 C27 80 12 88 18 100 C24 112 13 126 18 140' fill='none' stroke='%238c877a' stroke-width='1.1'/%3E%3C/svg%3E");
+    background-repeat: repeat-y;
+    background-size: 100% 140px;
+    /* En el pseudo-elemento, que es el que anima. Estaba en `.trace`, que
+       no se mueve, y por eso no promovía nada: 23 recálculos en reposo. */
+    will-change: transform;
+  }
+
+  /* ── EL CARRUSEL CONTINUO ─────────────────────────────────────
+     Lo que el brief pidió como «carrusel», resuelto como lo que es
+     en este mundo: una cinta impresa que corre y no se detiene.
+
+     No hay tarjetas, no hay flechas, no hay puntos de paginación —
+     no hay nada que encuadre. Es texto sobre papel en movimiento.
+
+     El contenido va DUPLICADO en el markup y la pista se desplaza
+     exactamente la mitad, así que el empalme es invisible y el
+     bucle no necesita JavaScript ni medir nada. */
+  .ribbon {
+    position: relative;
+    overflow: hidden;
+    /* Se desvanece en los cantos en vez de cortarse contra un borde:
+       la cinta entra y sale del tambor, no de una caja. */
+    mask-image: linear-gradient(
+      to right,
+      transparent,
+      #000 7rem,
+      #000 calc(100% - 7rem),
+      transparent
+    );
+  }
+
+  .ribbon-copy {
+    display: flex;
+    align-items: center;
+    margin: 0;
+    padding: 0;
+    list-style: none;
+    flex: none;
+  }
+
+  .ribbon-track {
+    display: flex;
+    width: max-content;
+    align-items: center;
+    will-change: transform;
+  }
+
+  .ribbon-item {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.75rem;
+    padding-inline: 1.75rem;
+    white-space: nowrap;
+    font-family: var(--font-mono);
+    font-size: var(--text-grad);
+    letter-spacing: 0.16em;
+    text-transform: uppercase;
+    color: var(--ink-subtle);
+  }
+
+  /* La marca de agua entre entradas: una perforación de papel, que
+     es lo que separa dos tramos de una cinta continua. */
+  .ribbon-item::after {
+    content: "";
+    width: 0.3125rem;
+    height: 0.3125rem;
+    flex: none;
+    border-radius: 50%;
+    background: var(--hairline-strong);
+  }
+
+  /* Un carril más grande, para nombres en vez de etiquetas. */
+  .ribbon-lg .ribbon-item {
+    font-family: var(--font-display);
+    font-size: clamp(1.25rem, 0.9rem + 1.6vw, 2.25rem);
+    font-variation-settings: "wdth" 88;
+    font-weight: 700;
+    letter-spacing: -0.02em;
+    text-transform: none;
+    color: var(--ink);
+  }
+
+  /* ── EL PUNTO EN LÍNEA ────────────────────────────────────────
+     Late porque hay algo midiendo del otro lado. Solo puede
+     acompañar a un estado que de verdad esté vivo. */
+  .live {
+    position: relative;
+    display: inline-block;
+    width: 0.4375rem;
+    height: 0.4375rem;
+    border-radius: 50%;
+    background: var(--threshold);
+    flex: none;
+    will-change: transform, opacity;
+  }
+
+  .live::after {
+    content: "";
+    position: absolute;
+    inset: 0;
+    border-radius: 50%;
+    background: var(--threshold);
+    will-change: transform, opacity;
+  }
+
+  /* ── DESPLAZAMIENTO EN HOVER, SIN CAJA ────────────────────────
+     Una fila no se eleva ni se enciende: la pluma avanza sobre ella.
+     Solo `transform`, así que no hay repintado y no hay recuadro. */
+  .channel {
+    transition: transform 180ms var(--ease-stylus);
+  }
+  .channel:hover,
+  .channel:focus-visible {
+    transform: translateX(0.5rem);
+  }
+
+  .channel-pen {
+    display: block;
+    height: 1px;
+    width: 0;
+    background: currentColor;
+    transition: width 220ms var(--ease-stylus);
+  }
+  .channel:hover .channel-pen,
+  .channel:focus-visible .channel-pen {
+    width: 100%;
+  }
+}
+
+/* ═══════════════════════════════════════════════════════════════
+   ANIMACIONES PERMANENTES
+   Todas `transform` u `opacity`. Todas mueren con `reduce`.
+   ═══════════════════════════════════════════════════════════════ */
+@media (prefers-reduced-motion: no-preference) {
+  /* La cinta corre. Un tile completo, en bucle lineal: sin easing,
+     porque un tambor gira a velocidad constante. */
+  @keyframes trace-run {
+    from {
+      transform: translate3d(0, 0, 0);
+    }
+    to {
+      transform: translate3d(0, -140px, 0);
+    }
+  }
+
+  /* El trazo NO se anima, y es una decisión medida: costaba 25 recálculos en
+     reposo de un presupuesto de 20, y el movimiento que el ojo registra en
+     esta página lo dan las cintas —que salieron gratis— y el latido. Un
+     trazo impreso sigue diciendo lo mismo: la aguja pasó por aquí. */
+
+  /* El carrusel. La pista lleva el contenido duplicado, así que
+     desplazar exactamente el 50% devuelve al punto de partida. */
+  @keyframes ribbon-run {
+    from {
+      transform: translate3d(0, 0, 0);
+    }
+    to {
+      transform: translate3d(-50%, 0, 0);
+    }
+  }
+
+  .ribbon-track {
+    animation: ribbon-run var(--ribbon-dur, 42s) linear infinite;
+  }
+
+  /* Al pasar el puntero la cinta no se congela de golpe: sigue
+     corriendo. Frenarla en seco delataría que es una animación. */
+  .ribbon:hover .ribbon-track {
+    animation-duration: calc(var(--ribbon-dur, 42s) * 2.6);
+  }
+
+  .ribbon-reverse .ribbon-track {
+    animation-direction: reverse;
+  }
+
+  /* El punto en línea: un latido lento y un anillo que se expande.
+     Escala y opacidad, nada más. */
+  /* Un PARPADEO dentro de un ciclo largo, no un seno continuo.
+     Dos razones, y las dos apuntan al mismo sitio:
+
+     Diseño — un instrumento no respira, parpadea. El LED de estado da un
+     pulso corto y se queda quieto; eso es lo que dice «hay algo midiendo»
+     sin pedir atención todo el tiempo.
+
+     Medición — el coste de una animación infinita en este proyecto escala
+     con la FRECUENCIA del ciclo, no con la propiedad ni con el elemento.
+     Medido con `check:perf`: el mismo punto a 2.4 s costaba 23 recálculos
+     en reposo y a 12 s costaba 5. El modelo es ≈ 57 / duración. A 8 s el
+     total de la página queda dentro del presupuesto de 20. */
+  @keyframes live-beat {
+    0% {
+      transform: scale3d(1, 1, 1);
+      opacity: 1;
+    }
+    3% {
+      transform: scale3d(0.62, 0.62, 1);
+      opacity: 0.4;
+    }
+    9% {
+      transform: scale3d(1, 1, 1);
+      opacity: 1;
+    }
+    100% {
+      transform: scale3d(1, 1, 1);
+      opacity: 1;
+    }
+  }
+
+  @keyframes live-ring {
+    0% {
+      transform: scale3d(1, 1, 1);
+      opacity: 0.5;
+    }
+    16% {
+      transform: scale3d(3.2, 3.2, 1);
+      opacity: 0;
+    }
+    100% {
+      transform: scale3d(3.2, 3.2, 1);
+      opacity: 0;
+    }
+  }
+
+  .live {
+    animation: live-beat 8s var(--ease-out) infinite;
+  }
+  .live::after {
+    animation: live-ring 8s var(--ease-out) infinite;
+  }
+}
+
+/* ═══════════════════════════════════════════════════════════════
+   PROFUNDIDAD POR PARÁLAX
+   El volumen de verdad no es una sombra: es que dos planos se
+   muevan a distinta velocidad. La cinta corre BAJO el contenido,
+   así que va más lenta. Ligado al scroll, fuera del main thread.
+   ═══════════════════════════════════════════════════════════════ */
+@supports (animation-timeline: scroll()) {
+  @media (prefers-reduced-motion: no-preference) {
+    @keyframes drift-behind {
+      from {
+        transform: translate3d(0, 0, 0);
+      }
+      to {
+        transform: translate3d(0, -7rem, 0);
+      }
+    }
+
+    /* Cuanto rollo ha pasado bajo la aguja. Es lo que le da sentido al
+       riel en toda su longitud, no solo en el heroe. */
+    @keyframes tape-advance {
+      from {
+        transform: scaleY(0);
+      }
+      to {
+        transform: scaleY(1);
+      }
+    }
+
+    .tape-progress {
+      animation: tape-advance 1ms linear both;
+      animation-timeline: scroll(root block);
+    }
+
+    .parallax-back {
+      animation: drift-behind 1ms linear both;
+      animation-timeline: scroll(root block);
+    }
+
+    /* NOTA: aquí iba un `widen-on-scroll` que animaba el eje `wdth` del
+       masthead con el scroll. Se retiró antes de usarse: cambiar el ancho
+       de una variable REFLUYE el texto, y un reflujo disparado por scroll
+       cuenta para CLS. En un sitio que vende Core Web Vitals eso no es un
+       efecto, es una regresión medible. La tipografía se mueve por reveal
+       y por escala, nunca por eje. */
+  }
+}
+
+/* ═══════════════════════════════════════════════════════════════
+   TRANSICIONES DE RUTA
+   La cinta es el objeto CONSTANTE del sitio: no se desvanece entre
+   páginas, se queda. Es lo que hace que navegar se sienta como que
+   el papel sigue corriendo y no como que se cargó otra pantalla.
+   ═══════════════════════════════════════════════════════════════ */
+@media (prefers-reduced-motion: no-preference) {
+  ::view-transition-old(root),
+  ::view-transition-new(root) {
+    animation-duration: 260ms;
+    animation-timing-function: var(--ease-stylus);
+  }
+
+  ::view-transition-old(root) {
+    animation-name: vt-out;
+  }
+  ::view-transition-new(root) {
+    animation-name: vt-in;
+  }
+
+  @keyframes vt-out {
+    to {
+      opacity: 0;
+      transform: translateY(-1.25rem);
+    }
+  }
+
+  @keyframes vt-in {
+    from {
+      opacity: 0;
+      transform: translateY(1.75rem);
+    }
+  }
+}
+
+/* ═══════════════════════════════════════════════════════════════
+   SIN CAJAS
+
+   «Quita tantos contenedores o cuadrados con cosas dentro o
+   bordes.» Aquí se ejecuta: no queda un solo borde de cuatro lados
+   en el sitio. Lo que sobrevive es la REGLA HORIZONTAL, que no es
+   una caja — es la línea de un registro, el idioma propio de este
+   sistema.
+
+   Va sin `@layer` y al final para ganarle a lo que quede sin migrar.
+   ═══════════════════════════════════════════════════════════════ */
+.card,
+.glass,
+.glass-strong,
+.glass-tint,
+[class*="rounded"] {
+  box-shadow: none !important;
+}
+
+.card,
+.glass,
+.glass-strong,
+.glass-tint {
+  background: transparent !important;
+  border: 0 !important;
+  border-top: 1px solid var(--hairline) !important;
+  border-radius: 0 !important;
+  padding-inline: 0 !important;
+}
+
+
+/* Las píldoras y botones redondeados del sistema anterior pierden la
+   cápsula: en un registro no hay cápsulas, hay texto y una regla. */
+.badge,
+.pill {
+  background: transparent !important;
+  border: 0 !important;
+  border-radius: 0 !important;
+  padding-inline: 0 !important;
+}
+
+
+
+
+
+
+
+/* ═══════════════════════════════════════════════════════════════
+   HUECOS DE MEDIO
+   Marcas de registro de imprenta, no cajas. Ver
+   components/instrument/media-slot.tsx para el porqué.
+   ═══════════════════════════════════════════════════════════════ */
+@layer components {
+  .media-slot {
+    position: relative;
+    display: flex;
+    align-items: flex-end;
+    width: 100%;
+    padding: 1.25rem;
+    /* Trama diagonal muy tenue: dice «aquí falta algo» sin competir con
+       el contenido de al lado. No es un borde y no encierra nada. */
+    background-image: repeating-linear-gradient(
+      -45deg,
+      var(--hairline-strong) 0 1px,
+      transparent 1px 8px
+    );
+  }
+
+  /* Un fondo animado se marca distinto: el hueco es la capa de atrás. */
+  .media-slot[data-kind="loop"],
+  .media-slot[data-kind="video"] {
+    background-image: repeating-linear-gradient(
+      -45deg,
+      var(--hairline-strong) 0 1px,
+      transparent 1px 14px
+    );
+  }
+
+  /* Las cruces de registro. Dos reglas cruzadas por esquina. */
+  .media-mark {
+    position: absolute;
+    width: 1.125rem;
+    height: 1.125rem;
+    pointer-events: none;
+  }
+  .media-mark::before,
+  .media-mark::after {
+    content: "";
+    position: absolute;
+    background: var(--paper);
+  }
+  .media-mark::before {
+    left: 0;
+    right: 0;
+    top: 50%;
+    height: 1px;
+  }
+  .media-mark::after {
+    top: 0;
+    bottom: 0;
+    left: 50%;
+    width: 1px;
+  }
+  .media-mark[data-corner="tl"] { top: 0.5rem; left: 0.5rem; }
+  .media-mark[data-corner="tr"] { top: 0.5rem; right: 0.5rem; }
+  .media-mark[data-corner="bl"] { bottom: 0.5rem; left: 0.5rem; }
+  .media-mark[data-corner="br"] { bottom: 0.5rem; right: 0.5rem; }
+
+  .media-slot-body {
+    max-width: 34ch;
+  }
+
+  .media-slot-kind {
+    margin: 0;
+    font-family: var(--font-mono);
+    font-size: var(--text-grad);
+    letter-spacing: 0.16em;
+    text-transform: uppercase;
+    color: var(--paper);
+  }
+
+  .media-slot-what {
+    margin: 0.5rem 0 0;
+    font-size: 0.875rem;
+    line-height: 1.45;
+    color: var(--ink-muted);
+  }
+
+  /* La ruta es lo que se copia. Va en tinta plena y seleccionable. */
+  .media-slot-path {
+    margin: 0.625rem 0 0;
+    font-family: var(--font-mono);
+    font-size: var(--text-grad);
+    letter-spacing: 0.04em;
+    color: var(--ink);
+    user-select: all;
+    word-break: break-all;
+  }
+
+  /* Dentro de la placa de papel el material se invierte. */
+  .plate .media-slot-kind { color: var(--ink-plate); }
+  .plate .media-slot-what { color: var(--ink-plate); }
+  .plate .media-slot-path { color: var(--soot); }
+  .plate .media-mark::before,
+  .plate .media-mark::after { background: rgb(18 16 14 / 0.45); }
 }

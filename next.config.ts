@@ -159,6 +159,34 @@ const nextConfig: NextConfig = {
   poweredByHeader: false,
 
   /**
+   * `next dev` y `next build` comparten `.next` y se pisan: con el server de
+   * desarrollo levantado, un build lo tumba o se corrompe.
+   *
+   * Esto permite darle al build su propio directorio sin apagar nada:
+   *
+   *   NEXT_DIST_DIR=.next-build npx next build
+   *
+   * Sin la variable el comportamiento es exactamente el de siempre.
+   */
+  distDir: process.env.NEXT_DIST_DIR ?? '.next',
+
+  /**
+   * Transiciones de ruta con la View Transitions API nativa.
+   *
+   * Es la pieza que hace que navegar se sienta continuo en vez de un corte
+   * seco entre pantallas, y cuesta 0 KB: el runtime ya viaja dentro de React
+   * 19, que la app envía de todas formas. La referencia del brief
+   * (dennissnellenberg.com) resuelve lo mismo cargando Barba.js, que es una
+   * dependencia entera para algo que la plataforma ya trae.
+   *
+   * La coreografía vive en `app/globals.css`, bajo `::view-transition-*`, y
+   * entera dentro de `prefers-reduced-motion: no-preference`.
+   */
+  experimental: {
+    viewTransition: true,
+  },
+
+  /**
    * lib/og.tsx reads its fonts from a path built at runtime
    * (`path.join(process.cwd(), 'assets', 'fonts')`). Next's file tracing works
    * by static analysis, so it cannot see that path and will not bundle the

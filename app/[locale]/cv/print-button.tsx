@@ -31,7 +31,7 @@ export function PrintButton({ label }: PrintButtonProps) {
     <Button
       type="button"
       size="lg"
-      className="sheen shadow-glow-brand"
+      className="press"
       onClick={() => window.print()}
     >
       <Printer className="size-4" aria-hidden="true" />

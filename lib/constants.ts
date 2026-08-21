@@ -71,7 +71,6 @@ export const SOCIAL_LINKS = {
   linkedin: 'https://www.linkedin.com/in/carlos-anaya-ruiz-732abb249/',
   github: 'https://github.com/canaya2002',
   githubAlt: 'https://github.com/CArlos12002',
-  fiverr: 'https://es.fiverr.com/s/995D62d',
   email: NAP.email,
   phone: NAP.phone,
   certsDrive:
@@ -99,33 +98,51 @@ export const SOCIAL_LINKS = {
  * ════════════════════════════════════════════════════════════════
  */
 export const PALETTE_HEX = {
+  /**
+   * ⚠ La llave se sigue llamando `light` por compatibilidad: la nombran las
+   * 13 rutas `opengraph-image.tsx`, el manifiesto y el `theme-color`.
+   * El nombre es vestigial — el sistema «Papel Ahumado» es oscuro. Se
+   * renombra cuando se migre la última de esas rutas.
+   */
   light: {
-    ground: '#fbfcfe',
-    surface: '#ffffff',
-    ink: '#16203a',
-    inkMuted: '#56618a',
-    hairline: '#e3ebf5',
-    brand: '#2563eb',
-    brandStrong: '#1d4ed8',
-    sky: '#0ea5e9',
-    skyInk: '#0369a1',
+    /** hollín · fondo dominante, 50% de la superficie */
+    ground: '#12100e',
+    /** humo · hollín delgado, el único escalón de superficie */
+    surface: '#23201c',
+    /** papel · el trazo. 15.24:1 sobre hollín */
+    ink: '#ebe6d9',
+    /** 8.57:1 sobre hollín */
+    inkMuted: '#b3aea0',
+    hairline: '#2a2620',
     /**
-     * Fondo de píldora. Sólo se usa como superficie (nunca como texto), así
-     * que no declara piso de contraste propio: lo que se apoya encima es
-     * `brand` o `ink`, que sí lo declaran.
+     * En este sistema un enlace es PAPEL. No hay color de marca: el único
+     * croma reservado son minio y umbral, y ninguno puede usarse aquí.
      */
-    brandWash: '#eef3fe',
+    brand: '#ebe6d9',
+    brandStrong: '#f7f4ec',
+    brandWash: '#23201c',
     /**
-     * ⚠ Solo decorativos. Medidos sobre fondo claro: sky 2.70:1 y
-     * cyan 1.76:1. Sirven como stop de gradiente o resplandor, nunca como
-     * texto ni borde con significado. Para cian legible: cyanInk (5.2:1).
+     * Legado neutralizado. `sky` y `cyan` ya no son azules — son ceniza.
+     * Siguen existiendo porque las nombran rutas todavía sin migrar y
+     * desaparecen con ellas.
      */
-    cyan: '#22d3ee',
-    cyanInk: '#0e7490',
+    sky: '#8c877a',
+    skyInk: '#b3aea0',
+    cyan: '#8c877a',
+    cyanInk: '#b3aea0',
+    /**
+     * ⚠ SEMÁNTICOS, NO DECORATIVOS. Son los hex exactos que Google publica
+     * para «fail» y «good» en Core Web Vitals. Solo pueden aparecer sobre
+     * una medición real que cruza un umbral. Usarlos para adornar hace que
+     * el instrumento mienta, que es lo único que este sitio no puede hacer.
+     */
+    minium: '#ff4e42',
+    threshold: '#0cce6b',
   },
   /**
-   * No hay entrada `dark`. El modo oscuro fue eliminado del sitio; dejar aquí
-   * una paleta oscura sin usar sería una invitación a reintroducirlo a medias.
+   * No hay entrada `dark`. El sitio tiene un solo tema; dejar aquí una
+   * segunda paleta sin usar sería una invitación a reintroducir el modo
+   * oscuro a medias.
    */
 } as const
 
