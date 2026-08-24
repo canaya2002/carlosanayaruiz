@@ -2,7 +2,7 @@
 n: 39
 title: "Prompt engineering avanzado: 20 técnicas que sí funcionan"
 slug: "prompt-engineering-avanzado-tecnicas"
-description: "20 técnicas de prompt engineering probadas, con el antes y después de cada prompt y cuándo cada técnica deja de servir."
+description: "20 técnicas de prompt engineering, de básicas a avanzadas, con ejemplos de la instrucción concreta y una sección de lo que no funciona."
 category: "Inteligencia Artificial"
 keyword: "prompt engineering"
 tipo: "satelite"

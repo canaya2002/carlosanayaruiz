@@ -36,7 +36,7 @@ const experienceData: Localized<Experience[]> = {
     {
       id: 'amazon-sde',
       company: 'Amazon',
-      position: 'Software Developer Engineer',
+      position: 'Software Development Engineer',
       location: 'Estados Unidos',
       country: 'US',
       startDate: '2023-11',
@@ -90,7 +90,7 @@ const experienceData: Localized<Experience[]> = {
     {
       id: 'amazon-sde',
       company: 'Amazon',
-      position: 'Software Developer Engineer',
+      position: 'Software Development Engineer',
       location: 'United States',
       country: 'US',
       startDate: '2023-11',

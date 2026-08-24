@@ -118,7 +118,10 @@ export default async function HomePage({ params }: Props) {
   const ts = await getTranslations('services')
   const tr = await getTranslations('trayectoria')
   const tc = await getTranslations('homeCta')
-  const tab = await getTranslations('about')
+  /* Ya no se abre `about`: los dos párrafos que la portada tomaba de ahí
+     eran /sobre-mi entero repetido, una de ellas la URL de mayor
+     autoridad del dominio. Ahora «el operador» tiene su propia voz en
+     `hero.operatorLead` y `hero.operatorNote`. */
 
   const lc = locale as Locale
   const en = lc === 'en'
@@ -414,7 +417,11 @@ export default async function HomePage({ params }: Props) {
                 ? `channels a–${channelId(services.length - 1)} · parallel`
                 : `canales a–${channelId(services.length - 1)} · paralelos`}
             </p>
-            <h2 className="mt-5 max-w-[18ch] text-d1">{ts('title')}</h2>
+            {/* «titleHome» y no «title»: /servicios ya usa ese encabezado
+                con esta misma lista y este mismo dial, y dos URLs con el
+                mismo titular compiten entre sí. Aquí se nombran los cuatro
+                oficios; allá se enmarca la decisión. */}
+            <h2 className="mt-5 max-w-[18ch] text-d1">{ts('titleHome')}</h2>
 
             {/* ── EL DIAL, EN SU PROPIA CELDA ──
                 Antes iba en `position: absolute` con un sangrado negativo de
@@ -544,9 +551,11 @@ export default async function HomePage({ params }: Props) {
                   vacía porque no decía nada nuevo. Estos dos salen de
                   `about`, que vive en otra página. */}
               <div>
-                <p className="max-w-[56ch] text-ink-muted">{tab('lead')}</p>
+                <p className="max-w-[56ch] text-ink-muted">
+                  {t('operatorLead')}
+                </p>
                 <p className="mt-5 max-w-[56ch] text-ink-muted">
-                  {tab('philosophyDesc')}
+                  {t('operatorNote')}
                 </p>
                 <p className="mt-8">
                   <Link className="link-stylus" href="/sobre-mi">
@@ -594,17 +603,14 @@ export default async function HomePage({ params }: Props) {
                   </dd>
                 </div>
 
-                {/* El único renglón de la placa que describe algo EN CURSO,
-                    así que es el único que puede llevar el punto que late. */}
-                <div className="plaque">
-                  <dt className="plaque-key">
-                    {en ? 'reply' : 'respuesta'}
-                  </dt>
-                  <dd className="plaque-val m-0 flex items-center gap-2.5">
-                    <span className="live" aria-hidden="true" />
-                    {en ? 'under 24 hours' : 'menos de 24 horas'}
-                  </dd>
-                </div>
+                {/* ⚠ AQUÍ NO VUELVE EL RENGLÓN DE «RESPUESTA». Estaba en la
+                    placa, en la nota del índice, en la FAQ y en el cierre:
+                    cuatro veces el mismo compromiso en un solo scroll. Y
+                    llevaba el punto «.live», que este sistema reserva para
+                    algo realmente EN CURSO — una política de respuesta no lo
+                    está. Quedan tres apariciones, cada una en su función y
+                    ninguna a la vista de otra: la FAQ (donde se busca),
+                    «homeCta.lead» (donde se decide) y el pie (el colofón). */}
               </dl>
             </div>
           </section>
@@ -654,8 +660,8 @@ export default async function HomePage({ params }: Props) {
               <div>
                 <p className="max-w-[40ch] font-human italic text-ink-muted">
                   {en
-                    ? 'The questions that turn up in every first email. If yours is not here, send it — I answer in under 24 hours.'
-                    : 'Las preguntas que salen en cada primer correo. Si la tuya no está, mándala: contesto en menos de 24 horas.'}
+                    ? 'The questions that turn up in every first email. If yours is not here, send it.'
+                    : 'Las preguntas que salen en cada primer correo. Si la tuya no está, mándala.'}
                 </p>
                 <p className="mt-6">
                   <Link className="link-stylus" href="/contacto">

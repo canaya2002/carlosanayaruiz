@@ -55,9 +55,10 @@ const servicesData: Localized<Service[]> = {
       headline: 'Auditorías, datos estructurados, Core Web Vitals y arquitectura de información',
       description: 'Consultoría SEO técnico en México. Audito, optimizo y arquitecto sitios web para buscadores: datos estructurados (Schema.org/JSON-LD), Core Web Vitals, indexación, hreflang, arquitectura de información y estrategia de rendimiento.',
       benefits: [
-        'Auditoría SEO técnica completa con hallazgos priorizados y plan de acción',
-        'Implementación de Schema.org / JSON-LD validado contra Google Rich Results',
-        'Optimización de Core Web Vitals (LCP, INP, CLS) y rendimiento web',
+        'Rastreo del sitio completo, cruzado con Search Console: qué se indexa, qué no y qué compite consigo mismo',
+        'Los datos estructurados que ya existen: qué tipos hay, cuáles validan y cuáles no producen ningún resultado',
+        'Core Web Vitals en datos de campo y en laboratorio, con la diferencia entre los dos a la vista',
+        'Arquitectura de información, estructura de URLs y enlazado interno',
       ],
       outcomes: [
         'Las páginas que importan quedan rastreables e indexables, sin plantillas huérfanas ni canonicals compitiendo entre sí.',
@@ -108,7 +109,7 @@ const servicesData: Localized<Service[]> = {
         },
         {
           question: '¿Cuánto tiempo tarda en verse el impacto de mejoras de SEO técnico?',
-          answer: 'Las correcciones técnicas (indexación, schema, CWV) típicamente muestran impacto en 2-8 semanas después de que Google recrawlea. Cambios estructurales como arquitectura de información pueden tomar 2-4 meses en reflejarse completamente en rankings.',
+          answer: 'El recrawl lo decide Google, no yo: una corrección no existe para el buscador hasta que vuelve a rastrear esa URL. Por eso no le pongo fecha al impacto en rankings. Lo que sí lleva fecha es lo verificable: el día en que la corrección quedó desplegada, la revalidación del schema y la lectura de campo de Core Web Vitals en el reporte de cierre.',
         },
         {
           question: '¿Puedes manejar migraciones SEO?',
@@ -124,11 +125,11 @@ const servicesData: Localized<Service[]> = {
       description: 'Construyo aplicaciones web de alto rendimiento con Next.js y Firebase — optimizadas para SEO técnico, Core Web Vitals y escalabilidad. Desde landing pages hasta plataformas SaaS completas con SSR/ISR, autenticación y base de datos en tiempo real.',
       benefits: [
         'Rendimiento Lighthouse 90+ en performance, SEO y accesibilidad',
-        'SSR/ISR para indexación instantánea y contenido siempre fresco',
+        'SSR/ISR: el contenido va en el HTML servido y se revalida sin redesplegar',
         'Backend serverless con Firebase: Firestore, Auth, Functions y Hosting',
       ],
       outcomes: [
-        'Google renderiza e indexa el contenido en el primer intento, sin depender de que se ejecute JavaScript en el cliente.',
+        'El contenido está en el HTML de la primera respuesta: Googlebot no necesita una segunda pasada para renderizar JavaScript y verlo.',
         'El contenido se actualiza sin esperar un despliegue completo del sitio.',
         'Costos de infraestructura predecibles: serverless que escala a cero cuando nadie lo está usando.',
         'Un repositorio con TypeScript estricto y CI que otro desarrollador puede retomar sin arqueología.',
@@ -176,15 +177,15 @@ const servicesData: Localized<Service[]> = {
       faq: [
         {
           question: '¿Cuánto tiempo toma desarrollar una aplicación web con Next.js?',
-          answer: 'Depende de la complejidad. Una landing page optimizada puede estar lista en 1-2 semanas. Una plataforma con autenticación, dashboard y base de datos toma entre 4-8 semanas. Siempre empiezo con una auditoría técnica para definir alcance y entregables.',
+          answer: 'Depende del alcance, y el alcance se cierra en el primer paso: qué páginas existen, qué se renderiza en el servidor y qué necesita datos en vivo. Antes de tener eso por escrito, cualquier número de semanas que te dé es adivinanza. Con el alcance cerrado te doy fechas por entregable. Esas fechas asumen una persona de tu lado que pueda decidir y revisar; sin ese contacto el calendario se estira y eso no lo controlo yo.',
         },
         {
           question: '¿Por qué Next.js y no otro framework?',
-          answer: 'Next.js ofrece la mejor combinación de rendimiento, SEO y experiencia de desarrollo. Su sistema de renderizado híbrido (SSR/SSG/ISR) permite que cada página se sirva de la forma más eficiente para Google y para el usuario. Además, su ecosistema con Vercel garantiza despliegues rápidos y confiables.',
+          answer: 'Por el renderizado híbrido: cada ruta se sirve como conviene —servidor, estática o revalidada— sin montar dos stacks para lograrlo. Y trae de fábrica lo que en otros frameworks va a mano: metadatos por ruta, sitemap, hreflang, imágenes optimizadas. En Vercel el despliegue es un push y el rollback es un clic. El tiempo de servicio lo controla el proveedor, no yo.',
         },
         {
-          question: '¿Puedo migrar mi sitio actual a Next.js?',
-          answer: 'Sí. Realizo migraciones desde WordPress, React SPA, Angular y otros frameworks. El proceso incluye auditoría SEO previa, mapeo de URLs, redirecciones 301 y validación post-migración para no perder posicionamiento orgánico.',
+          question: '¿Qué me queda cuando el proyecto termina?',
+          answer: 'El repositorio con TypeScript estricto y CI, el despliegue en Vercel con su CI/CD, y la documentación de cómo está armado, para que otro desarrollador pueda retomarlo. Si después quieres que siga trabajando en el proyecto, es un retainer mensual con horas acordadas.',
         },
       ],
     },
@@ -237,7 +238,7 @@ const servicesData: Localized<Service[]> = {
         'Negocios con documentación interna útil que nadie encuentra a tiempo.',
       ],
       notFor: [
-        'No es para decisiones legales, médicas o financieras sin revisión humana. Un LLM se equivoca; si el costo de una respuesta errónea es alto, hay que diseñar para que una persona apruebe.',
+        'No es para quien quiere que el sistema dé el dictamen final en un asunto legal, médico o financiero. Un LLM se equivoca y ahí el error lo paga tu cliente: esa respuesta la firma una persona, o no construyo el flujo.',
         'No es para procesos que todavía no están documentados. Automatizar un proceso confuso sólo lo vuelve confuso más rápido y más difícil de corregir.',
       ],
       icon: Bot,
@@ -333,9 +334,10 @@ const servicesData: Localized<Service[]> = {
       headline: 'Audits, structured data, Core Web Vitals, and information architecture',
       description: 'Technical SEO consulting in Mexico. I audit, optimize, and architect websites for search engines: structured data (Schema.org/JSON-LD), Core Web Vitals, indexation, hreflang, information architecture, and performance strategy.',
       benefits: [
-        'Full technical SEO audit with prioritized findings and action plan',
-        'Schema.org / JSON-LD implementation validated against Google Rich Results',
-        'Core Web Vitals optimization (LCP, INP, CLS) and web performance',
+        'A full crawl cross-referenced with Search Console: what gets indexed, what does not, and what competes with itself',
+        'The structured data already in place: which types exist, which validate, and which produce nothing',
+        'Core Web Vitals in field data and in the lab, with the gap between them visible',
+        'Information architecture, URL structure, and internal linking',
       ],
       outcomes: [
         'The pages that matter become crawlable and indexable, with no orphaned templates and no canonicals competing with each other.',
@@ -386,7 +388,7 @@ const servicesData: Localized<Service[]> = {
         },
         {
           question: 'How long before I see results from technical SEO improvements?',
-          answer: 'Technical fixes (indexation, schema, CWV) typically show impact in 2-8 weeks after Google recrawls. Structural changes like information architecture may take 2-4 months to fully reflect in rankings.',
+          answer: 'Google decides when it recrawls, not me: a fix does not exist for the search engine until it crawls that URL again. That is why I do not put a date on ranking impact. What does carry a date is what is verifiable: the day the fix shipped, the schema revalidation, and the field reading of Core Web Vitals in the closing report.',
         },
         {
           question: 'Can you handle SEO migrations?',
@@ -402,11 +404,11 @@ const servicesData: Localized<Service[]> = {
       description: 'I build high-performance web applications with Next.js and Firebase — optimized for technical SEO, Core Web Vitals, and scalability. From landing pages to full SaaS platforms with SSR/ISR, authentication, and real-time database.',
       benefits: [
         'Lighthouse 90+ scores in performance, SEO, and accessibility',
-        'SSR/ISR for instant indexation and always-fresh content',
+        'SSR/ISR: content ships in the served HTML and revalidates without a redeploy',
         'Serverless backend with Firebase: Firestore, Auth, Functions & Hosting',
       ],
       outcomes: [
-        'Google renders and indexes the content on the first pass, without depending on client-side JavaScript running.',
+        'The content is in the HTML of the first response: Googlebot does not need a second pass to render JavaScript and see it.',
         'Content updates without waiting for a full site deployment.',
         'Predictable infrastructure cost: serverless that scales to zero when nobody is using it.',
         'A repository with strict TypeScript and CI that another developer can pick up without archaeology.',
@@ -454,15 +456,15 @@ const servicesData: Localized<Service[]> = {
       faq: [
         {
           question: 'How long does it take to build a web app with Next.js?',
-          answer: 'It depends on complexity. An optimized landing page can be ready in 1-2 weeks. A platform with authentication, dashboard, and database takes 4-8 weeks. I always start with a technical audit to define scope and deliverables.',
+          answer: 'It depends on scope, and scope is closed in the first step: what pages exist, what renders on the server, and what needs live data. Before that is in writing, any number of weeks I give you is a guess. With scope closed I give you dates per deliverable. Those dates assume someone on your side who can decide and review; without that contact the calendar stretches, and that is not mine to control.',
         },
         {
           question: 'Why Next.js and not another framework?',
-          answer: 'Next.js offers the best combination of performance, SEO, and developer experience. Its hybrid rendering system (SSR/SSG/ISR) ensures each page is served in the most efficient way for Google and users. Plus, its ecosystem with Vercel guarantees fast, reliable deployments.',
+          answer: 'Because of hybrid rendering: each route is served the way it should be — server, static, or revalidated — without maintaining two stacks. And it ships with what other frameworks leave to hand: per-route metadata, sitemap, hreflang, optimized images. On Vercel a deploy is a push and a rollback is a click. Uptime is the provider to control, not me.',
         },
         {
-          question: 'Can you migrate my current site to Next.js?',
-          answer: 'Yes. I handle migrations from WordPress, React SPAs, Angular, and other frameworks. The process includes a pre-migration SEO audit, URL mapping, 301 redirects, and post-migration validation to preserve organic rankings.',
+          question: 'What do I keep when the project ends?',
+          answer: 'The repository with strict TypeScript and CI, the Vercel deployment with its CI/CD, and documentation of how it is built, so another developer can pick it up. If you want me to keep working on it afterwards, that is a monthly retainer with agreed hours.',
         },
       ],
     },
@@ -515,7 +517,7 @@ const servicesData: Localized<Service[]> = {
         'Businesses with useful internal documentation that nobody finds in time.',
       ],
       notFor: [
-        'Not for legal, medical, or financial decisions without human review. An LLM gets things wrong; where a wrong answer is expensive, a person has to approve it.',
+        'Not for anyone who wants the system to give the final ruling on a legal, medical, or financial matter. An LLM gets things wrong, and there the cost lands on your client: a person signs that answer, or I do not build the flow.',
         'Not for processes that are not documented yet. Automating a confused process only makes it confused faster and harder to correct.',
       ],
       icon: Bot,

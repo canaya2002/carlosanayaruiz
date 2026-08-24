@@ -5,38 +5,55 @@
  *
  * Este aviso de privacidad es un PUNTO DE PARTIDA TÉCNICO. Cada afirmación de
  * hecho se derivó leyendo el código que de verdad toca datos personales:
- * components/sections/contact-form.tsx, app/[locale]/layout.tsx y la política
- * de seguridad de next.config.ts. NO es asesoría legal y NO lo ha revisado un
- * abogado. Que lo revise un abogado mexicano en materia de protección de datos
- * antes de confiar en él; en particular: el domicilio que la LFPDPPP pide
- * publicar (aquí solo se publica un canal de correo), los plazos exactos de
- * respuesta a una solicitud ARCO y qué autoridad es hoy la competente para
- * recibir quejas.
+ * components/sections/lead-form.tsx, app/[locale]/lead-action.ts,
+ * lib/contact.ts, lib/forward.ts, lib/newsletter.ts, lib/broadcast.ts y la
+ * política de seguridad de next.config.ts. NO es asesoría legal y NO lo ha
+ * revisado un abogado. Que lo revise un abogado mexicano en materia de
+ * protección de datos antes de confiar en él; en particular: el domicilio que
+ * la LFPDPPP pide publicar (aquí solo se publica un canal de correo), los
+ * plazos exactos de respuesta a una solicitud ARCO y qué autoridad es hoy la
+ * competente para recibir quejas.
  *
- * REESCRITO POR COMPLETO EL 2026-08-19. La versión anterior describía una
- * recolección de datos que YA NO EXISTE: mencionaba Firestore, las colecciones
- * 'contact_messages' y 'newsletter_subscribers', un newsletter y hasta una
- * preferencia de tema en localStorage. Nada de eso queda en el proyecto. Los
- * hechos vigentes, verificables en el código, son:
+ * ── LA CORRECCIÓN DEL 2026-08-24, Y POR QUÉ IMPORTA ──
+ * Ocho cláusulas de este documento describían un formulario `mailto:` que se
+ * retiró: decían que el sitio «no tiene base de datos», que «el formulario no
+ * manda nada a ningún servidor» y que el tratamiento «empieza cuando tu correo
+ * llega a mi buzón, no antes». Las tres eran falsas desde que el formulario
+ * pasó a una Server Action.
  *
- *   - No hay base de datos. No hay servidor que reciba formularios. No hay
- *     newsletter ni lista de correo. ⚠ ESO CAMBIÓ: hay un boletín
- *     voluntario, y el documento lo declara en su propia sección. Si vuelves
- *     a tocar la recolección de datos, el aviso se actualiza EN EL MISMO
- *     commit — un aviso que dice «no hay lista» junto a un formulario de alta
- *     no es un descuido de copy, es una declaración falsa.
- *   - El formulario de contacto compone un `mailto:` y abre la aplicación de
- *     correo del visitante. Lo que escribe viaja por su propio proveedor de
- *     correo; el sitio no lo almacena ni lo transmite.
+ * La peor no era ninguna de ellas: era un párrafo que INVITABA al visitante a
+ * abrir la pestaña de red del navegador y comprobar que no sale ninguna
+ * petición. Un documento legal que ofrece una verificación que lo desmiente en
+ * diez segundos es peor que uno que se limita a estar desactualizado.
+ *
+ * Los hechos vigentes, verificados en el código:
+ *
+ *   - El formulario ES una Server Action. Lo que se escribe llega al servidor
+ *     y de ahí sale a DOS destinos: el correo por Resend (lib/contact.ts) y el
+ *     sistema de gestión propio (lib/forward.ts, LEAD_WEBHOOK_URL). Los dos
+ *     están conectados hoy.
+ *   - Supabase está PREVISTO y NO conectado: SUPABASE_URL y
+ *     SUPABASE_SERVICE_ROLE_KEY están vacías. Por eso la cláusula de seguridad
+ *     NO afirma nada sobre row level security: no hay tabla de la que
+ *     afirmarlo. ⚠ Cuando se conecte, se nombra el proveedor en «quién más
+ *     participa» y se comprueba RLS ANTES de escribir la viñeta.
+ *   - Hay un boletín voluntario. Resend manda los Broadcasts, así que el
+ *     documento ya NO puede decir «no hay plataforma de email marketing».
  *   - Vercel Analytics + Speed Insights: medición agregada y sin cookies.
  *   - No hay cuentas de usuario, ni cookies publicitarias, ni Google
  *     Analytics, ni píxel de Meta, ni rastreadores de terceros.
  *   - El sitio no escribe en localStorage ni en sessionStorage.
+ *   - No hay casilla de consentimiento en el formulario: el consentimiento se
+ *     da al enviarlo, y la cláusula lo dice así. Añadir la casilla y dejar el
+ *     texto viejo no habría arreglado nada, porque el texto viejo también
+ *     afirmaba que del consentimiento no queda registro.
  *
- * REGLA DE MANTENIMIENTO: si el flujo de datos cambia —un formulario que sí
- * envíe a un servidor, un proveedor nuevo, una herramienta de medición que sí
- * ponga cookies— este archivo cambia en el MISMO commit y LAST_UPDATED se
- * mueve con él. Un aviso de privacidad inexacto es peor que no tenerlo.
+ * REGLA DE MANTENIMIENTO: si el flujo de datos cambia —un proveedor nuevo, un
+ * destino más para el formulario, una herramienta de medición que sí ponga
+ * cookies— este archivo cambia en el MISMO commit y LAST_UPDATED se mueve con
+ * él. Un aviso de privacidad inexacto es peor que no tenerlo, y este documento
+ * ya demostró que la deriva ocurre en silencio: el formulario cambió y el
+ * aviso se quedó cinco días describiendo el anterior.
  *
  * ── PRESENTACIÓN: «PAPEL AHUMADO» ──
  * Migrado el 2026-08-20. Se fueron la aurora, el grano, la cuadrícula, los
@@ -57,6 +74,7 @@ import { Rail } from '@/components/instrument/rail'
 import { NAP } from '@/lib/constants'
 import { generatePageMetadata } from '@/lib/seo'
 import { generateLegalPageGraph } from '@/lib/schema'
+import { formatDate } from '@/lib/utils'
 import { Locale } from '@/data/types'
 
 interface Props {
@@ -76,11 +94,12 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
     title: en
       ? 'Privacy Notice & ARCO Rights'
       : 'Aviso de privacidad y derechos ARCO',
-    /* La descripción decía «sin servidor de formularios» y con el boletín
-       eso dejó de ser cierto. Y medía 169 caracteres, que Google recorta. */
+    /* Decía «sin base de datos» y «sin servidor de formularios»: las dos
+       dejaron de ser ciertas cuando el formulario pasó a Resend y al puente.
+       Y medía 169 caracteres, que Google recorta. */
     description: en
-      ? 'No database and no tracking cookies. What reaches my inbox, the one opt-in list, how long data is kept and how to exercise your ARCO rights.'
-      : 'Sin base de datos y sin cookies de rastreo. Qué llega a mi buzón, la única lista voluntaria, cuánto se conserva y cómo ejercer tus derechos ARCO.',
+      ? 'No tracking cookies. What reaches my inbox, what is stored, the opt-in list, how long data is kept and how to exercise your ARCO rights.'
+      : 'Sin cookies de rastreo. Qué llega a mi buzón, qué se guarda, la lista voluntaria, cuánto se conserva y cómo ejercer tus derechos ARCO.',
   })
 }
 
@@ -106,6 +125,13 @@ const DOC = [
   '[&_h3]:mt-10 [&_h3]:text-d3 [&_h3]:text-ink',
   '[&_strong]:font-semibold [&_strong]:text-ink',
   '[&_ul]:mt-5 [&_ul]:list-disc [&_ul]:space-y-2.5 [&_ul]:pl-5',
+  /* El `ol` necesita su propia regla: el preflight de Tailwind le quita el
+     marcador y la sangría, así que una lista numerada se renderizaría como
+     párrafos sueltos — y en la cláusula que enumera los destinos del
+     formulario el NÚMERO es el dato. El marcador va en mono como toda cifra
+     de este sistema. */
+  '[&_ol]:mt-5 [&_ol]:list-decimal [&_ol]:space-y-2.5 [&_ol]:pl-6',
+  '[&_ol>li]:marker:font-mono [&_ol>li]:marker:text-[0.9em]',
   '[&_li]:marker:text-ash',
   '[&_code]:font-mono [&_code]:text-[0.9em] [&_code]:text-ink',
 ].join(' ')
@@ -142,7 +168,10 @@ export default async function PrivacyPage({ params }: Props) {
     </a>
   )
 
-  const updatedLabel = en ? 'August 19, 2026' : '19 de agosto de 2026'
+  /* Derivada de LAST_UPDATED a proposito: la fecha visible y la del
+     JSON-LD tienen que ser la misma, y antes eran dos constantes que se
+     desincronizaron cinco dias. Al editar el aviso se mueve UNA sola. */
+  const updatedLabel = formatDate(LAST_UPDATED, locale as Locale)
 
   /** El numeral de cláusula. Un documento legal SÍ es una secuencia real: se
    *  cita por número, y el índice y el cuerpo tienen que coincidir. */
@@ -151,12 +180,12 @@ export default async function PrivacyPage({ params }: Props) {
   const highlights: Highlight[] = en
     ? [
         {
-          title: 'No database',
-          text: 'This site neither receives nor stores what you type. There is no form server behind it.',
+          title: 'The form does post to a server',
+          text: 'What you write reaches this site and from there my inbox. It does not use your email app, and does not need you to have one set up.',
         },
         {
-          title: 'The form opens your email app',
-          text: 'It writes the message and hands it to you. Your email travels through your own provider, not through this site.',
+          title: 'A copy is kept, only so I can reply',
+          text: 'Your message stays in my inbox and in a case-management system of my own, so I can follow it up. For that, and nothing else.',
         },
         {
           title: 'No tracking cookies',
@@ -165,12 +194,12 @@ export default async function PrivacyPage({ params }: Props) {
       ]
     : [
         {
-          title: 'Sin base de datos',
-          text: 'Este sitio no recibe ni guarda nada de lo que escribes. No hay un servidor de formularios detrás.',
+          title: 'El formulario sí manda a un servidor',
+          text: 'Lo que escribes llega a este sitio y de ahí a mi correo. No usa tu aplicación de correo ni depende de que la tengas configurada.',
         },
         {
-          title: 'El formulario abre tu correo',
-          text: 'Redacta el mensaje y te lo entrega. Tu correo viaja por tu propio proveedor, no por este sitio.',
+          title: 'Se guarda una copia, y solo para responderte',
+          text: 'Tu mensaje queda en mi buzón y en un sistema de gestión propio, para poder darle seguimiento. Para eso y nada más.',
         },
         {
           title: 'Sin cookies de rastreo',
@@ -214,47 +243,50 @@ export default async function PrivacyPage({ params }: Props) {
         },
         {
           id: 'no-collection',
-          title: 'First things first: this site does not receive your data',
+          title: 'First things first: what happens when you submit the form',
           body: (
             <>
               <p>
-                It is worth saying before anything else, because it changes
+                It is worth saying before anything else, because it shapes
                 everything that follows:{' '}
-                <strong>
-                  this site has no database and the contact form submits to no
-                  server
-                </strong>
-                . There is exactly one exception, and it is opt-in: the
-                newsletter, which is described in its own section below. Apart
-                from that address, there is no place where this site keeps
-                anything of yours.
+                <strong>the contact form does receive what you write</strong>.
+                When you submit it, the message travels to this site, and from
+                here it goes to two places:
+              </p>
+              <ol>
+                <li>
+                  <strong>My inbox</strong>, delivered by Resend. That is the
+                  delivery that counts.
+                </li>
+                <li>
+                  <strong>A case-management system of my own</strong>, so the
+                  message gets followed up instead of being lost in an inbox.
+                </li>
+              </ol>
+              <p>
+                A backup copy in a database is also foreseen. If that is
+                connected, it receives the same message for the same purpose —
+                being able to answer you — and for nothing else. Resend and any
+                database provider act as processors: they handle the data on my
+                instruction and to no other end. The section on who else is
+                involved names each one.
               </p>
               <p>
-                The contact form does not submit to any server. When you fill it
-                in and click, the site assembles a <code>mailto:</code> link
-                with the subject and message already written and opens the email
-                application on your device. From there <em>you</em> send the
-                email, from your own account and through your own email
-                provider. The site does not store it, does not transmit it and
-                cannot read it — its security policy (
-                <code>form-action &lsquo;self&rsquo;</code>) even prevents a
-                form on these pages from pointing at an outside host.
-              </p>
-              <p>
-                You can verify this yourself: open your browser&rsquo;s
-                developer tools, watch the network tab and submit the form. No
-                outgoing request appears, because there is nowhere for one to
-                go.
+                What the form cannot do is send what you write anywhere else:
+                the site&rsquo;s security policy (
+                <code>form-action &lsquo;self&rsquo;</code>) prevents a form on
+                these pages from pointing at an outside host.
               </p>
               <p>
                 There is also a button that copies my address to your clipboard,
-                for anyone without a configured email app. That happens entirely
+                if you would rather write to me directly. That happens entirely
                 on your own device.
               </p>
               <p>
-                So the processing of personal data begins when your email
-                arrives in my inbox — not before. The rest of this notice
-                describes what I do with what lands there.
+                There are no user accounts, no tracking cookies and no
+                profiling. What there is, is a message that reaches me and is
+                recorded so that I can reply to it. The rest of this notice
+                describes what I do with it.
               </p>
             </>
           ),
@@ -266,10 +298,13 @@ export default async function PrivacyPage({ params }: Props) {
             <>
               <h3>What you choose to write</h3>
               <p>
-                Exactly the fields you can see in the form: your name, your
-                email address, a subject line and your message. If you write
-                less, less arrives. None of it is needed in order to browse the
-                site — they are the fields of an email you compose and you send.
+                The five fields of the form: your name, your email address,
+                what it is about — picked from a list — your site&rsquo;s URL
+                and your message. The URL is optional; the rest are what I need
+                in order to reply. Two more travel with them that you do not
+                type: which page of the site you sent the form from, and which
+                language you were reading it in. None of this is needed in
+                order to browse the site.
               </p>
               <h3>Technical request data</h3>
               <p>
@@ -382,7 +417,10 @@ export default async function PrivacyPage({ params }: Props) {
                 <strong>What I never do with your data:</strong> I do not sell
                 it, transfer it, trade it, or enrich it against third-party
                 databases. I build no profiles and make no automated decisions
-                that affect you. Writing to me puts you on no list.
+                that affect you. Writing to me does not subscribe you to the
+                newsletter: that sign-up is separate and you make it yourself.
+                Your message is recorded so it can be followed up; where it
+                ends up is set out above.
               </p>
             </>
           ),
@@ -393,21 +431,22 @@ export default async function PrivacyPage({ params }: Props) {
           body: (
             <>
               <p>
-                The form will not open your email client unless you tick the
-                consent box. That is a technical requirement, not a pre-ticked
-                courtesy, and what you consent to is narrow: that I use what you
-                write only in order to answer you.
+                You give your consent by submitting the form. This notice tells
+                you beforehand what for: I use what you write in order to reply
+                to you and to follow your message up. For nothing else.
               </p>
               <p>
-                No record of that tick is stored anywhere, because there is
-                nowhere to store it. The box is the condition for the message to
-                be handed to your email app, and the email you send is itself
-                the evidence that you chose to send it.
+                A record of that submission is kept. The email that reaches me
+                carries your address, the date and the fields you filled in, and
+                that email is the evidence that you chose to send it. The
+                case-management system described in the section above holds the
+                same copy.
               </p>
               <p>
                 You can withdraw your consent at any time by writing to{' '}
                 {emailLink}. Withdrawing it means I delete your message and its
-                thread from my inbox and stop using your data, unless I have to
+                thread from my inbox and from the case-management system, and
+                stop using your data, unless I have to
                 keep something to meet a legal or tax obligation or to defend a
                 legal claim.
               </p>
@@ -424,35 +463,54 @@ export default async function PrivacyPage({ params }: Props) {
           body: (
             <>
               <p>
-                The site is served from <strong>Vercel</strong> infrastructure,
-                which also provides the aggregate traffic and performance
-                measurement (Vercel Analytics and Speed Insights). That is the
-                only third party involved in running these pages.
+                Three providers are involved. Each processes the data on my
+                instruction and for nothing else: they are processors, not
+                recipients.
+              </p>
+              <ul>
+                <li>
+                  <strong>Vercel</strong> — hosts the site and provides the
+                  aggregate traffic and performance measurement (Vercel
+                  Analytics and Speed Insights).
+                </li>
+                <li>
+                  <strong>Resend</strong> — delivers the emails from the form
+                  and sends the newsletter. It receives your name, your address
+                  and the content of your message, and the address of anyone
+                  who subscribes to the list.
+                </li>
+                <li>
+                  <strong>My own case-management system</strong> — receives
+                  each message from the form so it can be followed up. It is an
+                  application of mine, not a third-party service, and it is
+                  hosted on Vercel too.
+                </li>
+              </ul>
+              <p>
+                A backup database for form messages is foreseen. Until it is
+                connected it receives nothing; when it is, this notice will name
+                the provider.
               </p>
               <p>
-                The emails you send me live with my email provider, as they
-                would with any consultancy. They do not pass through this site.
-              </p>
-              <p>
-                There is no CRM, no email marketing platform, no advertising
-                pixel, no Google Analytics, no Meta Pixel, no third-party chat
-                widget, no embedded maps and no embedded video. The typefaces
-                are self-hosted at build time, so your browser makes no request
-                to Google Fonts, and every image is served from this same
-                domain.
+                What there is not: no advertising pixel, no Google Analytics, no
+                Meta Pixel, no third-party chat widget, no embedded maps and no
+                embedded video. The typefaces are self-hosted at build time, so
+                your browser makes no request to Google Fonts, and every image
+                is served from this same domain.
               </p>
               <h3>Transfers outside Mexico</h3>
               <p>
-                Vercel operates global infrastructure, so these pages are served
-                — and the aggregate metrics processed — from servers that may be
-                outside Mexico, typically in the United States. That measurement
-                is aggregate and does not identify you.
+                Vercel and Resend both operate global infrastructure, so these
+                pages are served — and your message processed — from servers
+                that may be outside Mexico, typically in the United States.
+                That is a transfer to a processor, which under the LFPDPPP does
+                not require your separate consent: it happens in order to
+                provide the service you asked for, and the processor may not
+                use the data for anything else.
               </p>
               <p>
-                Your email is a different matter: it travels from your provider
-                to mine, and that transfer is one you make when you press send,
-                under the terms of those two providers. Beyond that, your data
-                goes nowhere, because there is nowhere to send it.
+                You can ask me for the current detail of any provider by
+                writing to {emailLink}.
               </p>
             </>
           ),
@@ -500,8 +558,8 @@ export default async function PrivacyPage({ params }: Props) {
           body: (
             <>
               <p>
-                This site keeps nothing, because it has nowhere to. What gets
-                kept are emails in an inbox:
+                Your message reaches my inbox and my case-management system.
+                Those are the two places, and the periods are the same in both:
               </p>
               <ul>
                 <li>
@@ -515,14 +573,21 @@ export default async function PrivacyPage({ params }: Props) {
                   require.
                 </li>
                 <li>
+                  <strong>Your address on the newsletter:</strong> for as long
+                  as you stay subscribed. Unsubscribing removes it from the
+                  list.
+                </li>
+                <li>
                   <strong>Vercel metrics:</strong> aggregate and
                   non-identifying, so there is no personal datum of yours there
                   to expire.
                 </li>
               </ul>
               <p>
-                Once the period is over, the email is deleted from the inbox and
-                from the trash.
+                Once the period is over, or when you ask for cancellation, I
+                delete the email from the inbox and from the trash and delete
+                the record from the case-management system. Deleting the email
+                alone is not enough.
               </p>
             </>
           ),
@@ -538,9 +603,15 @@ export default async function PrivacyPage({ params }: Props) {
               </p>
               <ul>
                 <li>
-                  The strongest measure is that there is nothing here to steal:
-                  with no database and no accounts, there is no store of
-                  personal data that could leak.
+                  Only the minimum needed to reply is stored: name, email,
+                  subject, site and message. There are no user accounts, so
+                  there are no passwords to leak.
+                </li>
+                <li>
+                  The credentials for the email provider and for the
+                  case-management system are server-side only and never reach
+                  the browser. You can check that in the inspector: no key
+                  appears in the page source.
                 </li>
                 <li>
                   All traffic is encrypted in transit over HTTPS/TLS, enforced
@@ -613,9 +684,11 @@ export default async function PrivacyPage({ params }: Props) {
                 approximate date of your message.
               </p>
               <p>
-                In practice this is simple on both sides: everything I hold
-                about you is one email thread, so access means forwarding you
-                what I have, and cancellation means deleting it.
+                In practice: access means forwarding you your message and
+                telling you where it is — my inbox and my case-management
+                system; cancellation means deleting it from both. If you
+                subscribed to the newsletter, I also remove your address from
+                the list.
               </p>
               <p>
                 The process is free and I will answer within the deadlines the
@@ -677,45 +750,51 @@ export default async function PrivacyPage({ params }: Props) {
         },
         {
           id: 'sin-recoleccion',
-          title: 'Lo primero: este sitio no recibe tus datos',
+          title: 'Lo primero: qué pasa cuando envías el formulario',
           body: (
             <>
               <p>
                 Conviene decirlo antes que nada, porque cambia todo lo demás:{' '}
                 <strong>
-                  este sitio no tiene base de datos y el formulario de contacto
-                  no manda nada a ningún servidor
+                  el formulario de contacto sí recibe lo que escribes
                 </strong>
-                . Hay exactamente una excepción, y es voluntaria: el boletín,
-                que tiene su propia sección más abajo. Fuera de esa dirección,
-                no existe un lugar donde este sitio guarde algo tuyo.
+                . Al enviarlo, el mensaje viaja a este sitio y de aquí sale a
+                dos destinos:
+              </p>
+              <ol>
+                <li>
+                  <strong>Mi correo</strong>, entregado por Resend. Es la
+                  entrega que cuenta.
+                </li>
+                <li>
+                  <strong>Un sistema de gestión propio</strong>, para darle
+                  seguimiento en vez de dejarlo perdido en un buzón.
+                </li>
+              </ol>
+              <p>
+                Está previsto además guardar una copia de respaldo en una base
+                de datos. Si está conectada, recibe el mismo mensaje para la
+                misma finalidad —poder responderte— y para nada más. Resend y
+                el proveedor de esa base actúan como encargados: tratan los
+                datos por instrucción mía y para ningún otro fin. La sección de
+                quién más participa los nombra uno por uno.
               </p>
               <p>
-                El formulario de contacto no envía nada a ningún servidor.
-                Cuando lo llenas y haces clic, el sitio arma un enlace{' '}
-                <code>mailto:</code> con el asunto y el mensaje ya escritos y
-                abre la aplicación de correo de tu dispositivo. De ahí en
-                adelante <em>tú</em> envías el correo, desde tu propia cuenta y
-                por tu propio proveedor. El sitio no lo almacena, no lo
-                transmite y no puede leerlo: su política de seguridad (
-                <code>form-action &lsquo;self&rsquo;</code>) incluso impide que
-                un formulario de estas páginas apunte a un host externo.
+                Lo que el formulario no puede hacer es mandar lo que escribes a
+                otro sitio: la política de seguridad (
+                <code>form-action &lsquo;self&rsquo;</code>) impide que un
+                formulario de estas páginas apunte a un host externo.
               </p>
               <p>
-                Puedes comprobarlo tú mismo: abre las herramientas de
-                desarrollador de tu navegador, mira la pestaña de red y envía el
-                formulario. No aparece ninguna petición saliente, porque no hay
-                a dónde mandarla.
+                También hay un botón que copia mi correo a tu portapapeles, si
+                prefieres escribirme directo. Eso ocurre por completo en tu
+                dispositivo.
               </p>
               <p>
-                También hay un botón que copia mi correo a tu portapapeles, para
-                quien no tenga una aplicación de correo configurada. Eso ocurre
-                por completo en tu dispositivo.
-              </p>
-              <p>
-                Así que el tratamiento de datos personales empieza cuando tu
-                correo llega a mi buzón, no antes. El resto de este aviso
-                describe qué hago con lo que llega ahí.
+                No hay cuentas de usuario, ni cookies de rastreo, ni perfilado.
+                Lo que hay es un mensaje que me llega y queda registrado para
+                poder contestarte. El resto de este aviso describe qué hago con
+                él.
               </p>
             </>
           ),
@@ -727,10 +806,13 @@ export default async function PrivacyPage({ params }: Props) {
             <>
               <h3>Lo que tú decides escribir</h3>
               <p>
-                Exactamente los campos que ves en el formulario: tu nombre, tu
-                correo, un asunto y tu mensaje. Si escribes menos, llega menos.
-                Nada de eso hace falta para navegar el sitio: son los campos de
-                un correo que tú redactas y tú envías.
+                Los cinco campos del formulario: tu nombre, tu correo, de qué
+                va —elegido de una lista—, la URL de tu sitio y tu mensaje. La
+                URL es opcional; los otros son lo que necesito para poder
+                responderte. Con ellos viajan dos datos que no escribes tú:
+                desde qué página del sitio enviaste el formulario y en qué
+                idioma lo estabas leyendo. Nada de esto hace falta para navegar
+                el sitio.
               </p>
               <h3>Datos técnicos de la solicitud</h3>
               <p>
@@ -844,7 +926,10 @@ export default async function PrivacyPage({ params }: Props) {
                 <strong>Lo que nunca hago con tus datos:</strong> no los vendo,
                 no los cedo, no los intercambio y no los enriquezco con bases de
                 terceros. No construyo perfiles ni tomo decisiones automatizadas
-                que te afecten. Escribirme no te mete en ninguna lista.
+                que te afecten. Escribirme no te da de alta en el boletín:
+                esa alta es aparte y la haces tú. Tu mensaje sí queda
+                registrado para darle seguimiento; dónde queda lo dice la
+                sección de arriba.
               </p>
             </>
           ),
@@ -855,21 +940,21 @@ export default async function PrivacyPage({ params }: Props) {
           body: (
             <>
               <p>
-                El formulario no abre tu cliente de correo si no marcas la
-                casilla de consentimiento: es un requisito técnico, no una
-                casilla premarcada. Y lo que consientes es concreto: que use lo
-                que escribas únicamente para responderte.
+                El consentimiento lo das al enviar el formulario. Este aviso te
+                dice antes para qué: uso lo que escribas para responderte y
+                para dar seguimiento a tu mensaje. Para nada más.
               </p>
               <p>
-                De esa casilla no se guarda registro en ninguna parte, porque no
-                hay dónde guardarlo. La casilla es la condición para que el
-                mensaje pase a tu aplicación de correo, y el correo que envías
-                es por sí mismo la evidencia de que decidiste mandarlo.
+                Del envío queda constancia. El correo que me llega trae tu
+                dirección, la fecha y los campos que llenaste, y ese correo es
+                la evidencia de que decidiste mandarlo. En el sistema de
+                gestión que describe la sección de arriba queda la misma copia.
               </p>
               <p>
                 Puedes revocar tu consentimiento cuando quieras escribiendo a{' '}
                 {emailLink}. Revocarlo significa que elimino tu mensaje y su
-                hilo de mi buzón y dejo de usar tus datos, salvo que deba
+                hilo de mi buzón y del sistema de gestión, y dejo de usar tus
+                datos, salvo que deba
                 conservar algo por una obligación legal o fiscal, o para
                 defender un derecho.
               </p>
@@ -886,36 +971,54 @@ export default async function PrivacyPage({ params }: Props) {
           body: (
             <>
               <p>
-                El sitio se sirve desde la infraestructura de{' '}
-                <strong>Vercel</strong>, que además provee la medición agregada
-                de tráfico y rendimiento (Vercel Analytics y Speed Insights).
-                Ese es el único tercero que participa en el funcionamiento de
-                estas páginas.
+                Intervienen tres proveedores. Cada uno trata los datos por
+                instrucción mía y para nada más: son encargados, no
+                destinatarios.
+              </p>
+              <ul>
+                <li>
+                  <strong>Vercel</strong> — hospeda el sitio y provee la
+                  medición agregada de tráfico y rendimiento (Vercel Analytics
+                  y Speed Insights).
+                </li>
+                <li>
+                  <strong>Resend</strong> — entrega los correos del formulario
+                  y manda el boletín. Recibe tu nombre, tu dirección y el
+                  contenido de tu mensaje, y la dirección de quien se suscribe
+                  a la lista.
+                </li>
+                <li>
+                  <strong>Mi propio sistema de gestión</strong> — recibe cada
+                  mensaje del formulario para poder darle seguimiento. Es una
+                  aplicación mía, no un servicio de terceros, y también se
+                  aloja en Vercel.
+                </li>
+              </ul>
+              <p>
+                Está prevista una base de datos de respaldo para los mensajes
+                del formulario. Mientras no esté conectada no recibe nada; en
+                cuanto lo esté, este aviso nombrará al proveedor.
               </p>
               <p>
-                Los correos que me escribes viven en mi proveedor de correo,
-                como en cualquier consultoría. No pasan por este sitio.
-              </p>
-              <p>
-                No hay CRM, ni plataforma de email marketing, ni píxel
-                publicitario, ni Google Analytics, ni Meta Pixel, ni chat de
-                terceros, ni mapas embebidos, ni video incrustado. Las
-                tipografías se auto-hospedan en el build, así que tu navegador
-                no hace ni una petición a Google Fonts, y todas las imágenes se
-                sirven desde este mismo dominio.
+                Lo que no hay: ni píxel publicitario, ni Google Analytics, ni
+                Meta Pixel, ni chat de terceros, ni mapas embebidos, ni video
+                incrustado. Las tipografías se auto-hospedan en el build, así
+                que tu navegador no hace ni una petición a Google Fonts, y
+                todas las imágenes se sirven desde este mismo dominio.
               </p>
               <h3>Transferencias fuera de México</h3>
               <p>
-                Vercel opera infraestructura global, por lo que estas páginas se
-                sirven —y las métricas agregadas se procesan— desde servidores
-                que pueden estar fuera de México, normalmente en Estados Unidos.
-                Esa medición es agregada y no te identifica.
+                Vercel y Resend operan infraestructura global, por lo que estas
+                páginas se sirven —y tu mensaje se procesa— desde servidores
+                que pueden estar fuera de México, normalmente en Estados
+                Unidos. Eso es una remisión a un encargado, que la LFPDPPP no
+                sujeta a tu consentimiento aparte: ocurre para prestarte el
+                servicio que pediste, y el encargado no puede usar los datos
+                para otra cosa.
               </p>
               <p>
-                Tu correo es otra cosa: viaja de tu proveedor al mío, y esa
-                transferencia la haces tú al darle enviar, bajo los términos de
-                esos dos proveedores. Más allá de eso, tus datos no van a ningún
-                lado, porque no hay a dónde mandarlos.
+                Puedes pedirme el detalle vigente de cualquier proveedor
+                escribiendo a {emailLink}.
               </p>
             </>
           ),
@@ -964,8 +1067,8 @@ export default async function PrivacyPage({ params }: Props) {
           body: (
             <>
               <p>
-                Este sitio no conserva nada, porque no tiene dónde. Lo que se
-                conserva son correos en un buzón:
+                Tu mensaje llega a mi bandeja y a mi sistema de gestión. Esos
+                son los dos lugares, y los plazos son los mismos en los dos:
               </p>
               <ul>
                 <li>
@@ -979,14 +1082,19 @@ export default async function PrivacyPage({ params }: Props) {
                   aplicables.
                 </li>
                 <li>
+                  <strong>Tu dirección en el boletín:</strong> mientras sigas
+                  suscrito. Al darte de baja se retira de la lista.
+                </li>
+                <li>
                   <strong>Las métricas de Vercel:</strong> son agregadas y no te
                   identifican, así que ahí no hay un dato personal tuyo que
                   caduque.
                 </li>
               </ul>
               <p>
-                Cumplido el plazo, el correo se elimina del buzón y de la
-                papelera.
+                Cumplido el plazo, o cuando pides la cancelación, elimino el
+                correo del buzón y de la papelera y borro el registro del
+                sistema de gestión. No basta con borrar el correo.
               </p>
             </>
           ),
@@ -1002,9 +1110,15 @@ export default async function PrivacyPage({ params }: Props) {
               </p>
               <ul>
                 <li>
-                  La medida más fuerte es que aquí no hay nada que robar: sin
-                  base de datos y sin cuentas, no existe un almacén de datos
-                  personales que pueda filtrarse.
+                  Se guarda lo mínimo que sirve para responderte: nombre,
+                  correo, asunto, sitio y mensaje. No hay cuentas de usuario,
+                  así que no hay contraseñas que puedan filtrarse.
+                </li>
+                <li>
+                  Las credenciales del proveedor de correo y del sistema de
+                  gestión son solo de servidor y nunca llegan al navegador.
+                  Puedes comprobarlo en el inspector: no aparece ninguna clave
+                  en el código de la página.
                 </li>
                 <li>
                   Todo el tráfico viaja cifrado con HTTPS/TLS, forzado con HSTS
@@ -1076,9 +1190,10 @@ export default async function PrivacyPage({ params }: Props) {
                 aproximada de tu mensaje.
               </p>
               <p>
-                En la práctica esto es sencillo para los dos: todo lo que tengo
-                de ti es un hilo de correo, así que un acceso es reenviarte lo
-                que tengo y una cancelación es borrarlo.
+                En la práctica: un acceso es reenviarte tu mensaje y decirte
+                dónde está —mi buzón y mi sistema de gestión—; una cancelación
+                es borrarlo de los dos. Si te suscribiste al boletín, además
+                retiro tu dirección de la lista.
               </p>
               <p>
                 El trámite es gratuito y responderé dentro de los plazos que

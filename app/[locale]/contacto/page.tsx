@@ -531,7 +531,9 @@ export default async function ContactPage({ params }: Props) {
 
             <section className="px-5 pb-20 sm:px-10">
               <p className="stamp">
-                {en ? 'scope · channels a–d' : 'alcance · canales a–d'}
+                {en
+                  ? `scope · channels a–${channelId(services.length - 1)}`
+                  : `alcance · canales a–${channelId(services.length - 1)}`}
               </p>
               <h2 className="mt-5 max-w-[20ch] text-d1">{t('projectTypes')}</h2>
               <p className="mt-6 max-w-[62ch] text-sm leading-relaxed">

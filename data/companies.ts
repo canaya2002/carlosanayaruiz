@@ -85,13 +85,13 @@ const companiesData: Localized<Company[]> = {
       kind: 'empleo',
       country: 'USA',
       // Sin city ni coords: data/experience.ts solo registra "Estados Unidos".
-      role: 'Software Developer Engineer',
+      role: 'Software Development Engineer',
       startDate: '2023-11',
       endDate: '2025-04',
       summary:
         'Desarrollo de software en un entorno de escala real, con revisión de código, despliegue continuo y operación sobre sistemas en producción.',
       detail: [
-        'Trabajé como Software Developer Engineer dentro de equipos que operan sistemas en producción a escala. El trabajo diario combinaba desarrollo de funcionalidad, revisión de código de otros y responsabilidad operativa sobre lo que ya estaba corriendo.',
+        'Trabajé como Software Development Engineer dentro de equipos que operan sistemas en producción a escala. El trabajo diario combinaba desarrollo de funcionalidad, revisión de código de otros y responsabilidad operativa sobre lo que ya estaba corriendo.',
         'La parte que más me marcó no fue escribir código sino el rigor alrededor: nada llega a producción sin revisión, sin métricas que digan si mejoró algo, y sin un plan de qué hacer cuando falla. Es el criterio que aplico hoy en cada migración que toco.',
       ],
       stack: ['Java', 'Python', 'AWS', 'CI/CD', 'Git'],
@@ -148,7 +148,7 @@ const companiesData: Localized<Company[]> = {
         'Monitoreo de calidad del aire con datos satelitales. Reconocimiento "Galactic Problem Solver" del NASA Space Apps Challenge.',
       detail: [
         'AuraScope cruza datos satelitales de calidad del aire con visualización geográfica para hacer legible algo que normalmente vive en archivos que nadie abre.',
-        'Recibió el reconocimiento "Galactic Problem Solver" por la contribución técnica al manejar datasets complejos y convertirlos en visualizaciones que se entienden sin ser especialista.',
+        'AuraScope recibió el reconocimiento "Galactic Problem Solver" del NASA Space Apps Challenge 2024.',
       ],
       stack: ['Python', 'Datos satelitales', 'Visualización', 'GeoJSON'],
       shots: [],
@@ -207,13 +207,13 @@ const companiesData: Localized<Company[]> = {
       name: 'Amazon',
       kind: 'empleo',
       country: 'USA',
-      role: 'Software Developer Engineer',
+      role: 'Software Development Engineer',
       startDate: '2023-11',
       endDate: '2025-04',
       summary:
         'Software development at real scale, with code review, continuous deployment, and operational ownership of systems already in production.',
       detail: [
-        'I worked as a Software Developer Engineer on teams operating production systems at scale. Day to day the work combined building features, reviewing other people’s code, and carrying operational responsibility for what was already running.',
+        'I worked as a Software Development Engineer on teams operating production systems at scale. Day to day the work combined building features, reviewing other people’s code, and carrying operational responsibility for what was already running.',
         'What stayed with me was not the code but the rigour around it: nothing ships without review, without metrics that say whether it improved anything, and without a plan for when it breaks. That is the judgement I bring to every migration I touch now.',
       ],
       stack: ['Java', 'Python', 'AWS', 'CI/CD', 'Git'],
@@ -270,7 +270,7 @@ const companiesData: Localized<Company[]> = {
         'Air quality monitoring from satellite data. "Galactic Problem Solver" recognition, NASA Space Apps Challenge.',
       detail: [
         'AuraScope joins satellite air-quality data with geographic visualisation, to make legible something that normally lives in files nobody opens.',
-        'It received the "Galactic Problem Solver" recognition for the technical contribution of handling complex datasets and turning them into visualisations a non-specialist can read.',
+        'AuraScope received the "Galactic Problem Solver" recognition at the 2024 NASA Space Apps Challenge.',
       ],
       stack: ['Python', 'Satellite data', 'Visualisation', 'GeoJSON'],
       shots: [],

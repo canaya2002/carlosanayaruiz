@@ -1,8 +1,8 @@
 ---
 n: 7
-title: "15 casos de uso reales de IA en empresas de servicios"
+title: "15 casos de uso de IA en empresas de servicios"
 slug: "casos-de-uso-ia-empresas-servicios"
-description: "15 casos de uso de IA implementados de verdad en empresas de servicios, con el resultado medible de cada uno y qué se necesitó para montarlo."
+description: "15 casos de uso de IA en empresas de servicios, ordenados por dificultad de implementación, con lo que hace falta para montar cada uno."
 category: "Inteligencia Artificial"
 keyword: "casos de uso de inteligencia artificial en empresas"
 tipo: "satelite"
@@ -10,7 +10,7 @@ tags: ["casos de uso ia","automatización","empresas de servicios","productivida
 ---
 
 
-**Estos son casos de uso implementados en producción, no ideas de presentación.** Para cada uno indico qué resuelve, qué nivel de complejidad tiene y qué se necesita realmente para montarlo.
+Para cada uno indico qué resuelve, qué nivel de complejidad tiene y qué se necesita realmente para montarlo.
 
 Los ordeno por dificultad de implementación, de menor a mayor. Los primeros cinco los puede montar cualquier empresa este mes.
 

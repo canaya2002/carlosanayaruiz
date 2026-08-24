@@ -303,8 +303,8 @@ export default async function DesarrolloWebPage({ params }: Props) {
               </p>
               <p>
                 {en
-                  ? 'I use Next.js because it is the only framework that lets me choose SSR, SSG or ISR per page — the right rendering strategy for each kind of content. Combined with Firebase for the database, authentication and serverless functions, it is the stack that gives the most value per engineering hour instead of the most lines of code.'
-                  : 'Uso Next.js porque es el único framework que me permite elegir SSR, SSG o ISR por página — la estrategia de renderizado correcta para cada tipo de contenido. Combinado con Firebase para base de datos, autenticación y funciones serverless, es el stack que da más valor por hora de ingeniería, no más líneas de código.'}
+                  ? 'I use Next.js because it lets me choose SSR, SSG or ISR per page — the right rendering strategy for each kind of content. Combined with Firebase for the database, authentication and serverless functions, it is the stack that gives the most value per engineering hour instead of the most lines of code.'
+                  : 'Uso Next.js porque me deja elegir SSR, SSG o ISR por página — la estrategia de renderizado correcta para cada tipo de contenido. Combinado con Firebase para base de datos, autenticación y funciones serverless, es el stack que da más valor por hora de ingeniería, no más líneas de código.'}
               </p>
               <p>
                 {en

@@ -180,7 +180,8 @@ export default async function CertificationsPage({ params }: Props) {
   const issuers = new Set(credentials.map((credential) => credential.issuer))
 
   /* Las credenciales CON fecha, para el tramo del margen. La primera de
-     la lista no la tiene —es un grado en curso— y aquí se cae sola en vez
+     la lista no la tiene: es el PMP, y no hay fecha en ningún dato del
+     sitio. Aquí se cae sola en vez
      de imprimirse como un año inventado. Lo que se lee es el emisor,
      porque el margen mide 18rem y el nombre completo de una
      especialización no cabe en una línea. */

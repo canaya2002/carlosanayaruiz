@@ -49,7 +49,6 @@ const awardsData: Localized<Award[]> = {
       organization: 'NASA International Space Apps Challenge',
       date: '2024-10',
       description: 'Plataforma que procesa datos abiertos de NASA (Landsat/Sentinel) para identificar islas de calor y contaminación en zonas urbanas marginadas.',
-      impact: 'Reconocimiento "Galactic Problem Solver" por contribución técnica con datasets complejos y visualizaciones.',
     },
     {
       id: 'logiroute-ai',
@@ -78,7 +77,6 @@ const awardsData: Localized<Award[]> = {
       organization: 'NASA International Space Apps Challenge',
       date: '2024-10',
       description: 'Platform processing open NASA data (Landsat/Sentinel) to identify heat islands and pollution in marginalized urban areas.',
-      impact: '"Galactic Problem Solver" recognition for technical contribution with complex datasets and visualizations.',
     },
     {
       id: 'logiroute-ai',

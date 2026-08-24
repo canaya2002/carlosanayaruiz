@@ -521,7 +521,13 @@ export default async function AboutPage({ params }: Props) {
                           {formatShortDate(credential.date, locale)}
                         </time>
                       ) : (
-                        <span>{en ? 'active' : 'vigente'}</span>
+                        /* La tercera de las tres: iba en el HUECO DE LA FECHA
+                           diciendo «vigente», que es una afirmación de
+                           vigencia sin fecha de emisión ni de renovación. El
+                           PMP se renueva cada tres años con 60 PDU, así que de
+                           «sin fecha» no se deduce «vigente». Las otras dos
+                           salen de `certificaciones.noDate` y `cv.active`. */
+                        <span>{en ? 'no date' : 'sin fecha'}</span>
                       )}
                     </p>
                   </li>

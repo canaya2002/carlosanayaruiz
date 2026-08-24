@@ -123,10 +123,9 @@ export default async function BlogIndexPage({ params }: Props) {
                 </p>
 
                 <p className="mt-8 max-w-[62ch] text-ink-muted">
-                  Cien artículos escritos y programados, uno cada martes y cada
-                  viernes. Nada de esto es contenido de relleno para llenar un
-                  calendario: cada entrada sale de trabajo hecho en producción,
-                  y las que hablan de números traen los números.
+                  Cien artículos escritos y programados. Cada uno compite por
+                  una sola búsqueda y ninguno repite la de otro; las guías
+                  principales son el hub de su clúster.
                 </p>
               </div>
 
@@ -195,7 +194,7 @@ export default async function BlogIndexPage({ params }: Props) {
                 {siguiente ? formatPostDate(siguiente.publishedAt) : 'martes'}
               </h2>
               <p className="mt-6 max-w-[54ch] text-lead text-ink-muted">
-                Los cien artículos están escritos y programados. Esta página no
+                Esta página no
                 lista ninguno todavía porque ninguno ha salido — y una fecha
                 falsa para parecer activo es exactamente lo que este sitio no
                 hace.

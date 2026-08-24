@@ -97,9 +97,9 @@ export default async function ServicesHubPage({ params }: Props) {
       : 'Cuándo no soy la opción correcta',
   }
 
-  // Las cuatro fases, iguales para los cuatro servicios: es el proceso del
-  // despacho, no el de un servicio concreto. Salen de `messages/*.json` porque
-  // la home renderiza las mismas cuatro y no puede haber dos redacciones.
+  // Las cuatro fases del despacho, iguales en los cuatro servicios. Los pasos
+  // por servicio viven en `data/services.ts` y se renderizan en su página; el
+  // margen de la cabecera cuenta ESOS, no estos.
   const processSteps = [
     { title: ts('step1Title'), desc: ts('step1Desc') },
     { title: ts('step2Title'), desc: ts('step2Desc') },
@@ -221,7 +221,9 @@ export default async function ServicesHubPage({ params }: Props) {
             {/* Sin `style` inline: `.plate .stamp` ya lleva la tinta medida
                 para superficie clara. Ver --ink-plate en globals.css. */}
             <p className="stamp">
-              {en ? 'channels a–d · parallel' : 'canales a–d · paralelos'}
+              {en
+                ? `channels a–${channelId(services.length - 1)} · parallel`
+                : `canales a–${channelId(services.length - 1)} · paralelos`}
             </p>
             <h2 className="mt-5 max-w-[18ch] text-d1">{ts('title')}</h2>
             <p className="mt-6 max-w-[52ch] text-lead">{ts('subtitle')}</p>
@@ -306,9 +308,7 @@ export default async function ServicesHubPage({ params }: Props) {
               {en ? 'where to start' : 'por dónde empezar'}
             </p>
             <h2 className="mt-5 max-w-[16ch] text-d1 text-ink">
-              {en
-                ? 'Which of the four do you need?'
-                : '¿Cuál de los cuatro necesitas?'}
+              {en ? 'Which one do you need?' : '¿Cuál necesitas?'}
             </h2>
             <p className="mt-6 max-w-[52ch] text-lead text-ink-muted">
               {th('chooseHelp')}
@@ -357,8 +357,8 @@ export default async function ServicesHubPage({ params }: Props) {
                 punteada, sin caja. */}
             <p className="gap mt-8 max-w-[68ch] pt-4 text-sm text-ink-muted">
               {en
-                ? 'Most engagements start with one of the four, not with all of them. And sometimes the answer is none of them: if what you are missing is content or domain authority, technical work will not fix it, and I will say so on the first call instead of selling you an audit.'
-                : 'La mayoría de los proyectos empiezan con uno de los cuatro, no con todos. Y a veces la respuesta es ninguno: si lo que te falta es contenido o autoridad de dominio, el trabajo técnico no lo va a resolver, y te lo digo en la primera llamada en lugar de venderte una auditoría.'}
+                ? 'Most engagements start with one, not with all of them. And sometimes the answer is none of them: if what you are missing is content or domain authority, technical work will not fix it, and I will say so on the first call instead of selling you an audit.'
+                : 'La mayoría de los proyectos empiezan con uno, no con todos. Y a veces la respuesta es ninguno: si lo que te falta es contenido o autoridad de dominio, el trabajo técnico no lo va a resolver, y te lo digo en la primera llamada en lugar de venderte una auditoría.'}
             </p>
           </section>
 
@@ -373,8 +373,8 @@ export default async function ServicesHubPage({ params }: Props) {
             </p>
             <h2 className="mt-5 max-w-[18ch] text-d1 text-ink">
               {en
-                ? 'The four, side by side'
-                : 'Los cuatro, uno al lado del otro'}
+                ? 'All of them, side by side'
+                : 'Todos, uno al lado del otro'}
             </h2>
 
             <div className="mt-14 space-y-20">
@@ -494,8 +494,14 @@ export default async function ServicesHubPage({ params }: Props) {
               parte del dato. */}
           <section className="border-t border-hairline px-5 py-20 sm:px-10">
             <p className="stamp">{en ? 'method' : 'método'}</p>
+            {/* NO ts('process') aquí: «Cómo trabajo» es el stamp de las
+                cuatro páginas de servicio, donde encabeza CINCO fases
+                distintas. Tres versiones del proceso convivían en esta URL
+                y la siguiente. */}
             <h2 className="mt-5 max-w-[16ch] text-d1 text-ink">
-              {ts('process')}
+              {en
+                ? 'The same in all four services'
+                : 'Lo mismo en los cuatro servicios'}
             </h2>
             <p className="mt-6 max-w-[52ch] text-lead text-ink-muted">
               {ts('processSubtitle')}

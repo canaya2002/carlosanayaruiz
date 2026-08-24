@@ -240,11 +240,31 @@ export default async function BlogPostPage({ params }: Props) {
                 <div className="mt-16 border-t border-hairline pt-6">
                   <p className="stamp">escrito por</p>
                   <p className="mt-2 text-d3 text-ink">{SITE_CONFIG.name}</p>
+                  {/* ⚠ CADA FRASE DE AQUÍ SALE DE UN ARCHIVO, y no es
+                      pedantería: esta bio se sirve en 100 URLs y es el nodo
+                      `Person` del grafo escrito en la página, así que es la
+                      afirmación con más superficie del sitio. La anterior
+                      decía «productos SaaS propios» y «empresas de servicios»:
+                      los únicos `kind: 'propio'` de data/companies.ts son
+                      AuraScope y LogiRoute AI —dos hackathons de un mes— y en
+                      `data/` no hay una sola empresa de servicios como
+                      cliente.
+
+                      El grado sale de data/education.ts (con la forma que está
+                      en el dato, «Tecnológico de Monterrey», no «Tec de
+                      Monterrey»); el rol, del `title` de data/personal.ts; los
+                      tres empleos, de data/companies.ts; y la última frase es
+                      literalmente el `summary` de data/personal.ts. Con eso
+                      queda alineada con la descripción del nodo `Person` de
+                      lib/schema.ts, que es lo que este bloque dice hacer
+                      visible. */}
                   <p className="mt-2 max-w-[58ch] text-sm text-ink-muted">
-                    Ingeniero full-stack y consultor técnico en{' '}
-                    {NAP.locality}. Implemento sistemas con IA, SEO técnico y
-                    plataformas en producción para empresas de servicios y
-                    productos SaaS propios.
+                    Ingeniero en Tecnologías Computacionales por el Tecnológico
+                    de Monterrey. Consultor de SEO técnico e ingeniero
+                    full-stack en {NAP.locality}; antes en Amazon, Master
+                    Loyalty Group y Wan Hai Lines. Trabajo en la intersección
+                    entre ingeniería y buscadores: datos estructurados, Core
+                    Web Vitals y rendimiento web.
                   </p>
                   <p className="mt-5 flex flex-wrap gap-x-8 gap-y-3">
                     <Link className="link-stylus" href="/contacto">

@@ -8,10 +8,15 @@ export function cn(...inputs: ClassValue[]) {
 
 export function formatDate(date: string, locale: Locale = 'es'): string {
   const localeMap: Record<Locale, string> = { es: 'es-MX', en: 'en-US' }
+  /* timeZone UTC no es opcional: la entrada es una fecha civil sin hora
+     («2026-08-24»), que Date interpreta como medianoche UTC. Sin fijar la
+     zona, toLocaleDateString la traslada a la local y en CDMX (UTC−6)
+     imprime el día anterior. */
   return new Date(date).toLocaleDateString(localeMap[locale], {
     year: 'numeric',
     month: 'long',
     day: 'numeric',
+    timeZone: 'UTC',
   })
 }
 

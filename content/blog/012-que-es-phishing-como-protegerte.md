@@ -1,8 +1,8 @@
 ---
 n: 12
-title: "Qué es el phishing y cómo protegerte (con ejemplos reales)"
+title: "Qué es el phishing y cómo protegerte: 8 señales"
 slug: "que-es-phishing-como-protegerte"
-description: "Qué es el phishing, cómo identificarlo en 8 señales y qué hacer exactamente si ya hiciste clic. Con ejemplos reales anonimizados."
+description: "Qué es el phishing, los cinco tipos que vas a encontrar, las 8 señales que sí funcionan hoy y qué hacer si ya hiciste clic."
 category: "Ciberseguridad"
 keyword: "qué es phishing"
 tipo: "satelite"
@@ -50,7 +50,7 @@ Es el punto de entrada de la mayoría de los incidentes graves en empresas. No p
 
 ---
 
-### El protocolo de verificación que corta el 95% de los casos
+### El protocolo de verificación: una sola regla
 
 Una sola regla, aplicada sin excepciones:
 

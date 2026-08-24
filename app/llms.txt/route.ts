@@ -57,8 +57,8 @@ const ROUTE_LABELS: Record<RouteKey, { es: string; en: string }> = {
     en: 'Dashboards & analytics',
   },
   blog: {
-    es: 'Blog técnico (100 artículos, español)',
-    en: 'Technical blog (100 articles, Spanish)',
+    es: 'Blog técnico en español, martes y viernes. 100 artículos programados, 2026-08-25 a 2027-08-06',
+    en: 'Technical blog in Spanish, Tuesdays and Fridays. 100 articles scheduled, 2026-08-25 to 2027-08-06',
   },
   sobreMi: { es: 'Sobre mí / perfil', en: 'About / profile' },
   contacto: { es: 'Contacto', en: 'Contact' },

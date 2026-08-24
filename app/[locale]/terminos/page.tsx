@@ -5,8 +5,8 @@
  *
  * Estos términos son un PUNTO DE PARTIDA TÉCNICO, del tamaño de una
  * consultoría de una sola persona: cubren únicamente lo que este sitio de
- * verdad es —un sitio informativo con un formulario de contacto que abre la
- * aplicación de correo del visitante— y omiten a propósito el relleno
+ * verdad es —un sitio informativo, un blog y un formulario de contacto que
+ * entrega por correo— y omiten a propósito el relleno
  * corporativo: no hay cláusula de arbitraje, ni cuentas de usuario, ni
  * suscripciones, ni política de reembolsos, ni condiciones de comercio
  * electrónico, porque nada de eso existe aquí. NO son asesoría legal y NO los
@@ -15,11 +15,23 @@
  * conforme al derecho mexicano no puede excluir el dolo ni la culpa grave) y
  * la cláusula de jurisdicción si se esperan clientes fuera de México.
  *
- * REVISADO EL 2026-08-19 para que ninguna cláusula describa infraestructura
- * que ya no existe. Se eliminaron las menciones al newsletter, a las reglas de
- * seguridad de la base de datos y a Firebase: no hay base de datos, no hay
- * servidor que reciba formularios y no hay lista de correo. Si algo de eso
- * vuelve, estos términos cambian en el mismo commit.
+ * ── LA CORRECCIÓN DEL 2026-08-24 ──
+ * Dos cláusulas describían el compositor `mailto:` retirado, y la del
+ * formulario era la peor del sitio en un sentido concreto: es una LIMITACIÓN
+ * DE RESPONSABILIDAD, y trasladaba al visitante un riesgo que hoy es mío. «Que
+ * el correo salga depende de tu dispositivo, de tu cliente de correo y de tu
+ * proveedor» describía una cadena que ya no existe; la de verdad es Resend y
+ * mi infraestructura, las dos bajo mi control. Una cláusula así, además de
+ * falsa, no protege: un juez la lee contra quien la redactó.
+ *
+ * Lo que SÍ se conserva, porque sigue siendo honesto, es que no se promete la
+ * entrega de un correo —puede tardar o caer en no deseado— y que hay un canal
+ * alterno cuando la cadena falla.
+ *
+ * Vigente hoy: el formulario es una Server Action que entrega por Resend y
+ * reenvía a un sistema de gestión propio; hay un boletín voluntario; y una
+ * base de datos de respaldo está prevista y NO conectada. Si algo de eso
+ * cambia, estos términos cambian en el mismo commit y LAST_UPDATED se mueve.
  *
  * Todo lo relativo a un proyecto pagado (alcance, tiempos, precio,
  * confidencialidad, titularidad de la propiedad intelectual) va en la
@@ -44,6 +56,7 @@ import { Rail } from '@/components/instrument/rail'
 import { NAP, SITE_CONFIG } from '@/lib/constants'
 import { generatePageMetadata } from '@/lib/seo'
 import { generateLegalPageGraph } from '@/lib/schema'
+import { formatDate } from '@/lib/utils'
 import { Locale } from '@/data/types'
 
 interface Props {
@@ -51,7 +64,7 @@ interface Props {
 }
 
 /** Fecha real de la última edición de fondo. También alimenta el JSON-LD. */
-const LAST_UPDATED = '2026-08-19'
+const LAST_UPDATED = '2026-08-24'
 
 /** Dominio pelado, para el texto. Derivado para que un cambio de dominio
  *  actualice también el copy. */
@@ -126,7 +139,9 @@ export default async function TermsPage({ params }: Props) {
     </a>
   )
 
-  const updatedLabel = en ? 'August 19, 2026' : '19 de agosto de 2026'
+  /* Derivada de LAST_UPDATED: la fecha visible, la del <time dateTime> y la
+     del JSON-LD tienen que ser una sola. Antes eran dos constantes. */
+  const updatedLabel = formatDate(LAST_UPDATED, locale as Locale)
 
   const privacyLink = (
     <Link className="link-stylus" href="/privacidad">
@@ -265,23 +280,27 @@ export default async function TermsPage({ params }: Props) {
           body: (
             <>
               <p>
-                The form on the contact page does not send anything to a server.
-                It assembles the message and opens the email application on your
-                device so you can send it yourself, from your own account. There
-                is no database and no inbox on this site.
+                The form on the contact page does send your message. It travels
+                to this site and from there to my inbox; an external sending
+                provider makes the delivery and acts on my instruction. What is
+                collected, how long it is kept and how to exercise your rights
+                is in the {privacyLink}.
               </p>
               <p>
-                A consequence worth stating plainly: whether the email actually
-                leaves depends on your device, your email client and your
-                provider — none of which I control. I cannot acknowledge or
-                answer a message that never reached my inbox, so if you get no
-                reply within a reasonable time, it is worth writing to{' '}
-                {emailLink} directly.
+                The acknowledgement appears on the same screen. If the message
+                got through, the form says so; if reception is not connected or
+                something fails, it says that too and offers you WhatsApp, which
+                does not depend on the same chain.
               </p>
               <p>
-                What the form is for is structure: the fields exist so the first
-                email already contains the URL, what changed and since when. It
-                is a drafting aid, not a delivery guarantee.
+                What I do not promise is the delivery of an email: it can be
+                delayed or land in your spam folder, and that is not in my
+                hands. If you get no reply within a reasonable time, write to me
+                directly at {emailLink}.
+              </p>
+              <p>
+                The five fields exist to give structure: so the first message
+                already carries the URL, what changed and since when.
               </p>
             </>
           ),
@@ -407,11 +426,9 @@ export default async function TermsPage({ params }: Props) {
           body: (
             <>
               <p>
-                This site has no database and receives no form submissions: the
-                contact form opens your own email application. What reaches my
-                inbox, how long it is kept and how to exercise your ARCO rights
-                is described in the {privacyLink}, which forms part of these
-                terms.
+                The contact form sends your message to my inbox. What reaches
+                me, how long it is kept and how to exercise your ARCO rights is
+                described in the {privacyLink}, which forms part of these terms.
               </p>
               <p>
                 The site uses no advertising cookies and no third-party
@@ -518,24 +535,27 @@ export default async function TermsPage({ params }: Props) {
           body: (
             <>
               <p>
-                El formulario de la página de contacto no envía nada a un
-                servidor: arma el mensaje y abre la aplicación de correo de tu
-                dispositivo para que lo envíes tú, desde tu propia cuenta. Este
-                sitio no tiene base de datos ni buzón propio.
+                El formulario de la página de contacto sí envía tu mensaje.
+                Viaja a este sitio y de ahí a mi correo; un proveedor de envío
+                externo hace la entrega y actúa por instrucción mía. Qué se
+                recoge, cuánto se conserva y cómo ejercer tus derechos está en
+                el {privacyLink}.
               </p>
               <p>
-                De ahí se sigue algo que vale decir sin rodeos: que el correo
-                salga depende de tu dispositivo, de tu cliente de correo y de tu
-                proveedor, y ninguno de los tres está bajo mi control. No puedo
-                acusar recibo ni responder un mensaje que nunca llegó a mi
-                buzón, así que si no tienes respuesta en un plazo razonable vale
-                la pena escribir directo a {emailLink}.
+                El acuse aparece en la misma pantalla. Si el mensaje quedó, el
+                formulario lo dice; si la recepción no está conectada o algo
+                falla, también lo dice y te ofrece WhatsApp, que no depende de
+                la misma cadena.
               </p>
               <p>
-                Para lo que sirve el formulario es para dar estructura: los
-                campos existen para que el primer correo ya traiga la URL, qué
-                cambió y desde cuándo. Es una ayuda de redacción, no una
-                garantía de entrega.
+                Lo que no prometo es la entrega de un correo: puede tardar o
+                caer en tu carpeta de no deseado, y eso no está en mis manos. Si
+                no tienes respuesta en un plazo razonable, escríbeme directo a{' '}
+                {emailLink}.
+              </p>
+              <p>
+                Los cinco campos existen para dar estructura: para que el primer
+                mensaje ya traiga la URL, qué cambió y desde cuándo.
               </p>
             </>
           ),
@@ -663,11 +683,9 @@ export default async function TermsPage({ params }: Props) {
           body: (
             <>
               <p>
-                Este sitio no tiene base de datos y no recibe envíos de
-                formulario: el formulario de contacto abre tu propia aplicación
-                de correo. Qué llega a mi buzón, cuánto se conserva y cómo
-                ejercer tus derechos ARCO está descrito en el {privacyLink}, que
-                forma parte de estos términos.
+                El formulario de contacto envía tu mensaje a mi correo. Qué
+                llega, cuánto se conserva y cómo ejercer tus derechos ARCO está
+                descrito en el {privacyLink}, que forma parte de estos términos.
               </p>
               <p>
                 El sitio no usa cookies publicitarias ni rastreadores de

@@ -1384,6 +1384,218 @@ sensible a mayúsculas. Está los tres (es-MX, en-US, x-default) y son recíproc
 verdad.** Esta ronda cambió el titular, la frase del operador y el tiempo de
 respuesta, así que se subió. No se sube en refactors.
 
+## La ronda de contenido: el sitio decía cosas que no eran
+
+Una revisión de la copia de las 16 rutas contra el código que de verdad corre.
+**39 hallazgos confirmados**, y el reparto dice de qué tipo era el problema:
+19 afirmaciones sin respaldo, 6 contradicciones entre páginas, 5 cifras que no
+cuadran, 5 trozos de copia duplicada, 2 de relleno, 1 error de lengua y 1
+marcador de posición.
+
+### El aviso de privacidad describía un formulario que ya no existe
+
+**Ocho cláusulas.** El formulario dejó de componer un `mailto:` y pasó a ser una
+Server Action que entrega por Resend y reenvía al sistema de gestión, y el
+documento se quedó diciendo «este sitio no tiene base de datos», «el formulario
+no manda nada a ningún servidor» y «el tratamiento empieza cuando tu correo
+llega a mi buzón, no antes».
+
+**La peor no era ninguna de esas.** Era un párrafo que INVITABA al visitante a
+abrir la pestaña de red del navegador y comprobar que no sale ninguna petición.
+Hoy eso demuestra lo contrario en diez segundos: un documento legal que ofrece
+una verificación que lo desmiente es peor que uno que solo está viejo. Se borró
+sin sustituto.
+
+Lo que se rehízo, todo en el mismo commit porque a medias el documento se
+contradice: el resumen de tres bandas (dos eran falsas, la de cookies sigue
+siendo cierta y por eso se queda), la sección de qué pasa al enviar, los cinco
+campos —decía cuatro—, el consentimiento (describía una casilla que
+`lead-form.tsx` no tiene), los terceros (nombraba uno de tres), la
+conservación, la seguridad, el ARCO y la cabecera de mantenimiento.
+
+**No se afirmó nada sobre row level security, y eso fue deliberado.** El plan
+proponía una viñeta diciendo que la tabla `leads` la tiene activada.
+`SUPABASE_URL` y `SUPABASE_SERVICE_ROLE_KEY` están VACÍAS: no hay tabla de la
+que afirmarlo. Por eso Supabase se declara «previsto y no conectado» y la
+cláusula de seguridad habla solo de lo que existe. ⚠ Cuando se conecte, se
+comprueba RLS ANTES de escribir la viñeta.
+
+### Los términos eran peor en un sentido concreto
+
+La cláusula del formulario es una **limitación de responsabilidad**, y trasladaba
+al visitante un riesgo que hoy es del despacho: «que el correo salga depende de
+tu dispositivo, de tu cliente de correo y de tu proveedor». Esa cadena ya no
+existe; la de verdad es Resend y esta infraestructura, las dos bajo control
+propio. Una cláusula así, además de falsa, **no protege**: se lee contra quien la
+redactó. Lo que sí se conservó, porque sigue siendo honesto, es que no se promete
+la entrega de un correo y que hay un canal alterno cuando la cadena falla.
+
+### La fecha, en dos constantes que se separaron
+
+`LAST_UPDATED` decía `2026-08-24` y el texto visible `19 de agosto de 2026`:
+cinco días de diferencia en el documento cuya propia cláusula de cambios dice que
+la fecha identifica la versión vigente. Ahora la etiqueta se deriva
+(`formatDate(LAST_UPDATED, locale)`) en el aviso y en los términos.
+
+Eso obligó a arreglar `formatDate`: **le faltaba `timeZone: 'UTC'`**. La entrada
+es una fecha civil sin hora, que `Date` interpreta como medianoche UTC, y
+`toLocaleDateString` la trasladaba a la zona local — en CDMX (UTC−6) imprimía el
+día anterior. `lib/blog.ts` ya lo llevaba, y por eso el blog nunca se corrió.
+
+### Las promesas que el propio sitio se desmiente
+
+Este es el patrón que más se repitió: una página promete algo y otra del mismo
+repo dice que eso no se puede prometer.
+
+| Decía | Lo desmentía |
+|---|---|
+| «SSR/ISR para indexación instantánea» | `data/faq.ts`: «Google no promete indexación ni posiciones a nadie» |
+| «Google indexa el contenido en el primer intento» | lo mismo |
+| «se indexan el mismo día en que salen a producción» | lo mismo |
+| «impacto en 2-8 semanas después del recrawl» | el `notFor` del propio servicio admite no controlar el recrawl |
+| «Vercel garantiza despliegues» | `data/faq.ts` se niega a garantizar lo que no controla |
+| «la mejor combinación» | un superlativo sin comparativa |
+| «el único framework que me deja elegir el renderizado por ruta» | Nuxt, Astro, SvelteKit y Remix también |
+| «Siempre empiezo con una auditoría técnica» | el `process` de ese servicio empieza en «Alcance y arquitectura» |
+| «Todas empiezan con una auditoría» (los cuatro) | dos de los cuatro empiezan en inventario y en definición de preguntas |
+| «si no se puede medir, no se cobra como resultado» | la FAQ de la portada: «alcance cerrado… precio fijo», y sale en el `FAQPage` |
+
+**La lección: el respaldo tiene que estar en un archivo del repo, no en la
+intuición de que suena razonable.** Cada reemplazo de esta ronda se escribió
+apuntando a un archivo concreto, y donde no había archivo se quitó la promesa en
+lugar de suavizarla.
+
+### El `notFor` que se anulaba a sí mismo
+
+«No es para decisiones legales, médicas o financieras **sin revisión humana**»
+decía en realidad «sí lo tomo, con aprobación humana» — y la aprobación humana ya
+está vendida dos párrafos antes. Nadie se autoexcluye leyendo eso, y es el único
+`notFor` que se imprime en el margen de la cabecera bajo «no aplica». Un
+descalificador con una condición al final no descalifica.
+
+### El NASA estaba atribuido, no citado
+
+«Galactic Problem Solver **por contribución técnica con datasets complejos y
+visualizaciones**» es una interpretación, no una cita: en el repo no hay diploma,
+ni texto del certificado, ni URL de verificación (`image` está vacío a propósito
+y `public/pdf/` está vacía). En el NASA Space Apps Challenge esa es la
+designación de los equipos que entregan un proyecto válido; las distinciones son
+Local y Global Nominee. La frase la subía dos escalones — el inflado que la propia
+página promete no hacer, y es la afirmación estelar del sitio: encabeza
+`/premios`, va en su descripción SEO y se repite en `/sobre-mi`, `/cv` y
+`/proyectos/aurascope`.
+
+Se **borró** el campo `impact` en vez de recortarlo: es opcional a propósito, y
+reducido a repetir el nombre la fila sería el mismo dato dos veces.
+
+### «Software Developer Engineer» no existe en Amazon
+
+Es **Software Development Engineer** (SDE). Estaba en seis lugares, incluidos el
+`<title>`, el `h1` de `/proyectos/amazon` y el JSON-LD, así que salía también en
+Google. Para cualquiera de la industria es la señal inmediata de que el puesto se
+escribió de memoria. Nada de «Engineer I»: el nivel no está en ningún archivo.
+
+### Las cifras escritas a mano al lado de las que se calculan
+
+El sitio calcula `canales a–${channelId(services.length - 1)}` en la portada
+y en dos sitios más de `/servicios`… y tenía «a–d» escrito a mano en el rótulo de
+`/servicios` y de `/contacto`, más tres «los cuatro» en prosa. Con un quinto
+servicio, el hub pintaba cinco filas bajo un rótulo que decía cuatro mientras el
+dial se actualizaba solo. **Es el mismo defecto del «a–e» que el comentario de la
+portada ya documenta como «el tipo de mentira que nadie revisa».** Ahora los dos
+rótulos se calculan y las cuentas en prosa se quitaron — el arreglo es quitar la
+cifra, no convertirla en dígito.
+
+### El boletín se anunciaba «en preparación» junto a cien artículos programados
+
+Y `newsletter.lead` decía «Sin cadencia fija» mientras el **aviso de privacidad**
+declara «dos por semana, los martes y los viernes». El aviso es el que tiene razón
+(`vercel.json`: `0 14 * * 2,5`), así que se corrigió el otro lado. Una
+contradicción cuyo otro extremo es un documento legal no es un descuido de copy —
+es el mismo defecto que el aviso que decía «no hay boletín» al lado de un
+formulario de alta.
+
+Nada de fechas absolutas escritas a mano en el acuse: «el próximo artículo te
+llega el martes o el viernes» es cierto hoy y sigue siéndolo el 2027-08-06, donde
+termina el calendario. Y no dice «el primero», porque para el suscriptor número
+mil no lo es.
+
+### «Vigente» en el hueco de la fecha, tres veces
+
+El PMP se renueva cada tres años con 60 PDU. «Vigente» sin fecha de emisión ni de
+renovación es la única afirmación de `/certificaciones` que no se puede
+comprobar — y la página se titula «Credenciales que se pueden comprobar» y remata
+con «para que no tengas que creerme». Iba en el hueco donde va la FECHA, así que
+ahora dice «sin fecha». **Las tres a la vez** (`certificaciones.noDate`,
+`cv.active` y una tercera escrita a mano en el JSX de `/sobre-mi`), o el sitio se
+contradice entre páginas.
+
+### La bio del blog, en 100 URLs
+
+Decía «plataformas en producción para empresas de servicios y **productos SaaS
+propios**». Los únicos `kind: 'propio'` de `data/companies.ts` son AuraScope y
+LogiRoute AI: dos hackathons de un mes. Y en `data/` no hay una sola empresa de
+servicios como cliente. Es la afirmación con más superficie del sitio —se sirve en
+100 URLs y es el nodo `Person` del grafo escrito en la página—, así que ahora cada
+cláusula sale de un archivo: el grado de `data/education.ts`, el rol del `title`
+de `data/personal.ts`, los tres empleos de `data/companies.ts` y la última frase
+es literalmente el `summary`.
+
+### Y una cifra congelada en el documento que leen los asistentes
+
+`llms.txt` decía «Blog técnico (100 artículos)». Hoy `getPublishedPosts()`
+devuelve 0 y la cifra no llega a 100 hasta agosto de 2027. Todo el resto del sitio
+cuenta del dato precisamente por esto —la tarjeta OG del blog lo dice con sus
+propias palabras—, y `llms.txt` es exactamente el documento que leen los
+asistentes que este sitio vende conseguir que lo citen. Ahora dice «100 artículos
+programados, 2026-08-25 a 2027-08-06»: cierto hoy y cierto en 2027.
+
+**Si se quiere la cifra real de publicados, la etiqueta no basta:** hay que darle a
+la ruta un ciclo de refresco como el de sus hermanas (`revalidate = 900` en vez de
+`dynamic = 'force-static'`) y purgarla desde el cron. Sin eso, contar en vivo es
+peor que la cifra fija.
+
+### Tres artículos prometían en el título lo que el cuerpo no trae
+
+- **012 (phishing)** — «con ejemplos reales» en el `<title>`, el `<h1>`, la meta,
+  la tarjeta OG y la fila del índice. «Ejemplo» y «anonimizado» no aparecen ni una
+  vez en el cuerpo: lo que hay es una taxonomía, ocho señales y un protocolo. Y un
+  «corta el 95% de los casos» sin fuente.
+- **007 (casos de uso de IA)** — la meta prometía «el resultado medible de cada
+  uno» y el cuerpo dice «qué nivel de complejidad tiene». De los 15 casos, tres
+  traen cifra.
+- **039 (prompt engineering)** — 1107 palabras para 20 técnicas son 55 cada una.
+  Prometía «el antes y después de cada prompt»: **aritméticamente imposible** a esa
+  extensión.
+
+Después de editar el front-matter, `npm run blog:data`. **Verificado con un diff:
+no se movió ni una fecha ni un slug** — solo los tres títulos y descripciones. Eso
+es lo que hay que comprobar siempre al regenerar, porque `SCHEDULE_START` mueve
+`datePublished` de URLs ya indexadas.
+
+### Un `<ol>` necesita su propia regla
+
+La cláusula que enumera los destinos del formulario es una lista NUMERADA, y el
+número es el dato. El `DOC` del aviso estilizaba `ul` y no `ol`, así que el
+preflight de Tailwind le quitaba marcador y sangría: se habría renderizado como
+párrafos sueltos. Lleva `list-decimal`, `pl-6` y el marcador en mono, como toda
+cifra de este sistema.
+
+### Lo que NO se tocó, y por qué
+
+- **`data/skills.ts`.** El archivo confiesa que pasó de 56 a ~165 entradas porque
+  «la cinta con 56 nombres se veía corta», y dos párrafos más abajo declara «⚠ ESTA
+  ES LA LISTA PÚBLICA DE UNA PERSONA REAL». Hay 38 entradas que no aparecen en
+  ningún archivo del repo. **Pero borrarlas es del dueño, no mío:** el repo solo
+  cubre tres empleos y cinco proyectos, así que la ausencia ahí es evidencia débil,
+  y borrar una habilidad real falsea tanto como inventar una.
+- **El stack contradictorio de Amazon.** `experience.ts` describe un analista de BI
+  y Product Owner (Python, Pandas, Power BI, DAX, Jira); `companies.ts` describe un
+  SDE de backend (Java, AWS, CI/CD, Git). Misma empresa, mismas fechas, y no
+  comparten ni una tecnología salvo Python. Se ve abriendo `/cv` y luego
+  `/proyectos/amazon`. El arreglo es fuente única, pero **cuál de los dos es el
+  puesto real solo lo sabe él.**
+
 ## Verificación — en este orden
 
 ```bash
@@ -1575,3 +1787,31 @@ cuando se quiera.
 - `data/experience.ts` termina en abril 2025. La cinta muestra ese hueco tal cual porque el
   instrumento no puede mentir. Si hay consultoría en curso, va en ese archivo y la banda
   aparece sola.
+
+## Lo que solo puede contestar el dueño
+
+La ronda de contenido quitó lo falso. **Lo que falta no se puede escribir sin
+hechos que no están en el repo**, y cada uno bloquea algo concreto:
+
+1. **¿Cuál era el puesto real en Amazon?** `experience.ts` reclama Product Owner
+   bajo Agile-Scrum y trazabilidad HACCP/ISO 22000; `companies.ts` describe un SDE
+   de backend. Un SDE que además es Product Owner y supervisa normas de inocuidad
+   alimentaria es una combinación que **hay que confirmar, no reescribir a
+   ciegas.** Sin esta respuesta no se puede unificar la fuente de los dos stacks.
+2. **¿Existe el certificado del NASA Space Apps, y qué dice literalmente?** Si
+   existe, se copia su texto exacto y se llena `awards.ts:image`. Y si es la
+   afirmación estelar del sitio, el hueco `premios-diplomas` no debería seguir en
+   `priority: 'baja'`.
+3. **¿Número de certificación PMP y fecha de emisión?** Con ellos la fila puede
+   volver a decir «Vigente», con `validFrom`/`expires` e `identifier` en el
+   `hasCredential` del grafo. **Hasta ese día, no.** El PMI tiene registro público
+   de titulares: no ponerlo, en la página titulada «Credenciales que se pueden
+   comprobar», es la omisión más cara del sitio.
+4. **¿Se conecta Supabase?** Mientras `SUPABASE_URL` esté vacía, el aviso lo
+   declara «previsto y no conectado» y la cláusula de seguridad no afirma nada
+   sobre row level security. ⚠ Al conectarlo: comprobar RLS, nombrar al proveedor
+   en «quién más participa» y mover `LAST_UPDATED`, **en el mismo commit.**
+5. **`data/skills.ts`, entrada por entrada.** Hay 38 nombres que no aparecen en
+   ningún archivo del repo. La pregunta operativa es una sola: «¿de cuál de estas
+   podrías hablar quince minutos con un técnico?» Lo que no se sostenga, se borra
+   — la regla ya está escrita en el propio archivo.
