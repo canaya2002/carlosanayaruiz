@@ -79,8 +79,12 @@ async function manejar(request: Request) {
         ok: false,
         configurado: false,
         error: 'El reenvío no está configurado.',
+        /* Las DOCE que lee lib/forward.ts, no once: faltaban LEAD_WEBHOOK_ONLY
+           —la que decide qué campos se mandan— y LEAD_WEBHOOK_HMAC_HEADER.
+           Una lista de diagnóstico incompleta manda a probar la variable que
+           no es, que es justo lo que se quiere evitar aquí. */
         falta:
-          'LEAD_WEBHOOK_URL (obligatoria, https). Opcionales: LEAD_WEBHOOK_AUTH, LEAD_WEBHOOK_TOKEN, LEAD_WEBHOOK_HEADER, LEAD_WEBHOOK_FORMAT, LEAD_WEBHOOK_FIELDS, LEAD_WEBHOOK_EXTRA, LEAD_WEBHOOK_METHOD, LEAD_WEBHOOK_TIMEOUT_MS, LEAD_WEBHOOK_RETRIES.',
+          'LEAD_WEBHOOK_URL (obligatoria, https). Con AUTH distinto de "none" también LEAD_WEBHOOK_TOKEN, y con AUTH="header" también LEAD_WEBHOOK_HEADER. Opcionales: LEAD_WEBHOOK_AUTH, LEAD_WEBHOOK_ONLY, LEAD_WEBHOOK_FIELDS, LEAD_WEBHOOK_EXTRA, LEAD_WEBHOOK_FORMAT, LEAD_WEBHOOK_METHOD, LEAD_WEBHOOK_HMAC_HEADER, LEAD_WEBHOOK_TIMEOUT_MS, LEAD_WEBHOOK_RETRIES.',
       },
       { status: 200 }
     )
@@ -90,7 +94,17 @@ async function manejar(request: Request) {
   const lead = leadDePrueba(url)
   const r = await forwardLeadVerbose(lead)
 
-  const funciono = typeof r.status === 'number' && r.status >= 200 && r.status < 300
+  /* Un 2xx NO basta para decir que funcionó, y esta ruta lo decía. El
+     receptor contesta `{"ok":true,"recibido":false,"motivo":"tope"}` con
+     código 200 cuando se pasa de 30 contactos por hora: mirar solo el código
+     daba «Funcionó» justo en el único caso que esta herramienta existe para
+     detectar. El camino de producción sí lo distingue (lib/forward.ts), así
+     que el diagnóstico contradecía al código que diagnostica. */
+  const codigoOk = typeof r.status === 'number' && r.status >= 200 && r.status < 300
+  const rechazadoDentro = /"recibido"\s*:\s*false|"ok"\s*:\s*false/.test(
+    r.respuesta ?? ''
+  )
+  const funciono = codigoOk && !rechazadoDentro
 
   return Response.json(
     {
@@ -99,7 +113,9 @@ async function manejar(request: Request) {
         ? `Funcionó: el receptor respondió ${r.status}.`
         : r.error
           ? `No llegó: ${r.error}. Revisa que la URL sea alcanzable desde internet y que no bloquee a Vercel.`
-          : `Llegó pero el receptor lo rechazó con ${r.status}. Mira "respuesta" para saber qué le falta al cuerpo, y usa LEAD_WEBHOOK_FIELDS para renombrar campos.`,
+          : codigoOk
+            ? `Llegó y el receptor respondió ${r.status}, pero en el cuerpo dice que NO lo procesó. Mira "respuesta_del_receptor": si el motivo es "tope", se pasó de 30 contactos por hora y no hay nada que arreglar aquí — el correo con ese mensaje sale igual.`
+            : `Llegó pero el receptor lo rechazó con ${r.status}. Mira "respuesta_del_receptor": si le FALTA un campo, revisa LEAD_WEBHOOK_ONLY (¿lo estás excluyendo?) y LEAD_WEBHOOK_FIELDS (¿va con otro nombre?). Si le SOBRA un campo que su esquema no declara, quítalo de LEAD_WEBHOOK_ONLY: renombrarlo no sirve, una clave desconocida sigue siendo desconocida.`,
       destino: r.destino,
       autenticacion: r.auth,
       formato: r.formato,

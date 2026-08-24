@@ -1181,7 +1181,7 @@ Con `LEAD_WEBHOOK_AUTH=hmac` y el token bajo otro nombre —un typo en el panel�
 `if (cfg.token)` y fallaban en abierto. Ahora el modo **exige** su credencial:
 configuración incompleta = pieza apagada, nunca pieza a medias.
 
-Y las once variables `LEAD_WEBHOOK_*` no estaban documentadas en ninguna parte —
+Y las doce variables `LEAD_WEBHOOK_*` no estaban documentadas en ninguna parte —
 lo que hacía verosímil ese typo. Ya están en `.env.example`.
 
 ## El bug del `??` con variables vacías

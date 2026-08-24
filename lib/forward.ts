@@ -139,6 +139,23 @@ function readConfig(): ForwardConfig | null {
     return null
   }
 
+  /* El modo `header` exige además el NOMBRE de la cabecera, y por la misma
+     razón. Antes caía a `x-api-key` por omisión: con LEAD_WEBHOOK_HEADER en
+     blanco el secreto salía bajo un nombre que el receptor no mira, así que
+     contestaba 401 a cada lead y nada decía por qué. No es una fuga —el
+     secreto va al mismo destino— pero sí es la «pieza a medias» que la regla
+     de arriba prohíbe: una config incompleta tiene que apagar el puente, no
+     adivinar. Los otros modos no lo necesitan: `bearer` y `basic` tienen
+     una cabecera fijada por su propio estándar, y `hmac` sí puede caer a
+     `x-signature` porque ese nombre no decide si la petición se autentica,
+     solo dónde viaja la firma. */
+  if (auth === 'header' && !envOpt(process.env.LEAD_WEBHOOK_HEADER)) {
+    console.error(
+      '[forward] LEAD_WEBHOOK_AUTH="header" exige LEAD_WEBHOOK_HEADER, que falta o está vacío. Sin el nombre de la cabecera el secreto viajaría bajo uno que el receptor no lee, así que el puente queda APAGADO.'
+    )
+    return null
+  }
+
   const format = envOr(process.env.LEAD_WEBHOOK_FORMAT, 'json').toLowerCase()
   if (format !== 'json' && format !== 'form') {
     console.error(`[forward] LEAD_WEBHOOK_FORMAT "${format}" no es válido`)
@@ -180,11 +197,23 @@ export function isForwardConfigured(): boolean {
 /**
  * El cuerpo que se manda.
  *
- * `eventId` va dentro a propósito: es el mismo en todos los reintentos, así
- * que el receptor puede descartar duplicados sin adivinar. Sin él, un reintento
- * tras un timeout —donde la petición SÍ llegó pero la respuesta se perdió—
- * crea un lead duplicado del lado del receptor, y eso es exactamente lo que
- * pasa cuando una red va mal.
+ * `eventId` va en `base` porque es la forma correcta de deduplicar: el mismo
+ * id en todos los reintentos deja que el receptor descarte el duplicado que
+ * nace de un timeout —la petición SÍ llegó, la respuesta se perdió— sin tener
+ * que adivinar.
+ *
+ * ⚠ PERO CON LA CONFIGURACIÓN DE HOY NO VIAJA, y el comentario anterior decía
+ * lo contrario. `LEAD_WEBHOOK_ONLY` lo filtra, y a propósito: el contrato del
+ * receptor no declara `event_id`, así que mandarlo sería el campo de sobra
+ * que `only` existe para evitar. Quien deduplica es él, por correo y minuto
+ * —comprobado: un POST repetido contesta `duplicado: true`—.
+ *
+ * Lo que eso deja vivo es una ventana estrecha: si el intento 1 agota los 8 s
+ * de timeout y el reintento cae ya en el minuto siguiente, su deduplicación no
+ * lo ve y entra un lead repetido. No se puede cerrar desde este lado sin
+ * mandarle un campo que su esquema no conoce. **Si el receptor llega a
+ * declarar `event_id`, añadirlo a `LEAD_WEBHOOK_ONLY` cierra la ventana y no
+ * hay que tocar código.**
  */
 export function buildPayload(
   lead: Lead,
