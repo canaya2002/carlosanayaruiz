@@ -261,6 +261,105 @@ SUPABASE_LEADS_TABLE=leads
 
 ---
 
+## ⚠ LO ÚNICO QUE FALTA: pegar las variables en Vercel
+
+El sitio está desplegado y funcionando en <https://www.carlosanayaruiz.com>.
+Verificado en producción: las páginas responden 200, el blog existe, el gate de
+publicación funciona (los artículos futuros devuelven 404 hasta su fecha) y
+`/en/blog` consolida con un 308.
+
+**Pero en Vercel no hay ni una variable de entorno puesta.** Comprobado contra
+producción. Eso significa que HOY, en producción:
+
+| Funciona | No funciona |
+|---|---|
+| Las 16 páginas y el índice del blog | La fila «agendar una llamada» no se pinta |
+| El calendario de publicación (por ISR) | El formulario no entrega: dice que no está conectado |
+| El sitemap, el feed y el schema | El alta al boletín no guarda nada |
+| WhatsApp | El correo de cada artículo no sale |
+| | El reenvío a tu otro sistema no ocurre |
+
+**El artículo del martes SÍ va a aparecer en el sitio** —la revalidación de 15
+minutos lo publica sola— pero **nadie va a recibir el correo**, porque el cron
+responde 401 sin `CRON_SECRET`.
+
+### Vercel → Settings → Environment Variables
+
+<https://vercel.com/adminmanuelsolis-projects/carlosanayaruiz/settings/environment-variables>
+
+Están todas ya escritas en tu `.env.local`, que NO se sube a git: cópialas de
+ahí. Marca **Production, Preview y Development** en las tres primeras (llevan
+prefijo `NEXT_PUBLIC_`) y **Production + Preview** en el resto.
+
+```
+NEXT_PUBLIC_CAL_LINK=carlos-r-kmbjhd/reunion-con-carlos
+
+RESEND_API_KEY=          ← ⚠ LA NUEVA, después de rotar la que pegaste en el chat
+CONTACT_FROM=sitio@carlosanayaruiz.com
+CONTACT_TO=carlos@carlosanayaweb.com
+
+RESEND_AUDIENCE_ID=db96e0cd-47d3-42db-a34a-8f0ac9493703
+NEWSLETTER_ENDPOINT=https://api.resend.com/audiences/db96e0cd-47d3-42db-a34a-8f0ac9493703/contacts
+NEWSLETTER_TOKEN=       ← la misma clave nueva de Resend
+NEWSLETTER_FROM=blog@carlosanayaruiz.com
+
+CRON_SECRET=            ← el que está en tu .env.local
+```
+
+⚠ **`CONTACT_TO` no puede quedar en blanco.** Si añades la variable y la dejas
+vacía, Resend recibe un destinatario vacío. Ese bug ya existía y está arreglado
+en el código, pero es más limpio no crear la variable que crearla vacía.
+
+**Y después, un redeploy**: las variables se leen en el build. Deployments → el
+último → ⋯ → Redeploy.
+
+### El puente a tu otro sistema — me falta un dato
+
+El código está escrito, probado de punta a punta y desplegado. Lo único que me
+falta es **el contrato de tu endpoint**, que no llegó en el mensaje. Cuando me
+lo pases —o lo pongas tú— son estas dos líneas:
+
+```
+LEAD_WEBHOOK_URL=https://tu-sistema.com/la-ruta-que-recibe
+LEAD_WEBHOOK_AUTH=bearer          # o header | basic | hmac | none
+LEAD_WEBHOOK_TOKEN=tu-secreto
+```
+
+Y si tu sistema espera otros nombres de campo, se renombran sin tocar código:
+
+```
+LEAD_WEBHOOK_FIELDS={"nombre":"name","email":"email_address","mensaje":"message"}
+```
+
+Para saber si funcionó, una llamada:
+
+```bash
+curl -H "Authorization: Bearer TU_CRON_SECRET" \
+     https://www.carlosanayaruiz.com/api/probar-reenvio
+```
+
+Devuelve el status, el cuerpo exacto que se envió y la respuesta literal de tu
+sistema. Con eso se distingue en un intento un 401 de token, un 404 de URL y un
+422 de campo que falta.
+
+### Comprobar el boletín sin esperar al martes
+
+```bash
+# crea el borrador en Resend y NO manda nada
+curl -H "Authorization: Bearer TU_CRON_SECRET" \
+     "https://www.carlosanayaruiz.com/api/probar-boletin?n=1"
+
+# lo manda de verdad a la audiencia
+curl -H "Authorization: Bearer TU_CRON_SECRET" \
+     "https://www.carlosanayaruiz.com/api/probar-boletin?n=1&enviar=si"
+```
+
+El envío de prueba usa el nombre `prueba-blog-…`, distinto del que usa el cron,
+así que **no consume la idempotencia**: el martes el artículo se manda igual a la
+lista.
+
+---
+
 ## Dónde se pegan
 
 ### En local
