@@ -55,6 +55,17 @@ interface ForwardConfig {
   format: 'json' | 'form'
   /** Renombrado de campos: { nombre: 'name', email: 'email_address' } */
   fields: Record<string, string>
+  /**
+   * Lista blanca de campos base a enviar. Vacía = todos.
+   *
+   * Existe porque un receptor real casi nunca quiere los diez campos que este
+   * puente sabe mandar. El de Carlos documenta cinco y su validador —Zod—
+   * descarta lo que no reconoce; otro con `.strict()` devolvería 422 por cada
+   * lead. Mandar solo lo que el contrato del otro lado nombra es la diferencia
+   * entre una integración que aguanta y una que se rompe el día que el
+   * receptor endurece su esquema.
+   */
+  only: readonly string[]
   /** Campos fijos que se añaden al cuerpo: { source: 'portafolio' } */
   extra: Record<string, unknown>
   timeoutMs: number
@@ -149,6 +160,10 @@ function readConfig(): ForwardConfig | null {
       envOpt(process.env.LEAD_WEBHOOK_FIELDS),
       'LEAD_WEBHOOK_FIELDS'
     ) as Record<string, string>,
+    only: (envOpt(process.env.LEAD_WEBHOOK_ONLY) ?? '')
+      .split(',')
+      .map((f) => f.trim())
+      .filter(Boolean),
     extra: parseJsonEnv(
       envOpt(process.env.LEAD_WEBHOOK_EXTRA),
       'LEAD_WEBHOOK_EXTRA'
@@ -189,10 +204,20 @@ export function buildPayload(
     locale: lead.locale,
   }
 
+  /* El filtro va ANTES del renombrado, y el orden importa: la lista blanca se
+     escribe con los nombres de ORIGEN —los que este puente conoce— no con los
+     del receptor. Al revés habría que saber el renombrado para escribir la
+     lista, y las dos variables quedarían acopladas. */
+  const seleccion = cfg.only.length
+    ? Object.fromEntries(
+        Object.entries(base).filter(([k]) => cfg.only.includes(k))
+      )
+    : base
+
   // Renombrado configurable. Las claves que no aparezcan en el mapa se quedan
   // con su nombre original.
   const mapped: Record<string, unknown> = {}
-  for (const [key, value] of Object.entries(base)) {
+  for (const [key, value] of Object.entries(seleccion)) {
     mapped[cfg.fields[key] ?? key] = value
   }
 
@@ -289,6 +314,35 @@ export async function forwardLead(lead: Lead): Promise<ForwardResult> {
       ultimoStatus = res.status
 
       if (res.ok) {
+        /* ── UN 2xx NO SIEMPRE ES «GUARDADO» ──
+           Hay receptores que responden 200 y dentro del cuerpo dicen que no
+           procesaron: el de Carlos devuelve
+           `{"ok":true,"recibido":false,"motivo":"tope"}` cuando se pasa de 30
+           contactos por hora. Tratarlo como éxito dejaría esa condición
+           invisible.
+
+           No se reintenta —el tope no se va a levantar en tres segundos— y no
+           cambia el resultado: el correo con ese mensaje ya salió, así que el
+           lead no se pierde. Pero se registra fuerte, porque es lo único que
+           hace que se pueda ver. */
+        const cuerpo = (await res.text().catch(() => '')).slice(0, 300)
+        const rechazadoDentro = /"recibido"\s*:\s*false|"ok"\s*:\s*false/.test(
+          cuerpo
+        )
+
+        if (rechazadoDentro) {
+          console.error(
+            `[forward] el receptor respondió ${res.status} pero NO lo procesó event=${eventId}: ${cuerpo} — el correo con este mensaje SÍ salió`
+          )
+          return {
+            estado: 'fallo',
+            intentos: intento,
+            status: res.status,
+            error: 'el receptor respondió 2xx pero no lo procesó: ' + cuerpo,
+            ms: Date.now() - t0,
+          }
+        }
+
         // Nunca se registra el contenido del mensaje ni el correo del
         // visitante: solo el identificador del evento y la métrica.
         console.log(

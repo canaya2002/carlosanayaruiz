@@ -11,20 +11,22 @@ honestamente que no está conectado. Nada se rompe y nada finge.
 
 ## Resumen: qué me tienes que dar
 
-| # | Variable | Para qué | Si no la das |
-|---|---|---|---|
-| 1 | `NEXT_PUBLIC_CAL_LINK` | Agendar reunión | La fila «agendar» **no aparece** |
-| 2 | `RESEND_API_KEY` + `CONTACT_FROM` | Recibir el formulario | El formulario dice que no está conectado y ofrece WhatsApp |
-| 3 | `NEWSLETTER_ENDPOINT` + `NEWSLETTER_TOKEN` | Boletín | El alta dice que la lista no está conectada |
-| 4 | `RESEND_AUDIENCE_ID` | Envío de cada artículo a la lista | El artículo se publica igual, pero nadie recibe el correo |
-| 5 | `CRON_SECRET` | Que el cron pueda correr | La ruta responde 401 y no se publica ni se envía nada |
-| 6 | *(nada)* | WhatsApp | **Ya funciona** |
-| 7 | *(opcional)* Supabase | Copia de los mensajes | Solo llega el correo, que es lo que importa |
+**Todos los valores están ya resueltos y escritos en tu `.env.local`**, que no
+se sube a git. Lo único que falta es **pegarlos en Vercel**: ver
+«[Lo único que falta](#-lo-único-que-falta-pegar-las-variables-en-vercel)».
 
-**Tiempo de tu lado: 25–40 minutos**, y casi todo es esperar a que propague el
-DNS de Resend.
+| Pieza | Estado |
+|---|---|
+| Cal.com — agendar reunión | ✅ enlace resuelto |
+| Resend — recibir el formulario | ✅ dominio verificado, clave puesta |
+| El boletín | ✅ audiencia conectada y probada |
+| El blog: 100 artículos programados | ✅ desplegado, publica solo |
+| El correo de cada artículo | ✅ probado |
+| El puente a tu app de contrataciones | ✅ probado de punta a punta |
+| WhatsApp | ✅ nunca necesitó nada |
+| Supabase | ⬜ opcional, sin configurar |
 
-**Orden recomendado:** 1 → 2 → 3. El 4 ya está. El 5, cuando quieras.
+**Tiempo de tu lado: unos minutos.** Pegar las variables y redesplegar.
 
 ---
 
@@ -148,32 +150,19 @@ Antes de su fecha, la URL de un artículo devuelve 404 a propósito: una página
 «próximamente» se indexa como contenido pobre y luego cuesta que Google la reemplace por
 la buena. El día que le toca, aparece sola — sin que tú ni yo desplegemos nada.
 
-### Lo único que falta: la audiencia de Resend
+### El envío por correo, resuelto
 
-Para que **además llegue por correo** a quien se suscribió:
+La audiencia de Resend **ya existía** —«General»,
+`db96e0cd-47d3-42db-a34a-8f0ac9493703`— así que no hubo que crear nada. Está
+conectada y probada: el alta desde el pie del sitio guardó un contacto de prueba
+en Resend, y el correo del artículo 1 se generó correctamente.
 
-| Paso | Enlace exacto |
-|---|---|
-| Crear la audiencia | <https://resend.com/audiences> → **Create Audience** |
-| Copiar su ID | Ábrela: el ID es un UUID |
+Las tres variables ya están escritas en tu `.env.local`:
+`RESEND_AUDIENCE_ID`, `NEWSLETTER_ENDPOINT` y `NEWSLETTER_TOKEN`.
 
-Con eso, tres variables:
-
-```
-RESEND_AUDIENCE_ID=el-uuid-de-la-audiencia
-NEWSLETTER_ENDPOINT=https://api.resend.com/audiences/el-uuid-de-la-audiencia/contacts
-NEWSLETTER_TOKEN=tu-clave-de-resend
-```
-
-Y el secreto del cron, que ya está generado en tu `.env.local`:
-
-```
-CRON_SECRET=(el que está en .env.local)
-```
-
-> ⚠ **Sin `CRON_SECRET` no se publica NADA por correo**, y la ruta responde 401 incluso a
-> Vercel. Es a propósito: una ruta que dispara correos a una lista entera no puede quedar
-> abierta al mundo por omisión.
+> ⚠ **Sin `CRON_SECRET` no sale ningún correo**, y la ruta responde 401 incluso a
+> Vercel. Es a propósito: una ruta que dispara correos a una lista entera no puede
+> quedar abierta al mundo por omisión. El valor está en tu `.env.local`.
 
 ### Cómo comprobar que el envío quedó
 
@@ -313,33 +302,64 @@ en el código, pero es más limpio no crear la variable que crearla vacía.
 **Y después, un redeploy**: las variables se leen en el build. Deployments → el
 último → ⋯ → Redeploy.
 
-### El puente a tu otro sistema — me falta un dato
+### El puente a la app de contrataciones — LISTO Y PROBADO
 
-El código está escrito, probado de punta a punta y desplegado. Lo único que me
-falta es **el contrato de tu endpoint**, que no llegó en el mensaje. Cuando me
-lo pases —o lo pongas tú— son estas dos líneas:
+Cuando alguien llena el formulario, el mensaje aparece en la bandeja
+«Te escribieron» de tu app de iPhone. **Ya está configurado y verificado contra
+el endpoint real** el 24 de agosto de 2026.
 
-```
-LEAD_WEBHOOK_URL=https://tu-sistema.com/la-ruta-que-recibe
-LEAD_WEBHOOK_AUTH=bearer          # o header | basic | hmac | none
-LEAD_WEBHOOK_TOKEN=tu-secreto
-```
+Destino: `https://contrataciones-carlos.vercel.app/api/webhooks/contacto`,
+autenticado con la cabecera `x-contacto-secreto`.
 
-Y si tu sistema espera otros nombres de campo, se renombran sin tocar código:
+**Qué se le manda**, y por qué exactamente eso:
 
-```
-LEAD_WEBHOOK_FIELDS={"nombre":"name","email":"email_address","mensaje":"message"}
-```
+| Campo | De dónde sale |
+|---|---|
+| `email`, `mensaje` | del formulario. Son los dos obligatorios de su contrato |
+| `nombre` | del formulario |
+| `origen` | fijo: `carlosanayaruiz.com`. En su esquema `origen` es el SITIO, no la página |
+| `trampa` | siempre vacío: los bots ya se descartan en este lado antes de llegar aquí |
+| `asunto`, `sitio` | del formulario. Ver la nota de abajo |
 
-Para saber si funcionó, una llamada:
+**No se le manda** `event_id`, `event`, `enviado_en` ni `locale`. Su endpoint
+deduplica por correo y minuto, así que no necesita el identificador de evento, y
+su esquema no tiene sitio para el resto. Mandar solo lo que el contrato del otro
+lado nombra es lo que hace que la integración aguante el día que ese lado
+endurezca su validación.
+
+> **Nota sobre `asunto` y `sitio`.** Comprobado: su endpoint los ACEPTA
+> (responde 200), pero su esquema no los declara, así que con toda probabilidad
+> los descarta al validar. Se mandan igual porque no cuesta nada y son los dos
+> datos más útiles que da el formulario — sobre todo `sitio`, la URL de quien
+> escribe. **Si los quieres ver en la app, son dos campos opcionales de su lado**
+> y el dato ya está llegando. Mientras tanto los tienes completos en el correo.
+
+**Qué se probó, y con qué resultado:**
+
+| Prueba | Resultado |
+|---|---|
+| `GET` a la URL | 200 · `{"ok":true,"endpoint":"contacto del sitio"}` |
+| POST mínimo | 200 · con `id` |
+| POST con campos extra | 200 · con `id` (los acepta) |
+| Sin la cabecera del secreto | 401 · `{"error":"No autorizado."}` |
+| Sin `mensaje` | 422 · con `detalle` diciendo qué falta |
+| Honeypot lleno | 200 · sin `id`: lo descarta |
+| **El formulario real, en el navegador** | **llegó** — confirmado porque un POST posterior con el mismo correo contestó `duplicado: true` |
+
+**El tope de 30 por hora está cubierto.** Si su endpoint contesta
+`{"ok":true,"recibido":false,"motivo":"tope"}`, el puente lo trata como fallo y
+lo registra fuerte en vez de darlo por bueno. El mensaje no se pierde: el correo
+con ese lead ya salió antes.
+
+Para volver a comprobarlo en cualquier momento:
 
 ```bash
 curl -H "Authorization: Bearer TU_CRON_SECRET" \
      https://www.carlosanayaruiz.com/api/probar-reenvio
 ```
 
-Devuelve el status, el cuerpo exacto que se envió y la respuesta literal de tu
-sistema. Con eso se distingue en un intento un 401 de token, un 404 de URL y un
+Devuelve el status, el cuerpo exacto que se envió y la respuesta literal de la
+app. Con eso se distingue en un intento un 401 de secreto, un 404 de URL y un
 422 de campo que falta.
 
 ### Comprobar el boletín sin esperar al martes
