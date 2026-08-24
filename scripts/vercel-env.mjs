@@ -163,7 +163,29 @@ for (const clave of conValor) {
       // historial del shell.
       execFileSync(
         'npx',
-        ['vercel', 'env', 'add', clave, entorno, '--force'],
+        /**
+         * ── LAS NEXT_PUBLIC_ NO PUEDEN SER SECRETAS ──
+         *
+         * El CLI marca toda variable nueva como «sensitive» por omisión, y
+         * Vercel RECHAZA eso para cualquier nombre con prefijo de framework
+         * público: «Environment variables with a public framework prefix
+         * (NEXT_PUBLIC) cannot use secret visibility on Production or
+         * Preview». Sin el flag, esas dos escrituras fallan con
+         * invalid_visibility — y falla justo la que hace visible una fila en
+         * la página de contacto, así que se nota tarde.
+         *
+         * Y tiene sentido: una variable pública se sustituye en el build y
+         * viaja al navegador. Marcarla como secreta sería una promesa falsa.
+         */
+        [
+          'vercel',
+          'env',
+          'add',
+          clave,
+          entorno,
+          '--force',
+          ...(clave.startsWith('NEXT_PUBLIC_') ? ['--no-sensitive'] : []),
+        ],
         { input: env[clave] + '\n', stdio: ['pipe', 'pipe', 'pipe'], shell: true }
       )
       console.log(`    ✓ ${clave} · ${entorno}`)

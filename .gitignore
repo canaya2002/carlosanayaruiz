@@ -31,3 +31,6 @@ next-env.d.ts
 # public/blog/ como WebP de ~57 kB; estas son el material de origen y no
 # tienen por qué viajar ni al repo ni al despliegue. Ver scripts/blog-covers.mjs
 /assets/blog-covers-originales/
+
+.vercel
+.env*
