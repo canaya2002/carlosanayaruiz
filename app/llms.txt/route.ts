@@ -56,6 +56,10 @@ const ROUTE_LABELS: Record<RouteKey, { es: string; en: string }> = {
     es: 'Dashboards y analítica',
     en: 'Dashboards & analytics',
   },
+  blog: {
+    es: 'Blog técnico (100 artículos, español)',
+    en: 'Technical blog (100 articles, Spanish)',
+  },
   sobreMi: { es: 'Sobre mí / perfil', en: 'About / profile' },
   contacto: { es: 'Contacto', en: 'Contact' },
   libros: { es: 'Recursos técnicos', en: 'Technical resources' },

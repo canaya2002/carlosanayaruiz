@@ -192,19 +192,37 @@ const nextConfig: NextConfig = {
    * by static analysis, so it cannot see that path and will not bundle the
    * files.
    *
-   * Today every OG route is prerendered by `generateStaticParams`, so the
-   * fonts are read at build time when cwd is the repo root and it works. The
-   * moment any OG route becomes on-demand — a new dynamic segment, an
-   * un-prerendered params combination, ISR — the font files would be missing
-   * from the serverless bundle and the route would throw at request time,
-   * serving no preview image at all.
+   * ⚠ CORRECCIÓN MEDIDA: la versión anterior de esta nota afirmaba que «every
+   * OG route is prerendered by generateStaticParams». Es FALSO — ninguna de las
+   * 17 lo está. El manifiesto del build las lista en `dynamicRoutes` con
+   * `fallback: null`, así que cada tarjeta se genera en su PRIMERA PETICIÓN,
+   * en runtime, con el cwd del entorno serverless.
    *
-   * Declaring them here costs nothing while the routes stay static and
-   * removes the trap if they ever stop being.
+   * O sea que esta declaración no es una red de seguridad para un futuro
+   * hipotético: es lo único que hace que las tarjetas sociales funcionen hoy.
+   * Quitarla las rompe todas de inmediato.
    */
   outputFileTracingIncludes: {
     '/[locale]/opengraph-image': ['./assets/fonts/**'],
     '/[locale]/**/opengraph-image': ['./assets/fonts/**'],
+
+    /**
+     * EL CUERPO DE LOS ARTÍCULOS.
+     *
+     * Las páginas del blog leen su markdown de `content/blog/*.md` en tiempo
+     * de ejecución, y tienen que poder hacerlo: el calendario publica un
+     * artículo cada martes y viernes, así que una página que se generó como
+     * 404 en el build se regenera por ISR el día que le toca. Sin estos
+     * archivos en el bundle de servidor, esa regeneración fallaría al leer el
+     * archivo y el artículo no saldría nunca.
+     *
+     * Es exactamente la misma clase de trampa que las fuentes de arriba, y
+     * aquí sí está activa desde el primer día, no en potencia.
+     */
+    '/[locale]/blog/[slug]': ['./content/blog/**'],
+    '/[locale]/blog': ['./content/blog/**'],
+    '/feed.xml': ['./content/blog/**'],
+    '/api/cron/publicar': ['./content/blog/**'],
   },
 
   images: {

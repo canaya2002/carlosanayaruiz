@@ -8,6 +8,7 @@ import { Dial } from '@/components/instrument/dial'
 import { Rail } from '@/components/instrument/rail'
 import { Marks } from '@/components/instrument/marks'
 import { Ribbon } from '@/components/instrument/ribbon'
+import { BlogStrip } from '@/components/sections/blog-strip'
 import { MediaSlot } from '@/components/instrument/media-slot'
 import { getServices, servicePath } from '@/data/services'
 import { getSkillCategories } from '@/data/skills'
@@ -607,6 +608,25 @@ export default async function HomePage({ params }: Props) {
               </dl>
             </div>
           </section>
+
+          {/* ═══ DEL REGISTRO ════════════════════════════════════
+              Los últimos artículos publicados, en su propia banda.
+
+              Va ANTES del índice y no dentro: esa sección es «índice del
+              registro / Antes de escribirme», el bloque de preguntas de
+              conversión en dos columnas de <details>. Meter artículos ahí
+              rompería su función y su rejilla.
+
+              Y va en la portada porque es la URL con más autoridad del
+              dominio: hasta ahora no pasaba nada al blog, y un enlace desde
+              aquí es lo que hace que cien URLs nuevas se descubran rápido.
+              Es además la única señal de frescura que tiene la portada. */}
+          <BlogStrip
+            route="recientes"
+            locale={lc}
+            eyebrow="del registro · lo último"
+            title="Lo que acabo de escribir"
+          />
 
           {/* ═══ ÍNDICE ══════════════════════════════════════════
               <details> nativo: sin JS, y el contenido está en el HTML del

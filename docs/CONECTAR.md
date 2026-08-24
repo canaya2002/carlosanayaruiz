@@ -16,8 +16,10 @@ honestamente que no está conectado. Nada se rompe y nada finge.
 | 1 | `NEXT_PUBLIC_CAL_LINK` | Agendar reunión | La fila «agendar» **no aparece** |
 | 2 | `RESEND_API_KEY` + `CONTACT_FROM` | Recibir el formulario | El formulario dice que no está conectado y ofrece WhatsApp |
 | 3 | `NEWSLETTER_ENDPOINT` + `NEWSLETTER_TOKEN` | Boletín | El alta dice que la lista no está conectada |
-| 4 | *(nada)* | WhatsApp | **Ya funciona** |
-| 5 | *(opcional)* Supabase | Copia de los mensajes | Solo llega el correo, que es lo que importa |
+| 4 | `RESEND_AUDIENCE_ID` | Envío de cada artículo a la lista | El artículo se publica igual, pero nadie recibe el correo |
+| 5 | `CRON_SECRET` | Que el cron pueda correr | La ruta responde 401 y no se publica ni se envía nada |
+| 6 | *(nada)* | WhatsApp | **Ya funciona** |
+| 7 | *(opcional)* Supabase | Copia de los mensajes | Solo llega el correo, que es lo que importa |
 
 **Tiempo de tu lado: 25–40 minutos**, y casi todo es esperar a que propague el
 DNS de Resend.
@@ -76,7 +78,8 @@ llave.
 
 ### 2.1 · Verifica el dominio
 
-1. En <https://resend.com/domains> → **Add Domain** → `carlosanayaweb.com`.
+1. En <https://resend.com/domains> → **Add Domain** → `carlosanayaruiz.com`.
+   (Ya lo tienes hecho: la clave que me diste sale de ese dominio.)
 2. Resend te da 3 registros DNS: **DKIM**, **SPF** y opcionalmente **DMARC**.
 3. Pégalos donde tengas el DNS del dominio. Espera a que la pantalla de Resend
    ponga el dominio en **Verified** — normalmente minutos, hasta 24 h en el peor
@@ -93,7 +96,7 @@ access**. Copia el valor (empieza por `re_`); **solo se muestra una vez.**
 
 ```
 RESEND_API_KEY=re_xxxxxxxxxxxxxxxxxxxx
-CONTACT_FROM=sitio@carlosanayaweb.com
+CONTACT_FROM=sitio@carlosanayaruiz.com
 CONTACT_TO=carlos@carlosanayaweb.com
 ```
 
@@ -134,7 +137,64 @@ Resend espera el campo `email`, que es el que se manda por omisión.
 
 ---
 
-## 4 · WhatsApp — ya funciona
+## 4 y 5 · El blog: 100 artículos programados
+
+**Esto ya está hecho y no necesita que escribas nada.** Los cien artículos están en el
+sitio, con su portada, su schema y su fecha. Salen uno cada **martes y viernes a las 8:00
+de la mañana** (hora de Ciudad de México), del **25 de agosto de 2026** al **6 de agosto
+de 2027**.
+
+Antes de su fecha, la URL de un artículo devuelve 404 a propósito: una página con un
+«próximamente» se indexa como contenido pobre y luego cuesta que Google la reemplace por
+la buena. El día que le toca, aparece sola — sin que tú ni yo desplegemos nada.
+
+### Lo único que falta: la audiencia de Resend
+
+Para que **además llegue por correo** a quien se suscribió:
+
+| Paso | Enlace exacto |
+|---|---|
+| Crear la audiencia | <https://resend.com/audiences> → **Create Audience** |
+| Copiar su ID | Ábrela: el ID es un UUID |
+
+Con eso, tres variables:
+
+```
+RESEND_AUDIENCE_ID=el-uuid-de-la-audiencia
+NEWSLETTER_ENDPOINT=https://api.resend.com/audiences/el-uuid-de-la-audiencia/contacts
+NEWSLETTER_TOKEN=tu-clave-de-resend
+```
+
+Y el secreto del cron, que ya está generado en tu `.env.local`:
+
+```
+CRON_SECRET=(el que está en .env.local)
+```
+
+> ⚠ **Sin `CRON_SECRET` no se publica NADA por correo**, y la ruta responde 401 incluso a
+> Vercel. Es a propósito: una ruta que dispara correos a una lista entera no puede quedar
+> abierta al mundo por omisión.
+
+### Cómo comprobar que el envío quedó
+
+| Qué | Cómo |
+|---|---|
+| El cron corre | Vercel → tu proyecto → **Cron Jobs**. Debe aparecer `/api/cron/publicar`, martes y viernes 14:00 UTC |
+| Se puede disparar a mano | `curl -H "Authorization: Bearer TU_CRON_SECRET" https://tudominio.com/api/cron/publicar` |
+| El correo salió | <https://resend.com/broadcasts> — una difusión por artículo, llamada `blog-{slug}` |
+| No se duplica | Vuelve a disparar el cron: la respuesta dirá `ya-enviado`. El estado vive en Resend, no en una base de datos |
+
+### Una cosa tuya, no técnica
+
+**El artículo 10 no tiene portada.** Llegaron 99 imágenes para 100 artículos; la que falta
+es la de «10 errores al implementar IA en tu empresa». La página se ve bien sin ella —no
+hay un hueco ni una caja vacía— pero si la generas, ponla en
+`assets/blog-covers-originales/`, añade su línea a `data/blog-covers-map.json` y corre
+`npm run blog:covers`.
+
+---
+
+## 6 · WhatsApp — ya funciona
 
 **No necesito nada.** El número sale de `NAP` en `lib/constants.ts`
 (+52 55 4416 7974) y el enlace se abre **con el mensaje ya escrito, distinto en
@@ -151,7 +211,7 @@ configura en la app, no aquí: <https://business.whatsapp.com/>
 
 ---
 
-## 5 · Supabase — opcional, y de verdad opcional
+## 7 · Supabase — opcional, y de verdad opcional
 
 | Paso | Enlace exacto |
 |---|---|

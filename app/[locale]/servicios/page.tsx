@@ -3,6 +3,7 @@ import { setRequestLocale, getTranslations } from 'next-intl/server'
 import { Link } from '@/i18n/navigation'
 import type { StaticPathname } from '@/i18n/routing'
 import { Rail } from '@/components/instrument/rail'
+import { BlogStrip } from '@/components/sections/blog-strip'
 import { Ribbon } from '@/components/instrument/ribbon'
 import { Dial } from '@/components/instrument/dial'
 import { getServices, servicePath, type ServiceId } from '@/data/services'
@@ -519,6 +520,12 @@ export default async function ServicesHubPage({ params }: Props) {
               ))}
             </ol>
           </section>
+
+          {/* ── DEL REGISTRO ──
+              El hub de servicios enlaza a los artículos que tratan de los
+              cuatro. Antes esta página no enlazaba a ni un artículo, y es la
+              que reparte autoridad a las cuatro que facturan. */}
+          <BlogStrip route="services" locale={locale} title="Escrito sobre todo esto" />
 
           {/* ═══ CIERRE ══════════════════════════════════════════ */}
           <section className="border-t border-hairline px-5 py-24 sm:px-10">

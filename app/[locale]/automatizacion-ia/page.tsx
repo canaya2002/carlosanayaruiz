@@ -4,6 +4,7 @@ import { setRequestLocale, getTranslations } from 'next-intl/server'
 import { Link } from '@/i18n/navigation'
 import { MediaSlot } from '@/components/instrument/media-slot'
 import { Rail } from '@/components/instrument/rail'
+import { BlogStrip } from '@/components/sections/blog-strip'
 import { Pens } from '@/components/instrument/pens'
 import { ContactChannels } from '@/components/sections/contact-channels'
 import { Ribbon } from '@/components/instrument/ribbon'
@@ -566,6 +567,13 @@ export default async function AiAutomationPage({ params }: Props) {
               WhatsApp de ESTA página: quien escribe desde aquí llega con el
               tema ya nombrado y no hay que interrogarlo. Cada canal degrada
               solo si no está configurado. */}
+          {/* ── DEL REGISTRO ──
+              Los artículos del blog que tratan de esto. Es la mitad del
+              enlazado interno que faltaba: antes esta página, con prioridad
+              0.9 en el sitemap, no enlazaba a ni un artículo. Se pinta sola
+              solo si hay algo publicado que encaje. */}
+          <BlogStrip route="automatizacionIa" locale={locale} title="Escrito sobre IA aplicada" />
+
           <section className="border-t border-hairline px-5 py-20 sm:px-10">
             <ContactChannels
               locale={locale}

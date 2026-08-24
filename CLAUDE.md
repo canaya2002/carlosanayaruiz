@@ -829,6 +829,457 @@ el repo no pone coma final en los argumentos de una llamada. Verificado corriend
 lint`, no Prettier** — así que si dudas, no lo corras sobre un archivo que no acabas de
 escribir tú.
 
+# EL BLOG — 100 artículos programados
+
+Cien artículos escritos, uno cada **martes y viernes** a las 14:00 UTC (08:00 en Ciudad
+de México), del **25/08/2026 al 06/08/2027**. 99 743 palabras, 812 encabezados, 304 pares
+de preguntas frecuentes, 44 tablas y 198 bloques de código.
+
+## De dónde sale, y qué se generó
+
+La fuente es `docs/InformacionBlogs/`: 27 archivos de markdown con los 100 artículos y
+dos índices maestros que definen una arquitectura de **10 clústeres con pillar + satélites**.
+De ahí salieron:
+
+| Qué | Dónde | Generado por |
+|---|---|---|
+| Los 100 cuerpos | `content/blog/NNN-slug.md` | extracción única, ya hecha |
+| El registro | `data/blog.ts` | `npm run blog:data` |
+| Las 99 portadas | `public/blog/*.webp` | `npm run blog:covers` |
+| El mapa de portadas | `data/blog-covers-map.json` | emparejado revisado, en git |
+
+**El markdown es la fuente y `data/blog.ts` es derivado.** Es el mismo patrón que
+`media:manifest`: un dato, un generador, cero posibilidad de que la lista y las páginas
+discrepen.
+
+## Cómo aparece un artículo en su fecha
+
+Las cien páginas se generan **en el build**, y cada una comprueba su propia fecha al
+renderizarse: si `publishedAt` está en el futuro, responde **404**. Con `revalidate = 900`
+esa respuesta se regenera, así que el 404 se convierte en el artículo sin desplegar nada.
+
+Las dos alternativas están descartadas por una razón concreta:
+
+- **Generar solo las publicadas** dejaría a las futuras fuera del build, y entonces
+  existirían solo si alguien redespliega el día exacto.
+- **Generar las cien sin comprobar la fecha** las publicaría TODAS el primer día, que es
+  lo contrario de un calendario.
+
+**Y el 404 no es una página «próximamente».** Una URL que devuelve 200 con un marcador se
+indexa como contenido pobre, y luego hay que pelear para que Google reemplace esa versión
+por la real. 404 hasta la fecha y 200 con el artículo completo después es lo que produce
+una primera indexación limpia.
+
+**Las fechas son ABSOLUTAS, no relativas al despliegue.** Si el sitio se publica tarde,
+los artículos cuya fecha ya pasó salen juntos en el primer despliegue en vez de empezar
+la cuenta desde cero.
+
+> ⚠ **`SCHEDULE_START` no se mueve después de publicar.** Cambiaría el `datePublished` de
+> URLs ya indexadas, y una URL que cambia su fecha de publicación le dice a Google que el
+> contenido es otro.
+
+## `content/blog/**` tiene que viajar al bundle
+
+Está en `outputFileTracingIncludes` de `next.config.ts` y **no se quita**. Las páginas
+leen su markdown en tiempo de ejecución; sin esos archivos en el bundle de servidor, la
+regeneración por ISR —o sea, la publicación de todos los artículos posteriores al build—
+fallaría al leer el archivo y el artículo no saldría nunca. Es la misma clase de trampa
+que las fuentes de las tarjetas OG, y aquí está activa desde el primer día.
+
+## El renderizador de markdown es propio
+
+`lib/blog-render.ts`. **No es dogma antilibrería:** un renderizador genérico emite `<h2>`,
+`<table>` y `<pre>` sin una sola clase, así que habría que encadenarle una pasada de
+rehype para vestirlos con el vocabulario de «Papel Ahumado» — más código del que hay ahí,
+y con una dependencia encima.
+
+El subconjunto está **medido** sobre los 100 artículos, no supuesto: 396 vallas de código
+(198 bloques, todas balanceadas, 11 lenguajes), 780 `###`, 29 `####`, 1 113 listas con
+`-`, 238 ordenadas, 309 filas de tabla, 2 774 negritas, 608 `código`, 2 citas, 974 `---`,
+**158 itálicas de un asterisco en 9 artículos**, **3 `##` en el cuerpo (art. 091)**,
+**cero enlaces y cero imágenes** en el cuerpo.
+
+Tres decisiones que salieron del contenido real:
+
+- **La valla de código va antes que los encabezados.** Cinco artículos llevan `## Stack`,
+  `## Propósito`… DENTRO de un bloque ```markdown: son plantillas de ejemplo. Si los
+  encabezados se procesaran primero, esos ejemplos se volverían encabezados reales y
+  contaminarían el índice y la jerarquía.
+- **La jerarquía se desplaza un nivel.** En la fuente el título es `##` y las secciones
+  `###`. El título lo pinta la página como el único `<h1>`, así que `###` sale como `<h2>`.
+  Sin el desplazamiento habría un `h1` seguido de `h3` sin `h2` en medio.
+- **El `---` solo se pinta si NO le sigue un encabezado.** Hay 974 y su único trabajo es
+  separar; junto a un encabezado serían dos separadores a un centímetro.
+
+**`npm run check:blog` es la condición para que esto sea defendible.** Renderiza los 100 y
+falla si encuentra sintaxis sin cubrir, etiquetas desbalanceadas, markdown que sobrevivió,
+un artículo sin FAQ, anclas repetidas o frontmatter incompleto. Hoy: **0 problemas.**
+
+## Las portadas: 99 de 100, y cómo se emparejaron
+
+Llegaron con el nombre que les puso la herramienta que las generó —`ChatGPT Image 21 ago
+2026, 13_31_41.png`, `Gemini_Generated_Image_wxqh77wxqh77wxqh.jpg`— que no dice nada ni a
+una persona ni a un buscador. 214 MB en 99 archivos.
+
+**Los prompts de portada pedían «SIN texto, SIN letras» y las imágenes salieron con el
+título rotulado igual.** Ese fallo respecto al prompt es lo que permitió emparejarlas con
+certeza: 20 traían su número en el nombre y las otras 79 se identificaron **leyendo el
+título impreso en la imagen** y casándolo contra los 100 títulos reales por solapamiento
+de palabras. Resultado: 77 con puntuación alta, 2 dudosos —los dos correctos, bajaron solo
+por «IA» vs «inteligencia artificial» y «Security Groups» vs «grupos de seguridad»— y 0
+sin asignar. Cada uno se verificó además contra la descripción visual de su prompt.
+
+**El artículo 10 es el único sin portada** («10 errores al implementar IA en tu empresa»).
+La página se dibuja sin ella y la celda de la rejilla simplemente no existe: nunca una
+caja vacía esperando un archivo.
+
+Nombres nuevos: `{slug}-carlos-anaya-ruiz.webp`. El nombre de archivo es una de las pocas
+señales que un buscador tiene para entender de qué es una imagen, y cuando alguien la
+descarga o la rehospeda el nombre viaja con ella.
+
+**213.1 MB → 5.6 MB, 97.4 % menos, 57 kB de media**, WebP 1600×900. Los originales se
+movieron a `assets/blog-covers-originales/` —fuera de `public/`— y esa ruta está en el
+.gitignore: estaban dentro de lo que se despliega, y un `git add -A` habría metido 214 MB
+en el repo y en el bundle.
+
+**El color de las portadas vive SOLO en la imagen.** Violeta, cian, ámbar, magenta, dorado
+son los acentos que el índice maestro asigna a cada clúster, y no entran en la interfaz:
+este sistema tiene seis materiales y el minio es semántico. La portada se disuelve en el
+material con dos degradados lineales cruzados y `mask-composite: intersect`, igual que los
+dos retratos — sin rectángulo. (Un degradado radial dejaría los cantos medios al 86 % de
+opacidad; ya está medido en este repo.)
+
+## El enlazado interno se genera, no se escribe
+
+El índice maestro fija la regla: cada artículo enlaza a la pillar de su clúster, dos
+satélites hermanos y uno de otro clúster. **El contenido llegó sin un solo enlace markdown
+en el cuerpo**, así que `getRelated()` los construye del dato, y eso es mejor que
+inyectarlos en la prosa por dos razones:
+
+1. Un enlace en prosa a un artículo que aún no salió es un 404. Aquí se filtra por
+   publicados, así que la red crece con el calendario y **nunca apunta a nada roto**.
+2. Quedan en un bloque identificable al final, que es donde un lector los busca.
+
+El cruce entre clústeres solo se hace si comparten al menos una etiqueta: un enlace
+cross-cluster sin relación real es relleno.
+
+## Lo que el blog NO tiene, y es deliberado
+
+- **No hay páginas de categoría.** Las doce categorías reparten muy desigual —una tiene
+  un artículo, otra dieciocho— así que serían nueve páginas de contenido pobre compitiendo
+  con las pillar, que son los hubs de verdad. El agrupado vive en el índice.
+- **No hay paginación todavía.** Con cien artículos en cincuenta semanas, el índice pasa
+  de 20 entradas hacia el tercer mes. Montarla hoy sería construirla contra un volumen que
+  no existe.
+- **No hay comentarios**, así que el schema no declara `commentCount`.
+- **`dateModified` = `datePublished`** mientras nadie edite el texto. Fingir una fecha de
+  modificación reciente para parecer fresco es lo primero que Google verifica contra el
+  contenido que ya tiene indexado.
+
+## El blog es solo en español, y /en redirige
+
+Los 100 artículos están escritos para México y LATAM. Servir ese texto bajo `/en` y
+declararlo `en-US` en hreflang es un error que Search Console reporta, y traducir 99 743
+palabras no es una decisión de código.
+
+Así que `/en/blog*` **redirige** a `/es/blog*` —consolidando la señal en una sola URL— y
+el hreflang de estas páginas declara **`es-MX` y `x-default`, sin `en-US`**.
+
+> ⚠ **`seo.mjs` reporta esto como «hreflang incompleto (2, se esperan 3)» y es un FALSO
+> POSITIVO.** La sonda aplica una regla de todo el sitio que no vale para una sección que
+> existe en un solo idioma. Declarar `en-US` apuntando a una URL que redirige sí sería un
+> par no recíproco, o sea el error de verdad. **No lo «arregles».**
+
+> ⚠ Y durante una ronda esta afirmación fue falsa por otras dos vías: el middleware
+> de next-intl emitía una cabecera `Link` con `hreflang="en"` en TODA ruta, y el
+> sitemap listaba `/en/blog` con el clúster de tres hreflang. Google lee la
+> cabecera igual que la etiqueta. Cerradas las dos: `alternateLinks: false` en
+> `i18n/routing.ts` y el índice del blog fuera del bucle de locales en
+> `app/sitemap.ts`. Y el redirect pasó de 307 a `permanentRedirect` (308),
+> porque un 307 no consolida la señal.
+
+## El envío por correo — Resend Broadcasts
+
+`lib/broadcast.ts` + `app/api/cron/publicar/route.ts` + `vercel.json` (`0 14 * * 2,5`).
+
+El cron hace tres cosas **en este orden, y el orden importa**: revalida, después envía.
+Al revés, el correo podría llegar antes de que la página respondiera 200 y el primer clic
+de la lista se encontraría un 404. La ventana es de segundos, pero la lista entera hace
+clic en esos segundos.
+
+**La idempotencia no necesita base de datos.** Cada difusión se crea con el nombre
+`blog-{slug}` y antes de crear nada se listan las existentes. Si ya hay una con ese
+nombre, no se hace nada. El estado vive en Resend, que es donde de todas formas está la
+verdad de si un correo salió — y eso es **más** robusto que una tabla propia, porque una
+tabla puede decir «enviado» cuando el envío falló.
+
+Si no se puede listar, **no se envía**: un duplicado a toda la lista es peor que un envío
+que se reintenta en la siguiente ejecución.
+
+**Mira una ventana de 72 horas**, no «el de hoy». Si una ejecución falla, la siguiente
+recupera lo pendiente en vez de saltárselo para siempre.
+
+**`CRON_SECRET` es obligatorio.** Sin él la ruta responde 401 a todo el mundo, incluido
+Vercel: una ruta que dispara correos a una lista no puede quedar abierta por omisión.
+
+El HTML del correo es tabla de un carril con estilos en línea, sin media queries. Un
+cliente de correo no es un navegador —Outlook sigue renderizando con Word— y un diseño
+elaborado que se rompe en la mitad de las bandejas es peor que uno sobrio que se ve igual
+en todas. Va con versión en texto plano, que es puntos de entregabilidad.
+
+## SEO del blog, medido
+
+- `BlogPosting` + `Person` por `@id` + `FAQPage` + `BreadcrumbList` por artículo. El autor
+  apunta a la MISMA entidad que el CV, las certificaciones y los proyectos: eso es E-E-A-T
+  expresado en datos, no en una frase.
+- Sitemap: los publicados, con su `lastModified` real por URL —aquí el dato exacto SÍ se
+  conoce, que es la razón por la que el resto del sitemap usa una constante— y prioridad
+  0.8 para pillar, 0.6 para satélite. `revalidate = 1800`.
+- `/feed.xml`: RSS 2.0, 50 entradas, solo publicadas.
+- Medido con el calendario cumplido: **sitemap 132 URLs, feed 50 items, artículo con 1 h1
+  y 13 h2, BlogPosting y FAQPage presentes, canónico correcto.**
+- `/es/blog`: LCP 104–120 ms, CLS 0.0000, **0 layouts y 0 recálculos en reposo**.
+
+## `npm run` del blog
+
+```bash
+npm run check:blog     # renderiza los 100 y falla si hay residuos
+npm run blog:data      # regenera data/blog.ts desde el markdown
+npm run blog:covers    # renombra y optimiza portadas (idempotente)
+```
+
+## La ronda de auditoría adversarial — 19 defectos confirmados
+
+Después de construir el blog se corrió una revisión con cinco dimensiones en
+paralelo (gate de publicación, cron e idempotencia, renderizador, SEO técnico,
+puente del formulario) y **cada hallazgo se verificó por separado con un agente
+que intentaba refutarlo**. De 61 hallazgos brutos, **19 sobrevivieron**. Los 42
+refutados incluían cinco que reportaban como defecto un arreglo que ya estaba
+aplicado — de ahí la regla: **antes de tocar un archivo de este repo, leerlo.**
+
+Esto es lo que estaba mal de verdad. Se listan porque cada uno es una trampa que
+puede volver.
+
+### Lo que habría roto en producción
+
+**El correo se podía mandar dos veces a toda la lista.** `sendPostBroadcast`
+hacía listar → decidir → crear → enviar sin exclusión mutua, y el nombre de una
+difusión no es único en Resend. Dos ejecuciones simultáneas —el cron y una
+llamada manual con el secreto— creaban dos difusiones y mandaban dos correos.
+
+Resuelto **sin cerrojo y sin base de datos**: se crea el borrador, se vuelve a
+listar y, si hay gemelos, solo envía el de `id` menor; el perdedor borra su
+propio borrador. El desempate es una función pura del estado listado, así que las
+dos ejecuciones eligen el mismo ganador sin hablar entre ellas. La acción
+irreversible ocurre **después** de que la colisión es visible.
+
+**Un borrador huérfano bloqueaba un artículo para siempre.** «Existe» no es «se
+envió»: si el `POST /broadcasts` funcionaba y el `/send` fallaba, quedaba un
+borrador que hacía que toda ejecución posterior respondiera «ya enviado». Ese
+artículo no se mandaba nunca. Ahora un estado distinto de `draft` significa
+enviado, y un `draft` significa **reintentar el envío reutilizando su id** —
+reintentar sobre un borrador no puede duplicar, porque tras un envío correcto ya
+no es un borrador.
+
+**La ventana de recuperación de 72 h no recuperaba nada.** Medido sobre el
+calendario real: los huecos entre publicaciones alternan **72 h y 96 h** (50 y
+49). Con la ventana en 72 h, el artículo del viernes ya tenía 96 h el martes
+siguiente y quedaba fuera. La ventana era funcionalmente «solo el de hoy».
+Ahora son **8 días**, con un tope de **2 correos por ejecución**: sin el tope, un
+despliegue muy retrasado mandaría cuatro correos seguidos a la lista en un
+minuto, que es la definición de spam.
+
+**Y Vercel NO reintenta un cron fallido** — el comentario que decía lo contrario
+era falso. Esta ventana es el único mecanismo de recuperación que existe.
+
+**El 404 se servía obsoleto el día de publicación.** Las 100 rutas están
+prerenderizadas como 404 y una entrada vencida pero dentro de su `expire` se
+sirve **stale** mientras regenera por detrás. Si el cron no purgaba, el primer
+visitante —o Googlebot— recibía el 404 del artículo recién anunciado por correo.
+Ahora el cron **calienta la página con un GET** después de revalidar y **antes**
+del correo, y **solo manda el correo de los artículos que responden 200**.
+Anunciar por correo una URL que devuelve 404 es el peor resultado posible de
+todo el sistema.
+
+**Y el cron ya no responde 200 cuando algo falló.** Antes registraba y seguía, así
+que en el panel de Cron Jobs una ejecución que dejó la página en 404 se veía
+idéntica a una correcta. Ahora devuelve 500 con el detalle.
+
+### Las trampas del renderizador
+
+**158 asteriscos crudos en 9 artículos.** La itálica de un asterisco no estaba
+implementada, y `check:blog` daba OK porque solo buscaba `**`. Medido con el
+renderizador real: 066 (42), 007 (30), 088 (26), 016 (20), 063, 099, 064, 009,
+081 — y en varios la itálica envuelve frases completas. Ahora se generan **79
+`<em>` y quedan 0 asteriscos**. Va en la itálica de Archivo, **no en Fraunces**:
+esa cara está reservada a la voz en primera persona y gastarla en el énfasis de
+un párrafo técnico la devaluaría.
+
+**Una valla de código con info string invertía el resto del documento.** La
+apertura exigía `` ```lang `` a secas, así que ` ```js title="x" ` caía a párrafo
+y **la valla de cierre pasaba a actuar como apertura**, tragándose el resto del
+artículo dentro de un `<pre>`. Ahora la apertura es laxa y **el cierre sigue
+estricto** — si se relajaran las dos, dos aperturas seguidas volverían a
+invertir el documento.
+
+**El artículo 091 aplanaba su jerarquía.** Era el único con `##` en el cuerpo:
+tres grupos que agrupaban once tendencias, y como `###`→h2 y `##`→h2 también,
+los grupos se pintaban idénticos a sus ítems y el índice del margen listaba 17
+entradas planas. Arreglado en el CONTENIDO —grupos a `###`, ítems a `####`— y no
+remapeando el renderizador, que habría cambiado el tamaño de los 29 `####` del
+resto del corpus. El índice pasó de 17 entradas a 6.
+
+**`check:blog` daba falsa confianza.** La detección de sintaxis sin cubrir estaba
+DENTRO de la rama del párrafo, después de que listas, tablas, encabezados y el
+bloque de FAQ ya hubieran emitido. Un enlace en una viñeta salía crudo con
+`uncovered` vacío; en una pregunta del FAQ entraba crudo **dentro del JSON-LD**.
+Ahora es un **barrido previo por líneas del markdown de entrada**, fuera de
+vallas, y cubre enlaces, imágenes, tachado, `#####` y `##`. Verificado con once
+casos sintéticos.
+
+**Y una tabla se reestructuraba en silencio:** cualquier fila de guiones
+reasignaba la separadora, así que una a media tabla borraba el `<thead>` entero;
+y `| - | - |`, válida en GFM, no se reconocía. Ahora la separadora solo cuenta en
+la posición 1 y lo anómalo va a `uncovered`.
+
+### SEO
+
+**84 de 100 títulos se recortaban en la SERP.** La plantilla añade
+« | Carlos Anaya Ruiz» (20 caracteres) y el peor llegaba a **92**. Con
+`title: { absolute }` solo quedan 10 por encima de 60 y el peor es 72. Extra: el
+`<title>`, el de Open Graph y el de Twitter ahora coinciden entre sí y con el
+`<h1>` — antes discrepaban 20 caracteres. En un artículo el nombre de la marca no
+compra nada: quien busca «qué es RAG» no busca por marca.
+
+**El middleware declaraba `hreflang="en"` para el blog.** `alternateLinks` de
+next-intl está en `true` por omisión y emite una cabecera `Link` con alternates
+en toda ruta, apuntando a `/en/blog/{slug}` — una URL que redirige. Justo el par
+no recíproco que este archivo decía haber evitado, y encima con dos juegos de
+códigos contradictorios (`es`/`en` en la cabecera contra `es-MX`/`en-US` en el
+HTML). Apagado en `i18n/routing.ts` **dentro de `defineRouting`**: en next-intl
+4.8, `createMiddleware(routing, {...})` no compila.
+
+**Y el sitemap entregaba activamente la URL que redirige:** emitía las dos
+entradas del índice, `/es/blog` y `/en/blog`, las dos con el clúster de tres
+hreflang, mientras los 100 artículos del mismo archivo ya estaban bien. El
+archivo se contradecía consigo mismo.
+
+**`/en/blog*` redirigía con 307.** Un 307 le dice a Google que la URL original
+sigue siendo la válida, así que no consolidaba nada. Ahora es `permanentRedirect`
+(308).
+
+**El feed servía `lastBuildDate` de 1970** cuando no había artículos, y **la
+tarjeta social del índice se congelaba en «0 de 100»**: no exporta
+`generateStaticParams`, así que se genera en la primera petición y sin
+`revalidate` esa versión se quedaba para siempre.
+
+### El puente del formulario fallaba en abierto
+
+Con `LEAD_WEBHOOK_AUTH=hmac` y el token bajo otro nombre —un typo en el panel—
+`isForwardConfigured()` devolvía `true` y la petición salía **sin firma, sin
+`authorization` y sin `x-api-key`**: los cuatro casos del `switch` iban tras un
+`if (cfg.token)` y fallaban en abierto. Ahora el modo **exige** su credencial:
+configuración incompleta = pieza apagada, nunca pieza a medias.
+
+Y las once variables `LEAD_WEBHOOK_*` no estaban documentadas en ninguna parte —
+lo que hacía verosímil ese typo. Ya están en `.env.example`.
+
+## El bug del `??` con variables vacías
+
+Salió al enviar el formulario de verdad, no leyendo código, y merece su propia
+sección porque es una **clase** de bug, no un caso.
+
+`process.env.CONTACT_TO ?? NAP.email` parece correcto y no lo es: `??` solo cae
+al valor por omisión con `null` o `undefined`, y una variable **declarada y
+vacía** —`CONTACT_TO=` en un .env, o añadida en el panel de Vercel y dejada en
+blanco— llega como la cadena vacía, que no es nullish. Resend recibió
+`to: ['']`, respondió 422, y el formulario dijo «algo falló de mi lado».
+
+La misma forma estaba en cuatro sitios más, todos en el camino de producción:
+
+| Archivo | Con la variable vacía |
+|---|---|
+| `lib/channels.ts` | el enlace de WhatsApp apuntaba a `wa.me/` sin número — el canal que «ya funciona» |
+| `lib/broadcast.ts` | la difusión se creaba con `from: ''` |
+| `lib/newsletter.ts` | el alta mandaba el campo `''` |
+| `lib/contact.ts` | Supabase recibía la tabla `''` |
+
+Resuelto con `lib/env.ts`: `envOpt`, `envOr` y `envSet` tratan blanco como
+ausente. **Reciben el VALOR y no el nombre** a propósito: con una clave dinámica,
+Next no puede sustituir las `NEXT_PUBLIC_*` en el build y llegarían `undefined`
+al navegador.
+
+Y el `.env.example` de este repo **invita** al bug: documenta `CONTACT_TO=` como
+opcional. Por eso el arreglo va en el código y no en la documentación.
+
+## El puente al otro sistema
+
+`lib/forward.ts` reenvía cada mensaje del formulario a un endpoint HTTP propio —
+un CRM, un n8n, otro proyecto. Todo por variables de entorno: URL, método,
+autenticación (`none|bearer|header|basic|hmac`), formato (`json|form`), renombrado
+de campos y campos fijos añadidos. Cambiar de sistema receptor es cambiar una
+variable.
+
+**Corre en `after()`**, que ejecuta trabajo después de haber enviado la
+respuesta. Es lo que permite reintentar tres veces con espera creciente sin que
+el visitante mire una ruedita, y lo que evita las dos malas alternativas: esperar
+(el visitante paga la latencia del tercero) o disparar sin esperar (en serverless
+la función puede congelarse antes de que la petición salga).
+
+**Son DOS CANALES INDEPENDIENTES y basta con uno.** Si el correo falla, el puente
+se intenta de forma sincrónica como plan B; si entrega, el mensaje llegó y el
+visitante ve «llegó». Antes el correo era una cadena: un 422 de Resend tiraba el
+lead a la basura aunque el CRM estuviera disponible — y eso **pasó** al probar.
+
+**`event_id` es el mismo en todos los reintentos**, así que el receptor puede
+deduplicar. Sin él, un reintento tras un timeout donde la petición sí llegó crea
+un lead duplicado del otro lado.
+
+`/api/probar-reenvio` (protegida con `CRON_SECRET`) manda un lead de prueba y
+devuelve el status, el cuerpo enviado y **la respuesta literal del receptor**. Con
+eso se distingue en un intento un 401 de token, un 404 de URL y un 422 de campo
+que falta. Probado de punta a punta contra un receptor local que **valida la firma
+HMAC**: éxito, 3 reintentos ante un 500 (1 657 ms de espera creciente), 1 solo
+intento ante un 422, y 401 sin secreto.
+
+## El enlazado interno
+
+Antes de esta ronda, `grep -rn "/blog" app components` daba **dos**
+resultados: el nav y el pie, los dos al índice, los dos plantilla global. Cero
+enlaces contextuales desde la portada (prioridad 1.0), `/servicios` (0.8) o las
+cuatro páginas de servicio (0.9). Y en la otra dirección, los 100 artículos solo
+salían a `/contacto`, `/sobre-mi` y `/blog`: **las cuatro páginas que facturan no
+recibían nada de cien URLs temáticas.**
+
+`ROUTE_TOPICS` en `lib/blog.ts` puntúa por **clúster (+2), etiqueta (+1) y pillar
+(+1)**. Un mapa de valor único no habría servido: el clúster de cloud reparte
+entre desarrollo (despliegue, IaC, Kubernetes) y dashboards (observabilidad,
+costos), y hay artículos de medición repartidos por todo el corpus.
+
+Reparto medido de los 100: **automatización 28 · desarrollo 25 · SEO 11 ·
+proyectos 10 · dashboards 5 · sin destino 21.**
+
+**Los 21 sin destino son la decisión, no un hueco.** Ciberseguridad (11),
+privacidad (7), tendencias (2) y uno de cloud no tienen página comercial que los
+reciba. Mandarlos a `/sobre-mi` serían veintiún enlaces sin relación temática:
+diluye y contradice la regla del repo. `routeForPost` devuelve `undefined` y la
+fila no se pinta, igual que `ch c` no existe sin la clave de Cal.com.
+
+Lo que se montó, en orden de rendimiento:
+
+1. **Artículo → servicio.** Una fila en la placa «seguir leyendo», rotulada como
+   SERVICIO y no como lectura. Es la única pieza que rinde el día uno —no depende
+   del volumen del calendario— y la que convierte cien URLs en autoridad.
+2. **Anterior / siguiente** en el pie del artículo: un camino secuencial por el
+   archivo sin pasar por un índice de cien entradas.
+3. **`<BlogStrip>`** en la portada y en las cinco páginas comerciales. En la
+   portada va en modo `recientes` (la señal de frescura) y **en su propia banda**,
+   nunca dentro del «índice del registro» — esa sección es el bloque de preguntas
+   de conversión y meter artículos ahí rompería su rejilla.
+
+**La guarda de lista vacía no es estilo.** Los primeros días `getPublishedPosts()`
+devuelve cero: sin ella quedarían rótulos sobre listas vacías en seis páginas.
+
 ## Los tres canales de contacto
 
 Tres formas de llegar, y **cada una degrada sola**: sin su clave, la fila no se
@@ -939,6 +1390,7 @@ respuesta, así que se subió. No se sube en refactors.
 npx tsc --noEmit --incremental false
 npm run lint
 npm run palette:check                                # contraste, incluidos compuestos
+npm run check:blog                                   # los 100 artículos renderizan sin residuos
 npx next build
 npm run check:perf     http://localhost:PUERTO/es    # presupuesto: 20 en reposo · hoy va en 0
 npm run check:layout   http://localhost:PUERTO /es   # huecos, cortes, cintas rotas
@@ -978,6 +1430,69 @@ columnas con su regla superior, la lista de navegación partida en dos con `colu
 las cuatro acaban a la misma altura y desaparece la franja muerta que quedaba debajo— y
 `.sheet` como único margen.
 
+## El nav está migrado — era el último rincón
+
+Como el pie en su día, el nav sobrevivió a dos rediseños porque es el componente que
+nadie vuelve a mirar. Llevaba, **visible en captura**, un icono de lucide dentro de un
+recuadro redondeado con sombra que se inclinaba 6° y crecía al pasar el puntero: palabra
+por palabra el patrón que la **regla cero** de este archivo prohíbe.
+
+Lo que entró en su lugar es el vocabulario que el resto del sitio ya tenía:
+
+| Iba | Va | Por qué |
+|---|---|---|
+| 4 iconos en los servicios | **la letra del canal**, `a`–`d` | Son los canales a–d del registro: así se llaman en /servicios, en la placa de la portada y en el dial. Por primera vez el menú y la página dicen lo mismo |
+| 4 iconos en trayectoria | **nada** | No son canales ni una secuencia, y este proyecto prohíbe numerar lo que no lo es. Una fila sin marca es la gramática de `.band` |
+| `<ChevronDown>` | `.caret` | Una punta de pluma: dos reglas de 1 px que se encuentran en un vértice |
+| `<Menu>` / `<X>` | `.bars` | Tres reglas de 1 px —el vocabulario del riel— que se cruzan en una × |
+| `<ArrowRight>` ×3 | el glifo `→` | Ya es el idioma del resto del sitio |
+| `<Globe>` del idioma | nada | El componente ya resolvía los dos anchos: nombre completo en escritorio, código de dos letras en móvil. El icono repetía la etiqueta de al lado |
+| `<Printer>` del CV | nada | Su propio encabezado presumía de «cero kilobytes de JavaScript extra»; ahora es cierto |
+
+**El estado lo lee el CSS de `aria-expanded`**, que ya estaba en los botones porque lo pide
+la accesibilidad: no hay una prop nueva ni un nodo que se intercambie. Antes el conmutador
+móvil cambiaba de elemento en cada pulsación.
+
+**⚠ Y el ahorro de JS es 3.9 kB, no 30.** Se estimó «~30 kB» porque el chunk que contenía
+lucide pesaba 29.8 kB — pero doce iconos de lucide son doce arrays de coordenadas, y ese
+chunk llevaba otras cosas. Medido antes y después sobre el HTML servido: **671.9 kB → 668.0
+kB, y un chunk menos.** La razón para hacerlo es la consistencia con el sistema, no el
+rendimiento. Decir lo contrario sería exactamente el tipo de cifra sin respaldo que este
+proyecto no admite.
+
+Lucide **sigue instalado y sigue usándose**, en `components/layout/footer.tsx` (GitHub y
+LinkedIn), `components/layout/breadcrumbs.tsx` y `data/services.ts`. Los tres son de
+SERVIDOR: su SVG se imprime en el HTML y **no viaja un byte al cliente**. Lo que se retiró
+es lucide de los componentes marcados `'use client'`, que eran los únicos que lo enviaban
+al navegador.
+
+## Siete archivos de código muerto, fuera
+
+Sobrevivían del sistema anterior sin que nadie los importara — verificado en todo el repo,
+no solo en `app/` y `components/`:
+
+```
+components/motion/tilt-3d.tsx        components/ui/carousel.tsx
+components/motion/pointer-glow.tsx   components/ui/separator.tsx
+components/motion/counter.tsx        components/ui/image-slot.tsx
+components/sections/contact-form.tsx
+```
+
+No inflaban el bundle —Next solo empaqueta lo alcanzable— así que borrarlos no cambia una
+métrica. **El motivo es otro: eran trampas.** `contact-form.tsx` es el compositor de
+`mailto:` que `lead-form.tsx` reemplazó, y este archivo ya documentaba que quien no tiene
+cliente de correo se quedaba sin enviar; volver a importarlo por descuido habría
+reintroducido ese defecto. Y los cinco de `motion/` y `ui/` traían de vuelta `rounded`,
+`shadow-lift` y el giro al hacer hover.
+
+`components/layout/breadcrumbs.tsx` **se queda** aunque nadie lo importe: está documentado
+arriba como decisión, porque su JSON-LD sigue vivo en `lib/schema.ts`.
+
+**Quedan dos dependencias sin uso** tras esto: `embla-carousel-react` y
+`@radix-ui/react-separator`. No se desinstalaron porque no viajan al navegador y tocar el
+lockfile es un cambio que merece revisión aparte. Un `npm uninstall` de las dos es seguro
+cuando se quiera.
+
 ## Deuda conocida
 
 - ~~Hay una sola foto, 800×800 con fondo de oficina.~~ **Resuelto, y por duplicado.**
@@ -1004,12 +1519,29 @@ las cuatro acaban a la misma altura y desaparece la franja muerta que quedaba de
   **Si añades un titular con una palabra de más de 14 letras, mídelo a 320.**
 - **Un círculo rotado tiene caja de cuadrado.** Cuesta 3 px de desborde y se arregla
   recortando el contenedor. Si vuelves a rotar algo a tamaño completo, mídelo.
-- **Una tarea larga de ~55 ms** aparece en 3 de cada 4 corridas de `check:perf` **solo en la
-  portada**. Es ANTERIOR a esta ronda —verificado haciendo `git stash` y midiendo el commit
-  previo, que da 51/55/60 ms con la misma frecuencia— y no se reproduce con un observador
-  propio ni al cargar ni en interacción, así que apunta a la instrumentación del probe sobre
-  la única página con JS de cliente propio (`<Marks>`). Las métricas reales están holgadas:
-  LCP 116–188 ms, CLS 0.0036, 0 tareas largas medidas desde el primer frame.
+- **La tarea larga NO es solo de la portada, y esto corrige lo que decía aquí.** Se midió
+  por ruta, tres corridas cada una, con un observador propio desde el primer frame:
+
+  | Ruta | corrida 1 (frío) | corridas 2 y 3 |
+  |---|---|---|
+  | /es | 111 ms | ninguna |
+  | /es/contacto | 75 ms | ninguna |
+  | /es/premios | 68 ms | ninguna |
+  | /es/privacidad | 60 ms | ninguna |
+
+  El patrón es inequívoco: **aparece en TODAS las rutas, solo en la primera carga de un
+  perfil limpio, y su tamaño sigue al tamaño de la página.** No es la instrumentación del
+  probe ni `<Marks>`: es el parseo y la hidratación de React en frío. La versión anterior de
+  esta nota decía «solo en la portada» y era falso — se había medido solo ahí.
+
+  **No se puede quitar sin quitar la interactividad.** Son ~668 kB de JS sin comprimir, y el
+  desglose está medido: los tres chunks mayores (219 + 128 + 110 kB) son React 19 y el
+  runtime del App Router. Se comprobó buscando dentro de ellos: **no hay lucide, ni el
+  diccionario de `next-intl`, ni datos de `data/`.** El piso es el piso.
+
+  Lo que sí se puede decir con datos: el usuario nunca espera esa tarea, porque ocurre
+  **antes** de que pueda interactuar, y el LCP en esa misma corrida en frío es de 144–224 ms.
+  Las corridas 2 y 3 no tienen ninguna.
 - **Faltan 40 imágenes y una son las claves.** `docs/CONECTAR.md` y `docs/MEDIA.md` son
   la lista para el dueño; hasta que llegue, el código de los tres canales está escrito y
   desplegable pero **`ch c` no se pinta** y el formulario dice honestamente que la
@@ -1026,6 +1558,20 @@ las cuatro acaban a la misma altura y desaparece la franja muerta que quedaba de
 - **El margen se compone de renglones cortos, y eso es un límite real.** `--margin-w`
   son 18rem: una frase de más de ~220 caracteres en `.margin-prose` empieza a hacer
   una columna de sopa. Si un dato no cabe en tres líneas, no es dato de margen.
+- **El artículo 10 no tiene portada.** Llegaron 99 imágenes para 100 artículos. La
+  página se dibuja sin ella y no se rompe nada, pero es el único hueco visible del blog.
+  Se llena poniendo el archivo en `assets/blog-covers-originales/`, añadiendo su entrada
+  a `data/blog-covers-map.json` y corriendo `npm run blog:covers`.
+- **Los artículos miden ~1 000 palabras, no las 1 800–2 500 que dice el índice maestro.**
+  Media real: 997; el más corto 795 y el más largo 1 235. El índice declara objetivos que
+  el contenido entregado no alcanza. No se rellenó para llegar a la cifra —mil palabras
+  útiles compiten mejor que dos mil con paja— pero para las SERP más disputadas del
+  clúster de IA puede quedarse corto, y eso se sabrá midiendo, no discutiendo.
+- **El aviso de privacidad menciona el boletín pero no el envío de artículos.** Hoy el
+  texto cubre el alta a la lista; ahora la lista además RECIBE un correo dos veces por
+  semana. Es la misma finalidad y el mismo encargado, así que no hay una afirmación falsa,
+  pero la redacción se queda corta respecto a lo que el sistema hace. **Revisar antes de
+  conectar la audiencia de Resend.**
 - `data/experience.ts` termina en abril 2025. La cinta muestra ese hueco tal cual porque el
   instrumento no puede mentir. Si hay consultoría en curso, va en ese archivo y la banda
   aparece sola.

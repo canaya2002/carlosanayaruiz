@@ -4,7 +4,6 @@ import type { ComponentProps } from 'react'
 import { useLocale, useTranslations } from 'next-intl'
 import { useParams } from 'next/navigation'
 import { Link, usePathname } from '@/i18n/navigation'
-import { Globe } from 'lucide-react'
 import { Button } from '@/components/ui/button'
 import { Locale } from '@/data/types'
 
@@ -31,6 +30,14 @@ import { Locale } from '@/data/types'
 /** El único pathname con parámetro del sitio. */
 const PROJECT_ROUTE = '/proyectos/[slug]'
 
+/**
+ * El artículo del blog es la otra ruta dinámica, y se trata distinto a
+ * propósito: el blog existe SOLO en español, así que cambiar de idioma
+ * estando en un artículo no puede llevar a una traducción que no existe. El
+ * destino es el índice del blog, que sí está en los dos.
+ */
+const POST_ROUTE = '/blog/[slug]'
+
 type LinkHref = ComponentProps<typeof Link>['href']
 
 export function LanguageSwitcher() {
@@ -56,7 +63,10 @@ export function LanguageSwitcher() {
         // con corchetes.
         pathname === PROJECT_ROUTE
         ? '/proyectos'
-        : pathname
+        : // Un artículo no tiene versión en inglés: el destino es el índice.
+          pathname === POST_ROUTE
+          ? '/blog'
+          : pathname
 
   return (
     // El padding y el gap se aprietan solo por debajo de sm, donde la
@@ -78,7 +88,12 @@ export function LanguageSwitcher() {
         // Decirle al crawler qué hay del otro lado de este enlace.
         hrefLang={targetLocale}
       >
-        <Globe className="size-4" aria-hidden="true" />
+        {/* Iba un globo de lucide delante del nombre del idioma, y con él
+            venía `lucide-react` a un componente de CLIENTE montado en las
+            quince páginas. No se sustituyó por nada, y es la decisión: las dos
+            líneas de abajo ya resuelven los dos anchos —el nombre completo en
+            escritorio, el código de dos letras en móvil— así que el icono solo
+            repetía lo que la etiqueta de al lado ya decía. */}
         <span className="hidden sm:inline">{t('switchTo')}</span>
         <span className="sm:hidden">{targetLocale.toUpperCase()}</span>
       </Link>

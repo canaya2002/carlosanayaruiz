@@ -64,7 +64,7 @@ interface Props {
 }
 
 /** Fecha real de la última edición de fondo. También alimenta el JSON-LD. */
-const LAST_UPDATED = '2026-08-21'
+const LAST_UPDATED = '2026-08-24'
 
 export async function generateMetadata({ params }: Props): Promise<Metadata> {
   const { locale } = await params
@@ -289,10 +289,37 @@ export default async function PrivacyPage({ params }: Props) {
                 used for that and for nothing else.
               </p>
               <p>
+                <strong>What you receive, and how often.</strong> One email per
+                new blog article: two a week, on Tuesdays and Fridays. No
+                promotional sends, nothing from third parties, nothing that is
+                not an article published on this site. The email carries the
+                title, the standfirst and a link — and that link includes
+                campaign parameters (<code>utm_source</code>) so I can see how
+                many people arrive from the newsletter. That is aggregate site
+                analytics, not individual tracking: there is no open pixel and
+                no record of who clicked.
+              </p>
+              <p>
                 You can unsubscribe from the link in any issue, or by writing to{' '}
                 <a href={`mailto:${NAP.email}`}>{NAP.email}</a>. Withdrawing
                 consent removes the address from the list; it does not affect
                 anything else, because there is nothing else.
+              </p>
+              <h3>Where what you write in the form goes</h3>
+              <p>
+                Besides reaching me by email, the contents of the form may be
+                forwarded to a case-management system of my own so the message
+                can be followed up: same data, same purpose — replying to you —
+                and under my responsibility. It is not shared with third
+                parties for unrelated purposes, not sold, and not used for
+                advertising.
+              </p>
+              <p>
+                If that system ever belongs to an external provider, it acts as
+                a <strong>processor</strong>: it handles the data on my
+                instruction and for nothing else. You can ask me at any time
+                which providers are involved by writing to{' '}
+                <a href={`mailto:${NAP.email}`}>{NAP.email}</a>.
               </p>
               <h3>What this site does not collect</h3>
               <p>
@@ -723,10 +750,37 @@ export default async function PrivacyPage({ params }: Props) {
                 para nada más.
               </p>
               <p>
+                <strong>Qué recibes y cada cuánto.</strong> Un correo por
+                artículo nuevo del blog: dos por semana, los martes y los
+                viernes. No hay envíos promocionales, ni de terceros, ni de
+                nada que no sea un artículo publicado en este sitio. El correo
+                trae el título, la entradilla y un enlace — y ese enlace lleva
+                parámetros de campaña (<code>utm_source</code>) para saber
+                cuánta gente entra desde el boletín. Es analítica agregada del
+                sitio, no seguimiento individual: no hay píxel de apertura ni
+                registro de quién hizo clic.
+              </p>
+              <p>
                 Te das de baja desde el enlace de cualquier envío, o
                 escribiéndome a <a href={`mailto:${NAP.email}`}>{NAP.email}</a>.
                 Revocar el consentimiento saca la dirección de la lista; no
                 afecta a nada más, porque no hay nada más.
+              </p>
+              <h3>A dónde va lo que escribes en el formulario</h3>
+              <p>
+                Además de llegarme por correo, el contenido del formulario
+                puede reenviarse a un sistema de gestión propio para dar
+                seguimiento al mensaje: mismo dato, misma finalidad —
+                responderte— y bajo mi responsabilidad. No se comparte con
+                terceros para fines ajenos, no se vende y no se usa para
+                publicidad.
+              </p>
+              <p>
+                Si en algún momento ese sistema fuera de un proveedor externo,
+                actuaría como <strong>encargado</strong>: trata los datos por
+                instrucción mía y para nada más. Puedes pedirme en cualquier
+                momento el detalle de qué proveedores intervienen escribiendo a{' '}
+                <a href={`mailto:${NAP.email}`}>{NAP.email}</a>.
               </p>
               <h3>Lo que este sitio no recoge</h3>
               <p>

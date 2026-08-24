@@ -1,6 +1,5 @@
 'use client'
 
-import { Printer } from 'lucide-react'
 import { Button } from '@/components/ui/button'
 
 interface PrintButtonProps {
@@ -23,6 +22,10 @@ interface PrintButtonProps {
  * define page.tsx, así que el PDF SIEMPRE es el contenido de esta página. Cero
  * kilobytes de JavaScript extra y cero posibilidad de desincronización.
  *
+ * Y ahora es literal: llevaba un icono de lucide, que era la ÚNICA razón
+ * por la que esta ruta arrastraba una librería de iconos al navegador. El
+ * botón ya dice lo que hace con palabras.
+ *
  * Es el único cliente de la ruta: `window` no existe en el servidor, así que
  * el `onClick` obliga a que este archivo — y nada más — cruce al navegador.
  */
@@ -34,7 +37,6 @@ export function PrintButton({ label }: PrintButtonProps) {
       className="press"
       onClick={() => window.print()}
     >
-      <Printer className="size-4" aria-hidden="true" />
       {label}
     </Button>
   )

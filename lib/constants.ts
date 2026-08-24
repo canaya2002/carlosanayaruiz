@@ -249,6 +249,13 @@ export const ROUTES = {
   premios: { es: '/premios', en: '/awards' },
   certificaciones: { es: '/certificaciones', en: '/certifications' },
   cv: { es: '/cv', en: '/cv' },
+  /**
+   * El índice del blog. Los artículos NO están aquí: son cien URLs generadas
+   * desde `data/blog.ts`, y meterlas en esta tabla la volvería un registro de
+   * contenido en vez de un mapa de secciones. El sitemap las añade aparte,
+   * filtrando por fecha de publicación.
+   */
+  blog: { es: '/blog', en: '/blog' },
   privacidad: { es: '/privacidad', en: '/privacy' },
   terminos: { es: '/terminos', en: '/terms' },
 } as const

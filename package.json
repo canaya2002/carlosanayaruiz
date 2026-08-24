@@ -18,7 +18,10 @@
     "shoot": "node scripts/shoot.mjs",
     "check:perf:all": "node scripts/perf-sweep.mjs",
     "media:manifest": "node scripts/generate-media-manifest.mjs",
-    "check:layout": "node scripts/layout-audit.mjs"
+    "check:layout": "node scripts/layout-audit.mjs",
+    "blog:data": "node scripts/generate-blog-data.mjs",
+    "blog:covers": "node scripts/blog-covers.mjs",
+    "check:blog": "node scripts/blog-check.mjs"
   },
   "dependencies": {
     "@radix-ui/react-dropdown-menu": "^2.1.6",

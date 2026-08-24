@@ -3,21 +3,6 @@
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react'
 import { useTranslations } from 'next-intl'
 import { Link, usePathname } from '@/i18n/navigation'
-import {
-  ArrowRight,
-  BadgeCheck,
-  BarChart3,
-  Bot,
-  ChevronDown,
-  FileText,
-  FolderKanban,
-  Globe,
-  Menu,
-  Search,
-  Trophy,
-  X,
-  type LucideIcon,
-} from 'lucide-react'
 import { cn } from '@/lib/utils'
 import { Button } from '@/components/ui/button'
 import { LanguageSwitcher } from '@/components/language-switcher'
@@ -49,29 +34,46 @@ type GroupId = keyof typeof PANEL_IDS
 interface NavItem {
   href: StaticPathname
   /** Clave dentro del namespace `nav`. */
-  key: 'about' | 'books' | 'contact'
+  key: 'about' | 'blog' | 'books' | 'contact'
 }
 
 interface GroupSource {
   href: StaticPathname
   /** Clave de traducción; el namespace lo decide el grupo que la consume. */
   key: string
-  icon: LucideIcon
+  /**
+   * Identificador de canal, si la fila ES un canal.
+   *
+   * Los cuatro servicios son los canales a–d del registro: así se llaman en
+   * /servicios, en la placa de la portada y en el dial. Las cuatro páginas de
+   * trayectoria NO lo son —no son canales ni una secuencia— así que van sin
+   * marca, que es la gramática de `.band`. Este proyecto prohíbe numerar lo
+   * que no es una secuencia real.
+   *
+   * Sustituye a `icon: LucideIcon`. Ver «El nav, migrado» en globals.css.
+   */
+  ch?: string
 }
 
 /** Inicio va primero, luego los dos grupos, luego estos. */
 const NAV_ITEMS: readonly NavItem[] = [
   { href: '/sobre-mi', key: 'about' },
+  { href: '/blog', key: 'blog' },
   { href: '/libros', key: 'books' },
   { href: '/contacto', key: 'contact' },
 ]
 
-/** Los mismos íconos que asigna data/services.ts, para que el mapeo se reconozca. */
+/**
+ * Las letras son las MISMAS que la placa de la portada y /servicios imprimen
+ * para estos cuatro servicios, y en el mismo orden. Es lo que hace que el menú
+ * y la página digan lo mismo: antes el nav ponía cuatro iconos que no
+ * correspondían a nada del resto del sitio.
+ */
 const SERVICE_ITEMS: readonly GroupSource[] = [
-  { href: '/seo-tecnico', key: 'seoTecnico', icon: Search },
-  { href: '/desarrollo-web', key: 'desarrolloWeb', icon: Globe },
-  { href: '/automatizacion-ia', key: 'automatizacionIA', icon: Bot },
-  { href: '/dashboards', key: 'dashboardsLabel', icon: BarChart3 },
+  { href: '/seo-tecnico', key: 'seoTecnico', ch: 'a' },
+  { href: '/desarrollo-web', key: 'desarrolloWeb', ch: 'b' },
+  { href: '/automatizacion-ia', key: 'automatizacionIA', ch: 'c' },
+  { href: '/dashboards', key: 'dashboardsLabel', ch: 'd' },
 ]
 
 /**
@@ -83,10 +85,10 @@ const SERVICE_ITEMS: readonly GroupSource[] = [
  * existe detrás de un menú es un hub que ningún crawler sigue.
  */
 const TRAJECTORY_ITEMS: readonly GroupSource[] = [
-  { href: '/proyectos', key: 'projects', icon: FolderKanban },
-  { href: '/premios', key: 'awards', icon: Trophy },
-  { href: '/certificaciones', key: 'certifications', icon: BadgeCheck },
-  { href: '/cv', key: 'cv', icon: FileText },
+  { href: '/proyectos', key: 'projects' },
+  { href: '/premios', key: 'awards' },
+  { href: '/certificaciones', key: 'certifications' },
+  { href: '/cv', key: 'cv' },
 ]
 
 /**
@@ -163,7 +165,8 @@ const NAV_LINK = `${NAV_LINK_BASE} drop`
 interface GroupLink {
   href: StaticPathname
   label: string
-  icon: LucideIcon
+  /** Letra del canal, solo en las filas que SON canales. */
+  ch?: string
 }
 
 /** Todo lo que necesita pintar un grupo desplegable, sin nada de estado. */
@@ -178,8 +181,6 @@ interface NavGroupConfig {
   items: readonly GroupLink[]
   /** Fila final opcional, tipo "Todos los servicios". */
   all?: { href: StaticPathname; label: string }
-  /** Clases del cuadro del ícono: cada grupo tiene su matiz. */
-  chip: string
   /** Ancho del panel; las etiquetas de trayectoria son más cortas. */
   width: string
 }
@@ -216,10 +217,9 @@ export function Header() {
       items: SERVICE_ITEMS.map((item) => ({
         href: item.href,
         label: tf(item.key),
-        icon: item.icon,
+        ch: item.ch,
       })),
       all: { href: '/servicios', label: ts('allServices') },
-      chip: 'bg-sky-wash text-sky-ink',
       width: 'w-[19rem]',
     },
     {
@@ -231,11 +231,10 @@ export function Header() {
       items: TRAJECTORY_ITEMS.map((item) => ({
         href: item.href,
         label: t(item.key),
-        icon: item.icon,
+        ch: item.ch,
       })),
       // Sin fila "ver todo": el hub del grupo ya es /proyectos y "Proyectos" es
       // el primer ítem de la lista.
-      chip: 'bg-cyan-wash text-cyan-ink',
       width: 'w-[16rem]',
     },
   ]
@@ -268,7 +267,9 @@ export function Header() {
         services: () =>
           setOpenGroup((current) => (current === 'services' ? null : current)),
         trajectory: () =>
-          setOpenGroup((current) => (current === 'trajectory' ? null : current)),
+          setOpenGroup((current) =>
+            current === 'trajectory' ? null : current
+          ),
       }) satisfies Record<GroupId, () => void>,
     []
   )
@@ -408,7 +409,6 @@ export function Header() {
          este nivel le pintaría vidrio encima. */
       className="sticky top-0 z-50"
     >
-
       {/* `.sheet` y no `mx-auto max-w-6xl`: el contenido de las páginas va a
           sangre desde el canto del riel, así que un nav centrado dejaba la
           marca cien píxeles a la derecha del titular y las dos rejillas no
@@ -549,9 +549,13 @@ export function Header() {
               asChild
               className="hidden active:scale-[0.98] sm:inline-flex"
             >
+              {/* La flecha es el glifo de texto, que es el idioma del resto
+                  del sitio —«{t('ctaMain')} →» en las quince páginas— y no un
+                  `<svg>` que obliga a traer una librería de iconos al
+                  cliente. */}
               <Link href="/contacto">
                 {t('hireMe')}
-                <ArrowRight className="size-4" aria-hidden="true" />
+                <span aria-hidden="true">→</span>
               </Link>
             </Button>
 
@@ -567,11 +571,15 @@ export function Header() {
                 menuOpen && 'text-ink'
               )}
             >
-              {menuOpen ? (
-                <X className="size-5" aria-hidden="true" />
-              ) : (
-                <Menu className="size-5" aria-hidden="true" />
-              )}
+              {/* Tres reglas de 1 px —el vocabulario del riel— que se
+                  cruzan en una × al abrir. El nodo es SIEMPRE el mismo: el
+                  estado lo lee el CSS de `aria-expanded`, que ya está en el
+                  botón por accesibilidad. Antes eran dos `<svg>` que se
+                  intercambiaban con un ternario, así que cada pulsación
+                  cambiaba el árbol. */}
+              <span className="bars" aria-hidden="true">
+                <span />
+              </span>
             </button>
           </div>
         </div>
@@ -648,7 +656,6 @@ export function Header() {
                 />
                 <ul className="pb-3 pl-1">
                   {group.items.map((item) => {
-                    const Icon = item.icon
                     return (
                       <li key={item.href}>
                         <Link
@@ -664,15 +671,15 @@ export function Header() {
                               : 'text-ink-muted hover:bg-brand-wash/60'
                           )}
                         >
-                          <span
-                            aria-hidden="true"
-                            className={cn(
-                              'grid size-8 shrink-0 place-items-center rounded-lg shadow-lift-1 transition-[scale,rotate] duration-300 group-hover/row:-rotate-6 group-hover/row:scale-110',
-                              group.chip
-                            )}
-                          >
-                            <Icon className="size-4" />
-                          </span>
+                          {/* La letra del canal, o nada. Ver «El nav,
+                              migrado» en globals.css: el recuadro con sombra
+                              que se inclinaba era el patrón que la regla cero
+                              prohíbe. */}
+                          {item.ch ? (
+                            <span className="nav-ch" aria-hidden="true">
+                              {item.ch}
+                            </span>
+                          ) : null}
                           {item.label}
                         </Link>
                       </li>
@@ -694,14 +701,10 @@ export function Header() {
             ))}
           </ul>
 
-          <Button
-            asChild
-            size="lg"
-            className="mt-6 w-full active:scale-[0.98]"
-          >
+          <Button asChild size="lg" className="mt-6 w-full active:scale-[0.98]">
             <Link href="/contacto" onClick={() => setMenuOpen(false)}>
               {t('hireMe')}
-              <ArrowRight className="size-4" aria-hidden="true" />
+              <span aria-hidden="true">→</span>
             </Link>
           </Button>
         </nav>
@@ -904,13 +907,11 @@ function NavDropdown({
           open && 'text-ink'
         )}
       >
-        <ChevronDown
-          className={cn(
-            'size-3.5 shrink-0 transition-transform duration-300',
-            open && 'rotate-180'
-          )}
-          aria-hidden="true"
-        />
+        {/* Una punta de pluma: dos reglas de 1 px que se encuentran en un
+            vértice. El giro lo dispara `aria-expanded` desde el CSS, así que
+            no hace falta pasarle `open` — el atributo ya está en el botón
+            porque lo pide la accesibilidad. */}
+        <span className="caret" aria-hidden="true" />
       </button>
 
       {/* Se alterna con el atributo `hidden` en lugar de montarse a demanda, así
@@ -946,10 +947,8 @@ function NavDropdown({
           group.width
         )}
       >
-
         <ul className="relative">
           {group.items.map((item, index) => {
-            const Icon = item.icon
             return (
               // Los renglones entran escalonados detrás del panel: es la
               // cascada que hace que un menú se sienta de aplicación. Duración y
@@ -975,15 +974,11 @@ function NavDropdown({
                       : 'text-ink-muted hover:bg-brand-wash/70 hover:text-ink'
                   )}
                 >
-                  <span
-                    aria-hidden="true"
-                    className={cn(
-                      'grid size-8 shrink-0 place-items-center rounded-lg shadow-lift-1 transition-[scale,rotate] duration-300 group-hover/item:-rotate-6 group-hover/item:scale-110',
-                      group.chip
-                    )}
-                  >
-                    <Icon className="size-4" />
-                  </span>
+                  {item.ch ? (
+                    <span className="nav-ch" aria-hidden="true">
+                      {item.ch}
+                    </span>
+                  ) : null}
                   {item.label}
                 </Link>
               </li>
@@ -999,10 +994,12 @@ function NavDropdown({
               className="group/all press flex min-h-11 items-center gap-2 text-sm font-semibold text-ink transition-colors hover:text-paper"
             >
               {group.all.label}
-              <ArrowRight
-                className="size-4 transition-transform duration-300 group-hover/all:translate-x-1"
+              <span
+                className="transition-transform duration-300 group-hover/all:translate-x-1"
                 aria-hidden="true"
-              />
+              >
+                →
+              </span>
             </Link>
           </div>
         )}
@@ -1063,10 +1060,7 @@ function MobileLink({
     >
       {label}
       {current && (
-        <span
-          aria-hidden="true"
-          className="h-px w-6 shrink-0 bg-ash"
-        />
+        <span aria-hidden="true" className="h-px w-6 shrink-0 bg-ash" />
       )}
     </Link>
   )

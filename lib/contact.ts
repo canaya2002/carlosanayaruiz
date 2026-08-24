@@ -1,4 +1,7 @@
+import { after } from 'next/server'
 import { NAP } from './constants'
+import { envOr, envOpt, envSet } from './env'
+import { forwardLead, isForwardConfigured } from './forward'
 
 /**
  * ════════════════════════════════════════════════════════════════
@@ -100,12 +103,13 @@ function esc(v: string): string {
 }
 
 export function isContactConfigured(): boolean {
-  return Boolean(process.env.RESEND_API_KEY && process.env.CONTACT_FROM)
+  return envSet(process.env.RESEND_API_KEY) && envSet(process.env.CONTACT_FROM)
 }
 
 function isSupabaseConfigured(): boolean {
-  return Boolean(
-    process.env.SUPABASE_URL && process.env.SUPABASE_SERVICE_ROLE_KEY
+  return (
+    envSet(process.env.SUPABASE_URL) &&
+    envSet(process.env.SUPABASE_SERVICE_ROLE_KEY)
   )
 }
 
@@ -115,9 +119,9 @@ function isSupabaseConfigured(): boolean {
  */
 async function guardar(lead: Lead): Promise<void> {
   if (!isSupabaseConfigured()) return
-  const url = process.env.SUPABASE_URL!.replace(/\/+$/, '')
-  const key = process.env.SUPABASE_SERVICE_ROLE_KEY!
-  const tabla = process.env.SUPABASE_LEADS_TABLE ?? 'leads'
+  const url = envOpt(process.env.SUPABASE_URL)!.replace(/\/+$/, '')
+  const key = envOpt(process.env.SUPABASE_SERVICE_ROLE_KEY)!
+  const tabla = envOr(process.env.SUPABASE_LEADS_TABLE, 'leads')
   try {
     await fetch(`${url}/rest/v1/${tabla}`, {
       method: 'POST',
@@ -171,11 +175,43 @@ export async function sendLead(
   if (!correoPlausible(lead.email)) return 'datos-invalidos'
   if (lead.mensaje.length < 12) return 'datos-invalidos'
 
-  const key = process.env.RESEND_API_KEY
-  const from = process.env.CONTACT_FROM
-  if (!key || !from) return 'sin-configurar'
+  const key = envOpt(process.env.RESEND_API_KEY)
+  const from = envOpt(process.env.CONTACT_FROM)
 
-  const to = process.env.CONTACT_TO ?? NAP.email
+  /**
+   * ── DOS CANALES INDEPENDIENTES, Y BASTA CON UNO ──
+   *
+   * El correo es el canal principal, pero no el único: si el mensaje llega al
+   * sistema externo, LLEGÓ. Tratarlos como una cadena —correo primero, y si
+   * falla se abandona— significaba que un 422 de Resend tiraba el lead a la
+   * basura aunque el CRM estuviera perfectamente disponible.
+   *
+   * Eso no es teórico: pasó al probar el formulario de verdad. Una variable de
+   * entorno vacía hizo que Resend devolviera 422, y con la versión anterior de
+   * esta función el mensaje se perdió entero.
+   *
+   * Así que:
+   *   · sin Resend pero con puente → se entrega por el puente
+   *   · con Resend y falla         → se intenta el puente antes de rendirse
+   *   · con los dos y el correo va → el puente corre en after(), sin esperar
+   */
+  if (!key || !from) {
+    if (!isForwardConfigured()) return 'sin-configurar'
+    const r = await forwardLead(lead)
+    if (r.estado !== 'ok') return 'error'
+    try {
+      after(() => guardar(lead))
+    } catch {
+      await guardar(lead)
+    }
+    return 'ok'
+  }
+
+  /* `envOr` y no `??`: con `CONTACT_TO=` vacío —lo que deja el panel de
+     Vercel al añadir una variable en blanco— `??` no cae al valor por
+     omisión y Resend recibía `to: ['']`, respondía 422 y el formulario decía
+     «algo falló de mi lado». Medido enviando el formulario de verdad. */
+  const to = envOr(process.env.CONTACT_TO, NAP.email)
 
   /* El asunto lleva el nombre y de qué va: en una bandeja con cien correos,
      un asunto que ya dice el tema se responde antes. */
@@ -215,6 +251,8 @@ export async function sendLead(
     lead.mensaje +
     '\n'
 
+  let correoOk = true
+
   try {
     const res = await fetch('https://api.resend.com/emails', {
       method: 'POST',
@@ -235,12 +273,74 @@ export async function sendLead(
       signal: AbortSignal.timeout(9000),
     })
 
-    if (!res.ok) return 'error'
-  } catch {
-    return 'error'
+    if (!res.ok) {
+      /* Se registra el motivo. Antes este camino devolvía 'error' sin dejar
+         rastro, así que un formulario roto en producción no daba ni una pista
+         en los registros — que es exactamente cómo se tarda una semana en
+         descubrir que nadie puede escribirte. No se registra el mensaje ni el
+         correo del visitante: solo lo que hace falta para diagnosticar. */
+      const detalle = await res.text().catch(() => '')
+      console.error(
+        `[contacto] Resend rechazó el envío: ${res.status} ${detalle.slice(0, 300)}`
+      )
+      correoOk = false
+    }
+  } catch (e) {
+    console.error(
+      '[contacto] el envío a Resend falló:',
+      e instanceof Error ? `${e.name}: ${e.message}` : e
+    )
+    correoOk = false
   }
 
-  /* Después del correo, nunca antes: la copia en base de datos es un extra. */
-  await guardar(lead)
+  /**
+   * El correo no salió. El puente es el plan B, y aquí SÍ se espera: es el
+   * camino degradado, así que unos segundos de más valen si evitan perder un
+   * cliente. Si el puente entrega, el mensaje llegó de verdad y el visitante
+   * merece verlo — decirle «algo falló» cuando su mensaje está en el CRM sería
+   * mentirle para el otro lado.
+   */
+  if (!correoOk) {
+    if (!isForwardConfigured()) return 'error'
+    const r = await forwardLead(lead)
+    if (r.estado !== 'ok') return 'error'
+    console.warn(
+      '[contacto] el correo falló pero el puente entregó el mensaje: no se perdió'
+    )
+    try {
+      after(() => guardar(lead))
+    } catch {
+      await guardar(lead)
+    }
+    return 'ok'
+  }
+
+  /**
+   * ── LOS EFECTOS SECUNDARIOS VAN DESPUÉS DE LA RESPUESTA ──
+   *
+   * La copia en Supabase y el reenvío al sistema externo no son la entrega:
+   * la entrega es el correo, y ya salió. Antes se esperaba a Supabase, así que
+   * el visitante pagaba hasta seis segundos de latencia de un extra; ahora los
+   * dos corren en `after()`, que ejecuta trabajo DESPUÉS de haber devuelto la
+   * respuesta.
+   *
+   * Eso no es solo velocidad: es lo que permite que el reenvío reintente tres
+   * veces con espera creciente sin que nadie mire una ruedita.
+   *
+   * `after()` necesita un contexto de petición. Lo hay siempre —esto se llama
+   * desde una Server Action o desde una ruta— pero si algún día se llamara
+   * desde un script, el catch garantiza que el trabajo se hace igual, esperando.
+   */
+  const cola = async () => {
+    await guardar(lead)
+    if (isForwardConfigured()) await forwardLead(lead)
+  }
+
+  try {
+    after(cola)
+  } catch {
+    await cola()
+  }
+
   return 'ok'
 }

@@ -1,3 +1,5 @@
+import { envOr, envSet } from './env'
+
 /**
  * ════════════════════════════════════════════════════════════════
  * LA SUSCRIPCIÓN — la lista de correo, antes de que existan los blogs
@@ -51,7 +53,7 @@ export function isEmail(value: string): boolean {
 }
 
 export function isNewsletterConfigured(): boolean {
-  return Boolean(process.env.NEWSLETTER_ENDPOINT)
+  return envSet(process.env.NEWSLETTER_ENDPOINT)
 }
 
 /**
@@ -68,7 +70,7 @@ export async function subscribe(
   const endpoint = process.env.NEWSLETTER_ENDPOINT
   if (!endpoint) return 'sin-configurar'
 
-  const field = process.env.NEWSLETTER_FIELD ?? 'email'
+  const field = envOr(process.env.NEWSLETTER_FIELD, 'email')
   const token = process.env.NEWSLETTER_TOKEN
 
   try {

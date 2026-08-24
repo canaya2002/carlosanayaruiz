@@ -77,6 +77,7 @@ export async function Footer() {
   const navigation: readonly FooterLink[] = [
     { href: '/', label: tn('home') },
     { href: '/sobre-mi', label: tn('about') },
+    { href: '/blog', label: tn('blog') },
     { href: '/proyectos', label: tn('projects') },
     { href: '/premios', label: tn('awards') },
     { href: '/certificaciones', label: tn('certifications') },

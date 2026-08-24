@@ -1,4 +1,5 @@
 import { NAP } from './constants'
+import { envOr, envSet } from './env'
 
 /**
  * ════════════════════════════════════════════════════════════════
@@ -30,7 +31,10 @@ import { NAP } from './constants'
 
 /** El número de WhatsApp en dígitos, como lo quiere wa.me (sin `+`). */
 function whatsappDigits(): string {
-  const raw = process.env.NEXT_PUBLIC_WHATSAPP ?? NAP.phone
+  /* `envOr`: con la variable declarada y vacía, `??` dejaba `raw` en ''
+     y el enlace de WhatsApp —el canal que «ya funciona sin configurar
+     nada»— apuntaba a wa.me/ sin número. */
+  const raw = envOr(process.env.NEXT_PUBLIC_WHATSAPP, NAP.phone)
   return raw.replace(/\D/g, '')
 }
 
@@ -63,7 +67,7 @@ export function calUrl(): string | null {
 }
 
 export function isCalConfigured(): boolean {
-  return Boolean(process.env.NEXT_PUBLIC_CAL_LINK)
+  return envSet(process.env.NEXT_PUBLIC_CAL_LINK)
 }
 
 /** El `mailto:` con asunto, que es el canal que no depende de nada. */

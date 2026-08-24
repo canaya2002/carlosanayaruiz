@@ -1,6 +1,7 @@
 /node_modules
 /.next/
 /.next-build/
+/.next-dev/
 /out/
 /build
 .DS_Store
@@ -25,3 +26,8 @@ next-env.d.ts
 /*-movil.png
 /*-hero.png
 /*-nav.png
+
+# Portadas del blog SIN optimizar (214 MB). Las publicadas viven en
+# public/blog/ como WebP de ~57 kB; estas son el material de origen y no
+# tienen por qué viajar ni al repo ni al despliegue. Ver scripts/blog-covers.mjs
+/assets/blog-covers-originales/
