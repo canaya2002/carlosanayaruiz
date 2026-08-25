@@ -52,6 +52,10 @@ import { SITE_CONFIG } from '@/lib/constants'
 
 /** Nunca se cachea: es un disparador, no una lectura. */
 export const dynamic = 'force-dynamic'
+/* El calentado puede reintentar hasta 45 s antes de rendirse, y después van
+   los envíos. Se declara el techo en vez de heredar el del plan, para que un
+   día lento no corte la invocación a mitad de un envío. */
+export const maxDuration = 120
 
 /** Margen de recuperación. Ver la nota de arriba: 72 h no recuperaba nada. */
 const VENTANA_MS = 8 * 24 * 60 * 60 * 1000
@@ -123,32 +127,72 @@ export async function GET(request: Request) {
         dentro de su `expire` se sirve obsoleta mientras regenera. Pedirla
         aquí hace que el primer lector —o Googlebot— no reciba ese 404. */
   const calentadas: { slug: string; status: number | string }[] = []
+  /** Intentos por artículo. El 1.º casi siempre devuelve la versión obsoleta. */
+  const INTENTOS_CALENTADO = 4
+  /** Espera entre intentos. Da tiempo a que termine la regeneración. */
+  const ESPERA_MS = 1200
+  /** Techo de tiempo para TODO el calentado, no por artículo: con varios
+   *  pendientes, cuatro intentos cada uno se comerían la invocación. */
+  const PRESUPUESTO_MS = 45000
   const base =
     envOpt(process.env.NEXT_PUBLIC_SITE_URL) ??
     (envOpt(process.env.VERCEL_PROJECT_PRODUCTION_URL)
       ? `https://${process.env.VERCEL_PROJECT_PRODUCTION_URL}`
       : SITE_CONFIG.url)
 
+  const t0Calentado = Date.now()
+
   for (const post of recientes) {
     const url = `${base}/es/blog/${post.slug}`
-    try {
-      const r = await fetch(url, {
-        cache: 'no-store',
-        headers: { 'user-agent': 'carlosanayaruiz.com/cron-warmup' },
-        signal: AbortSignal.timeout(12000),
-      })
-      calentadas.push({ slug: post.slug, status: r.status })
-      if (r.status !== 200) {
+    let ultimo: number | string = 'sin intentos'
+    let intentosHechos = 0
+
+    for (let intento = 1; intento <= INTENTOS_CALENTADO; intento++) {
+      /* El presupuesto se comprueba ANTES de gastar, no después: si ya no
+         queda, este artículo se queda sin calentar y por tanto sin correo,
+         que es el resultado seguro. */
+      if (intento > 1 && Date.now() - t0Calentado > PRESUPUESTO_MS) {
         console.error(
-          `[cron] la página de ${post.slug} responde ${r.status} DESPUÉS de revalidar — no se anuncia por correo`
+          `[cron] presupuesto de calentado agotado con ${post.slug} en ${ultimo}; no se anuncia`
         )
+        break
       }
-    } catch (e) {
-      calentadas.push({
-        slug: post.slug,
-        status: e instanceof Error ? e.name : 'error',
-      })
-      console.error(`[cron] no se pudo calentar ${url}`, e)
+
+      intentosHechos = intento
+      try {
+        const r = await fetch(url, {
+          cache: 'no-store',
+          headers: { 'user-agent': 'carlosanayaruiz.com/cron-warmup' },
+          signal: AbortSignal.timeout(8000),
+        })
+        ultimo = r.status
+        if (r.status === 200) break
+
+        /* Un 404 en el primer intento es lo ESPERADO, no un error: es la
+           versión obsoleta, y pedirla es lo que arranca la regeneración. Solo
+           se registra fuerte cuando ya no quedan intentos. */
+        if (intento < INTENTOS_CALENTADO) {
+          await new Promise((r) => setTimeout(r, ESPERA_MS))
+        }
+      } catch (e) {
+        ultimo = e instanceof Error ? e.name : 'error'
+        console.error(`[cron] fallo al calentar ${url} (intento ${intento})`, e)
+        if (intento < INTENTOS_CALENTADO) {
+          await new Promise((r) => setTimeout(r, ESPERA_MS))
+        }
+      }
+    }
+
+    calentadas.push({ slug: post.slug, status: ultimo })
+
+    if (ultimo !== 200) {
+      console.error(
+        `[cron] la página de ${post.slug} sigue en ${ultimo} tras ${intentosHechos} intento(s) — NO se anuncia por correo`
+      )
+    } else if (intentosHechos > 1) {
+      console.log(
+        `[cron] ${post.slug} levantó en el intento ${intentosHechos} (el 1.º sirve la versión obsoleta)`
+      )
     }
   }
 
