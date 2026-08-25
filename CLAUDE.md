@@ -1596,6 +1596,78 @@ cifra de este sistema.
   `/proyectos/amazon`. El arreglo es fuente única, pero **cuál de los dos es el
   puesto real solo lo sabe él.**
 
+## La primera publicación real, y el defecto que sacó
+
+El artículo 001 salió el **2026-08-25 a las 14:00 UTC**, la fecha que fija
+`SCHEDULE_START`. La página se publicó sola por ISR, pero **el correo no salió**,
+y lo que lo destapó fue mirar los logs, no el código.
+
+La secuencia, medida:
+
+| Hora | Qué pasó |
+|---|---|
+| 14:00 | el cron de Vercel dispara y revalida las rutas |
+| 14:00 | el GET de calentado recibe **404** |
+| 14:00 | se niega a anunciar por correo y devuelve **500** |
+| 15:20 | una llamada manual ve 200 y el correo sale |
+
+**La guarda funcionó**: no se anunció por correo una URL que devolvía 404, que es
+el peor resultado posible de todo el sistema. Lo que falló es que hacía falta una
+mano — y habría hecho falta en los **100** artículos, porque la causa es
+estructural.
+
+### Un solo GET nunca puede ver el resultado de haber despertado la página
+
+`stale-while-revalidate` entrega la versión vieja al PRIMER lector y usa **esa
+misma petición** para disparar la regeneración por detrás. El GET que hace de
+despertador es, por definición, el que recibe la versión sin regenerar. Con las
+100 rutas prerenderizadas como 404, ese primer GET del día de publicación siempre
+da 404.
+
+**La prueba de que fue eso y no otra cosa:** en los logs de producción de esas
+tres horas, la página del artículo devolvió 404 **exactamente una vez**, y fue esa
+petición. Un grupo de logs por `requestPath` y por `statusCode` lo dijo en dos
+consultas; leyendo el código no se veía.
+
+Ahora el calentado hace **hasta cuatro intentos con 1.2 s de espera**, con un
+presupuesto de **45 s para TODO el calentado, no por artículo**: con varios
+pendientes, cuatro intentos cada uno se comerían la invocación. El presupuesto se
+comprueba **antes** de gastar, así que agotarlo deja el artículo sin correo, que
+es el resultado seguro. Y un 404 en el primer intento **dejó de registrarse como
+error**: es lo esperado, no un fallo.
+
+Verificado ejercitando el código real de la ruta —apuntando su calentado a un
+servidor que reproduce la carrera— en los dos caminos:
+
+| Escenario | Resultado |
+|---|---|
+| 404 y luego 200 | petición 1 = 404, petición 2 = 200, `calentadas` 200, `ok: true` |
+| 404 siempre | 4 intentos, `correo: []`, `omitidos` con el slug, **HTTP 500** |
+
+Y la idempotencia se comprobó en el mismo paso: la segunda llamada devolvió
+`ya-enviado` en vez de mandar un segundo correo, porque la difusión
+`blog-001-…` ya existía en Resend con estado distinto de `draft`.
+
+### Lo que quedó verificado en producción
+
+`status: sent` en Resend a las 15:20:56 UTC. El artículo responde 200 con su
+`h1`, su `BlogPosting` y su `FAQPage`; **el del viernes sigue en 404**, que es la
+puerta de publicación haciendo su trabajo; el sitemap tiene 32 URLs, el feed 1
+item y `/en/blog` sigue consolidando con 308.
+
+> ⚠ **Los martes y viernes a las 14:00 UTC, la ejecución del cron es lo único que
+> hay que mirar.** Si responde 500, el correo de ese artículo NO salió: la
+> respuesta trae `calentadas` y `omitidos` diciendo cuál y con qué código. La
+> ventana de 8 días lo recupera en la siguiente ejecución, pero eso son tres o
+> cuatro días de retraso para ese artículo, así que conviene llamarlo a mano:
+>
+> ```bash
+> curl -H "Authorization: Bearer TU_CRON_SECRET" \
+>      https://www.carlosanayaruiz.com/api/cron/publicar
+> ```
+>
+> Es idempotente: si el correo ya salió, contesta `ya-enviado` y no manda nada.
+
 ## Verificación — en este orden
 
 ```bash
