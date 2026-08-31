@@ -49,6 +49,17 @@ const awardsData: Localized<Award[]> = {
       organization: 'NASA International Space Apps Challenge',
       date: '2024-10',
       description: 'Plataforma que procesa datos abiertos de NASA (Landsat/Sentinel) para identificar islas de calor y contaminación en zonas urbanas marginadas.',
+      /* CITA LITERAL del certificado, no una interpretación.
+         Aquí había «Galactic Problem Solver por contribución técnica con
+         datasets complejos y visualizaciones» y se BORRÓ porque era una lectura
+         propia: en el repo no había diploma, ni texto, ni URL. Ya hay documento
+         —`public/credenciales/certificado-nasa-space-apps-galactic-problem-solver-carlos-anaya-ruiz.webp`—
+         así que lo que se imprime es lo que dice, entre comillas y con quién lo
+         firma. La transcripción completa está en `docs/CREDENCIALES.md`. */
+      impact:
+        'Distinción «Galactic Problem Solver». Cita literal del certificado: «for outstanding participation and efforts to address challenges we face on Earth and in space». Firmado por Dr. Keith Gaddis, Program Scientist. 5–6 de octubre de 2024.',
+      image:
+        '/credenciales/certificado-nasa-space-apps-galactic-problem-solver-carlos-anaya-ruiz.webp',
     },
     {
       id: 'logiroute-ai',
@@ -77,6 +88,13 @@ const awardsData: Localized<Award[]> = {
       organization: 'NASA International Space Apps Challenge',
       date: '2024-10',
       description: 'Platform processing open NASA data (Landsat/Sentinel) to identify heat islands and pollution in marginalized urban areas.',
+      /* Literal citation from the certificate — see the Spanish entry and
+         `docs/CREDENCIALES.md`. The award wording is quoted in English because
+         that is the language the certificate is written in. */
+      impact:
+        '“Galactic Problem Solver” distinction. Literal citation on the certificate: “for outstanding participation and efforts to address challenges we face on Earth and in space.” Signed by Dr. Keith Gaddis, Program Scientist. October 5–6, 2024.',
+      image:
+        '/credenciales/certificado-nasa-space-apps-galactic-problem-solver-carlos-anaya-ruiz.webp',
     },
     {
       id: 'logiroute-ai',

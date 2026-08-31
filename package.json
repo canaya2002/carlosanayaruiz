@@ -22,7 +22,8 @@
     "blog:data": "node scripts/generate-blog-data.mjs",
     "blog:covers": "node scripts/blog-covers.mjs",
     "check:blog": "node scripts/blog-check.mjs",
-    "vercel:env": "node scripts/vercel-env.mjs"
+    "vercel:env": "node scripts/vercel-env.mjs",
+    "credenciales": "node scripts/credenciales.mjs"
   },
   "dependencies": {
     "@radix-ui/react-dropdown-menu": "^2.1.6",
