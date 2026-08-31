@@ -152,10 +152,18 @@ export default async function HomePage({ params }: Props) {
 
   return (
     <>
+      {/* El `faq` NO es opcional aquí, y por eso va explícito.
+          `generateHomeGraph(locale, faqs = [], dates?)` emite el nodo FAQPage
+          solo si `faqs.length > 0`. La llamada iba con un único argumento, así
+          que la portada pintaba sus seis preguntas en `<details>` y NO emitía
+          FAQPage — mientras las cuatro páginas de servicio y /contacto sí lo
+          emitían. Era la URL de mayor autoridad del dominio (prioridad 1.0) la
+          única sin el marcado que da el rich result, y encima `data/faq.ts`
+          documenta que estas respuestas «se emiten como FAQPage». */}
       <script
         type="application/ld+json"
         dangerouslySetInnerHTML={{
-          __html: JSON.stringify(generateHomeGraph(lc)),
+          __html: JSON.stringify(generateHomeGraph(lc, faq)),
         }}
       />
 
@@ -208,8 +216,12 @@ export default async function HomePage({ params }: Props) {
             {/* La columna del retrato crece en TRES saltos y no en uno: a
                 1024 exactos, un retrato de 36rem dejaría la columna de texto
                 en 240 px y la pista de la lectura se comprimiría a nada.
-                24rem hasta 1280, 36 hasta 1536, 40 de ahí en adelante. */}
-            <div className="mt-12 grid gap-x-12 gap-y-12 lg:mt-14 lg:grid-cols-[minmax(0,1fr)_minmax(0,26rem)] xl:grid-cols-[minmax(0,1fr)_minmax(0,38rem)] 2xl:grid-cols-[minmax(0,1fr)_minmax(0,44rem)]">
+                24rem hasta 1280, 36 hasta 1536, 40 de ahí en adelante.
+
+                Bajado un escalón a petición del dueño («poquito nada más»):
+                26→23rem, 38→34, 44→39. `sizes` baja con ellos o el navegador
+                seguiría descargando la variante del ancho viejo. */}
+            <div className="mt-12 grid gap-x-12 gap-y-12 lg:mt-14 lg:grid-cols-[minmax(0,1fr)_minmax(0,23rem)] xl:grid-cols-[minmax(0,1fr)_minmax(0,34rem)] 2xl:grid-cols-[minmax(0,1fr)_minmax(0,39rem)]">
               {/* `.hero-in` escalona la entrada AL CARGAR y no al scroll: lo
                   que está en la primera pantalla ya pasó su rango de
                   `view()` antes de que nadie toque la rueda. El `<h1>` queda
@@ -274,7 +286,7 @@ export default async function HomePage({ params }: Props) {
                   alt={SEO_IMAGES.avatarAlt[lc]}
                   width={SEO_IMAGES.portraitWidth}
                   height={SEO_IMAGES.portraitHeight}
-                  sizes="(min-width: 1536px) 44rem, (min-width: 1280px) 38rem, (min-width: 1024px) 26rem, 100vw"
+                  sizes="(min-width: 1536px) 39rem, (min-width: 1280px) 34rem, (min-width: 1024px) 23rem, 100vw"
                   priority
                 />
                 {/* La aguja escribiéndolo: una línea de papel que baja una

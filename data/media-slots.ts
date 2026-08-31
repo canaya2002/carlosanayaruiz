@@ -90,76 +90,27 @@ export const MEDIA_SLOTS: readonly MediaSlot[] = [
       'YA EXISTE pero a 800×800 con fondo de oficina desenfocado. Funciona con el duotono de media tinta, pero una sesión nueva es la mejora de mayor impacto de todo el sitio. Las rayas finas vibran con la trama de impresión.',
   },
 
-  /* ── PROYECTOS ────────────────────────────────────────────
-     Cuatro archivos por proyecto, que es EXACTAMENTE lo que la ficha
-     renderiza: el logo y tres capturas. El registro y la página tienen
-     que coincidir o el manifiesto pide archivos que no van a ningún
-     lado, o peor, deja huecos sin pedir. */
-  ...(
-    [
-      ['amazon', 'Amazon'],
-      ['master-loyalty-group', 'Master Loyalty Group'],
-      ['wan-hai-lines', 'Wan Hai Lines'],
-      ['aurascope', 'AuraScope'],
-      ['logiroute-ai', 'LogiRoute AI'],
-    ] as const
-  ).flatMap(([slug, name]) => [
-    {
-      id: `proyecto-${slug}-logo`,
-      kind: 'image' as const,
-      path: `/logos/${slug}.png`,
-      width: 400,
-      height: 400,
-      page: `/es/proyectos/${slug}`,
-      where: 'Arriba de la ficha, antes del título',
-      what: `Logotipo de ${name} en PNG con fondo transparente, cuadrado. Si es un logo horizontal, céntralo en un lienzo cuadrado con aire.`,
-      alt: `Logotipo de ${name}`,
-      priority: 'media' as const,
-      filled: false,
-      notes: 'Versión clara: va sobre fondo hollín. Si solo tienes la oscura, dilo y la invierto.',
-    },
-    {
-      id: `proyecto-${slug}-captura-1`,
-      kind: 'image' as const,
-      path: `/proyectos/${slug}/captura-1.png`,
-      width: 1200,
-      height: 750,
-      page: `/es/proyectos/${slug}`,
-      where: 'Galería de la ficha · también es la portada en el índice',
-      what: `Captura principal del trabajo de ${name}: la pantalla o el entregable más representativo. Navegador sin barras del sistema.`,
-      alt: `Captura principal del trabajo realizado para ${name}`,
-      priority: 'alta' as const,
-      filled: false,
-      notes: 'Es la que se ve en /es/proyectos, así que es la que más importa de las tres.',
-    },
-    {
-      id: `proyecto-${slug}-captura-2`,
-      kind: 'image' as const,
-      path: `/proyectos/${slug}/captura-2.png`,
-      width: 1200,
-      height: 750,
-      page: `/es/proyectos/${slug}`,
-      where: 'Galería de la ficha',
-      what: `Detalle del trabajo de ${name}: una vista secundaria, un panel, una pantalla interna.`,
-      alt: `Detalle del trabajo realizado para ${name}`,
-      priority: 'baja' as const,
-      filled: false,
-    },
-    {
-      id: `proyecto-${slug}-captura-3`,
-      kind: 'image' as const,
-      path: `/proyectos/${slug}/captura-3.png`,
-      width: 1200,
-      height: 750,
-      page: `/es/proyectos/${slug}`,
-      where: 'Galería de la ficha',
-      what: `Resultado medible de ${name}: una gráfica de tráfico, un reporte de Core Web Vitals, un antes y después.`,
-      alt: `Resultado obtenido para ${name}`,
-      priority: 'media' as const,
-      filled: false,
-      notes: 'Si hay NDA, difumina cifras y nombres antes de mandarla.',
-    },
-  ]),
+  /* ── PROYECTOS · SIN HUECOS, Y ES DECISIÓN DEL DUEÑO ──────
+     Aquí se generaban 20 registros —un logo y tres capturas por cada una de
+     las cinco entradas de `data/companies.ts`— y todos se retiraron.
+
+     LAS CAPTURAS: el dueño no puede compartirlas. Amazon, Master Loyalty Group
+     y Wan Hai Lines son empleos, y las pantallas de sistemas internos de un
+     empleador no son suyas para publicar. Pedirlas en `docs/MEDIA.md` era
+     pedirle algo que no va a llegar nunca, y mientras tanto la ficha de cada
+     empresa imprimía «Captura 1 de Amazon», «Captura 2», «Captura 3» — vacías,
+     justo debajo del aviso de que no había capturas.
+
+     LOS LOGOS: además de que tampoco los tiene, un logotipo de Amazon o de Wan
+     Hai es MARCA REGISTRADA y ponerlo en una página comercial propia insinúa
+     endoso. El nombre en texto no; el logo sí. Por eso no vuelven aunque
+     lleguen los archivos.
+
+     ⚠ CUANDO LLEGUEN LOS PROYECTOS PROPIOS, aquí es donde vuelven — pero solo
+     los propios (AuraScope, LogiRoute y lo que venga), porque de esos las
+     capturas sí son suyas. La forma que había era correcta: un `flatMap` sobre
+     los slugs generando `proyecto-{slug}-captura-{n}`, que es exactamente lo
+     que `/proyectos/[slug]` monta. */
 
   /* ── PÁGINAS DE SERVICIO ──────────────────────────────────── */
   {
@@ -218,47 +169,34 @@ export const MEDIA_SLOTS: readonly MediaSlot[] = [
 
   /* ── TRAYECTORIA ──────────────────────────────────────────── */
   {
-    id: 'sobre-mi-trabajo',
-    kind: 'image',
-    path: '/media/sobre-mi/trabajando.jpg',
-    width: 2000,
-    height: 1333,
-    page: '/es/sobre-mi',
-    where: 'Cuerpo de la página',
-    what: 'Foto tuya trabajando, de perfil o tres cuartos, con la laptop. Luz natural. No pose de stock.',
-    alt: 'Carlos Anaya Ruiz trabajando en una auditoría técnica',
-    priority: 'media',
-    filled: false,
-    notes: 'De la misma sesión que el retrato del héroe.',
-  },
-  {
     id: 'premios-diplomas',
     kind: 'image',
-    path: '/media/premios/diploma-{slug}.jpg',
-    width: 1400,
-    height: 990,
+    path: '/credenciales/certificado-nasa-space-apps-galactic-problem-solver-carlos-anaya-ruiz.webp',
+    width: 1600,
+    height: 900,
     page: '/es/premios',
-    where: 'Una por cada premio de la lista',
-    what: 'Foto o escaneo del diploma o reconocimiento. Recto, bien iluminado, sin sombra de la mano.',
-    alt: 'Diploma del reconocimiento',
-    priority: 'baja',
-    filled: false,
+    where: 'La fila del NASA Space Apps',
+    what: 'LLENADO. Certificado «Galactic Problem Solver» del NASA International Space Apps Challenge 2024, con la cita literal y la firma de Dr. Keith Gaddis. Transcrito en docs/CREDENCIALES.md.',
+    alt: 'Certificado Galactic Problem Solver del NASA International Space Apps Challenge 2024 otorgado a Carlos Anaya Ruiz',
+    priority: 'alta',
+    filled: true,
     notes:
-      'Hay 7 premios en data/awards.ts. Manda las que tengas; las que falten simplemente no muestran hueco.',
+      'De los tres registros de data/awards.ts, este es el único con documento. El hackathon de 2022 y el TOEFL siguen sin diploma: si llegan, se añaden como huecos propios en vez de reabrir este.',
   },
   {
     id: 'certificaciones-constancias',
     kind: 'image',
-    path: '/media/certificaciones/{slug}.jpg',
-    width: 1400,
-    height: 990,
+    path: '/credenciales/certificado-full-stack-web-development-bootcamp-carlos-anaya-ruiz.webp',
+    width: 1288,
+    height: 958,
     page: '/es/certificaciones',
-    where: 'Una por cada certificación',
-    what: 'Constancia o certificado. El PMP y el TOEFL son los que más pesan comercialmente.',
-    alt: 'Certificación profesional',
-    priority: 'baja',
-    filled: false,
-    notes: 'Tapa el número de folio si prefieres.',
+    where: 'La sección de cursos',
+    what: 'LLENADO con 10 certificados de Udemy (265.5 h), 7 de ellos con número de folio y URL de verificación pública. Los once documentos están transcritos en docs/CREDENCIALES.md.',
+    alt: 'Certificado de Udemy del bootcamp completo de desarrollo web full-stack, 61.5 horas, a nombre de Carlos Anaya Ruiz',
+    priority: 'alta',
+    filled: true,
+    notes:
+      'NO tapes el folio: es lo que hace verificable la fila, y es justo lo que la página promete en su h1. Tres llegaron a 488×363 (nextjs, pmp-exam-prep, scrum) y a ese tamaño no se pueden mostrar grandes: vuelve a exportarlas de Udemy y corre `npm run credenciales`. ⚠ El PMP de este lote es un CURSO DE PREPARACIÓN de 35 PDU, no la certificación del PMI.',
   },
   {
     id: 'libros-portadas',
@@ -407,38 +345,8 @@ export const MEDIA_SLOTS: readonly MediaSlot[] = [
   },
 
   /* ── SOBRE MÍ · LA SEGUNDA FOTO ───────────────────────────────── */
-  {
-    id: 'sobre-mi-escritorio',
-    kind: 'image',
-    path: '/media/sobre-mi/escritorio.jpg',
-    width: 2000,
-    height: 1333,
-    page: '/es/sobre-mi',
-    where: 'Sección de cómo trabajo',
-    what: 'Tu puesto de trabajo real, sin ti dentro: las pantallas encendidas con código o un dashboard, la luz que haya. No una foto de stock de un escritorio ordenado.',
-    alt: 'El puesto de trabajo de Carlos Anaya Ruiz, con las pantallas encendidas',
-    priority: 'media',
-    filled: false,
-    notes:
-      'Horizontal. Si sale una pantalla con datos de cliente, difumínalos antes de mandarla.',
-  },
 
   /* ── CONTACTO · QUIÉN CONTESTA ────────────────────────────────── */
-  {
-    id: 'contacto-retrato',
-    kind: 'image',
-    path: '/media/contacto/quien-contesta.jpg',
-    width: 1200,
-    height: 1200,
-    page: '/es/contacto',
-    where: 'Junto al formulario, en la columna de canales directos',
-    what: 'Un retrato tuyo distinto al del héroe, más cercano y menos formal — de la misma sesión sirve. Es la foto de «esta es la persona que va a leer tu mensaje», así que mirando a cámara.',
-    alt: 'Carlos Anaya Ruiz, quien responde los mensajes del sitio',
-    priority: 'media',
-    filled: false,
-    notes:
-      'Cuadrada. Fondo liso o el mismo del recorte del héroe; si viene con alfa, mejor: se compone sin caja.',
-  },
 ] as const
 
 /** Los slots de una página concreta, en orden. */

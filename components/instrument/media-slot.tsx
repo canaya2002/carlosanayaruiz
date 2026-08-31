@@ -1,4 +1,5 @@
 import Image from 'next/image'
+import { getLocale } from 'next-intl/server'
 import { slotById } from '@/data/media-slots'
 
 /**
@@ -42,13 +43,27 @@ import { slotById } from '@/data/media-slots'
  * ════════════════════════════════════════════════════════════════
  */
 
-const KIND_LABEL: Record<string, string> = {
-  image: 'imagen',
-  video: 'video',
-  loop: 'fondo animado',
+/**
+ * El renglón del hueco iba SOLO en español —«pendiente» fijo y estos tres
+ * rótulos— y se servía igual en `/en`. Medido: en `/en/sobre-mi` salían dos
+ * seguidos al abrir la trayectoria, y en `/en/contacto` era lo PRIMERO de la
+ * columna derecha, encima de «Contact details». Un visitante en inglés leía
+ * «pendiente · imagen 2000×1333».
+ *
+ * Es un marcador interno, sí, pero se sirve en el HTML público de las dos
+ * lenguas, y este repo verifica paridad es/en como condición.
+ */
+const KIND_LABEL: Record<string, Record<string, string>> = {
+  es: { image: 'imagen', video: 'video', loop: 'fondo animado' },
+  en: { image: 'image', video: 'video', loop: 'animated background' },
 }
 
-export function MediaSlot({
+const PENDING_LABEL: Record<string, string> = {
+  es: 'pendiente',
+  en: 'pending',
+}
+
+export async function MediaSlot({
   id,
   className,
   sizes = '(min-width: 1024px) 50vw, 100vw',
@@ -90,23 +105,35 @@ export function MediaSlot({
     )
   }
 
-  const kind = KIND_LABEL[slot.kind] ?? slot.kind
+  /* ════════════════════════════════════════════════════════════════
+     UN HUECO SIN ARCHIVO NO PINTA NADA. Decisión del dueño, y es la
+     tercera vez que la pide con otras palabras: «sin nada ahí
+     pendiente».
 
-  /* La forma por defecto: un renglón, no un hueco de 400 px. */
-  if (!compact) {
-    return (
-      <p className={`media-note ${className ?? ''}`}>
-        <span className="media-note-kind">
-          {`pendiente · ${kind} ${slot.width}×${slot.height}`}
-        </span>
-        {/* La ruta en UNA sola plantilla. Con dos hijos de texto adyacentes
-            React mete un comentario en medio y la ruta deja de existir como
-            texto: no se puede copiar ni encontrar con Ctrl+F, que es
-            justamente para lo que está. */}
-        <span className="media-note-path">{`public${slot.path}`}</span>
-      </p>
-    )
-  }
+     Antes se dibujaba un renglón con el tipo, el tamaño y la RUTA DEL
+     SISTEMA DE ARCHIVOS. En la práctica eso significaba que en la
+     portada —la URL de mayor autoridad del dominio, dentro de la
+     sección cuyo h2 dice «qué puedes verificar»— un prospecto leía
+     «pendiente · imagen 1600×900 · public/media/home/antes-despues.png»
+     en tinta plena. Un TODO del repo no es copia de una página
+     comercial.
+
+     La instrucción NO se pierde: `docs/MEDIA.md` se genera del MISMO
+     archivo (`data/media-slots.ts`) con `npm run media:manifest`, y ahí
+     sigue completa —qué falta, a qué ruta, de qué tamaño y con qué
+     encuadre—. Es el documento que lee el dueño; la página la lee quien
+     compra. Cada uno con su lector.
+
+     Esto además cierra dos defectos que ya estaban medidos: el renglón
+     estaba escrito solo en español y se servía igual en `/en`, y el
+     `aria-label` de la caja compacta le leía al lector de pantalla el
+     encargo de fotografía escrito para el dueño.
+     ════════════════════════════════════════════════════════════════ */
+  if (!compact) return null
+
+  const lang = (await getLocale()) === 'en' ? 'en' : 'es'
+  const kind = KIND_LABEL[lang][slot.kind] ?? slot.kind
+  const pending = PENDING_LABEL[lang]
 
   return (
     <div
@@ -114,7 +141,12 @@ export function MediaSlot({
       style={{ aspectRatio: ratio }}
       data-kind={slot.kind}
       role="img"
-      aria-label={`Pendiente: ${slot.what}`}
+      /* `slot.alt` y NO `slot.what`. `what` es el encargo para el dueño —«UNA
+         sola imagen que sea la prueba de todo el sitio: Search Console o CrUX
+         con un antes y un después…»— y se le estaba leyendo entero a quien usa
+         lector de pantalla, cinco veces en /proyectos. `alt` es el campo que
+         existe justamente para ser texto público, y no se estaba usando aquí. */
+      aria-label={`${pending}: ${slot.alt}`}
     >
       {/* Las cuatro cruces de registro. Decorativas: la instrucción es texto. */}
       <span className="media-mark" data-corner="tl" aria-hidden="true" />

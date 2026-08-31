@@ -80,26 +80,33 @@ export function PresenceMap({ locale }: Props) {
   const unpinned = companies.filter((c) => !c.coords)
 
   /**
-   * `.glass-strong` y no `.glass` a secas: la leyenda de abajo lleva un
-   * `text-ink-subtle` (la nota de los registros sin ciudad), y la regla medida
-   * es que un panel que contenga tinta terciaria tiene que ser el cristal
-   * fuerte — sobre `.glass` mide 4.30:1 y no pasa el piso de 4.5; sobre
-   * `.glass-strong` mide 4.54 y sí.
+   * ── MIGRADO A «PAPEL AHUMADO» ──
    *
-   * Se sube el PANEL en vez de subir el texto a `text-ink-muted` porque los
-   * otros dos elementos de la leyenda ya son `muted`: igualarlos borraría la
-   * jerarquía de tres niveles que distingue las dos etiquetas del mapa de la
-   * nota sobre lo que falta.
+   * Este componente era el ÚLTIMO rincón del sistema anterior, y el único sitio
+   * donde sobrevivía una caja de cuatro lados: `.glass .glass-strong
+   * .glass-spec` trae `border-radius: var(--radius-2xl)` y `border: 1px solid`,
+   * o sea exactamente lo que la regla cero de este proyecto prohíbe y lo que
+   * CLAUDE.md declara inexistente («no queda un borde de cuatro lados en el
+   * sitio»). Llevaba además un lavado `grad-soft` que existía solo para que el
+   * cristal se viera, y dos blancos puros —`ring-white` en la leyenda y
+   * `fill-white` en las cifras— que NO pasan por el puente de tokens porque son
+   * utilidades de Tailwind, no variables.
+   *
+   * Lo que queda es el mapa como PLACA IMPRESA, que es lo que este sistema hace
+   * con un dato: el océano es hollín, la tierra es humo, y los países con
+   * presencia son el TRAZO —papel— con su cifra en tinta de hollín encima. Esa
+   * inversión ya está medida en `palette:check`: hollín sobre placa de papel da
+   * 15.24:1.
+   *
+   * Sin panel, sin radio, sin sombra y sin lavado. La única regla es la de
+   * arriba, que es el vocabulario de `.band`.
+   *
+   * La geografía NO cambió: sigue siendo Natural Earth proyectado por
+   * `scripts/generate-worldmap.mjs`, servida en el HTML, sin JavaScript y con
+   * cada pin como enlace real.
    */
   return (
-    <figure className="glass glass-strong glass-spec relative overflow-hidden p-3 sm:p-5">
-      {/* Lavado detras del mapa. Sin esto el cristal es invisible: un panel
-          translucido sobre un fondo casi blanco no tiene nada que difuminar,
-          y los paises resaltados se pierden contra el oceano vacio. */}
-      <div
-        className="grad-soft pointer-events-none absolute inset-0 opacity-70"
-        aria-hidden="true"
-      />
+    <figure className="relative m-0 border-t border-hairline pt-6">
       <div className="relative">
       <svg
         viewBox={`0 0 ${MAP_VIEWBOX.width} ${MAP_VIEWBOX.height}`}
@@ -119,23 +126,43 @@ export function PresenceMap({ locale }: Props) {
         </desc>
 
         <defs>
-          {/* El gradiente decorativo, en SVG. No lleva texto encima, así que
-              puede usar los stops vivos (el cian mide 1.8:1). */}
+          {/* El país con presencia se pinta como PAPEL, y el degradado lateral
+              es el mismo recurso con el que `.drum` y `.plate` se leen como
+              cilindro: más claro donde la luz da y más apagado en el canto. No
+              es decorativo — es lo que hace que el trazo parezca una hoja
+              enrollada y no un relleno plano.
+
+              Antes iba de `--brand` a `--sky` a `--cyan`. Los tres están
+              puenteados a papel y ceniza, así que no había azules; pero tres
+              paradas para dos tonos es el resto de una paleta que ya no
+              existe. */}
           <linearGradient id="mapa-grad" x1="0" y1="0" x2="1" y2="1">
-            <stop offset="0%" stopColor="var(--brand)" />
-            <stop offset="55%" stopColor="var(--sky)" />
-            <stop offset="100%" stopColor="var(--cyan)" />
+            <stop offset="0%" stopColor="var(--paper)" />
+            <stop offset="100%" stopColor="var(--ash)" />
           </linearGradient>
         </defs>
 
         {/* Todo el contenido geografico va en un grupo para poder acercarlo
             en pantallas angostas sin servir un segundo SVG. */}
         <g className="map-focus">
-        {/* Resto del mundo: un solo path, una sola capa. */}
+        {/* El océano es el hollín del fondo y la tierra sin presencia es el
+            humo — el ÚNICO escalón de superficie que este sistema tiene.
+
+            El CONTORNO va en ceniza, y eso es lo que hace legible el mapa. Con
+            el relleno en humo (#23201c) sobre hollín (#12100e) la diferencia es
+            de un punto y medio de luminancia: los continentes se adivinaban
+            pero no se leían, y un mapa que no se lee no informa. Antes el trazo
+            iba en `--hairline-strong` (#3d3830), que es casi el mismo tono.
+
+            La ceniza al 40% da el contorno sin convertir la tierra en una masa
+            clara que compita con los países resaltados. Es exactamente lo que
+            el material dice que es: «raspado parcial». Línea, no mancha — que
+            además es cómo se imprime una carta geográfica de verdad. */}
         <path
           d={LAND_PATH}
-          fill="var(--hairline)"
-          stroke="var(--hairline-strong)"
+          fill="var(--smoke)"
+          stroke="var(--ash)"
+          strokeOpacity={0.4}
           strokeWidth={0.4}
         />
 
@@ -162,7 +189,7 @@ export function PresenceMap({ locale }: Props) {
               <path
                 d={country.path}
                 fill="url(#mapa-grad)"
-                stroke="var(--brand-strong)"
+                stroke="var(--paper)"
                 strokeWidth={0.6}
                 opacity={0.62}
                 className="transition-opacity duration-300 group-hover:opacity-95 group-focus-visible:opacity-95"
@@ -171,10 +198,15 @@ export function PresenceMap({ locale }: Props) {
                 x={label.x}
                 y={label.y}
                 textAnchor="middle"
-                className="pointer-events-none fill-white font-display"
+                /* Hollín sobre el relleno de papel del país: la misma
+                   inversión que la placa, medida en 15.24:1. Antes era
+                   `fill-white` —blanco puro, que este sistema no tiene— con un
+                   trazo de `--brand-strong`, un séptimo tono claro que no está
+                   entre los seis materiales. */
+                className="pointer-events-none fill-[var(--soot)] font-display"
                 fontSize={22}
                 fontWeight={700}
-                stroke="var(--brand-strong)"
+                stroke="var(--paper)"
                 strokeWidth={4}
                 paintOrder="stroke"
                 data-numeric=""
@@ -201,7 +233,7 @@ export function PresenceMap({ locale }: Props) {
                 cx={x}
                 cy={y}
                 r={9}
-                fill="var(--sky)"
+                fill="var(--ash)"
                 opacity={0.22}
                 /* `transform-box: fill-box` ancla el escalado al centro del
                    propio círculo; sin esto el origen sería el (0,0) del
@@ -215,8 +247,8 @@ export function PresenceMap({ locale }: Props) {
                 cx={x}
                 cy={y}
                 r={4.5}
-                fill="var(--brand-strong)"
-                stroke="var(--surface)"
+                fill="var(--paper)"
+                stroke="var(--soot)"
                 strokeWidth={1.8}
                 /* Solo `fill`. Transicionar «todo» habría incluido la geometría
                    (`r`, `cx`, `cy`), que no se compone.
@@ -227,7 +259,13 @@ export function PresenceMap({ locale }: Props) {
                    quedaba disponible para que alguien la usara sin darse
                    cuenta. Verificado: la clase desapareció del CSS servido al
                    reescribir esta línea. */
-                className="transition-[fill] duration-300 group-hover:fill-[var(--cyan-ink)]"
+                /* Sin transición de `fill`, y es un arreglo: iba a
+                   `--cyan-ink`, que está puenteado a `--ink-muted` (#b3aea0).
+                   El punto en reposo es PAPEL (#ebe6d9), así que al pasar el
+                   puntero se APAGABA — el hover iba al revés. La respuesta la
+                   da el halo, que crece y sube de opacidad, más la etiqueta con
+                   el nombre que aparece al lado. El punto no necesita cambiar:
+                   ya es el tono más claro que este sistema tiene. */
               />
               {/* Etiqueta al pasar el mouse o al enfocar con teclado. */}
               <text
@@ -236,7 +274,7 @@ export function PresenceMap({ locale }: Props) {
                 className="pointer-events-none fill-[var(--ink)] font-sans opacity-0 transition-opacity duration-200 group-hover:opacity-100 group-focus-visible:opacity-100"
                 fontSize={14}
                 fontWeight={600}
-                stroke="var(--surface)"
+                stroke="var(--soot)"
                 strokeWidth={3}
                 paintOrder="stroke"
               >
@@ -255,14 +293,14 @@ export function PresenceMap({ locale }: Props) {
       <figcaption className="mt-4 flex flex-wrap items-center gap-x-5 gap-y-2 border-t border-hairline pt-4 text-sm">
         <span className="inline-flex items-center gap-2 text-ink-muted">
           <span
-            className="size-2.5 rounded-full bg-brand-strong ring-2 ring-white"
+            className="size-2.5 rounded-full bg-[var(--paper)]"
             aria-hidden="true"
           />
           {en ? 'Known city' : 'Ciudad conocida'}
         </span>
         <span className="inline-flex items-center gap-2 text-ink-muted">
           <span
-            className="grad-deco size-2.5 rounded-[2px] opacity-70"
+            className="size-2.5 bg-[var(--paper)] opacity-60"
             aria-hidden="true"
           />
           {en ? 'Country with presence' : 'País con presencia'}

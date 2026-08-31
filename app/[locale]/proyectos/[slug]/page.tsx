@@ -508,10 +508,27 @@ export default async function ProjectPage({ params }: Props) {
           </section>
 
           {/* ═══ CAPTURAS ════════════════════════════════════════
-              Las tres posiciones SIEMPRE se dibujan, con captura real o con
-              el hueco etiquetado. Un hueco que dice la ruta exacta donde va
-              el archivo es contenido útil; una sección que desaparece
-              porque el array está vacío no le dice a nadie qué falta. */}
+              La rejilla se dibuja SOLO si hay capturas de verdad.
+
+              ⚠ Antes las tres posiciones se dibujaban siempre, y el comentario
+              que había aquí lo defendía: «un hueco que dice la ruta exacta donde
+              va el archivo es contenido útil». En la práctica no era eso. Los
+              cinco `shots` están vacíos, así que en /proyectos/amazon —y en las
+              otras cuatro— se leía el aviso honesto de que no hay capturas y
+              justo debajo tres renglones numerados: «Captura 1 de Amazon»,
+              «Captura 2 de Amazon», «Captura 3 de Amazon», sin imagen. Verificado
+              en producción. Eso no se lee como una instrucción: se lee como una
+              galería rota, en la página de la empresa más reconocible del
+              currículum.
+
+              Y este mismo archivo ya usaba la regla contraria treinta líneas más
+              abajo, para `docs`: «la sección entera se omite en lugar de listar
+              enlaces a PDFs que no existen». Ahora las dos secciones se
+              comportan igual.
+
+              Qué falta y dónde va sigue estando en `docs/MEDIA.md`, que se
+              genera del MISMO dato — que es donde esa instrucción sirve, porque
+              es el documento que lee el dueño y no el prospecto. */}
           <section className="border-t border-hairline px-5 py-20 sm:px-10">
             <p className="stamp">{company.name}</p>
 
@@ -521,33 +538,30 @@ export default async function ProjectPage({ params }: Props) {
               {t('galleryLead')}
             </p>
 
-            {/* Cuando no hay ni una captura se escribe el aviso honesto en
-                lugar de fingir una galería. Es un hueco declarado del
-                registro, así que se dibuja como hueco. */}
             {company.shots.length === 0 ? (
               <p className="gap mt-6 max-w-[74ch] pt-4 text-sm">
                 {t('noShots')}
               </p>
-            ) : null}
-
-            <ol className="reveal-stagger mt-12 grid gap-10 sm:grid-cols-2 lg:grid-cols-3">
-              {gallery.map((item, i) => (
-                <li key={item.key}>
-                  <figure className="m-0">
-                    <MediaSlot
-                      id={`proyecto-${company.slug}-captura-${i + 1}`}
-                      compact
-                      sizes="(min-width: 1024px) 30vw, (min-width: 640px) 45vw, 90vw"
-                      className="w-full"
-                    />
-                    <figcaption className="mt-4 flex items-baseline gap-3">
-                      <span className="stamp tabular-nums">{i + 1}</span>
-                      <span className="text-sm text-ink">{item.caption}</span>
-                    </figcaption>
-                  </figure>
-                </li>
-              ))}
-            </ol>
+            ) : (
+              <ol className="reveal-stagger mt-12 grid gap-10 sm:grid-cols-2 lg:grid-cols-3">
+                {gallery.map((item, i) => (
+                  <li key={item.key}>
+                    <figure className="m-0">
+                      <MediaSlot
+                        id={`proyecto-${company.slug}-captura-${i + 1}`}
+                        compact
+                        sizes="(min-width: 1024px) 30vw, (min-width: 640px) 45vw, 90vw"
+                        className="w-full"
+                      />
+                      <figcaption className="mt-4 flex items-baseline gap-3">
+                        <span className="stamp tabular-nums">{i + 1}</span>
+                        <span className="text-sm text-ink">{item.caption}</span>
+                      </figcaption>
+                    </figure>
+                  </li>
+                ))}
+              </ol>
+            )}
           </section>
 
           {/* ═══ DOCUMENTOS ══════════════════════════════════════
