@@ -11,10 +11,9 @@
  */
 import { spawn } from 'node:child_process'
 import { setTimeout as sleep } from 'node:timers/promises'
+import { resolveChrome } from './chrome-path.mjs'
 
-const CHROME =
-  process.env.CHROME_PATH ??
-  'C:/Program Files/Google/Chrome/Application/chrome.exe'
+const CHROME = resolveChrome()
 const url = process.argv[2] ?? 'http://localhost:4800/es'
 const PORT = 9481
 

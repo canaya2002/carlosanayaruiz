@@ -15,10 +15,9 @@
  */
 import { spawn } from 'node:child_process'
 import { setTimeout as sleep } from 'node:timers/promises'
+import { resolveChrome } from './chrome-path.mjs'
 
-const CHROME =
-  process.env.CHROME_PATH ??
-  'C:/Program Files/Google/Chrome/Application/chrome.exe'
+const CHROME = resolveChrome()
 const base = (process.argv[2] ?? 'http://localhost:3000').replace(/\/$/, '')
 const PORT = 9691
 const IDLE_BUDGET = 20

@@ -15,10 +15,9 @@
 import { spawn } from 'node:child_process'
 import { writeFile } from 'node:fs/promises'
 import { setTimeout as sleep } from 'node:timers/promises'
+import { resolveChrome } from './chrome-path.mjs'
 
-const CHROME =
-  process.env.CHROME_PATH ??
-  'C:/Program Files/Google/Chrome/Application/chrome.exe'
+const CHROME = resolveChrome()
 
 const url = process.argv[2] ?? 'http://localhost:3600/es'
 const prefix = process.argv[3] ?? 'shot'
