@@ -17,57 +17,33 @@
     "menu": "Menú"
   },
   "a11y": {
-    "experienceRail": "Carrusel de experiencia",
     "skipToContent": "Saltar al contenido",
     "mainNav": "Navegación principal",
     "mobileMenu": "Menú móvil",
     "openSubmenu": "abrir submenú",
     "breadcrumb": "Ruta de navegación",
     "socialLinks": "Perfiles y redes",
-    "changeLanguage": "Cambiar idioma",
-    "prevSlide": "Anterior",
-    "nextSlide": "Siguiente",
-    "servicesRail": "Carrusel de servicios",
     "stackRail": "Carrusel del stack técnico",
     "scopeRail": "Carrusel de alcance del servicio",
-    "projectsRail": "Carrusel de proyectos",
-    "galleryRail": "Carrusel de capturas",
-    "awardsRail": "Carrusel de premios y reconocimientos",
     "certsRail": "Carrusel de certificaciones"
   },
   "language": {
     "switchTo": "English",
-    "current": "Español",
     "label": "Idioma"
   },
   "hero": {
     "eyebrow": "Consultor SEO técnico · Ciudad de México",
-    "headline": "SEO técnico para que Google te indexe",
-    "lead": "Soy Carlos Anaya Ruiz. Audito, reconstruyo y migro sitios en Next.js para equipos de producto y agencias. Lo que arreglo es concreto: indexación, datos estructurados, Core Web Vitals y migraciones que no tiran el tráfico orgánico.",
+    "lead": "Soy Carlos Anaya Ruiz. Audito, reconstruyo y migro sitios en Next.js. Lo que arreglo es concreto: indexación, datos estructurados, Core Web Vitals y migraciones que no tiran el tráfico orgánico.",
     "ctaPrimary": "Agendar una llamada",
-    "ctaSecondary": "Ver servicios",
     "ctaTertiary": "Conoce mi trayectoria",
     "locationNote": "Ciudad de México, GMT-6. Remoto, o presencial en CDMX.",
-    "greeting": "Hola, soy",
-    "tagline": "Consultor SEO técnico e ingeniero full-stack en Ciudad de México",
-    "subtitle": "Soy Carlos Anaya Ruiz. Audito, reconstruyo y migro sitios en Next.js para equipos de producto y agencias. Lo que arreglo es concreto: indexación, datos estructurados, Core Web Vitals y migraciones que no tiran el tráfico orgánico.",
-    "ctaServices": "Ver servicios",
-    "ctaContact": "Agendar una llamada",
-    "ctaAbout": "Conoce mi trayectoria",
-    "headlineAccent": "y ChatGPT te cite.",
-    "shotAlt": "Captura de un panel de Core Web Vitals",
     "operatorLead": "Escribo el código y también respondo por el tráfico orgánico que ese código produce. Esa mezcla es el servicio.",
-    "operatorNote": "Las correcciones las implemento en tu repositorio, o las entrego especificadas para que las aplique tu equipo y reviso los pull requests. Tú decides quién ejecuta.",
-    "credentialsLabel": "Credenciales verificables"
+    "operatorNote": "Las correcciones las implemento en tu repositorio, o las entrego especificadas para que las aplique tu equipo y reviso los pull requests. Tú decides quién ejecuta."
   },
   "trust": {
-    "yearsExp": "+4 años de experiencia",
-    "pmpCert": "Certificado PMP",
-    "tecMty": "Tec de Monterrey",
     "companies": "Amazon · Master Loyalty Group · Wan Hai Lines",
     "companiesLabel": "Experiencia previa",
     "engineerLabel": "Ingeniero en Tecnologías Computacionales",
-    "logoAlt": "Logo de {company}",
     "metrics": {
       "yearsLabel": "Años de experiencia",
       "certifiedLabel": "Certificado",
@@ -79,8 +55,6 @@
     }
   },
   "audience": {
-    "title": "Con quién trabajo",
-    "subtitle": "Tres situaciones distintas y una sola pregunta: dónde se está fugando el tráfico.",
     "startups": {
       "title": "Startups y fundadores",
       "desc": "Vas a lanzar y la primera versión tiene que salir bien: rutas, renderizado, schema y analítica desde el día uno. Arreglar eso después cuesta el triple y te cuesta rankings."
@@ -147,7 +121,6 @@
     "titleHome": "SEO técnico, desarrollo, IA y dashboards",
     "subtitle": "Todas empiezan midiendo y terminan con algo que puedes verificar tú mismo.",
     "viewService": "Ver el servicio",
-    "requestQuote": "Solicitar cotización",
     "process": "Cómo trabajo",
     "processSubtitle": "Las cuatro fases son iguales en todos los proyectos. Los pasos concretos de cada servicio están en su página.",
     "step1Title": "Auditoría",
@@ -158,13 +131,9 @@
     "step3Desc": "Trabajo en ramas, con PRs revisables y un entorno de staging. Nada llega a producción sin que lo puedas ver antes.",
     "step4Title": "Verificación",
     "step4Desc": "Comparo el antes y el después con las métricas que fijamos en la fase 02. Si algo no se movió, te lo digo.",
-    "faq": "Preguntas frecuentes",
-    "faqSubtitle": "Lo que me preguntan antes de firmar.",
     "allServices": "Todos los servicios",
     "benefits": "Beneficios clave",
-    "includes": "Qué incluye",
-    "cta": "Solicitar cotización",
-    "viewAll": "Ver el servicio"
+    "includes": "Qué incluye"
   },
   "servicesHub": {
     "title": "Servicios",
@@ -227,9 +196,6 @@
     }
   },
   "about": {
-    "workingImageAlt": "Carlos Anaya Ruiz trabajando",
-    "setupImageAlt": "Espacio de trabajo de Carlos Anaya Ruiz",
-    "awardImageAlt": "Imagen del reconocimiento {title}",
     "title": "Sobre mí",
     "subtitle": "Ingeniero en tecnologías computacionales. Consultor SEO técnico. Certificado PMP.",
     "lead": "Estudié Ingeniería en Tecnologías Computacionales en el Tec de Monterrey, con especialización en inteligencia artificial avanzada para ciencia de datos. Cuatro años después hago una mezcla poco común: escribo el código y también respondo por el tráfico orgánico que ese código produce.",
@@ -247,37 +213,16 @@
     "credentialsNote": "Cada título y certificación está disponible para revisión en una carpeta pública. Nada de esto pide que me creas."
   },
   "contact": {
-    "title": "Contacto",
-    "subtitle": "Cuéntame qué está roto o qué quieres construir.",
     "lead": "Mientras más concreto sea tu mensaje, más útil será mi primera respuesta. Si ya tienes la URL, acceso a Search Console o un reporte de Lighthouse, mándalos: llego a la llamada con hipótesis en lugar de preguntas.",
     "info": "Datos de contacto",
-    "form": "Envíame un mensaje",
-    "name": "Nombre",
-    "namePh": "Nombre y apellido",
-    "email": "Correo electrónico",
-    "emailPh": "tu@correo.com",
-    "subject": "Asunto",
-    "subjectPh": "Auditoría SEO, migración, dashboard...",
-    "message": "Mensaje",
-    "messagePh": "URL del sitio, qué está pasando y desde cuándo.",
-    "consent": "Acepto que mis datos se usen únicamente para responder este mensaje, conforme a la LFPDPPP.",
-    "consentLink": "Aviso de privacidad",
-    "send": "Abrir mi correo con el mensaje",
     "location": "Ubicación",
     "responseTime": "Respuesta en menos de 24 horas",
     "directEmail": "Correo directo",
     "projectTypes": "Tipos de proyecto",
     "projectTypesDesc": "Auditorías puntuales de una a dos semanas, proyectos de desarrollo de cuatro a ocho, y trabajo mensual continuo para equipos que necesitan un ingeniero SEO de planta.",
-    "requiredField": "Este campo es obligatorio",
-    "invalidEmail": "Escribe un correo electrónico válido",
     "social": "Redes y perfiles",
     "connect": "Conecta conmigo",
-    "seeProjects": "Ve mis proyectos",
-    "mailtoNote": "Al enviar se abre tu aplicación de correo con el mensaje ya escrito. No guardo nada en ninguna base de datos.",
-    "noMailClient": "¿No se abrió tu correo?",
-    "copyEmail": "Copiar mi correo",
-    "copied": "Copiado",
-    "orDirect": "O escríbeme directo"
+    "seeProjects": "Ve mis proyectos"
   },
   "books": {
     "title": "Recursos técnicos",
@@ -287,7 +232,6 @@
     "pages": "páginas",
     "comingSoon": "Hay más en camino.",
     "upcoming": "Próximamente",
-    "upcomingDesc": "Está en escritura activa. Suscríbete y te aviso el día que salga, no antes.",
     "notifyMe": "Avísame cuando salga",
     "freeResources": "Recursos gratuitos",
     "freeResourcesDesc": "Mientras tanto, esto ya es público y gratis:"
@@ -373,8 +317,6 @@
     "orTry": "O prueba con:"
   },
   "cv": {
-    "certImageAlt": "Documento de la certificación {name}",
-    "awardImageAlt": "Imagen del reconocimiento {title}",
     "title": "CV",
     "eyebrow": "Curriculum vitae",
     "lead": "La trayectoria completa en una sola página: formación, los tres puestos que he tenido con lo que hice en cada uno, certificaciones, premios, stack e idiomas. Todo sale de los mismos datos que el resto del sitio, así que ninguna versión se queda vieja.",
@@ -388,8 +330,7 @@
     "projectLink": "Ver la página del proyecto",
     "education": "Formación académica",
     "certifications": "Certificaciones",
-    "certificationsNote": "El PMP no tiene fecha en ningún dato del sitio, así que la fila lo dice en lugar de imprimir un mes.",
-    "active": "Sin fecha",
+    "certificationsNote": "El PMP todavía no tiene fecha de emisión en el registro, así que su fila no imprime mes. En cuanto esté, aparece sola.",
     "viewCertifications": "Ver las certificaciones",
     "viewFolder": "Abrir la carpeta de credenciales",
     "awards": "Premios y reconocimientos",
@@ -444,14 +385,7 @@
     "logoAlt": "Logo de {name}"
   },
   "common": {
-    "readMore": "Leer más",
-    "viewMore": "Ver más",
-    "present": "Presente",
-    "backToHome": "Volver al inicio",
-    "learnMore": "Saber más",
-    "relatedServices": "Servicios relacionados",
-    "required": "obligatorio",
-    "dragHint": "Arrastra o usa las flechas"
+    "present": "Presente"
   },
   "premios": {
     "crumb": "Premios",
@@ -463,7 +397,6 @@
     "honesty": "Los tres no son la misma cosa, y llamarlos «premios» a todos exageraría dos. Aquí cada uno va etiquetado por lo que realmente es: reconocimiento, competencia o certificación.",
     "metricsTotalLabel": "Reconocimientos y credenciales",
     "metricsTotalHint": "Cada uno con emisor y fecha",
-    "metricsLatestLabel": "El más reciente",
     "metricsOrgsLabel": "Organizaciones que los otorgaron",
     "metricsOrgsHint": "Ninguna credencial es autoasignada",
     "listEyebrow": "Uno por uno",
@@ -487,26 +420,22 @@
     "cvCta": "Ver el CV",
     "ctaTitle": "¿Te sirve alguien que documenta lo que afirma?",
     "ctaLead": "Cuéntame el sitio y qué cambió. Respondo en menos de 24 horas con una primera lectura de lo que probablemente está pasando.",
-    "ctaButton": "Escríbeme",
-    "railEyebrow": "De un vistazo",
-    "railTitle": "Los tres, en tarjetas",
-    "photoAlt": "Foto del reconocimiento: {title}"
+    "ctaButton": "Escríbeme"
   },
   "certificaciones": {
     "title": "Certificaciones",
     "eyebrow": "Credenciales y formación",
     "h1Lead": "Credenciales que ",
     "h1Accent": "se pueden comprobar",
-    "lead": "Cada credencial con el nombre de quien la emitió y el año a la vista, y la carpeta de documentos abierta para que no tengas que creerme.",
+    "lead": "Cada credencial con el nombre de quien la emitió, y la carpeta de documentos abierta para que no tengas que creerme.",
     "note": "Aquí no hay insignias decorativas. Una insignia dibujada no prueba nada; lo que prueba es el certificado, y está a un clic.",
     "statCredentials": "Credenciales",
     "statIssuers": "Emisores",
     "statLanguages": "Idiomas",
     "gridEyebrow": "Una por una",
     "gridTitle": "Qué tengo y quién lo emitió",
-    "gridSubtitle": "Título, especialización y certificaciones, con su institución y su fecha. Nada más: si un registro no trae fecha, lo dice en lugar de inventarla.",
+    "gridSubtitle": "Título, especialización y certificaciones, con su institución. Nada más: donde el registro no trae fecha, no se imprime ninguna en lugar de inventarla.",
     "issuedBy": "Emitido por",
-    "noDate": "Sin fecha en el registro",
     "kindProfessional": "Certificación profesional",
     "kindExam": "Certificación por examen",
     "kindDegree": "Título universitario",
@@ -517,7 +446,6 @@
     "verifyLead": "Los documentos originales están en una carpeta de Google Drive con acceso de lectura. Ábrela y revisa uno por uno: es lo único que hace que una credencial en un sitio web signifique algo.",
     "verifyCta": "Abrir la carpeta de certificados",
     "verifyNote": "Se abre en Google Drive, en una pestaña nueva.",
-    "verifyCoverLabel": "Certificados",
     "pdfEyebrow": "Descargas",
     "pdfTitle": "Certificados en PDF",
     "pdfSubtitle": "Los documentos que ya viven en este sitio, sin salir a Drive.",
@@ -530,19 +458,11 @@
     "ctaTitle": "¿Te falta algún documento?",
     "ctaLead": "Si necesitas una credencial que no está en la carpeta —una constancia, una verificación directa con el emisor— pídemela y te la mando.",
     "ctaCta": "Escríbeme",
-    "diplomaAlt": "Diploma de {name}",
-    "folderShotAlt": "Captura de la carpeta de certificados en Google Drive",
     "cefrLabel": "Nivel MCER"
   },
-  "stack": {
-    "eyebrow": "Stack",
-    "title": "Con qué construyo",
-    "subtitle": "Las herramientas con las que trabajo, agrupadas por frente. Arrastra para ver todas las categorías."
-  },
+  "stack": {},
   "homeCta": {
     "title": "Cuéntame por dónde se está fugando el tráfico.",
-    "lead": "Descríbeme el sitio y qué cambió. Respondo en menos de 24 horas con una primera lectura de lo que probablemente está pasando.",
-    "alsoOn": "También en",
-    "and": "y"
+    "lead": "Descríbeme el sitio y qué cambió. Respondo en menos de 24 horas con una primera lectura de lo que probablemente está pasando."
   }
 }

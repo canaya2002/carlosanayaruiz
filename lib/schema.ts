@@ -398,8 +398,8 @@ export function generatePersonSchema(locale: Locale): JsonLdNode {
     jobTitle,
     description:
       locale === 'en'
-        ? 'Computer Science engineer with 4+ years leading software projects, technical SEO, Next.js and Firebase development, AI automation, and data dashboards. PMP certified. Previously at Amazon, Master Loyalty Group, and Wan Hai Lines.'
-        : 'Ingeniero en Tecnologías Computacionales con +4 años liderando proyectos de software, SEO técnico, desarrollo Next.js y Firebase, automatización con IA y dashboards de datos. Certificado PMP. Antes en Amazon, Master Loyalty Group y Wan Hai Lines.',
+        ? 'Computer Science engineer with 5+ years leading software projects, technical SEO, Next.js and Firebase development, AI automation, and data dashboards. PMP certified. Previously at Amazon, Master Loyalty Group, and Wan Hai Lines.'
+        : 'Ingeniero en Tecnologías Computacionales con +5 años liderando proyectos de software, SEO técnico, desarrollo Next.js y Firebase, automatización con IA y dashboards de datos. Certificado PMP. Antes en Amazon, Master Loyalty Group y Wan Hai Lines.',
     email: `mailto:${NAP.email}`,
     telephone: NAP.phone,
     address: postalAddress(locale),
@@ -898,14 +898,31 @@ export function generateProfilePageGraph(
       locale,
       pageUrl,
       type: 'ProfilePage',
+      /* «Líder Técnico» / «Tech Lead» NO estaba en ningún archivo de datos: los
+         cargos registrados son Software Development Engineer II (Amazon),
+         Project Manager, Full Stack Developer y Director de Tecnologías. Era una
+         afirmación de seniority servida en datos estructurados sin un archivo
+         detrás — el inflado que la propia página promete no hacer.
+
+         El PMP sí se conserva: el dueño confirmó tenerlo. Lo que falta es la
+         IMAGEN del certificado y, sobre todo, el FOLIO y la FECHA DE EMISIÓN —
+         con esos dos, `hasCredential` puede llevar `identifier`, `validFrom` y
+         `expires`, y la fila enlazar al registro público del PMI. Mientras no
+         estén, la afirmación es correcta pero no comprobable en la página que se
+         titula «para que no tengas que creerme». Ver `docs/CREDENCIALES.md`.
+
+         ⚠ Y NO confundir con el curso de Udemy «PMP Certification Exam Prep
+         Course, 35 PDU Contact Hours»: esas horas son el requisito para
+         presentar el examen, no la credencial. Son dos cosas distintas y el
+         sitio no debe mezclarlas. */
       name:
         locale === 'en'
-          ? 'About Carlos Anaya Ruiz — Engineer, Tech Lead & SEO Consultant'
-          : 'Sobre Carlos Anaya Ruiz — Ingeniero, Líder Técnico y Consultor SEO',
+          ? 'About Carlos Anaya Ruiz — Engineer, PMP & Technical SEO Consultant'
+          : 'Sobre Carlos Anaya Ruiz — Ingeniero, PMP y Consultor SEO técnico',
       description:
         locale === 'en'
-          ? 'Professional profile of Carlos Anaya Ruiz: Computer Science engineer from Tecnológico de Monterrey, PMP certified, 4+ years across Amazon, Master Loyalty Group, and Wan Hai Lines.'
-          : 'Perfil profesional de Carlos Anaya Ruiz: ingeniero en Tecnologías Computacionales por el Tecnológico de Monterrey, certificado PMP, +4 años en Amazon, Master Loyalty Group y Wan Hai Lines.',
+          ? 'Professional profile of Carlos Anaya Ruiz: Computer Science engineer from Tecnológico de Monterrey, PMP certified. Director of Technology at Law Offices of Manuel Solis; previously Amazon, Master Loyalty Group and Wan Hai Lines.'
+          : 'Perfil profesional de Carlos Anaya Ruiz: ingeniero en Tecnologías Computacionales por el Tecnológico de Monterrey, certificado PMP. Director de Tecnologías en Law Offices of Manuel Solis; antes Amazon, Master Loyalty Group y Wan Hai Lines.',
       mainEntityId: ID.person,
       showsPrimaryImage: true,
       hasBreadcrumb: true,

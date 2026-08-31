@@ -3,7 +3,6 @@ import { setRequestLocale, getTranslations } from 'next-intl/server'
 import { Link } from '@/i18n/navigation'
 import { Rail } from '@/components/instrument/rail'
 import { LeadForm } from '@/components/sections/lead-form'
-import { MediaSlot } from '@/components/instrument/media-slot'
 import { ContactChannels } from '@/components/sections/contact-channels'
 import { getServices, servicePath } from '@/data/services'
 import { NAP, SOCIAL_LINKS } from '@/lib/constants'
@@ -57,30 +56,46 @@ export default async function ContactPage({ params }: Props) {
    * para empezar) pertenecen al `getSiteFaq` de la home, y las técnicas a cada
    * página de servicio. Nada de aquí repite ninguna de las dos: estas cinco son
    * las que solo tienen sentido teniendo el formulario enfrente — a qué buzón
-   * llega, qué pasa con lo que escribes, qué hacer si tu cliente de correo no
-   * abre, qué hacer si no sabes nombrar el servicio, y por qué no hay campo de
-   * archivos.
+   * llega, qué pasa con lo que escribes, cómo sabes que llegó, qué hacer si no
+   * sabes nombrar el servicio, y por qué no hay campo de archivos.
    *
    * Cada respuesta se emite como JSON-LD de FAQPage, así que tiene que seguir
-   * siendo literalmente cierta. Ya no hay base de datos: el formulario compone
-   * un `mailto:`, y ninguna respuesta de aquí puede insinuar lo contrario.
+   * siendo literalmente cierta.
+   *
+   * ⚠ Estas cinco describían el compositor de `mailto:` que se retiró, y el
+   * comentario que había aquí ORDENABA mantenerlo así («ya no hay base de datos:
+   * el formulario compone un `mailto:`»). Eran cuatro afirmaciones falsas sobre
+   * tratamiento de datos personales, emitidas en datos estructurados, en la
+   * página donde alguien decide si manda los suyos. Y una de ellas —«no hay base
+   * de datos ni servidor que reciba el formulario»— es exactamente la que la
+   * ronda de contenido ya corrigió en el aviso de privacidad: arregló el
+   * documento legal y se saltó este FAQ, así que las dos páginas del mismo sitio
+   * afirmaban lo contrario la una de la otra.
+   *
+   * Lo que corre de verdad: el formulario ES una Server Action
+   * (`app/[locale]/lead-action.ts`). Lo que se escribe llega al servidor y sale
+   * a DOS destinos independientes — el correo por Resend (`lib/contact.ts`, con
+   * `reply_to` del visitante) y el reenvío al sistema de gestión
+   * (`lib/forward.ts`, dentro de `after()` y con reintentos). Supabase está
+   * previsto y NO conectado. Ninguna respuesta de aquí puede insinuar que no se
+   * recibe nada.
    */
   const faqs = en
     ? [
         {
           question: 'Should I use the form, email, or the phone?',
           answer:
-            'All three land in the same inbox. The form only structures the message: it asks for the things I always end up asking for, then opens your own email app with everything already written, so it usually saves one round trip. For a first contact I prefer writing, because it lets me look at the site before I answer. The phone is the better channel once something is already scheduled.',
+            'All three land in the same inbox. The form only structures the message: it asks for the things I always end up asking for, and it arrives with your address set as the reply-to, so I answer by hitting reply — which usually saves one round trip. For a first contact I prefer writing, because it lets me look at the site before I answer. The phone is the better channel once something is already scheduled.',
         },
         {
           question: 'What happens to what I type into the form?',
           answer:
-            'Nothing is stored on this site — there is no database and no server receiving the form. The fields only compose an email that leaves from your own account, and that message lives in my inbox, where it is used solely to answer you, under Mexico’s federal data protection law (LFPDPPP). How to exercise your ARCO rights is in the privacy notice.',
+            'What you type reaches my server, and from there it goes to two destinations: an email to my inbox and a copy to the system where I track work enquiries. It is used solely to answer you and follow up, under Mexico’s federal data protection law (LFPDPPP). Which fields are collected, who else takes part in the processing, and how to exercise your ARCO rights are all in the privacy notice.',
         },
         {
-          question: 'What if my email app does not open?',
+          question: 'How do I know my message arrived?',
           answer:
-            'That happens when the browser has no mail client associated with it, which is common on desktop with webmail. Everything you typed stays in the form, and just below it there is a button that copies my address to the clipboard, so you can paste both the address and your text into Gmail, Outlook, or whatever you use.',
+            'The form tells you on the same screen, right below the button, as soon as it finishes sending. If something fails on my side it tells you that too, instead of pretending it went through, and the direct email address and WhatsApp are right there as an alternative. I do not promise delivery of an email I do not control end to end — that is why there is a second channel.',
         },
         {
           question:
@@ -91,24 +106,24 @@ export default async function ContactPage({ params }: Props) {
         {
           question: 'Can I attach files or send access credentials here?',
           answer:
-            'The form composes text only. Once the draft is open in your mail client you can attach whatever you like, but credentials should not travel by email even there. Paste a link instead — a public URL, a Lighthouse report, a Drive folder, the repository — or just say that it exists, and we agree on a safe channel for access once there is a defined scope.',
+            'The form is text only — there is no file field. And credentials should not travel by email. Paste a link instead — a public URL, a Lighthouse report, a Drive folder, the repository — or just say that it exists, and we agree on a safe channel for access once there is a defined scope.',
         },
       ]
     : [
         {
           question: '¿Te escribo por el formulario, por correo o por teléfono?',
           answer:
-            'Los tres llegan al mismo buzón. El formulario solo ordena el mensaje: pide justo los datos que siempre acabo pidiendo y después abre tu propia aplicación de correo con todo escrito, así que normalmente ahorra un ida y vuelta. Para un primer contacto prefiero texto, porque me permite revisar el sitio antes de contestarte. El teléfono funciona mejor cuando ya hay algo agendado.',
+            'Los tres llegan al mismo buzón. El formulario solo ordena el mensaje: pide justo los datos que siempre acabo pidiendo, y llega con tu dirección puesta como remitente de respuesta, así que contesto con «responder» y normalmente ahorra un ida y vuelta. Para un primer contacto prefiero texto, porque me permite revisar el sitio antes de contestarte. El teléfono funciona mejor cuando ya hay algo agendado.',
         },
         {
           question: '¿Qué pasa con lo que escribo en el formulario?',
           answer:
-            'Nada se guarda en este sitio: no hay base de datos ni servidor que reciba el formulario. Los campos solo componen un correo que sale de tu propia cuenta, y ese mensaje vive en mi buzón, donde se usa únicamente para responderte, conforme a la LFPDPPP. Cómo ejercer tus derechos ARCO está en el aviso de privacidad.',
+            'Lo que escribes llega a mi servidor, y de ahí sale a dos destinos: un correo a mi buzón y una copia al sistema donde llevo los mensajes de trabajo. Se usa únicamente para responderte y dar seguimiento, conforme a la LFPDPPP. Qué campos se recogen, quién más participa en el tratamiento y cómo ejercer tus derechos ARCO está en el aviso de privacidad.',
         },
         {
-          question: '¿Y si no se abre mi aplicación de correo?',
+          question: '¿Cómo sé que mi mensaje llegó?',
           answer:
-            'Pasa cuando el navegador no tiene un cliente de correo asociado, algo común en escritorio con correo web. Todo lo que escribiste sigue en el formulario, y justo debajo hay un botón que copia mi dirección al portapapeles, así que puedes pegar la dirección y tu texto en Gmail, Outlook o lo que uses.',
+            'El formulario te lo dice en la misma pantalla, debajo del botón, en cuanto termina de enviarse. Si algo falla de mi lado también te lo dice, en vez de fingir que salió, y ahí mismo tienes el correo directo y WhatsApp como alternativa. No prometo la entrega de un correo que no controlo de punta a punta: por eso hay un segundo canal.',
         },
         {
           question: 'No sé cuál de tus servicios necesito. ¿Escribo igual?',
@@ -118,13 +133,17 @@ export default async function ContactPage({ params }: Props) {
         {
           question: '¿Puedo adjuntar archivos o mandarte accesos por aquí?',
           answer:
-            'El formulario compone solo texto. Una vez abierto el borrador en tu cliente de correo puedes adjuntar lo que quieras, pero las credenciales no deberían viajar por correo ni ahí. Mejor pega un enlace —una URL pública, un reporte de Lighthouse, una carpeta de Drive, el repositorio— o dime que existe, y acordamos un canal seguro para los accesos cuando ya haya un alcance definido.',
+            'El formulario es de texto: no tiene campo de archivos. Y las credenciales no deberían viajar por correo. Mejor pega un enlace —una URL pública, un reporte de Lighthouse, una carpeta de Drive, el repositorio— o dime que existe, y acordamos un canal seguro para los accesos cuando ya haya un alcance definido.',
         },
       ]
 
   /**
    * Lo que pasa de verdad después del botón, en orden. Sin SLA inventado y sin
-   * prometer recepción automática: el paso uno es el `mailto:`, dicho tal cual.
+   * prometer recepción automática.
+   *
+   * ⚠ El paso uno decía «se abre tu correo, no un servidor mío», que era el
+   * `mailto:` retirado y la misma falsedad del FAQ de arriba. Hoy el paso uno es
+   * la recepción en el servidor, que es lo que de verdad ocurre al pulsar.
    *
    * Aquí sí hay secuencia real —uno ocurre antes que dos— así que la
    * numeración es un dato y no un adorno de maquetación.
@@ -132,8 +151,8 @@ export default async function ContactPage({ params }: Props) {
   const steps = en
     ? [
         {
-          title: 'Your email app opens, not a server of mine',
-          desc: 'The form does not submit anywhere. It composes the draft and hands it to your own mail client with the subject and the message already written — you press send, so the copy stays in your sent folder.',
+          title: 'It reaches my inbox, not your email app',
+          desc: 'The form submits to the server, which sends it on as an email with your address as the reply-to, and files a copy in the system where I track enquiries. You get the acknowledgement on screen; nothing opens on your side and there is nothing for you to press twice.',
         },
         {
           title: 'I look at the site before I answer',
@@ -146,8 +165,8 @@ export default async function ContactPage({ params }: Props) {
       ]
     : [
         {
-          title: 'Se abre tu correo, no un servidor mío',
-          desc: 'El formulario no envía a ningún lado. Arma el borrador y se lo entrega a tu propia aplicación de correo con el asunto y el mensaje ya escritos: tú le das enviar, así que la copia queda en tus enviados.',
+          title: 'Llega a mi buzón, no a tu aplicación de correo',
+          desc: 'El formulario envía al servidor, que lo manda como correo con tu dirección puesta para responder y archiva una copia en el sistema donde llevo los mensajes. El acuse lo ves en pantalla: no se abre nada de tu lado y no hay nada que pulsar dos veces.',
         },
         {
           title: 'Reviso el sitio antes de contestarte',
@@ -385,15 +404,16 @@ export default async function ContactPage({ params }: Props) {
               </div>
 
               <aside aria-labelledby="contact-direct" className="min-w-0">
-                {/* La foto de «esta es la persona que va a leer tu mensaje».
-                    En una página de contacto eso hace más que cualquier
-                    argumento: quien escribe quiere saber a quién. */}
-                <MediaSlot
-                  id="contacto-retrato"
-                  className="mb-8"
-                  sizes="(min-width: 1024px) 20rem, 100vw"
-                />
+                {/* ⚠ Aquí iba el hueco `contacto-retrato`, un segundo retrato
+                    del dueño para decir «esta es la persona que va a leer tu
+                    mensaje». Se retiró por decisión suya junto con los dos de
+                    /sobre-mi, y su registro ya no existe en
+                    `data/media-slots.ts`.
 
+                    Aquí no quedó envoltorio vacío porque el `<aside>` sigue
+                    teniendo el resto de la columna debajo — al contrario de lo
+                    que pasó en /sobre-mi, donde el contenedor era solo para las
+                    dos fotos y hubo que retirarlo también. */}
                 <h2 id="contact-direct" className="text-d2 text-ink">
                   {t('info')}
                 </h2>

@@ -281,10 +281,12 @@ export default async function TermsPage({ params }: Props) {
             <>
               <p>
                 The form on the contact page does send your message. It travels
-                to this site and from there to my inbox; an external sending
-                provider makes the delivery and acts on my instruction. What is
-                collected, how long it is kept and how to exercise your rights
-                is in the {privacyLink}.
+                to this site and from there to two independent destinations: my
+                inbox, delivered by an external sending provider, and a copy to
+                the system where I track work enquiries. Both act on my
+                instruction. What is collected, how long it is kept, who else
+                takes part and how to exercise your rights is in the{' '}
+                {privacyLink}.
               </p>
               <p>
                 The acknowledgement appears on the same screen. If the message
@@ -536,10 +538,12 @@ export default async function TermsPage({ params }: Props) {
             <>
               <p>
                 El formulario de la página de contacto sí envía tu mensaje.
-                Viaja a este sitio y de ahí a mi correo; un proveedor de envío
-                externo hace la entrega y actúa por instrucción mía. Qué se
-                recoge, cuánto se conserva y cómo ejercer tus derechos está en
-                el {privacyLink}.
+                Viaja a este sitio y de ahí sale a dos destinos independientes:
+                mi correo, que entrega un proveedor de envío externo, y una
+                copia al sistema donde llevo los mensajes de trabajo. Los dos
+                actúan por instrucción mía. Qué se recoge, cuánto se conserva,
+                quién más participa y cómo ejercer tus derechos está en el{' '}
+                {privacyLink}.
               </p>
               <p>
                 El acuse aparece en la misma pantalla. Si el mensaje quedó, el

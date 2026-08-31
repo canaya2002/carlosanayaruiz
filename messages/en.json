@@ -17,57 +17,33 @@
     "menu": "Menu"
   },
   "a11y": {
-    "experienceRail": "Experience carousel",
     "skipToContent": "Skip to content",
     "mainNav": "Main navigation",
     "mobileMenu": "Mobile menu",
     "openSubmenu": "open submenu",
     "breadcrumb": "Breadcrumb",
     "socialLinks": "Profiles and social links",
-    "changeLanguage": "Change language",
-    "prevSlide": "Previous",
-    "nextSlide": "Next",
-    "servicesRail": "Services carousel",
     "stackRail": "Technical stack carousel",
     "scopeRail": "Service scope carousel",
-    "projectsRail": "Projects carousel",
-    "galleryRail": "Screenshots carousel",
-    "awardsRail": "Awards and recognitions carousel",
     "certsRail": "Certifications carousel"
   },
   "language": {
     "switchTo": "Español",
-    "current": "English",
     "label": "Language"
   },
   "hero": {
     "eyebrow": "Technical SEO consultant · Mexico City",
-    "headline": "Technical SEO so Google indexes you",
-    "lead": "I'm Carlos Anaya Ruiz. I audit, rebuild, and migrate Next.js sites for product teams and agencies. What I fix is concrete: indexation, structured data, Core Web Vitals, and migrations that don't drop organic traffic.",
+    "lead": "I'm Carlos Anaya Ruiz. I audit, rebuild, and migrate Next.js sites. What I fix is concrete: indexation, structured data, Core Web Vitals, and migrations that don't drop organic traffic.",
     "ctaPrimary": "Book a call",
-    "ctaSecondary": "View services",
     "ctaTertiary": "See my background",
     "locationNote": "Mexico City, GMT-6. Remote, or in person in CDMX.",
-    "greeting": "Hi, I'm",
-    "tagline": "Technical SEO consultant and full-stack engineer in Mexico City",
-    "subtitle": "I'm Carlos Anaya Ruiz. I audit, rebuild, and migrate Next.js sites for product teams and agencies. What I fix is concrete: indexation, structured data, Core Web Vitals, and migrations that don't drop organic traffic.",
-    "ctaServices": "View services",
-    "ctaContact": "Book a call",
-    "ctaAbout": "See my background",
-    "headlineAccent": "and ChatGPT cites you.",
-    "shotAlt": "Screenshot of a Core Web Vitals panel",
     "operatorLead": "I write the code and I also answer for the organic traffic that code produces. That mix is the service.",
-    "operatorNote": "I implement the fixes in your repository, or hand them over specified for your team to apply and review the pull requests. You decide who executes.",
-    "credentialsLabel": "Verifiable credentials"
+    "operatorNote": "I implement the fixes in your repository, or hand them over specified for your team to apply and review the pull requests. You decide who executes."
   },
   "trust": {
-    "yearsExp": "4+ years of experience",
-    "pmpCert": "PMP certified",
-    "tecMty": "Tec de Monterrey",
     "companies": "Amazon · Master Loyalty Group · Wan Hai Lines",
     "companiesLabel": "Previously at",
     "engineerLabel": "Computer Science Engineer",
-    "logoAlt": "{company} logo",
     "metrics": {
       "yearsLabel": "Years of experience",
       "certifiedLabel": "Certified",
@@ -79,8 +55,6 @@
     }
   },
   "audience": {
-    "title": "Who I work with",
-    "subtitle": "Three different situations, one question: where is the traffic leaking.",
     "startups": {
       "title": "Startups and founders",
       "desc": "You're launching, and version one has to be right: routes, rendering, schema, and analytics from day one. Fixing that later costs triple and costs you rankings."
@@ -147,7 +121,6 @@
     "titleHome": "Technical SEO, development, AI, dashboards",
     "subtitle": "All of them start by measuring and end with something you can verify yourself.",
     "viewService": "View this service",
-    "requestQuote": "Request a quote",
     "process": "How I work",
     "processSubtitle": "The four phases are the same in every project. The concrete steps for each service are on its own page.",
     "step1Title": "Audit",
@@ -158,13 +131,9 @@
     "step3Desc": "I work in branches, with reviewable PRs and a staging environment. Nothing reaches production before you've seen it.",
     "step4Title": "Verification",
     "step4Desc": "I compare before and after using the metrics we set in phase 02. If something didn't move, I tell you.",
-    "faq": "Frequently asked questions",
-    "faqSubtitle": "What people ask before signing.",
     "allServices": "All services",
     "benefits": "Key benefits",
-    "includes": "What's included",
-    "cta": "Request a quote",
-    "viewAll": "View this service"
+    "includes": "What's included"
   },
   "servicesHub": {
     "title": "Services",
@@ -227,9 +196,6 @@
     }
   },
   "about": {
-    "workingImageAlt": "Carlos Anaya Ruiz at work",
-    "setupImageAlt": "The workspace of Carlos Anaya Ruiz",
-    "awardImageAlt": "Image for the {title} recognition",
     "title": "About",
     "subtitle": "Computer science engineer. Technical SEO consultant. PMP certified.",
     "lead": "I studied Computer Science Engineering at Tecnológico de Monterrey, with a specialization in advanced AI for data science. Four years on, I do an uncommon mix: I write the code, and I'm also accountable for the organic traffic that code produces.",
@@ -247,37 +213,16 @@
     "credentialsNote": "Every degree and certification is available for review in a public folder. None of this asks you to take my word for it."
   },
   "contact": {
-    "title": "Contact",
-    "subtitle": "Tell me what's broken, or what you want to build.",
     "lead": "The more specific your message, the more useful my first reply. If you already have the URL, Search Console access, or a Lighthouse report, send them: I'll come to the call with hypotheses instead of questions.",
     "info": "Contact details",
-    "form": "Send me a message",
-    "name": "Name",
-    "namePh": "First and last name",
-    "email": "Email",
-    "emailPh": "you@email.com",
-    "subject": "Subject",
-    "subjectPh": "SEO audit, migration, dashboard...",
-    "message": "Message",
-    "messagePh": "Site URL, what's happening, and since when.",
-    "consent": "I agree that my data will be used only to answer this message, under Mexico's federal data protection law (LFPDPPP).",
-    "consentLink": "Privacy notice",
-    "send": "Open my message in email",
     "location": "Location",
     "responseTime": "Reply in under 24 hours",
     "directEmail": "Direct email",
     "projectTypes": "Project types",
     "projectTypesDesc": "Standalone audits of one to two weeks, builds of four to eight, and ongoing monthly work for teams that need an in-house SEO engineer.",
-    "requiredField": "This field is required",
-    "invalidEmail": "Enter a valid email address",
     "social": "Profiles and social",
     "connect": "Connect with me",
-    "seeProjects": "See my projects",
-    "mailtoNote": "Sending opens your email app with the message already written. Nothing is stored in any database.",
-    "noMailClient": "Email app did not open?",
-    "copyEmail": "Copy my email",
-    "copied": "Copied",
-    "orDirect": "Or reach me directly"
+    "seeProjects": "See my projects"
   },
   "books": {
     "title": "Technical resources",
@@ -287,7 +232,6 @@
     "pages": "pages",
     "comingSoon": "More on the way.",
     "upcoming": "Coming soon",
-    "upcomingDesc": "It's in active writing. Subscribe and I'll tell you the day it ships, not before.",
     "notifyMe": "Notify me at launch",
     "freeResources": "Free resources",
     "freeResourcesDesc": "In the meantime, this is already public and free:"
@@ -373,8 +317,6 @@
     "orTry": "Or try:"
   },
   "cv": {
-    "certImageAlt": "Certificate document for {name}",
-    "awardImageAlt": "Image for the {title} recognition",
     "title": "CV",
     "eyebrow": "Curriculum vitae",
     "lead": "The whole track record on one page: education, the three roles I have held and what I did in each, certifications, awards, stack and languages. It all comes from the same data as the rest of the site, so no version of it can go stale.",
@@ -388,8 +330,7 @@
     "projectLink": "Open the project page",
     "education": "Education",
     "certifications": "Certifications",
-    "certificationsNote": "The PMP has no date in any of the site data, so the row says so instead of printing a month.",
-    "active": "No date",
+    "certificationsNote": "The PMP has no issue date on record yet, so its row prints no month. It appears on its own once it is there.",
     "viewCertifications": "View the certifications",
     "viewFolder": "Open the credentials folder",
     "awards": "Awards and recognitions",
@@ -444,14 +385,7 @@
     "logoAlt": "{name} logo"
   },
   "common": {
-    "readMore": "Read more",
-    "viewMore": "View more",
-    "present": "Present",
-    "backToHome": "Back to home",
-    "learnMore": "Learn more",
-    "relatedServices": "Related services",
-    "required": "required",
-    "dragHint": "Drag or use the arrows"
+    "present": "Present"
   },
   "premios": {
     "crumb": "Awards",
@@ -463,7 +397,6 @@
     "honesty": "The three are not the same kind of thing, and calling all of them prizes would overstate two. Each is labelled here for what it actually is: a recognition, a competition result, or a certification.",
     "metricsTotalLabel": "Recognitions and credentials",
     "metricsTotalHint": "Each one with issuer and date",
-    "metricsLatestLabel": "Most recent",
     "metricsOrgsLabel": "Organisations that granted them",
     "metricsOrgsHint": "No credential here is self-issued",
     "listEyebrow": "One by one",
@@ -487,26 +420,22 @@
     "cvCta": "See the CV",
     "ctaTitle": "Want someone who documents what he claims?",
     "ctaLead": "Describe the site and what changed. I reply in under 24 hours with a first read on what is likely going on.",
-    "ctaButton": "Write to me",
-    "railEyebrow": "At a glance",
-    "railTitle": "The three of them, as cards",
-    "photoAlt": "Photo of the recognition: {title}"
+    "ctaButton": "Write to me"
   },
   "certificaciones": {
     "title": "Certifications",
     "eyebrow": "Credentials & education",
     "h1Lead": "Credentials you can ",
     "h1Accent": "actually check",
-    "lead": "Every credential with the body that issued it and the year in plain sight, and the document folder left open so you do not have to take my word for it.",
+    "lead": "Every credential with the body that issued it, and the document folder left open so you do not have to take my word for it.",
     "note": "No decorative badges here. A drawn badge proves nothing; the certificate proves it, and it is one click away.",
     "statCredentials": "Credentials",
     "statIssuers": "Issuing bodies",
     "statLanguages": "Languages",
     "gridEyebrow": "One by one",
     "gridTitle": "What I hold and who issued it",
-    "gridSubtitle": "Degree, specialization and certifications, with the institution and the date. Nothing else: when a record carries no date, it says so instead of inventing one.",
+    "gridSubtitle": "Degree, specialization and certifications, with the institution. Nothing else: where a record carries no date, none is printed rather than invented.",
     "issuedBy": "Issued by",
-    "noDate": "No date on record",
     "kindProfessional": "Professional certification",
     "kindExam": "Exam certification",
     "kindDegree": "University degree",
@@ -517,7 +446,6 @@
     "verifyLead": "The original documents sit in a read-only Google Drive folder. Open it and go through them one by one: that is the only thing that makes a credential on a website mean anything.",
     "verifyCta": "Open the certificate folder",
     "verifyNote": "Opens in Google Drive, in a new tab.",
-    "verifyCoverLabel": "Certificates",
     "pdfEyebrow": "Downloads",
     "pdfTitle": "Certificates as PDF",
     "pdfSubtitle": "The documents already hosted on this site, no trip to Drive required.",
@@ -530,19 +458,11 @@
     "ctaTitle": "Missing a document?",
     "ctaLead": "If you need a credential that is not in the folder — a letter, a direct verification with the issuer — ask for it and I will send it.",
     "ctaCta": "Write to me",
-    "diplomaAlt": "{name} diploma",
-    "folderShotAlt": "Screenshot of the certificate folder on Google Drive",
     "cefrLabel": "CEFR level"
   },
-  "stack": {
-    "eyebrow": "Stack",
-    "title": "What I build with",
-    "subtitle": "The tools I work with, grouped by area. Drag to see every category."
-  },
+  "stack": {},
   "homeCta": {
     "title": "Tell me where the traffic is leaking.",
-    "lead": "Describe the site and what changed. I reply in under 24 hours with a first read on what is likely going on.",
-    "alsoOn": "Also on",
-    "and": "and"
+    "lead": "Describe the site and what changed. I reply in under 24 hours with a first read on what is likely going on."
   }
 }

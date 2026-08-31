@@ -384,11 +384,7 @@ export default async function CertificationsPage({ params }: Props) {
                           </>
                         ) : null}
                       </span>
-                    ) : (
-                      /* Sin fecha en el registro: lo dice en lugar de
-                         inventar una. */
-                      <span>{t('noDate')}</span>
-                    )}
+                    ) : null}
                   </p>
 
                   <h3 className="mt-3 max-w-[44ch] text-d3 text-ink">

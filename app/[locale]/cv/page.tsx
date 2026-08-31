@@ -290,6 +290,17 @@ export default async function CvPage({ params }: Props) {
       what: item.institution,
     })),
   ]
+
+  /* El CIERRE del tramo, calculado del mismo dato. Sin esto la lectura decía
+     «2019–2023» —el inicio más reciente— mientras la sección de Experiencia de
+     este mismo currículum llega a abr 2025. Ver `components/instrument/span.tsx`
+     para por qué el arreglo no es marcar por fecha de cierre. */
+  const rangeEnd = [
+    ...experiences.map((e) => e.endDate ?? new Date().toISOString().slice(0, 7)),
+    ...education.map((e) => e.endDate),
+  ]
+    .sort()
+    .at(-1)
   const skillCategories = getSkillCategories(locale)
   const awards = getAwards(locale)
   const companies = getCompanies(locale)
@@ -591,6 +602,7 @@ export default async function CvPage({ params }: Props) {
                   >
                     <Span
                       entries={spanEntries}
+                      rangeEnd={rangeEnd}
                       label={en ? 'the span' : 'el tramo'}
                       spanLabel={
                         en ? 'jobs and degrees, one axis' : 'empleos y estudios'
@@ -781,9 +793,7 @@ export default async function CvPage({ params }: Props) {
                         <time dateTime={credential.date}>
                           {formatShortDate(credential.date, locale)}
                         </time>
-                      ) : (
-                        <span>{t('active')}</span>
-                      )}
+                      ) : null}
                     </p>
                     <h3 className="mt-3 max-w-[44ch] text-d3 text-ink">
                       {credential.name}

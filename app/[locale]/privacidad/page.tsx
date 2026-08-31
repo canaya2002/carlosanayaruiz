@@ -278,9 +278,9 @@ export default async function PrivacyPage({ params }: Props) {
                 these pages from pointing at an outside host.
               </p>
               <p>
-                There is also a button that copies my address to your clipboard,
-                if you would rather write to me directly. That happens entirely
-                on your own device.
+                My address is also written out in full on the contact page, if
+                you would rather write to me directly from your own account
+                without going through the form at all.
               </p>
               <p>
                 There are no user accounts, no tracking cookies and no
@@ -786,9 +786,9 @@ export default async function PrivacyPage({ params }: Props) {
                 formulario de estas páginas apunte a un host externo.
               </p>
               <p>
-                También hay un botón que copia mi correo a tu portapapeles, si
-                prefieres escribirme directo. Eso ocurre por completo en tu
-                dispositivo.
+                Mi correo también está escrito completo en la página de
+                contacto, si prefieres escribirme directo desde tu propia cuenta
+                sin pasar por el formulario.
               </p>
               <p>
                 No hay cuentas de usuario, ni cookies de rastreo, ni perfilado.

@@ -185,10 +185,21 @@ export default async function ServicesHubPage({ params }: Props) {
                     {en ? 'channels' : 'canales'}
                   </span>
                   <span className="margin-read">{services.length}</span>
+                  {/* ⚠ Decía «paralelos, no pasos de una secuencia», que explica
+                      la METÁFORA del registrador multipluma en vez de decirle al
+                      visitante qué significa para él. El dueño mismo preguntó
+                      qué quería decir, y si el dueño no lo entiende, un
+                      prospecto tampoco.
+
+                      Se conserva la palabra «canales» y los identificadores
+                      `ch a`–`ch d`, porque son el vocabulario del sitio entero
+                      —el dial, el nav y la home los usan igual— y romperlo sería
+                      peor. Lo que cambia es la explicación: ahora dice la
+                      CONSECUENCIA, que es lo único que le sirve a quien compra. */}
                   <span className="margin-val">
                     {en
-                      ? 'parallel, not steps of a sequence.'
-                      : 'paralelos, no pasos de una secuencia.'}
+                      ? 'each one is hired on its own — they are not phases of a single project.'
+                      : 'cada uno se contrata solo; no son fases de un mismo proyecto.'}
                   </span>
                 </div>
 
@@ -200,11 +211,22 @@ export default async function ServicesHubPage({ params }: Props) {
                     <span className="margin-val !text-ink">
                       {service.title}
                     </span>
+                    {/* ⚠ Decía «4 pasos · 6 renglones» y era ilegible para un
+                        comprador: describía la ESTRUCTURA DEL DATO, no la
+                        oferta. «Renglón» además es una palabra del registrador
+                        —una línea del gráfico— que se filtró a la copia
+                        comercial; en `data/services.ts` el campo se llama
+                        `includes`, y lo que contiene son entregables.
+
+                        Las cifras son las mismas y siguen saliendo del archivo:
+                        `process.length` son las fases de la entrega e
+                        `includes.length` los entregables. Lo único que cambia
+                        son las palabras. */}
                     <span className="margin-val !text-ink-subtle">
                       {service.process.length}
-                      {en ? ' steps · ' : ' pasos · '}
+                      {en ? ' delivery phases · ' : ' fases de entrega · '}
                       {service.includes.length}
-                      {en ? ' line items' : ' renglones'}
+                      {en ? ' deliverables' : ' entregables'}
                     </span>
                   </div>
                 ))}

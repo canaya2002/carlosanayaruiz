@@ -304,12 +304,21 @@ export default async function BooksPage({ params }: Props) {
                     </p>
                   ) : (
                     <>
-                      {/* ⚠ AQUÍ NO SE USA `books.upcomingDesc` A PROPÓSITO. Esa
-                          cadena del catálogo dice "suscríbete y te aviso", y no
-                          hay a qué suscribirse: el newsletter y la base de
-                          datos se eliminaron del proyecto. Se deja intacta en
-                          messages/*.json —lo edita otro agente— y aquí se
-                          escribe la versión que sí es cierta. */}
+                      {/* ⚠ `books.upcomingDesc` decía «suscríbete y te aviso» y
+                          aquí se escribía la versión contraria porque —según el
+                          comentario que había— «el newsletter y la base de datos
+                          se eliminaron del proyecto». Eso ya NO es cierto: el
+                          boletín existe (`lib/newsletter.ts`,
+                          `components/sections/newsletter.tsx`) y el PIE de esta
+                          misma página monta su formulario de alta. Así que la
+                          página negaba tener lista de correo doscientos píxeles
+                          arriba de un campo que dice «Suscribirme →» — el mismo
+                          defecto que ya se corrigió en el aviso de privacidad
+                          cuando decía «no hay boletín» junto a un alta.
+
+                          Lo que sí es cierto y es la distinción que importa: no
+                          hay lista de espera DEL LIBRO. El boletín manda los
+                          artículos del blog, no avisos de esto. */}
                       <p className="mt-6 max-w-[68ch] font-human text-ink-muted">
                         {en
                           ? 'It is in active writing, and that is the whole status: no pre-order, no waiting list, no launch date to hold me to.'
@@ -317,11 +326,12 @@ export default async function BooksPage({ params }: Props) {
                       </p>
 
                       {/* El aviso sale de un correo escrito a mano y el enlace
-                          lleva a /contacto. */}
+                          lleva a /contacto. El boletín del pie NO avisa de
+                          esto: manda los artículos del blog. */}
                       <p className="mt-3 max-w-[68ch] font-human text-ink-muted">
                         {en
-                          ? 'There is no mailing list: write me one line and I will tell you myself the day it is readable.'
-                          : 'No hay lista de correo: escríbeme una línea y yo te aviso el día que se pueda leer.'}
+                          ? 'There is no waiting list for the book. The newsletter in the footer sends blog articles, not announcements about this — so if you want to hear about the book, write me one line and I will tell you myself the day it is readable.'
+                          : 'No hay lista de espera del libro. El boletín del pie manda los artículos del blog, no avisos de esto: si quieres que te avise del libro, escríbeme una línea y te lo digo yo el día que se pueda leer.'}
                       </p>
 
                       {/* `expectedRelease` está vacío a propósito en
@@ -392,9 +402,12 @@ export default async function BooksPage({ params }: Props) {
           </section>
 
           {/* ═══ CIERRE ══════════════════════════════════════════
-              Ocupa el lugar de la banda del newsletter, que fue borrada:
-              hace el mismo trabajo —avisarte cuando salga— sin base de
-              datos detrás. */}
+              Ocupa el lugar de la banda del newsletter que esta página tenía.
+              Hace un trabajo DISTINTO al del boletín del pie, y ahí está la
+              razón de que convivan: el boletín manda los artículos del blog dos
+              veces por semana; esto es un aviso único sobre el libro, escrito a
+              mano. Decir «sin lista de correo» a secas era falso —el pie de
+              esta página monta el alta— así que se dice de qué no hay lista. */}
           <section className="border-t border-hairline px-5 py-24 sm:px-10">
             <h2 className="max-w-[20ch] text-d1 text-ink">
               {en
@@ -403,8 +416,8 @@ export default async function BooksPage({ params }: Props) {
             </h2>
             <p className="mt-6 max-w-[52ch] font-human text-lead text-ink-muted">
               {en
-                ? 'Tell me and I will write to you once, when it is readable. No mailing list, no automated sequence. And if you need something specific before then, describe the site instead.'
-                : 'Dímelo y te escribo una sola vez, cuando se pueda leer. Sin lista de correo y sin secuencia automática. Y si necesitas algo concreto antes, cuéntame el sitio.'}
+                ? 'Tell me and I will write to you once, when it is readable — by hand, with no automated sequence behind it. And if you need something specific before then, describe the site instead.'
+                : 'Dímelo y te escribo una sola vez, cuando se pueda leer: a mano, sin secuencia automática detrás. Y si necesitas algo concreto antes, cuéntame el sitio.'}
             </p>
             <p className="mt-10 flex flex-wrap items-baseline gap-x-8 gap-y-3">
               <Link className="link-stylus text-d3" href="/contacto">

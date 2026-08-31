@@ -2,7 +2,6 @@ import type { Metadata } from 'next'
 import Image from 'next/image'
 import { setRequestLocale, getTranslations } from 'next-intl/server'
 import { Link } from '@/i18n/navigation'
-import { MediaSlot } from '@/components/instrument/media-slot'
 import { Rail } from '@/components/instrument/rail'
 import { Span } from '@/components/instrument/span'
 import { Ribbon } from '@/components/instrument/ribbon'
@@ -68,9 +67,25 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
       ? 'About — Engineer, PMP, technical SEO'
       : 'Sobre mí — Ingeniero, PMP, SEO técnico',
     description: en
-      ? 'Computer Science engineer from Tec de Monterrey, PMP certified, TOEFL iBT 92, four years across Amazon, Master Loyalty Group and Wan Hai Lines.'
-      : 'Ingeniero en Tecnologías Computacionales por el Tec de Monterrey, certificado PMP y cuatro años en Amazon, Master Loyalty Group y Wan Hai Lines.',
+      ? 'Computer Science engineer from Tec de Monterrey, PMP certified, TOEFL iBT 92. Director of Technology at Law Offices of Manuel Solis; previously Amazon, Master Loyalty Group and Wan Hai Lines.'
+      : 'Ingeniero en Tecnologías Computacionales por el Tec de Monterrey, certificado PMP. Director de Tecnologías en Law Offices of Manuel Solis; antes Amazon, Master Loyalty Group y Wan Hai Lines.',
   })
+}
+
+/**
+ * Años completos desde `desde` (`YYYY-MM`) hasta hoy, en UTC.
+ *
+ * Va FUERA del componente a propósito: leer el reloj dentro del cuerpo de un
+ * componente es impuro y `react-hooks/purity` lo marca como error. Es el mismo
+ * patrón que `currentYearMonth()` en /proyectos.
+ */
+function aniosDesde(desde: string | undefined): number {
+  if (!desde) return 0
+  const inicio = new Date(`${desde}-01T00:00:00Z`)
+  const hoy = new Date()
+  let años = hoy.getUTCFullYear() - inicio.getUTCFullYear()
+  if (hoy.getUTCMonth() < inicio.getUTCMonth()) años -= 1
+  return Math.max(0, años)
 }
 
 export default async function AboutPage({ params }: Props) {
@@ -104,6 +119,17 @@ export default async function AboutPage({ params }: Props) {
       what: item.institution,
     })),
   ]
+
+  /* El CIERRE del tramo, calculado del mismo dato. Sin esto la lectura decía
+     «2019–2023» —el inicio más reciente— mientras la Trayectoria de esta misma
+     página dice «nov 2023 – abr 2025». Un empleo en curso (`endDate: null`)
+     cierra en hoy, que es lo que significa estar en curso. */
+  const rangeEnd = [
+    ...experiences.map((e) => e.endDate ?? new Date().toISOString().slice(0, 7)),
+    ...education.map((e) => e.endDate),
+  ]
+    .sort()
+    .at(-1)
   const skillCategories = getSkillCategories(locale)
   const awards = getAwards(locale)
 
@@ -165,9 +191,16 @@ export default async function AboutPage({ params }: Props) {
   //
   // Se imprimen, no se cuentan hacia arriba: un contador animado es JavaScript
   // de cliente para mostrar un número que el servidor ya sabe.
+  /* Los años ya NO van escritos a mano. Decían «4+» desde que el registro
+     terminaba en abr 2025; con el puesto actual son cinco y medio, y con el
+     siguiente serían otros. `aniosDesde` los cuenta del primer `startDate` del
+     archivo a hoy, así que la cifra no puede quedarse vieja — que es la regla
+     del repo para toda cuenta derivable del dato. */
+  const anios = aniosDesde(experiences.map((e) => e.startDate).sort()[0])
+
   const stats = [
     {
-      value: '4+',
+      value: `${anios}+`,
       label: en ? 'Years of experience' : 'Años de experiencia',
       hint: tt('engineerLabel'),
     },
@@ -309,6 +342,7 @@ export default async function AboutPage({ params }: Props) {
               <div className="mt-10 border-t border-hairline pt-5">
                 <Span
                   entries={spanEntries}
+                  rangeEnd={rangeEnd}
                   label={en ? 'the span' : 'el tramo'}
                   spanLabel={
                     en ? 'jobs and degrees, one axis' : 'empleos y estudios'
@@ -386,20 +420,19 @@ export default async function AboutPage({ params }: Props) {
               {t('experience')}
             </h2>
 
-            {/* La foto de trabajo abre la trayectoria: una imagen antes de la
-                lista de puestos, no una por puesto. */}
-            <div className="mt-12 grid max-w-4xl gap-x-14 gap-y-4 lg:grid-cols-2">
-              <MediaSlot
-                id="sobre-mi-trabajo"
-                sizes="(min-width: 1024px) 40vw, 100vw"
-              />
-              {/* El puesto de trabajo, sin él dentro. Es lo que dice «esto es
-                  un oficio» sin tener que escribirlo. */}
-              <MediaSlot
-                id="sobre-mi-escritorio"
-                sizes="(min-width: 1024px) 40vw, 100vw"
-              />
-            </div>
+            {/* ⚠ Aquí iban dos huecos de foto —`sobre-mi-trabajo` y
+                `sobre-mi-escritorio`— que pedían un retrato del dueño
+                trabajando y una foto de su escritorio. Se retiraron por
+                decisión suya, así que sus registros ya no existen en
+                `data/media-slots.ts` y el envoltorio se fue con ellos: un
+                `<div className="mt-12 grid …">` sin hijos deja su margen
+                superior en pie y eso es exactamente el «espacio vacío» que este
+                proyecto ya arregló dos veces.
+
+                Es la misma trampa que la galería de /proyectos/[slug]: borrar el
+                registro del hueco NO basta, porque `<MediaSlot>` devuelve `null`
+                para un id inexistente y el contenedor sobrevive. Si vuelves a
+                añadir un hueco aquí, añade también su contenedor. */}
 
             <ol className="reveal-stagger mt-12">
               {experiences.map((exp) => (
@@ -520,15 +553,7 @@ export default async function AboutPage({ params }: Props) {
                         <time dateTime={credential.date}>
                           {formatShortDate(credential.date, locale)}
                         </time>
-                      ) : (
-                        /* La tercera de las tres: iba en el HUECO DE LA FECHA
-                           diciendo «vigente», que es una afirmación de
-                           vigencia sin fecha de emisión ni de renovación. El
-                           PMP se renueva cada tres años con 60 PDU, así que de
-                           «sin fecha» no se deduce «vigente». Las otras dos
-                           salen de `certificaciones.noDate` y `cv.active`. */
-                        <span>{en ? 'no date' : 'sin fecha'}</span>
-                      )}
+                      ) : null}
                     </p>
                   </li>
                 ))}
