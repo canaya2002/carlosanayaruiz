@@ -35,8 +35,8 @@ export default async function Image({ params }: Params) {
       ? 'The engineer who answers for the traffic, not just the code'
       : 'El ingeniero que responde por el tráfico, no solo por el código',
     subtitle: en
-      ? 'Tec de Monterrey engineer, PMP certified, four years across Amazon, Master Loyalty Group and Wan Hai Lines.'
-      : 'Ingeniero por el Tec de Monterrey, certificado PMP, cuatro años entre Amazon, Master Loyalty Group y Wan Hai Lines.',
+      ? 'Tec de Monterrey engineer, PMP certified. Director of Technology at Law Offices of Manuel Solis; previously Amazon and Wan Hai Lines.'
+      : 'Ingeniero por el Tec de Monterrey, certificado PMP. Director de Tecnologías en Law Offices of Manuel Solis; antes Amazon y Wan Hai Lines.',
     facts: en
       ? ['Tec de Monterrey', 'PMP certified', 'TOEFL iBT 92']
       : ['Tec de Monterrey', 'Certificado PMP', 'TOEFL iBT 92'],

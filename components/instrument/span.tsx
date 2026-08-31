@@ -37,13 +37,35 @@ interface SpanProps {
   label: string
   /** Rótulo del tramo total («tramo» / «span»), ya traducido. */
   spanLabel: string
+  /**
+   * CIERRE real del registro (`YYYY` o `YYYY-MM`). Opcional.
+   *
+   * Las marcas se colocan donde cada cosa EMPEZÓ, que es cuando entra al
+   * registro. Por eso el máximo de `entries` es el inicio más reciente y NO el
+   * final del tramo — y en /cv y /sobre-mi eso hacía que la lectura dijera
+   * «2019–2023» mientras la sección de Trayectoria de la MISMA página decía
+   * «nov 2023 – abr 2025». Dos cifras del mismo dato, contradiciéndose en una
+   * pantalla, en el instrumento de una página que se llama currículum.
+   *
+   * Marcar por fecha de cierre no lo arregla: haría que el tramo empezara en
+   * 2022 —el cierre más antiguo— y perdería el 2019 en que empezó el grado. El
+   * tramo verdadero es «inicio más antiguo → cierre más reciente», así que el
+   * cierre entra por aquí y las marcas se quedan donde estaban.
+   *
+   * /premios y /certificaciones no lo pasan: ahí cada entrada es un instante,
+   * no un periodo, y el máximo de las fechas ES el final del tramo.
+   */
+  rangeEnd?: string
 }
 
-export function Span({ entries, label, spanLabel }: SpanProps) {
+export function Span({ entries, label, spanLabel, rangeEnd }: SpanProps) {
   if (entries.length === 0) return null
 
   const sorted = [...entries].sort((a, b) => b.date.localeCompare(a.date))
-  const newest = sorted[0]!.date.slice(0, 4)
+  const ultimaMarca = sorted[0]!.date
+  const newest = (
+    rangeEnd && rangeEnd > ultimaMarca ? rangeEnd : ultimaMarca
+  ).slice(0, 4)
   const oldest = sorted[sorted.length - 1]!.date.slice(0, 4)
 
   return (

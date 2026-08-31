@@ -79,19 +79,57 @@ export interface Company {
 
 const companiesData: Localized<Company[]> = {
   es: [
+    /* EL PUESTO ACTUAL, y va PRIMERO porque el registro se lee de lo más
+       reciente a lo más antiguo.
+
+       Existe aquí además de en `data/experience.ts` porque son dos vistas del
+       mismo hecho y las dos se sirven: `experience.ts` alimenta el CV y la
+       cinta de trayectoria; `companies.ts` alimenta /proyectos, su ficha por
+       empresa y el MAPA DE PRESENCIA. Sin esta entrada, /cv mostraba un puesto
+       en curso y /proyectos seguía terminando en abr 2025 — dos páginas del
+       mismo sitio contradiciéndose, que es justo la clase de defecto que esta
+       ronda vino a quitar.
+
+       ⚠ `stack` y el segundo párrafo de `detail` están vacíos a propósito: el
+       dueño dio el puesto, la firma y las fechas. Escribir tecnologías o logros
+       aquí sería inventar. `shots` se queda vacío y ya no pide capturas: las
+       pantallas de los sistemas internos de un empleador no son suyas para
+       publicar.
+
+       El puesto es HÍBRIDO en Estados Unidos, así que va sin `city` ni `coords`
+       —igual que Amazon— y cuenta a nivel país en el mapa. Poner un pin en una
+       ciudad concreta sin saber cuál sería el dato falso que este componente
+       declara no inventar. */
+    {
+      slug: 'law-offices-manuel-solis',
+      name: 'Law Offices of Manuel Solis',
+      kind: 'empleo',
+      country: 'USA',
+      role: 'Director de Tecnologías',
+      startDate: '2025-06',
+      endDate: null,
+      summary:
+        'Dirección del área de tecnología de la firma: arquitectura de los sistemas internos, plataforma web y automatización de procesos.',
+      detail: [
+        'Dirijo la función de tecnología de la firma. El alcance cubre los sistemas internos, la plataforma web y la automatización de los procesos que antes se hacían a mano.',
+      ],
+      stack: [],
+      shots: [],
+      docs: [],
+    },
     {
       slug: 'amazon',
       name: 'Amazon',
       kind: 'empleo',
       country: 'USA',
       // Sin city ni coords: data/experience.ts solo registra "Estados Unidos".
-      role: 'Software Development Engineer',
+      role: 'Software Developer Engineer 2',
       startDate: '2023-11',
       endDate: '2025-04',
       summary:
         'Desarrollo de software en un entorno de escala real, con revisión de código, despliegue continuo y operación sobre sistemas en producción.',
       detail: [
-        'Trabajé como Software Development Engineer dentro de equipos que operan sistemas en producción a escala. El trabajo diario combinaba desarrollo de funcionalidad, revisión de código de otros y responsabilidad operativa sobre lo que ya estaba corriendo.',
+        'Trabajé como Software Developer Engineer 2 dentro de equipos que operan sistemas en producción a escala. El trabajo diario combinaba desarrollo de funcionalidad, revisión de código de otros y responsabilidad operativa sobre lo que ya estaba corriendo.',
         'La parte que más me marcó no fue escribir código sino el rigor alrededor: nada llega a producción sin revisión, sin métricas que digan si mejoró algo, y sin un plan de qué hacer cuando falla. Es el criterio que aplico hoy en cada migración que toco.',
       ],
       stack: ['Java', 'Python', 'AWS', 'CI/CD', 'Git'],
@@ -202,18 +240,36 @@ const companiesData: Localized<Company[]> = {
      */
   ],
   en: [
+    /* Ver la entrada en español para por qué `stack` va vacío. */
+    {
+      slug: 'law-offices-manuel-solis',
+      name: 'Law Offices of Manuel Solis',
+      kind: 'empleo',
+      country: 'USA',
+      role: 'Director of Technology',
+      startDate: '2025-06',
+      endDate: null,
+      summary:
+        "Head of the firm's technology function: architecture of the internal systems, the web platform, and process automation.",
+      detail: [
+        "I lead the firm's technology function. The scope covers the internal systems, the web platform, and automating the processes that used to be done by hand.",
+      ],
+      stack: [],
+      shots: [],
+      docs: [],
+    },
     {
       slug: 'amazon',
       name: 'Amazon',
       kind: 'empleo',
       country: 'USA',
-      role: 'Software Development Engineer',
+      role: 'Software Developer Engineer 2',
       startDate: '2023-11',
       endDate: '2025-04',
       summary:
         'Software development at real scale, with code review, continuous deployment, and operational ownership of systems already in production.',
       detail: [
-        'I worked as a Software Development Engineer on teams operating production systems at scale. Day to day the work combined building features, reviewing other people’s code, and carrying operational responsibility for what was already running.',
+        'I worked as a Software Developer Engineer 2 on teams operating production systems at scale. Day to day the work combined building features, reviewing other people’s code, and carrying operational responsibility for what was already running.',
         'What stayed with me was not the code but the rigour around it: nothing ships without review, without metrics that say whether it improved anything, and without a plan for when it breaks. That is the judgement I bring to every migration I touch now.',
       ],
       stack: ['Java', 'Python', 'AWS', 'CI/CD', 'Git'],

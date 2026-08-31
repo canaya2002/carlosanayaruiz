@@ -65,7 +65,7 @@ const personalData: Localized<PersonalInfo> = {
     ...identity,
     title: 'Consultor SEO Técnico e Ingeniero Full-Stack',
     location: `${NAP.locality}, ${NAP.countryName}`,
-    summary: `Ingeniero en Tecnologías Computacionales por el Tecnológico de Monterrey, con más de 4 años de experiencia entre proyectos de software, SEO técnico y desarrollo full-stack. Certificado PMP y con práctica en metodologías ágiles (Scrum).
+    summary: `Ingeniero en Tecnologías Computacionales por el Tecnológico de Monterrey, con más de 5 años de experiencia entre proyectos de software, SEO técnico y desarrollo full-stack. Certificado PMP y con práctica en metodologías ágiles (Scrum).
 
 Trabajo en la intersección entre ingeniería y buscadores: arquitectura de información, datos estructurados (Schema.org/JSON-LD), Core Web Vitals, internacionalización (i18n/hreflang) y rendimiento web. He liderado equipos multidisciplinarios en Amazon, Master Loyalty Group y Wan Hai Lines.`,
     shortBio:
@@ -81,7 +81,7 @@ Trabajo en la intersección entre ingeniería y buscadores: arquitectura de info
     ...identity,
     title: 'Technical SEO Consultant & Full-Stack Engineer',
     location: `${NAP.localityEn}, ${NAP.countryNameEn}`,
-    summary: `Computer Science Engineer from Tecnológico de Monterrey with 4+ years of experience across software projects, technical SEO, and full-stack development. PMP certified, working in agile (Scrum) teams.
+    summary: `Computer Science Engineer from Tecnológico de Monterrey with 5+ years of experience across software projects, technical SEO, and full-stack development. PMP certified, working in agile (Scrum) teams.
 
 I work at the intersection of engineering and search: information architecture, structured data (Schema.org/JSON-LD), Core Web Vitals, internationalization (i18n/hreflang), and web performance. I have led multidisciplinary teams at Amazon, Master Loyalty Group, and Wan Hai Lines.`,
     shortBio:

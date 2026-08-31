@@ -36,7 +36,7 @@ export default async function Image({ params }: Params) {
       ? 'Technical audits, structured data and Core Web Vitals for sites that have to rank.'
       : 'Auditorías técnicas, datos estructurados y Core Web Vitals para sitios que tienen que posicionar.',
     facts: en
-      ? ['4+ years', 'PMP certified', 'Ex-Amazon']
-      : ['+4 años', 'Certificado PMP', 'Ex-Amazon'],
+      ? ['5+ years', 'PMP certified', 'Ex-Amazon']
+      : ['+5 años', 'Certificado PMP', 'Ex-Amazon'],
   })
 }
