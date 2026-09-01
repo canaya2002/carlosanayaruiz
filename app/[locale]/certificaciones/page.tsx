@@ -475,13 +475,23 @@ export default async function CertificationsPage({ params }: Props) {
                 : `Son cursos con certificado de finalización, no certificaciones profesionales: la etiqueta importa y esta página la respeta. ${COURSES_VERIFIABLE} de ${COURSES.length} traen folio, así que puedes abrir al emisor y comprobar el documento por tu cuenta.`}
             </p>
 
-            {/* Dos columnas a partir de 64rem. A tres el título del curso caía
-                a cinco líneas y el documento quedaba en 18rem, ilegible. */}
-            <ul className="reveal-stagger mt-14 grid gap-x-12 gap-y-14 lg:grid-cols-2">
+            {/* TRES columnas a partir de 80rem, dos desde 40rem, y cada celda
+                topada a 24rem.
+
+                Iban a dos columnas sin tope: a 1440 cada documento medía ~32rem
+                y la sección se leía como una galería de pósters — el dueño lo
+                reportó como «demasiado grandes y no se ve bien». A este tamaño
+                el certificado sigue siendo legible (se distingue el emisor, el
+                título y el nombre) y la sección se lee como lo que es: un juego
+                de documentos que respaldan una lista, no siete cuadros.
+
+                Quien quiera leerlo entero tiene el enlace a Udemy, que es
+                además la versión que de verdad comprueba algo. */}
+            <ul className="reveal-stagger mt-14 grid gap-x-10 gap-y-12 sm:grid-cols-2 xl:grid-cols-3">
               {COURSES.filter((course) => course.image).map((course, i) => {
                 const url = courseVerifyUrl(course)
                 return (
-                  <li key={course.id}>
+                  <li key={course.id} className="max-w-[24rem]">
                     <a
                       className="group block outline-none"
                       href={url}
@@ -494,7 +504,7 @@ export default async function CertificationsPage({ params }: Props) {
                           alt={course.alt}
                           width={course.width!}
                           height={course.height!}
-                          sizes="(min-width: 1024px) 32rem, 92vw"
+                          sizes="(min-width: 1280px) 24rem, (min-width: 640px) 44vw, 90vw"
                           /* El primero entra eager: es el que puede ser
                              candidato a LCP si alguien llega por ancla. Los
                              demás cargan de forma diferida. */

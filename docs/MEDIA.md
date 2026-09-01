@@ -3,7 +3,7 @@
 > **Generado.** No lo edites a mano: sale de `data/media-slots.ts` con
 > `npm run media:manifest`. Si editas aquí, el siguiente build lo sobrescribe.
 
-**15 archivos pendientes** · 3 ya puestos.
+**14 archivos pendientes** · 3 ya puestos.
 
 Cada hueco está marcado en la página con cruces de registro y la ruta exacta
 escrita encima, así que también puedes ir navegando el sitio y verlos.
@@ -61,18 +61,6 @@ Captura de Screaming Frog o Sitebulb a mitad de un crawl real: el árbol de URLs
 Informe de Lighthouse de un sitio tuyo en producción, con los cuatro círculos a la vista. Que sea REAL: un 100 de laboratorio en un sitio vacío no prueba nada, un 95 en un sitio con contenido sí.
 
 > Mejor de PageSpeed Insights con datos de campo (CrUX) que de laboratorio: el dato de campo es el que no se puede maquillar.
-
-### Captura de un flujo real en n8n, Make o el diagrama de un agente: los nodos conectados, con nombres legibles
-
-| | |
-|---|---|
-| **Archivo** | `public/media/servicios/automatizacion-flujo-n8n.png` |
-| **Tipo** | Imagen |
-| **Tamaño** | 1600 × 900 px |
-| **Página** | `/es/automatizacion-ia` |
-| **Dónde** | Sección de alcance, arriba de la lista |
-
-Captura de un flujo real en n8n, Make o el diagrama de un agente: los nodos conectados, con nombres legibles. Que se vea que hay lógica y no una caja negra.
 
 ### Un dashboard tuyo completo, con gráficas reales y filtros a la vista
 

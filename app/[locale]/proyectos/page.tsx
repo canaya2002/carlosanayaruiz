@@ -6,6 +6,15 @@ import { Ribbon } from '@/components/instrument/ribbon'
 import { MediaSlot } from '@/components/instrument/media-slot'
 import { PresenceMap } from '@/components/map/presence-map'
 import {
+  ENGAGEMENTS,
+  ENGAGEMENT_COUNT,
+  ENGAGEMENT_WEEKS,
+  ENGAGEMENT_COUNTRIES,
+  ENGAGEMENT_YEARS,
+  engagementsByKind,
+  type EngagementKind,
+} from '@/data/engagements'
+import {
   getCompanies,
   type CompanyKind,
   type CountryCode,
@@ -97,6 +106,35 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
       : 'Mapa y ficha de cada proyecto: Amazon, Master Loyalty Group, Wan Hai Lines, AuraScope y LogiRoute AI, con rol, periodo y stack de cada uno.',
   })
 }
+
+/**
+ * Los seis tipos de encargo, en las dos lenguas.
+ *
+ * Van aquí y no en `messages/*.json` porque son la enumeración cerrada de un
+ * tipo de TypeScript: si se añade un `EngagementKind`, este objeto deja de
+ * compilar hasta que se traduzca. Un archivo de mensajes no da esa garantía.
+ */
+const KIND_LABEL: Record<'es' | 'en', Record<EngagementKind, string>> = {
+  es: {
+    'sitio-web': 'sitio web',
+    'software-interno': 'software interno',
+    automatizacion: 'automatización',
+    dashboard: 'dashboard',
+    seo: 'SEO técnico',
+    integracion: 'integración',
+  },
+  en: {
+    'sitio-web': 'website',
+    'software-interno': 'internal software',
+    automatizacion: 'automation',
+    dashboard: 'dashboard',
+    seo: 'technical SEO',
+    integracion: 'integration',
+  },
+}
+
+/** La semana más larga del registro: el 100% de la barra de duración. */
+const MAX_WEEKS = Math.max(...ENGAGEMENTS.map((e) => e.weeks))
 
 export default async function ProyectosPage({ params }: Props) {
   const { locale: rawLocale } = await params
@@ -469,6 +507,148 @@ export default async function ProyectosPage({ params }: Props) {
                 </ol>
               </div>
             ))}
+          </section>
+
+
+          {/* ═══ EL REGISTRO DE ENCARGOS ═════════════════════════
+              Dieciocho trabajos freelance, en filas y con su eje.
+
+              NO llevan página propia a propósito: son encargos de dos a nueve
+              semanas, y darle una URL a cada uno crearía dieciocho páginas de
+              contenido pobre compitiendo con las cinco que sí tienen cuerpo.
+              Aquí son lo que son — un registro.
+
+              LA MARCA ES EL DATO: el largo de cada barra es `weeks` sobre la
+              semana más larga del registro, y su fila la ordena el año. El
+              dibujo no puede desmentir la tabla porque sale de ella.
+
+              El `outcome` NO se pinta todavía. Nueve encargos traen cifra de
+              resultado y están en el archivo, pero llegaron en el mismo mensaje
+              que once capturas de Search Console generadas con IA (credenciales
+              C2PA de OpenAI en los metadatos). Publicar nueve resultados de
+              cliente en una página comercial pide una confirmación explícita de
+              que son mediciones reales. Cuando llegue, se enciende aquí. */}
+          <section
+            id="encargos"
+            className="border-t border-hairline px-5 py-20 sm:px-10"
+          >
+            <div className="ledger">
+              <div className="min-w-0">
+                <p className="stamp">
+                  {en ? 'the log · freelance' : 'el registro · freelance'}
+                </p>
+
+                <h2 className="mt-5 max-w-[20ch] text-d1 text-ink">
+                  {en ? 'Client work' : 'Trabajo de cliente'}
+                </h2>
+
+                <p className="mt-8 max-w-[62ch] text-lead text-ink-muted">
+                  {en
+                    ? `${ENGAGEMENT_COUNT} engagements between ${ENGAGEMENT_YEARS.from} and ${ENGAGEMENT_YEARS.to}, in ${ENGAGEMENT_COUNTRIES} countries. Each row carries what was delivered, how long it took and the stack. The bar is the duration — it is the data, not decoration.`
+                    : `${ENGAGEMENT_COUNT} encargos entre ${ENGAGEMENT_YEARS.from} y ${ENGAGEMENT_YEARS.to}, en ${ENGAGEMENT_COUNTRIES} países. Cada fila trae qué se entregó, cuánto duró y con qué. La barra es la duración: es el dato, no un adorno.`}
+                </p>
+
+                {/* Cada encargo es una fila del registro. El orden es
+                    descendente por año y, dentro del año, por duración: un
+                    registrador escribe hacia abajo y lo más nuevo sale
+                    primero. */}
+                <ol className="reveal-stagger mt-14">
+                  {[...ENGAGEMENTS]
+                    .sort((a, b) => b.year - a.year || b.weeks - a.weeks)
+                    .map((e) => (
+                      <li key={e.id} className="band">
+                        <p className="stamp tabular-nums">
+                          {e.year}
+                          {' · '}
+                          {e.weeks}
+                          {en ? ' weeks · ' : ' semanas · '}
+                          {KIND_LABEL[en ? 'en' : 'es'][e.kind]}
+                        </p>
+
+                        <h3 className="mt-2 max-w-[44ch] text-d3 text-ink">
+                          {e.client}
+                          {e.anonymous ? (
+                            <span className="stamp ml-3 align-middle">
+                              {en ? 'name under NDA' : 'nombre bajo acuerdo'}
+                            </span>
+                          ) : null}
+                        </h3>
+
+                        <p className="mt-2 max-w-[62ch] text-ink-muted">
+                          {e.delivered}
+                        </p>
+
+                        {/* LA BARRA. Su largo es `weeks` sobre la semana más
+                            larga del registro, así que las dieciocho se leen
+                            entre sí por comparación directa. Es el mismo
+                            recurso que `.band-fill` usa para los idiomas. */}
+                        <span
+                          className="mt-4 block"
+                          style={{ width: `${(e.weeks / MAX_WEEKS) * 100}%` }}
+                          aria-hidden="true"
+                        >
+                          <span className="band-fill" />
+                        </span>
+
+                        <p className="stamp mt-4">
+                          {e.sector}
+                          {' · '}
+                          {e.city}
+                          {', '}
+                          {e.country}
+                          {e.stack.length > 0 ? ` · ${e.stack.join(', ')}` : ''}
+                        </p>
+                      </li>
+                    ))}
+                </ol>
+              </div>
+
+              {/* ── EL MARGEN: la leyenda del registro ── */}
+              <aside className="margin margin-sticky">
+                <div className="margin-row">
+                  <span className="margin-key">
+                    {en ? 'engagements' : 'encargos'}
+                  </span>
+                  <span className="margin-read tabular-nums">
+                    {ENGAGEMENT_COUNT}
+                  </span>
+                  <span className="margin-val">
+                    {en
+                      ? `${ENGAGEMENT_YEARS.from}–${ENGAGEMENT_YEARS.to}`
+                      : `${ENGAGEMENT_YEARS.from}–${ENGAGEMENT_YEARS.to}`}
+                  </span>
+                </div>
+
+                <div className="margin-row">
+                  <span className="margin-key">
+                    {en ? 'weeks delivered' : 'semanas entregadas'}
+                  </span>
+                  <span className="margin-read tabular-nums">
+                    {ENGAGEMENT_WEEKS}
+                  </span>
+                </div>
+
+                <div className="margin-row">
+                  <span className="margin-key">
+                    {en ? 'countries' : 'países'}
+                  </span>
+                  <span className="margin-read tabular-nums">
+                    {ENGAGEMENT_COUNTRIES}
+                  </span>
+                </div>
+
+                {engagementsByKind().map(({ kind, count }) => (
+                  <div key={kind} className="margin-row">
+                    <span className="margin-key">
+                      {KIND_LABEL[en ? 'en' : 'es'][kind]}
+                    </span>
+                    <span className="margin-val !text-ink tabular-nums">
+                      {count}
+                    </span>
+                  </div>
+                ))}
+              </aside>
+            </div>
           </section>
 
           {/* ═══ LA PLACA ════════════════════════════════════════

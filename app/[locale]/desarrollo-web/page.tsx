@@ -3,6 +3,7 @@ import { notFound } from 'next/navigation'
 import { setRequestLocale, getTranslations } from 'next-intl/server'
 import { Link } from '@/i18n/navigation'
 import { MediaSlot } from '@/components/instrument/media-slot'
+import { anySlotFilled } from '@/data/media-slots'
 import { Rail } from '@/components/instrument/rail'
 import { BlogStrip } from '@/components/sections/blog-strip'
 import { Pens } from '@/components/instrument/pens'
@@ -603,23 +604,31 @@ export default async function DesarrolloWebPage({ params }: Props) {
               píxeles de nada. El mismo dato genera docs/MEDIA.md, así que la
               lista que se entrega y lo que pinta la página no pueden
               contradecirse. */}
-          <section className="border-t border-hairline px-5 py-16 sm:px-10">
-            <p className="stamp">
-              {en
-                ? 'the proof · file pending'
-                : 'la prueba · pendiente de archivo'}
-            </p>
-            <div className="mt-8 grid gap-x-14 gap-y-4 lg:grid-cols-2">
-              <MediaSlot
-                id="desarrollo-web-lighthouse"
-                sizes="(min-width: 1024px) 40vw, 100vw"
-              />
-              <MediaSlot
-                id="desarrollo-web-codigo"
-                sizes="(min-width: 1024px) 40vw, 100vw"
-              />
-            </div>
-          </section>
+          {/* La sección entera se omite si no hay NI UN archivo. Su rótulo
+              dice «la prueba · pendiente de archivo», así que sin archivos era
+              un encabezado anunciando lo que falta encima de una rejilla vacía.
+              Un `<MediaSlot>` sabe que no tiene archivo pero no puede borrar a
+              su padre; `anySlotFilled` sí. Cuando llegue una captura real, la
+              sección reaparece sola. */}
+          {anySlotFilled('desarrollo-web-lighthouse', 'desarrollo-web-codigo') ? (
+            <section className="border-t border-hairline px-5 py-16 sm:px-10">
+              <p className="stamp">
+                {en
+                  ? 'the proof · file pending'
+                  : 'la prueba · pendiente de archivo'}
+              </p>
+              <div className="mt-8 grid gap-x-14 gap-y-4 lg:grid-cols-2">
+                <MediaSlot
+                  id="desarrollo-web-lighthouse"
+                  sizes="(min-width: 1024px) 40vw, 100vw"
+                />
+                <MediaSlot
+                  id="desarrollo-web-codigo"
+                  sizes="(min-width: 1024px) 40vw, 100vw"
+                />
+              </div>
+            </section>
+          ) : null}
 
           {/* ═══ LOS TRES CANALES ════════════════════════════════
               La misma banda de la portada de contacto, con el mensaje de

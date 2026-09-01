@@ -274,19 +274,6 @@ export const MEDIA_SLOTS: readonly MediaSlot[] = [
     notes: 'Puede ser de un repo propio. Tapa nombres de terceros si aplica.',
   },
   {
-    id: 'automatizacion-ia-flujo',
-    kind: 'image',
-    path: '/media/servicios/automatizacion-flujo-n8n.png',
-    width: 1600,
-    height: 900,
-    page: '/es/automatizacion-ia',
-    where: 'Sección de alcance, arriba de la lista',
-    what: 'Captura de un flujo real en n8n, Make o el diagrama de un agente: los nodos conectados, con nombres legibles. Que se vea que hay lógica y no una caja negra.',
-    alt: 'Flujo de automatización con IA, con sus nodos conectados',
-    priority: 'alta',
-    filled: false,
-  },
-  {
     id: 'automatizacion-ia-chat',
     kind: 'image',
     path: '/media/servicios/automatizacion-chat.png',
@@ -365,4 +352,20 @@ export function pendingSlots(): MediaSlot[] {
   return MEDIA_SLOTS.filter((s) => !s.filled).sort(
     (a, b) => rank[a.priority] - rank[b.priority]
   )
+}
+
+/**
+ * ¿Hay archivo para AL MENOS UNO de estos huecos?
+ *
+ * Existe para que una SECCIÓN entera pueda no renderizarse. Las cuatro páginas
+ * de servicio tenían un bloque rotulado «la prueba · pendiente de archivo» con
+ * dos huecos dentro; desde que un hueco sin archivo no pinta nada, ese bloque
+ * quedaba en un rótulo que anuncia un archivo que falta y una rejilla vacía —
+ * exactamente lo que el dueño pidió quitar («sin nada ahí pendiente»).
+ *
+ * Un `<MediaSlot>` sabe si tiene archivo, pero no puede borrar a su padre. Esto
+ * sí.
+ */
+export function anySlotFilled(...ids: string[]): boolean {
+  return ids.some((id) => slotById(id)?.filled === true)
 }
