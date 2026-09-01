@@ -1,6 +1,7 @@
 import type { Metadata } from 'next'
 import { setRequestLocale, getTranslations } from 'next-intl/server'
 import { Link } from '@/i18n/navigation'
+import type { StaticPathname } from '@/i18n/routing'
 import { Rail } from '@/components/instrument/rail'
 import { Ribbon } from '@/components/instrument/ribbon'
 import { MediaSlot } from '@/components/instrument/media-slot'
@@ -14,6 +15,7 @@ import {
   ENGAGEMENTS_MEASURED,
   engagementsByKind,
   type EngagementKind,
+  type EngagementService,
 } from '@/data/engagements'
 import {
   getCompanies,
@@ -115,6 +117,25 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
  * tipo de TypeScript: si se añade un `EngagementKind`, este objeto deja de
  * compilar hasta que se traduzca. Un archivo de mensajes no da esa garantía.
  */
+/**
+ * De qué servicio es cada encargo, a su ruta.
+ *
+ * Son DIECIOCHO enlaces internos contextuales hacia las cuatro páginas que
+ * facturan, y hasta ahora el campo `service` de `data/engagements.ts` no se
+ * usaba para nada. El enlazado interno del repo ya documenta que esas cuatro
+ * páginas casi no recibían enlaces desde ningún sitio: esto lo corrige con dato
+ * que ya existía.
+ *
+ * La clave es la ruta en español porque así está declarado `pathnames` en
+ * `i18n/routing.ts`; `<Link>` la traduce al locale servido.
+ */
+const SERVICE_HREF: Record<EngagementService, StaticPathname> = {
+  'seo-tecnico': '/seo-tecnico',
+  'desarrollo-web': '/desarrollo-web',
+  'automatizacion-ia': '/automatizacion-ia',
+  dashboards: '/dashboards',
+}
+
 const KIND_LABEL: Record<'es' | 'en', Record<EngagementKind, string>> = {
   es: {
     'sitio-web': 'sitio web',
@@ -613,6 +634,24 @@ export default async function ProyectosPage({ params }: Props) {
                           {e.country}
                           {e.stack.length > 0 ? ` · ${e.stack.join(', ')}` : ''}
                         </p>
+
+                        {/* El enlace al servicio del que fue este encargo.
+                            Rotulado como SERVICIO y no como lectura, para que
+                            se lea como «esto es lo que hago» y no como otra
+                            fila del registro. Son dieciocho enlaces
+                            contextuales hacia las cuatro páginas que facturan,
+                            sacados de un campo que ya estaba en el dato. */}
+                        {e.service ? (
+                          <p className="mt-3">
+                            <Link
+                              className="link-stylus text-sm"
+                              href={SERVICE_HREF[e.service]}
+                            >
+                              {en ? 'service: ' : 'servicio: '}
+                              {KIND_LABEL[en ? 'en' : 'es'][e.kind]} →
+                            </Link>
+                          </p>
+                        ) : null}
                       </li>
                     ))}
                 </ol>
