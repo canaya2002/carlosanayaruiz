@@ -279,6 +279,53 @@ export default async function CertificationsPage({ params }: Props) {
           }
         }),
       },
+      /**
+       * ── EL TERCER NODO: LA FORMACIÓN ──
+       *
+       * Diez cursos con 265.5 horas fechadas, instructor nombrado, plataforma, día
+       * exacto, SIETE folios de verificación pública y siete imágenes del
+       * documento servidas en la página — y cero de eso estaba en el grafo.
+       *
+       * Van como `ItemList` propio con su `@id`, hermano del de credenciales y no
+       * fusionado con él: un curso de Udemy NO es una
+       * `EducationalOccupationalCredential` al lado del TOEFL y del grado, y
+       * meterlo en la misma lista sería el inflado que `data/courses.ts` documenta
+       * como la razón de existir separado.
+       *
+       * `Course` + `CourseInstance` es el tipo que schema.org tiene para esto, y
+       * `provider` ata cada uno a Udemy, que es quien lo emitió. El `url` es la
+       * verificación pública, y solo se declara en los siete que la tienen: sin
+       * folio no hay URL, y una lista que la inventara valdría menos que no
+       * tenerla.
+       */
+      {
+        '@type': 'ItemList',
+        '@id': `${pageUrl}#formacion`,
+        name: en ? 'Training with certificate' : 'Formación con certificado',
+        numberOfItems: COURSES.length,
+        itemListElement: COURSES.map((course, index) => {
+          const verify = courseVerifyUrl(course)
+          return {
+            '@type': 'ListItem',
+            position: index + 1,
+            item: {
+              '@type': 'Course',
+              name: course.title,
+              description: en
+                ? `${course.hours} hours. Instructors: ${course.instructors}.`
+                : `${course.hours} horas. Instructores: ${course.instructors}.`,
+              provider: { '@type': 'Organization', name: course.platform },
+              ...(verify ? { url: verify } : {}),
+              hasCourseInstance: {
+                '@type': 'CourseInstance',
+                courseMode: 'online',
+                endDate: course.date,
+              },
+            },
+          }
+        }),
+      },
+
       generateBreadcrumbSchema(
         [
           { name: en ? 'Home' : 'Inicio', route: 'home' },

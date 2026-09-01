@@ -728,7 +728,14 @@ export default async function CvPage({ params }: Props) {
                               params: { slug },
                             }}
                           >
-                            {t('projectLink')} →
+                            {/* El nombre de la empresa VA en el texto visible.
+                                Las cuatro fichas de empleo cerraban con el mismo
+                                ancla —«Ver la página del proyecto»— apuntando a
+                                cuatro URLs distintas, sin `aria-label`: ni un
+                                buscador ni un lector de pantalla podían
+                                distinguirlas. /servicios ya lo hace así con el
+                                título del servicio. */}
+                            {t('projectLink')}: {exp.company} →
                           </Link>
                         </p>
                       ) : null}

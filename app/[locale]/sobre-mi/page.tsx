@@ -67,8 +67,8 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
       ? 'About — Engineer, PMP, technical SEO'
       : 'Sobre mí — Ingeniero, PMP, SEO técnico',
     description: en
-      ? 'Computer Science engineer from Tec de Monterrey, PMP certified, TOEFL iBT 92. Director of Technology at Law Offices of Manuel Solis; previously Amazon, Master Loyalty Group and Wan Hai Lines.'
-      : 'Ingeniero en Tecnologías Computacionales por el Tec de Monterrey, certificado PMP. Director de Tecnologías en Law Offices of Manuel Solis; antes Amazon, Master Loyalty Group y Wan Hai Lines.',
+      ? 'Tec de Monterrey engineer, PMP certified. Director of Technology at Law Offices of Manuel Solis; previously Amazon, Master Loyalty Group and Wan Hai Lines.'
+      : 'Ingeniero por el Tec de Monterrey y PMP. Director de Tecnologías en Law Offices of Manuel Solis; antes Amazon, Master Loyalty Group y Wan Hai Lines.',
   })
 }
 
@@ -327,6 +327,13 @@ export default async function AboutPage({ params }: Props) {
                     width={SEO_IMAGES.portraitBwSize}
                     height={SEO_IMAGES.portraitBwSize}
                     sizes="(min-width: 768px) 15rem, 60vw"
+                    /* Esta foto está DENTRO del héroe: a 1 335 caracteres del
+                       `<h1>`, en la misma rejilla que el titular, el sumario y
+                       los cuatro enlaces de contacto. Sin `priority` no se
+                       precarga, y un candidato a LCP sin precargar es
+                       exactamente la regresión que este sitio vende arreglar.
+                       El bloque equivalente de /cv ya lo llevaba. */
+                    priority
                   />
                 </span>
                 <figcaption className="stamp mt-4 tabular-nums">
@@ -562,7 +569,16 @@ export default async function AboutPage({ params }: Props) {
               {/* Una carpeta que cualquiera puede abrir vale más que una
                   insignia dibujada: la afirmación queda verificable, que es
                   todo el punto de esta página. */}
-              <p className="mt-10">
+              {/* LOS DOS, y en este orden. La sección de credenciales cerraba
+                  SOLO con el enlace a la carpeta de Drive, así que el único
+                  camino que ofrecía salía del dominio — y /es/certificaciones,
+                  que es la página que desarrolla exactamente esto y ahora
+                  además muestra los ocho documentos, no recibía enlace desde
+                  aquí. Primero el interno, después el externo. */}
+              <p className="mt-10 flex flex-wrap gap-x-8 gap-y-3">
+                <Link className="link-stylus" href="/certificaciones">
+                  {en ? 'see the certifications' : 'ver las certificaciones'} →
+                </Link>
                 <a
                   className="link-stylus"
                   href={SOCIAL_LINKS.certsDrive}

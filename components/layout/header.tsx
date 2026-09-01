@@ -878,6 +878,11 @@ function NavDropdown({
     >
       <Link
         href={group.hub}
+        /* Sin prefetch. Los dos hubs del nav —/servicios y /proyectos— son los
+           payloads RSC más caros del sitio, y el nav dispara 29 peticiones de
+           prefetch (118 kB comprimidos, 537 kB sin comprimir) en cada carga
+           solo por tener sus siete enlaces visibles. El enlace navega igual. */
+        prefetch={false}
         aria-current={isCurrent(group.hub) ? 'page' : undefined}
         className={cn(
           NAV_LINK_BASE,

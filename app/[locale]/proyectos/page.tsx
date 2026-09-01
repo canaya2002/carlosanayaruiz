@@ -22,7 +22,7 @@ import {
   type CompanyKind,
   type CountryCode,
 } from '@/data/companies'
-import { NAP, routeUrl } from '@/lib/constants'
+import { NAP, SITE_CONFIG, routeUrl } from '@/lib/constants'
 import { formatShortDate } from '@/lib/utils'
 import { generatePageMetadata } from '@/lib/seo'
 import {
@@ -246,6 +246,50 @@ export default async function ProyectosPage({ params }: Props) {
     })),
   }
 
+  /**
+   * ── EL SEGUNDO ItemList: LOS ENCARGOS ──
+   *
+   * Dieciocho encargos con dato completo y estructurado —cliente o sector, año,
+   * duración, tipo, qué se entregó, stack y, en nueve, el resultado medido— que
+   * la página sirve en HTML y el grafo no declaraba.
+   *
+   * Va como ItemList HERMANO y no fusionado con el de arriba, a propósito: son
+   * dos colecciones distintas. Aquella son las fichas con su propia URL; esta
+   * son filas de un registro que no tienen página. Fusionarlas obligaría a dar
+   * `url` a entradas que no la tienen, y un `ListItem` sin `url` dentro de una
+   * lista donde el resto sí la trae es peor que dos listas honestas.
+   *
+   * Cada elemento es un `Service` y no un `CreativeWork`: lo que se registra es
+   * el trabajo prestado, y `provider` lo ata por `@id` a la misma entidad Person
+   * del resto del sitio — que es E-E-A-T expresado en datos.
+   *
+   * `description` lleva el resultado SOLO cuando existe. Los nueve sin medición
+   * no lo declaran, igual que la página no lo imprime.
+   */
+  const encargosList: JsonLdNode = {
+    '@type': 'ItemList',
+    '@id': `${pageUrl}#encargos`,
+    name: en ? 'Client work' : 'Trabajo de cliente',
+    numberOfItems: ENGAGEMENTS.length,
+    itemListElement: [...ENGAGEMENTS]
+      .sort((a, b) => b.year - a.year || b.weeks - a.weeks)
+      .map((e, index) => ({
+        '@type': 'ListItem',
+        position: index + 1,
+        item: {
+          '@type': 'Service',
+          name: e.delivered,
+          serviceType: KIND_LABEL[en ? 'en' : 'es'][e.kind],
+          description: e.outcome
+            ? `${e.delivered}. ${en ? 'Measured result' : 'Resultado medido'}: ${e.outcome}.`
+            : e.delivered,
+          provider: { '@id': `${SITE_CONFIG.url}/#person` },
+          areaServed: { '@type': 'Country', name: e.country },
+          ...(e.stack.length > 0 ? { keywords: e.stack.join(', ') } : {}),
+        },
+      })),
+  }
+
   const schema: SchemaGraph = {
     '@context': 'https://schema.org',
     '@graph': [
@@ -260,6 +304,7 @@ export default async function ProyectosPage({ params }: Props) {
         mainEntityId: listId,
       }),
       itemList,
+      encargosList,
       generateBreadcrumbSchema(
         [
           { name: en ? 'Home' : 'Inicio', route: 'home' },

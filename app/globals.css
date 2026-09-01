@@ -2521,6 +2521,12 @@
   .figure-bw {
     position: relative;
     display: block;
+    /* TOPE DE 15rem. El archivo es 400×400 y el CSS lo estiraba al 100% de su
+       contenedor sin límite: por debajo de 768px la foto se servía a más de 400
+       px de ancho y se veía blanda. CLAUDE.md ya tenía la regla escrita —«no la
+       sirvas más grande que 15rem en ningún sitio nuevo»— y no había nada que la
+       hiciera cumplir. Un solo cambio cubre las seis rutas que la montan. */
+    max-width: 15rem;
     mask-image:
       linear-gradient(
         to right,

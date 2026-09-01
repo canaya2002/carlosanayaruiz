@@ -1,6 +1,7 @@
 import type { MetadataRoute } from 'next'
 import { ROUTES, SITE_CONFIG, type RouteKey } from '@/lib/constants'
 import { getPublishedPosts } from '@/lib/blog'
+import { getCompanies } from '@/data/companies'
 import type { Locale } from '@/data/types'
 
 /**
@@ -157,12 +158,64 @@ export default function sitemap(): MetadataRoute.Sitemap {
       })),
     )
 
+  /* Los publicados se calculan UNA vez: los usan el índice y la lista de
+     artículos, y llamar dos veces a `getPublishedPosts()` era pagar el filtro
+     de cien entradas por duplicado. */
+  const publicados = getPublishedPosts()
+
   const indiceBlog = {
     url: url('blog', 'es'),
-    lastModified: CONTENT_UPDATED,
+    /* El `lastModified` del índice sale del artículo publicado MÁS RECIENTE, no
+       de la constante global. El sitemap servido se contradecía en dos entradas
+       contiguas: declaraba `/es/blog` con lastmod 2026-08-24 y, tres líneas
+       abajo, un artículo de ese mismo índice con lastmod 2026-08-28. El índice
+       cambia cada vez que sale un artículo — dos veces por semana durante
+       cincuenta semanas— así que su fecha es un dato conocido y no hace falta
+       aproximarla. */
+    lastModified: publicados.length
+      ? publicados
+          .map((post) => post.publishedAt.slice(0, 10))
+          .sort()
+          .at(-1)!
+      : CONTENT_UPDATED,
     changeFrequency: PAGE_META.blog.changeFrequency,
     priority: PAGE_META.blog.priority,
   }
+
+  /**
+   * ── LAS FICHAS DE PROYECTO ──
+   * Doce URLs que responden 200, llevan `index, follow`, canónico
+   * autorreferente y el clúster hreflang de tres completo — y no estaban en el
+   * sitemap. La ruta es dinámica (`app/[locale]/proyectos/[slug]`), así que el
+   * bucle sobre `PAGE_META` no las veía: ese `Record<RouteKey, …>` solo conoce
+   * las rutas estáticas.
+   *
+   * Salen de `getCompanies()`, la misma fuente que pinta /proyectos y que
+   * genera `generateStaticParams`, así que una entrada nueva en
+   * `data/companies.ts` aparece aquí sola y no puede haber una ficha sin
+   * listar ni una URL listada sin ficha.
+   *
+   * `alternates` sí, y con las tres: al contrario que los artículos del blog,
+   * estas páginas EXISTEN en los dos idiomas.
+   */
+  const fichas = getCompanies('es').flatMap((company) =>
+    SITE_CONFIG.locales.map((locale) => ({
+      url: `${SITE_CONFIG.url}/${locale}${ROUTES.proyectos[locale]}/${company.slug}`,
+      lastModified: CONTENT_UPDATED,
+      changeFrequency: 'monthly' as ChangeFrequency,
+      /* Por debajo del hub (0.9) y del catálogo, por encima de un satélite del
+         blog: una ficha es una página de confianza, no una de conversión. */
+      priority: 0.7,
+      alternates: {
+        languages: Object.fromEntries(
+          SITE_CONFIG.locales.map((l) => [
+            l === 'en' ? 'en-US' : 'es-MX',
+            `${SITE_CONFIG.url}/${l}${ROUTES.proyectos[l]}/${company.slug}`,
+          ])
+        ),
+      },
+    }))
+  )
 
   /**
    * ── LOS ARTÍCULOS PUBLICADOS ──
@@ -182,12 +235,12 @@ export default function sitemap(): MetadataRoute.Sitemap {
    * clústeres lo distingue: la pillar es la que debe rankear para el término
    * cabecera.
    */
-  const articulos = getPublishedPosts().map((post) => ({
+  const articulos = publicados.map((post) => ({
     url: `${SITE_CONFIG.url}/es/blog/${post.slug}`,
     lastModified: post.publishedAt.slice(0, 10),
     changeFrequency: 'monthly' as ChangeFrequency,
     priority: post.tipo === 'pillar' ? 0.8 : 0.6,
   }))
 
-  return [...paginas, indiceBlog, ...articulos]
+  return [...paginas, ...fichas, indiceBlog, ...articulos]
 }

@@ -228,6 +228,19 @@ const nextConfig: NextConfig = {
   images: {
     formats: ['image/avif', 'image/webp'],
     /**
+     * Un año de caché en el navegador y en el CDN.
+     *
+     * Sin esto, toda respuesta de `/_next/image` salía con
+     * `cache-control: public, max-age=0, must-revalidate` y sin `etag`: el
+     * navegador no podía reusar una imagen ni un segundo, así que cada visita
+     * repetida volvía a descargar el retrato del héroe, la foto en blanco y
+     * negro, las 99 portadas del blog y los 8 certificados.
+     *
+     * Es seguro porque la URL de `/_next/image` lleva el id del despliegue: un
+     * deploy nuevo cambia la URL e invalida la caché sola. Nada queda pegado.
+     */
+    minimumCacheTTL: 31536000,
+    /**
      * `remotePatterns` is deliberately absent. It previously allowed
      * { protocol: 'https', hostname: '**' }, which turns /_next/image into
      * an open image proxy: anyone could pass any URL on the internet through

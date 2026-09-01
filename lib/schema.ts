@@ -45,6 +45,8 @@ import {
 } from './constants'
 import type { Locale } from '@/data/types'
 import { getServices } from '@/data/services'
+import { getAwards } from '@/data/awards'
+import { getEducation } from '@/data/education'
 
 const BASE_URL = SITE_CONFIG.url
 
@@ -441,30 +443,68 @@ export function generatePersonSchema(locale: Locale): JsonLdNode {
     nationality: { '@type': 'Country', name: 'Mexico' },
     knowsLanguage: KNOWS_LANGUAGE,
     knowsAbout: KNOWS_ABOUT,
+    /**
+     * LAS CUATRO CREDENCIALES, DERIVADAS DEL DATO.
+     *
+     * Este array estaba escrito A MANO con tres entradas, mientras
+     * /certificaciones construía su `ItemList` del dato real con cuatro. Una
+     * sola respuesta HTTP contenía SIETE nodos
+     * `EducationalOccupationalCredential` para cuatro credenciales, y las dos
+     * copias se contradecían:
+     *
+     *   · el PMP dos veces, y la copia manual SIN `recognizedBy`
+     *   · el TOEFL dos veces con DOS nombres distintos, y solo una diciendo ETS
+     *   · la Especialización en IA ausente de `hasCredential`
+     *
+     * La copia manual era estrictamente más pobre, y es la que viajaba en las
+     * 32 rutas porque este nodo lo emite el layout.
+     *
+     * Ahora sale de `data/education.ts` y `data/awards.ts` —las mismas fuentes
+     * que pintan /certificaciones y /cv— así que no puede volver a divergir. El
+     * PMP sigue escrito a mano y es lo correcto: no vive en ningún `data/*.ts`
+     * porque no tiene folio ni fecha de emisión, y esa ausencia está decidida.
+     */
     hasCredential: [
       {
         '@type': 'EducationalOccupationalCredential',
         name: 'Project Management Professional (PMP)',
         credentialCategory: 'Professional Certification',
-      },
-      {
-        '@type': 'EducationalOccupationalCredential',
-        name: 'TOEFL iBT (score 92)',
-        credentialCategory: 'Language Certification',
-      },
-      {
-        '@type': 'EducationalOccupationalCredential',
-        name:
-          locale === 'en'
-            ? 'Computer Science Engineering degree'
-            : 'Ingeniería en Tecnologías Computacionales',
-        credentialCategory: 'degree',
         recognizedBy: {
-          '@type': 'CollegeOrUniversity',
-          name: 'Tecnológico de Monterrey',
+          '@type': 'Organization',
+          name: 'Project Management Institute',
         },
       },
+      ...getAwards(locale)
+        .filter((award) => award.kind === 'certification')
+        .map((award) => ({
+          '@type': 'EducationalOccupationalCredential' as const,
+          name: award.title,
+          credentialCategory: 'Language Certification',
+          recognizedBy: { '@type': 'Organization', name: award.organization },
+          dateCreated: award.date,
+        })),
+      ...getEducation(locale).map((item) => ({
+        '@type': 'EducationalOccupationalCredential' as const,
+        name: `${item.degree} · ${item.field}`,
+        credentialCategory: item.kind === 'degree' ? 'degree' : 'Specialization',
+        recognizedBy: {
+          '@type': 'CollegeOrUniversity',
+          name: item.institution,
+        },
+        dateCreated: item.endDate,
+      })),
     ],
+    /**
+     * Los reconocimientos, como texto y sacados del dato.
+     *
+     * `Person.award` es la propiedad que schema.org tiene para esto y el grafo
+     * no la traía, aunque `data/awards.ts` lleva las tres entradas con su
+     * organización y su fecha. No se inventa nada: cada cadena es
+     * «{título} — {organización} ({año})», compuesta del registro.
+     */
+    award: getAwards(locale).map(
+      (a) => `${a.title} — ${a.organization} (${a.date.slice(0, 4)})`
+    ),
     alumniOf: [
       {
         '@type': 'CollegeOrUniversity',
@@ -484,7 +524,26 @@ export function generatePersonSchema(locale: Locale): JsonLdNode {
       },
     },
     // Both directions of the person ⇄ practice relationship.
-    worksFor: { '@id': ID.business },
+    /**
+     * DOS empleadores, y el grafo se contradecía sin ellos.
+     *
+     * `worksFor` apuntaba solo a `#business` —su propio despacho— mientras la
+     * `description` del `ProfilePage` dice «Director de Tecnologías en Law
+     * Offices of Manuel Solis» y `data/experience.ts` lo declara `current:
+     * true`. Un grafo que describe en prosa un empleo que su propia propiedad
+     * estructurada no declara es exactamente el tipo de incoherencia que un
+     * asistente resuelve mal.
+     *
+     * El despacho propio va primero porque es la entidad que vende los cuatro
+     * servicios de este sitio.
+     */
+    worksFor: [
+      { '@id': ID.business },
+      {
+        '@type': 'Organization',
+        name: 'Law Offices of Manuel Solis',
+      },
+    ],
     hasOfferCatalog: offerCatalog(locale),
     // A URL, not an @id: the ProfilePage node only exists on the about page.
     mainEntityOfPage: routeUrl('sobreMi', locale),
@@ -519,6 +578,16 @@ export function generateProfessionalServiceSchema(locale: Locale): JsonLdNode {
     founder: { '@id': ID.person },
     employee: { '@id': ID.person },
     address: postalAddress(locale),
+    /* `geo` es una de las propiedades que Google recomienda para
+       `LocalBusiness`, y `ProfessionalService` es un subtipo. El grafo no
+       traía una sola `GeoCoordinates` en las 32 rutas, aunque el par ya
+       está impreso como texto en /sobre-mi y en /cv («19.4326 N / 99.1332
+       W»). Mismo dato, ahora legible por máquina. */
+    geo: {
+      '@type': 'GeoCoordinates',
+      latitude: 19.4326,
+      longitude: -99.1332,
+    },
     telephone: NAP.phone,
     email: `mailto:${NAP.email}`,
     areaServed: areaServed(locale),

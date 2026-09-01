@@ -569,9 +569,22 @@ export default async function HomePage({ params }: Props) {
                 <p className="mt-5 max-w-[56ch] text-ink-muted">
                   {t('operatorNote')}
                 </p>
-                <p className="mt-8">
+                {/* DOS destinos, no uno. /es/proyectos es el hub de 6 fichas
+                    y de los 18 encargos, y el sitemap la declara priority 0.9 —
+                    el tramo más alto, igual que las cuatro páginas que
+                    facturan— pero no recibía un solo enlace CONTEXTUAL desde la
+                    portada: solo los tres de plantilla del nav y del pie. Este
+                    párrafo ya cerraba con «el registro completo», así que el
+                    sitio natural del segundo enlace es aquí. */}
+                <p className="mt-8 flex flex-wrap gap-x-8 gap-y-3">
                   <Link className="link-stylus" href="/sobre-mi">
                     {en ? 'full record' : 'el registro completo'} →
+                  </Link>
+                  <Link className="link-stylus" href="/proyectos">
+                    {en
+                      ? 'the client work'
+                      : 'el trabajo de cliente'}{' '}
+                    →
                   </Link>
                 </p>
               </div>

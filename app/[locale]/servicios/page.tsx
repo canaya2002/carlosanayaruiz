@@ -496,12 +496,15 @@ export default async function ServicesHubPage({ params }: Props) {
                         servicio. Sigue conteniendo el texto visible (WCAG
                         2.5.3). */}
                     <p className="mt-10">
-                      <Link
-                        className="link-stylus"
-                        href={href}
-                        aria-label={`${ts('viewService')}: ${service.title}`}
-                      >
-                        {ts('viewService')} →
+                      <Link className="link-stylus" href={href}>
+                        {/* El título entra en el texto VISIBLE. Estaba solo en
+                            el `aria-label`, así que los cuatro enlaces de cierre
+                            de la rejilla compartían ancla —«Ver el servicio»—
+                            apuntando a las cuatro páginas que facturan. La línea
+                            370 de este mismo archivo ya lo hacía bien; ahora las
+                            dos coinciden, y con el título en el texto el
+                            `aria-label` sobra. */}
+                        {ts('viewService')}: {service.title} →
                       </Link>
                     </p>
                   </article>

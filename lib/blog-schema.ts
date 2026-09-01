@@ -3,7 +3,6 @@ import type { FaqPair } from '@/lib/blog-render'
 import { postUrl, blogUrl } from '@/lib/blog'
 import { SITE_CONFIG, SEO_IMAGES } from '@/lib/constants'
 import {
-  generatePersonSchema,
   generateBreadcrumbSchema,
   generateFAQSchema,
   type JsonLdNode,
@@ -85,7 +84,15 @@ export function generateBlogPostGraph(
 ): SchemaGraph {
   const url = postUrl(post)
   const graph: JsonLdNode[] = [
-    generatePersonSchema('es'),
+      /* El nodo Person NO se repite aquí.
+         `generateLayoutGraph` (lib/schema.ts:777) lo emite en TODA ruta,
+         incluidas las del blog, así que este archivo lo estaba duplicando byte
+         por byte: medido en el HTML servido de un artículo, DOS nodos
+         `"@type":"Person"` completos, 3 302 bytes repetidos en cada una de las
+         100 URLs del calendario.
+         `author` y `publisher` lo referencian por `@id`, que es lo correcto y
+         lo que hace innecesaria la copia: un `@id` solo necesita que el nodo
+         exista en ALGÚN grafo del documento. */
     articleNode(post, faq),
     generateBreadcrumbSchema(
       [
@@ -123,7 +130,6 @@ export function generateBlogIndexGraph(posts: readonly BlogPost[]): SchemaGraph 
   return {
     '@context': 'https://schema.org',
     '@graph': [
-      generatePersonSchema('es'),
       {
         '@type': 'Blog',
         '@id': `${url}#blog`,

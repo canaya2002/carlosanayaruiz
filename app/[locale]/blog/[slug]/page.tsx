@@ -89,7 +89,13 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
     authors: [{ name: SITE_CONFIG.name, url: SITE_CONFIG.url }],
     creator: SITE_CONFIG.name,
     publisher: SITE_CONFIG.name,
-    keywords: [post.keyword, ...post.tags],
+    /* Deduplicado. `keyword` también está en `tags` en 12 de los 100
+       artículos, así que la palabra clave principal salía repetida en el
+       `<meta name="keywords">` y en `BlogPosting.keywords`. Se arregla en el
+       ORIGEN y no en `data/blog.ts` porque ese archivo se regenera con
+       `npm run blog:data`: un arreglo escrito ahí se perdería en la siguiente
+       corrida. */
+    keywords: [...new Set([post.keyword, ...post.tags])],
     alternates: {
       canonical: url,
       /**
@@ -97,6 +103,10 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
        * inglés, y anunciar una que redirige es un par no recíproco.
        */
       languages: { 'es-MX': url, 'x-default': url },
+      /* Autodescubrimiento del feed. Lo llevaba el ÍNDICE del blog y no los
+         artículos, que es al revés de donde sirve: un lector llega a un
+         artículo desde una búsqueda, no al índice. */
+      types: { 'application/rss+xml': `${SITE_CONFIG.url}/feed.xml` },
     },
     openGraph: {
       type: 'article',
@@ -127,7 +137,12 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
       card: 'summary_large_image',
       title: post.title,
       description: post.description,
-      ...(post.cover ? { images: [`${SITE_CONFIG.url}${post.cover}`] } : {}),
+      /* Sin `images` propio, a propósito. Declarado como cadena suelta se
+         perdía el `alt`, y los artículos eran las ÚNICAS páginas del sitio
+         sin `twitter:image:alt`. Las 16 rutas sí lo llevan porque
+         `lib/seo.ts` no declara `twitter.images` y Next hereda el objeto
+         completo de `openGraph.images`, que trae url, width, height y alt.
+         Aquí ocurre lo mismo ahora. */
     },
   }
 }

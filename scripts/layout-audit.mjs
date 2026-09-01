@@ -272,6 +272,23 @@ for (const path of paths) {
       mobile: width < 640,
     })
     await cdp(ws, ++id, 'Page.navigate', { url: base + path })
+    /* ⚠ LÍMITE CONOCIDO DE ESTE CHEQUEO — leer antes de diagnosticar el sitio.
+       De la TERCERA ruta en adelante, en una sola invocación, la detección de
+       «INVISIBLE» reporta el héroe entero (eyebrow, h1, lead, enlaces del
+       margen) como contenido invisible dentro del viewport. NO es un defecto de
+       la página: `.hero-in` no vuelve a reproducirse en la misma pestaña, así
+       que el probe lo mide en su fotograma inicial, que es `opacity: 0`.
+
+       Medido: las mismas siete rutas dan 0 hallazgos medidas DE UNA EN UNA y 82
+       en una sola invocación, y siempre son las cinco últimas. Es determinista.
+
+       Se intentaron tres arreglos y ninguno lo resolvió: esperar a que
+       `getAnimations()` termine (con y sin base fija), y navegar a `about:blank`
+       entre rutas para resetear el documento. La causa sigue sin localizar.
+
+       MIENTRAS ESO SIGA ASÍ: una ruta que reporte «INVISIBLE» se vuelve a medir
+       SOLA antes de tocar nada. Este comentario existe porque el falso positivo
+       ya costó cinco ciclos de diagnóstico sobre una página que estaba bien. */
     await sleep(2200)
     const { result } = await cdp(ws, ++id, 'Runtime.evaluate', {
       expression: PROBE,

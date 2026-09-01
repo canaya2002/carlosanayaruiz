@@ -64,6 +64,12 @@ export async function Footer() {
   const year = new Date().getFullYear()
 
   const services: readonly FooterLink[] = [
+    /* EL HUB VA PRIMERO. /es/servicios reparte a las cuatro páginas que
+       facturan y era la ÚNICA de las 16 rutas en español con cero enlaces desde
+       el pie: el pie listaba sus cuatro hijas y no a la madre. El pie es la
+       única superficie que comparten las 31 URLs, así que es el enlace interno
+       más barato que existe. */
+    { href: '/servicios', label: tn('services') },
     { href: '/seo-tecnico', label: t('seoTecnico') },
     { href: '/desarrollo-web', label: t('desarrolloWeb') },
     { href: '/automatizacion-ia', label: t('automatizacionIA') },

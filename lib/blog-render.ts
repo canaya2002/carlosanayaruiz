@@ -421,8 +421,35 @@ export function renderArticle(markdown: string): RenderedArticle {
       const answer = plainText(buf.slice(1).join(' '))
       if (question && answer) {
         faq.push({ question, answer })
+
+        /* LA PREGUNTA ES UN ENCABEZADO, no un párrafo en negrita.
+           Iba como `<p class="q"><strong>…</strong></p>`, y son 305 preguntas
+           repartidas en los 100 artículos: cada una se declara como nodo
+           `Question` de un `FAQPage` en el JSON-LD, así que el documento
+           afirmaba en datos estructurados una jerarquía que su propio HTML no
+           tenía. Un rich result de FAQ se apoya en las dos señales.
+
+           `h3` y no `h2` porque la sección «Preguntas frecuentes» ya es el `h2`
+           que abre este bloque —`inFaq` se activa justo en él— así que h2 → h3
+           no salta ningún nivel.
+
+           El `**` exterior se retira: dentro de un encabezado la negrita es
+           redundante. El formato INTERIOR se conserva, porque `inline` sigue
+           corriendo sobre el contenido.
+
+           Y lleva `id`, con el mismo slugificador y el mismo `uniqueId` que los
+           encabezados de sección: cada pregunta pasa a ser enlazable, que es
+           justo lo que un fragmento de FAQ necesita.
+
+           NO se empuja a `headings`: el índice del margen lista solo `h2` a
+           propósito, y meter 305 preguntas ahí lo convertiría en otro artículo.
+
+           El CSS no se mueve: `.article .qa .q` ya fija `font-size: 1rem` y
+           gana por especificidad (tres clases) a cualquier `.article h3`. */
+        const inner = buf[0]!.replace(/^\*\*(.+)\*\*$/, '$1')
+        const qId = uniqueId(slugifyHeading(question))
         out.push(
-          `<div class="qa"><p class="q">${inline(buf[0]!)}</p><p class="a">${inline(
+          `<div class="qa"><h3 class="q" id="${qId}">${inline(inner)}</h3><p class="a">${inline(
             buf.slice(1).join(' ')
           )}</p></div>`
         )
