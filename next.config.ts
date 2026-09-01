@@ -152,6 +152,25 @@ const IMMUTABLE_ASSETS = [
   '/icon-maskable-512.png',
   '/apple-touch-icon.png',
   '/carlos-anaya-ruiz.jpg',
+  /**
+   * ── LOS DOS RETRATOS, LAS 99 PORTADAS Y LOS 8 CERTIFICADOS ──
+   *
+   * Faltaban, y `minimumCacheTTL` NO lo arreglaba: para una imagen local,
+   * `/_next/image` HEREDA el `cache-control` del archivo de origen. Como
+   * `public/` se sirve con `max-age=0, must-revalidate`, la variante optimizada
+   * salía igual — medido en producción: `x-vercel-cache: HIT` con `age: 16` (el
+   * CDN sí la cacheaba) y `cache-control: public, max-age=0, must-revalidate`
+   * hacia el navegador, que no podía reusarla ni un segundo.
+   *
+   * Es seguro por la misma convención que ya rige para los cinco de arriba y
+   * que este archivo documenta: una imagen no se reemplaza en su sitio, se
+   * cambia de NOMBRE. Las portadas del blog llevan el slug del artículo y los
+   * certificados el del curso, así que el nombre ya es su contenido.
+   */
+  '/carlos-anaya-ruiz-bn.webp',
+  '/carlos-anaya-ruiz-retrato.webp',
+  '/blog/:slug*',
+  '/credenciales/:slug*',
 ]
 
 const nextConfig: NextConfig = {
