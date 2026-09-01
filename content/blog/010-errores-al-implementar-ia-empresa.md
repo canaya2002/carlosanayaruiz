@@ -2,6 +2,7 @@
 n: 10
 title: "10 errores al implementar IA en tu empresa (y cómo evitarlos)"
 slug: "errores-al-implementar-ia-empresa"
+seoTitle: "10 errores al implementar IA en tu empresa"
 description: "Los 10 errores que hacen fracasar proyectos de IA en empresas, con el síntoma temprano de cada uno y cómo corregirlo antes de quemar presupuesto."
 category: "Inteligencia Artificial"
 keyword: "errores al implementar inteligencia artificial"

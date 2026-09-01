@@ -400,12 +400,22 @@ export default async function HomePage({ params }: Props) {
               {en ? 'Stack and tools' : 'Stack y herramientas'}
             </h2>
             <Ribbon
-              items={stack}
+              items={stack.slice(0, Math.ceil(stack.length / 2))}
               label={en ? 'Stack and tools' : 'Stack y herramientas'}
             />
+            {/* EL STACK SE REPARTE entre los dos carriles; antes los dos
+                recibían el array COMPLETO. `Ribbon` además duplica su contenido
+                internamente para cerrar el bucle, así que la portada servía 664
+                elementos `.ribbon-item` para 166 etiquetas distintas: cada
+                nombre cuatro veces, y unas 896 palabras que son la mitad del
+                texto principal de la página. Para un buscador eso es el mismo
+                término repetido cuatro veces en la URL de mayor autoridad.
+                Repartido, cada etiqueta sale dos veces (la copia del bucle) en
+                vez de cuatro, y las dos pistas siguen corriendo a distinta
+                velocidad porque `reverse` no cambia. */}
             <div className="mt-3">
               <Ribbon
-                items={stack}
+                items={stack.slice(Math.ceil(stack.length / 2))}
                 label={en ? 'Stack, second rail' : 'Stack, segundo carril'}
                 reverse
               />
@@ -550,7 +560,7 @@ export default async function HomePage({ params }: Props) {
                   <span className="portrait-shutter" aria-hidden="true" />
                   <Image
                     src={SEO_IMAGES.portraitBw}
-                    alt={SEO_IMAGES.avatarAlt[lc]}
+                    alt={SEO_IMAGES.portraitBwAlt[lc]}
                     width={SEO_IMAGES.portraitBwSize}
                     height={SEO_IMAGES.portraitBwSize}
                     sizes="(min-width: 1024px) 15rem, (min-width: 768px) 16rem, 60vw"

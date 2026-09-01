@@ -166,6 +166,38 @@ export default async function LocaleLayout({
 
   setRequestLocale(locale)
   const messages = await getMessages()
+
+  /**
+   * SOLO los namespaces que cruzan al cliente.
+   *
+   * `NextIntlClientProvider` es frontera de cliente, así que lo que se le pasa
+   * se SERIALIZA en el payload RSC de todas las rutas. Aquí iba `messages`
+   * completo: los 28 namespaces y 377 cadenas del diccionario, incluidos los
+   * documentos legales, los 40 renglones de /premios y los 37 de
+   * /certificaciones — en las 31 rutas y en los 100 artículos, tengan o no
+   * nada que ver.
+   *
+   * Los únicos consumidores marcados `'use client'` son `header.tsx` (nav,
+   * a11y, services, footer) y `language-switcher.tsx` (language). Verificado
+   * con grep sobre todos los archivos con la directiva.
+   *
+   * ⚠ Si un componente de cliente nuevo pide otro namespace, hay que añadirlo
+   * aquí o `useTranslations` lanzará en el navegador. Es el precio de no
+   * mandar el diccionario entero, y es un fallo ruidoso y no silencioso.
+   */
+  const CLIENT_NAMESPACES = [
+    'nav',
+    'a11y',
+    'services',
+    'footer',
+    'language',
+  ] as const
+  const clientMessages = Object.fromEntries(
+    CLIENT_NAMESPACES.filter((ns) => ns in messages).map((ns) => [
+      ns,
+      messages[ns],
+    ])
+  )
   const t = await getTranslations({ locale, namespace: 'a11y' })
 
   return (
@@ -189,7 +221,7 @@ export default async function LocaleLayout({
         />
       </head>
       <body className="min-h-screen bg-ground font-sans text-ink antialiased">
-        <NextIntlClientProvider messages={messages}>
+        <NextIntlClientProvider messages={clientMessages}>
           <a href="#main-content" className="skip-to-content">
             {t('skipToContent')}
           </a>

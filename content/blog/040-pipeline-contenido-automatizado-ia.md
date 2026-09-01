@@ -2,6 +2,7 @@
 n: 40
 title: "Pipeline de contenido automatizado con IA (sin publicar basura)"
 slug: "pipeline-contenido-automatizado-ia"
+seoTitle: "Pipeline de contenido automatizado con IA"
 description: "Cómo montar un pipeline de contenido con IA que produce a escala sin caer en spam: investigación, redacción, revisión humana y publicación."
 category: "Automatización"
 keyword: "automatizar contenido con ia"

@@ -88,7 +88,14 @@ const PAGE_META: Record<RouteKey, SitemapMeta> = {
   sobreMi: { changeFrequency: 'monthly', priority: 0.7 },
   contacto: { changeFrequency: 'yearly', priority: 0.7 },
   libros: { changeFrequency: 'monthly', priority: 0.6 },
-  proyectos: { changeFrequency: 'monthly', priority: 0.9 },
+  /* 0.8 y no 0.9. Salía empatada con las cuatro páginas de servicio y POR
+     ENCIMA de `/es/servicios` (0.8), que es el hub que reparte hacia ellas. Y
+     el comentario de esta tabla describe /proyectos como página de CONFIANZA,
+     no de conversión — como sus vecinas /premios y /certificaciones, que están
+     en 0.6. La tabla y el comentario decían cosas distintas; ahora dicen la
+     misma. Sigue por encima de sus vecinas porque además es el hub de las 6
+     fichas y de los 18 encargos. */
+  proyectos: { changeFrequency: 'monthly', priority: 0.8 },
   premios: { changeFrequency: 'yearly', priority: 0.6 },
   certificaciones: { changeFrequency: 'yearly', priority: 0.6 },
   cv: { changeFrequency: 'monthly', priority: 0.7 },

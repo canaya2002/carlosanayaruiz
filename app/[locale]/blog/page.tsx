@@ -65,6 +65,16 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
       languages: { 'es-MX': url, 'x-default': url },
       types: { 'application/rss+xml': `${SITE_CONFIG.url}/feed.xml` },
     },
+    /* Bloque `twitter` PROPIO. `/es/blog` era la única de las 31 rutas que no
+       lo declaraba, así que heredaba el de la plantilla y su tarjeta de X
+       anunciaba la PORTADA en vez del blog: el título, la descripción y la
+       imagen eran los de la home. La única URL del sitio que existe para que
+       la compartan, y era la que se compartía mal. */
+    twitter: {
+      card: 'summary_large_image',
+      title: TITLE,
+      description: DESCRIPTION,
+    },
     openGraph: {
       type: 'website',
       url,
@@ -177,6 +187,26 @@ export default async function BlogIndexPage({ params }: Props) {
                     /feed.xml →
                   </a>
                 </div>
+
+                {/* /es/libros no recibía UN SOLO enlace contextual en las 16
+                    rutas en español: sus tres apariciones por documento eran la
+                    plantilla —dos en el nav y una en el pie, las tres bajo el
+                    rótulo «Recursos», que no dice libro— y el sitemap la declara
+                    priority 0.6.
+
+                    El sitio natural es aquí y no en la portada: quien lee los
+                    artículos es exactamente quien se apunta a un libro sobre lo
+                    mismo. Va en el margen, que es donde este índice pone lo que
+                    se mira antes de decidir si se lee. */}
+                <div className="margin-row">
+                  {/* Sin ternario de idioma: esta ruta es SOLO española —el
+                      tipo de `locale` ya está estrechado a 'es' aquí— así que
+                      comparar con 'en' no compila. */}
+                  <span className="margin-key">también escribo</span>
+                  <Link className="link-stylus" href="/libros">
+                    el libro →
+                  </Link>
+                </div>
               </aside>
             </div>
           </section>
@@ -258,9 +288,16 @@ export default async function BlogIndexPage({ params }: Props) {
                               : ''}
                           </span>
 
-                          <span className="entry-title mt-2.5 block">
+                          {/* `h3` y no `span`. Los títulos de artículo no eran
+                              encabezados en ninguna parte, así que el índice del
+                              blog servía un árbol de dos nodos: el h1 «Blog
+                              técnico» y UN h2 por clúster, con las veinte
+                              entradas como texto suelto. La sección del clúster
+                              ya es un `<section aria-labelledby>` con su h2, así
+                              que h2 → h3 no salta nivel. */}
+                          <h3 className="entry-title mt-2.5 block">
                             {post.title}
-                          </span>
+                          </h3>
 
                           <span className="mt-2.5 block max-w-[62ch] text-sm leading-relaxed text-ink-muted">
                             {post.description}

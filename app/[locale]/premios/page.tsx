@@ -350,7 +350,11 @@ export default async function AwardsPage({ params }: Props) {
                         <span className="credential credential-wide">
                           <Image
                             src={award.image}
-                            alt={award.title}
+                            /* `imageAlt` y no `title`: el título es el nombre
+                               del PROYECTO y ya está impreso literal 500
+                               caracteres antes en esta misma página. El `alt` de
+                               un documento escaneado describe el documento. */
+                            alt={award.imageAlt ?? award.title}
                             width={1600}
                             height={1075}
                             sizes="(min-width: 1024px) 54rem, 92vw"

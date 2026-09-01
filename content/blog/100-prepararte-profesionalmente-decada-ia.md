@@ -2,6 +2,7 @@
 n: 100
 title: "Cómo prepararte profesionalmente para la próxima década de IA"
 slug: "prepararte-profesionalmente-decada-ia"
+seoTitle: "Cómo prepararte para la próxima década de IA"
 description: "Qué habilidades suben y bajan de valor con la IA, cómo construir un perfil difícil de automatizar y un plan de 12 meses para lograrlo."
 category: "Tendencias"
 keyword: "cómo prepararse para la inteligencia artificial"

@@ -2,6 +2,7 @@
 n: 6
 title: "Fine-tuning, RAG o prompt engineering: cuál necesitas realmente"
 slug: "fine-tuning-vs-rag-vs-prompt-engineering"
+seoTitle: "Fine-tuning, RAG o prompt engineering: cuál necesitas"
 description: "El 90% de las empresas que quieren fine-tuning en realidad necesitan RAG o mejores prompts. Cómo decidir con un árbol de decisión claro."
 category: "Inteligencia Artificial"
 keyword: "fine tuning vs rag"

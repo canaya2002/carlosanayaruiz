@@ -2,6 +2,7 @@
 n: 4
 title: "RAG explicado: cómo darle a la IA el conocimiento de tu empresa"
 slug: "que-es-rag-inteligencia-artificial"
+seoTitle: "RAG: cómo darle a la IA el conocimiento de tu empresa"
 description: "RAG explicado sin jerga: cómo conectar tus documentos a un modelo de IA para que responda con información real de tu empresa."
 category: "Inteligencia Artificial"
 keyword: "qué es rag inteligencia artificial"

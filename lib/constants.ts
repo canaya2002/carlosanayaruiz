@@ -219,6 +219,23 @@ export const SEO_IMAGES = {
    */
   portraitBw: '/carlos-anaya-ruiz-bn.webp',
   portraitBwSize: 400,
+  /**
+   * Alt PROPIO de la foto de estudio, distinto del de `avatarAlt`.
+   *
+   * Las tres páginas que la montan —la portada, /sobre-mi y /cv— reusaban
+   * `avatarAlt`, así que la portada servía DOS imágenes distintas —el recorte
+   * con alfa del masthead y esta, a 38 000 caracteres de distancia— con el
+   * MISMO texto alternativo palabra por palabra. Para un lector de pantalla son
+   * dos veces la misma frase sobre dos fotos distintas, y para un buscador dos
+   * imágenes indistinguibles.
+   *
+   * Describe la foto, no repite el rol: el rol ya está en el `avatarAlt` del
+   * retrato y en la propia página.
+   */
+  portraitBwAlt: {
+    es: 'Retrato de estudio en blanco y negro de Carlos Anaya Ruiz, de frente y sobre fondo oscuro',
+    en: 'Black and white studio portrait of Carlos Anaya Ruiz, facing the camera against a dark background',
+  } as Record<Locale, string>,
   appleTouchIcon: '/apple-touch-icon.png',
   icon192: '/icon-192.png',
   icon512: '/icon-512.png',

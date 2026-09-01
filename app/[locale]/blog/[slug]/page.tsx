@@ -84,7 +84,13 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
      * busca «qué es RAG» no busca por marca, y esos 20 caracteres se comen la
      * cola de la frase, que es donde están las palabras que sí importan.
      */
-    title: { absolute: post.title },
+    /* `seoTitle` cuando existe. Diez de los 100 títulos pasan de ~60
+       caracteres decodificados y Google los recorta con puntos suspensivos —el
+       001, que es la pillar del clúster de IA y el primero publicado, mide 72.
+       El `<h1>` VISIBLE sigue siendo `post.title`: ahí no hay límite de píxeles
+       y recortar el titular para complacer a una SERP sería cambiar el
+       contenido por el envoltorio. */
+    title: { absolute: post.seoTitle ?? post.title },
     description: post.description,
     authors: [{ name: SITE_CONFIG.name, url: SITE_CONFIG.url }],
     creator: SITE_CONFIG.name,
@@ -111,7 +117,7 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
     openGraph: {
       type: 'article',
       url,
-      title: post.title,
+      title: post.seoTitle ?? post.title,
       description: post.description,
       siteName: SITE_CONFIG.name,
       locale: 'es_MX',
@@ -135,7 +141,7 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
     },
     twitter: {
       card: 'summary_large_image',
-      title: post.title,
+      title: post.seoTitle ?? post.title,
       description: post.description,
       /* Sin `images` propio, a propósito. Declarado como cadena suelta se
          perdía el `alt`, y los artículos eran las ÚNICAS páginas del sitio

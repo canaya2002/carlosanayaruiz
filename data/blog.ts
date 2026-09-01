@@ -24,6 +24,17 @@ export interface BlogPost {
   /** Número del artículo en el índice maestro, 1–100. Es su orden de salida. */
   n: number
   slug: string
+  /**
+   * Título para el elemento title, el OG y la tarjeta social, cuando el visible
+   * pasa de ~60 caracteres y Google lo recortaría con puntos suspensivos.
+   *
+   * Ausente en 90 de los 100: solo lo llevan los que lo necesitan. El h1
+   * SIEMPRE usa 'title' — ahí no hay límite de píxeles, y recortar el titular
+   * visible para complacer a una SERP sería cambiar el contenido por el
+   * envoltorio. (Sin backticks: este bloque vive dentro de un template
+   * literal.)
+   */
+  seoTitle?: string
   title: string
   description: string
   /** Categoría del frontmatter: 12 valores. */
@@ -49,6 +60,7 @@ export const BLOG_POSTS: readonly BlogPost[] = [
   {
     n: 1,
     slug: "que-es-inteligencia-artificial-generativa-empresas",
+    seoTitle: "Qué es la IA generativa y cómo usarla en tu empresa",
     title: "Qué es la inteligencia artificial generativa y cómo usarla en tu empresa",
     description: "Qué es la inteligencia artificial generativa, cómo funciona y 12 formas concretas de aplicarla en tu empresa este año. Guía sin humo.",
     category: "Inteligencia Artificial",
@@ -61,7 +73,7 @@ export const BLOG_POSTS: readonly BlogPost[] = [
     words: 1181,
     readingMinutes: 6,
     cover: "/blog/que-es-inteligencia-artificial-generativa-empresas-carlos-anaya-ruiz.webp",
-    coverAlt: "Qué es la inteligencia artificial generativa y cómo usarla en tu empresa — una nube de partículas violeta eléctrico organizándose desde el caos hacia una forma cristalina perfectamente geométrica, flotando sobre un plano negro infinito reflejante",
+    coverAlt: "Una nube de partículas violeta eléctrico organizándose desde el caos hacia una forma cristalina perfectamente geométrica, flotando sobre un plano negro infinito reflejante",
   },
   {
     n: 2,
@@ -78,7 +90,7 @@ export const BLOG_POSTS: readonly BlogPost[] = [
     words: 1118,
     readingMinutes: 6,
     cover: "/blog/como-implementar-ia-en-pymes-mexico-carlos-anaya-ruiz.webp",
-    coverAlt: "Cómo implementar IA en una PyME mexicana: guía paso a paso — un pequeño edificio comercial de arquitectura mexicana, modelado en 3D con estilo maqueta minimalista de arcilla gris, del que emergen hacia arriba hilos de luz violeta eléctrico que se conectan a una red neuronal abstracta suspendida sobre él",
+    coverAlt: "Un pequeño edificio comercial de arquitectura mexicana, modelado en 3D con estilo maqueta minimalista de arcilla gris, del que emergen hacia arriba hilos de luz violeta eléctrico que se conectan a una red neuronal abstracta suspendida sobre él",
   },
   {
     n: 3,
@@ -95,11 +107,12 @@ export const BLOG_POSTS: readonly BlogPost[] = [
     words: 1017,
     readingMinutes: 5,
     cover: "/blog/chatgpt-vs-claude-vs-gemini-empresas-carlos-anaya-ruiz.webp",
-    coverAlt: "ChatGPT vs Claude vs Gemini: cuál conviene a tu negocio — tres monolitos verticales de vidrio esmerilado alineados en perspectiva, cada uno con una pulsación de luz interna distinta —verde menta, naranja cálido, azul frío— sobre un suelo negro reflejante",
+    coverAlt: "Tres monolitos verticales de vidrio esmerilado alineados en perspectiva, cada uno con una pulsación de luz interna distinta —verde menta, naranja cálido, azul frío— sobre un suelo negro reflejante",
   },
   {
     n: 4,
     slug: "que-es-rag-inteligencia-artificial",
+    seoTitle: "RAG: cómo darle a la IA el conocimiento de tu empresa",
     title: "RAG explicado: cómo darle a la IA el conocimiento de tu empresa",
     description: "RAG explicado sin jerga: cómo conectar tus documentos a un modelo de IA para que responda con información real de tu empresa.",
     category: "Inteligencia Artificial",
@@ -112,7 +125,7 @@ export const BLOG_POSTS: readonly BlogPost[] = [
     words: 990,
     readingMinutes: 5,
     cover: "/blog/que-es-rag-inteligencia-artificial-carlos-anaya-ruiz.webp",
-    coverAlt: "RAG explicado: cómo darle a la IA el conocimiento de tu empresa — un archivo de documentos flotantes representados como láminas de vidrio traslúcido apiladas en el aire, de las que salen haces de luz violeta eléctrico convergiendo en una esfera de energía densa en el centro-derecha del encuadre",
+    coverAlt: "Un archivo de documentos flotantes representados como láminas de vidrio traslúcido apiladas en el aire, de las que salen haces de luz violeta eléctrico convergiendo en una esfera de energía densa en el centro-derecha del encuadre",
   },
   {
     n: 5,
@@ -129,11 +142,12 @@ export const BLOG_POSTS: readonly BlogPost[] = [
     words: 1041,
     readingMinutes: 5,
     cover: "/blog/cuanto-cuesta-implementar-ia-empresa-carlos-anaya-ruiz.webp",
-    coverAlt: "Cuánto cuesta implementar IA en tu empresa: números reales — una balanza de precisión abstracta hecha de líneas de neón violeta eléctrico, con un platillo sosteniendo un cubo de datos luminoso y el otro sosteniendo monedas geométricas apiladas, en equilibrio tenso",
+    coverAlt: "Una balanza de precisión abstracta hecha de líneas de neón violeta eléctrico, con un platillo sosteniendo un cubo de datos luminoso y el otro sosteniendo monedas geométricas apiladas, en equilibrio tenso",
   },
   {
     n: 6,
     slug: "fine-tuning-vs-rag-vs-prompt-engineering",
+    seoTitle: "Fine-tuning, RAG o prompt engineering: cuál necesitas",
     title: "Fine-tuning, RAG o prompt engineering: cuál necesitas realmente",
     description: "El 90% de las empresas que quieren fine-tuning en realidad necesitan RAG o mejores prompts. Cómo decidir con un árbol de decisión claro.",
     category: "Inteligencia Artificial",
@@ -146,7 +160,7 @@ export const BLOG_POSTS: readonly BlogPost[] = [
     words: 883,
     readingMinutes: 4,
     cover: "/blog/fine-tuning-vs-rag-vs-prompt-engineering-carlos-anaya-ruiz.webp",
-    coverAlt: "Fine-tuning, RAG o prompt engineering: cuál necesitas realmente — tres caminos de luz violeta eléctrico divergiendo desde un mismo punto de origen en el primer plano y perdiéndose en la oscuridad, cada uno con distinta densidad y grosor: uno delgado y brillante, uno medio, uno ancho y tenue",
+    coverAlt: "Tres caminos de luz violeta eléctrico divergiendo desde un mismo punto de origen en el primer plano y perdiéndose en la oscuridad, cada uno con distinta densidad y grosor: uno delgado y brillante, uno medio, uno ancho y tenue",
   },
   {
     n: 7,
@@ -180,7 +194,7 @@ export const BLOG_POSTS: readonly BlogPost[] = [
     words: 1070,
     readingMinutes: 5,
     cover: "/blog/roi-proyecto-inteligencia-artificial-carlos-anaya-ruiz.webp",
-    coverAlt: "Cómo medir el ROI de un proyecto de inteligencia artificial — una curva ascendente hecha de luz violeta eléctrico sólida elevándose sobre un terreno de datos abstracto compuesto por barras verticales oscuras de distintas alturas, con el punto de inflexión de la curva brillando con intensidad",
+    coverAlt: "Una curva ascendente hecha de luz violeta eléctrico sólida elevándose sobre un terreno de datos abstracto compuesto por barras verticales oscuras de distintas alturas, con el punto de inflexión de la curva brillando con intensidad",
   },
   {
     n: 9,
@@ -197,11 +211,12 @@ export const BLOG_POSTS: readonly BlogPost[] = [
     words: 947,
     readingMinutes: 5,
     cover: "/blog/chatbot-con-inteligencia-artificial-que-vende-carlos-anaya-ruiz.webp",
-    coverAlt: "Chatbots con IA: cómo construir uno que realmente venda — dos burbujas de conversación abstractas y geométricas, una de vidrio traslúcido y otra de luz violeta eléctrico sólida, entrelazándose en el aire en un flujo continuo que termina transformado en una forma de flecha direccional",
+    coverAlt: "Dos burbujas de conversación abstractas y geométricas, una de vidrio traslúcido y otra de luz violeta eléctrico sólida, entrelazándose en el aire en un flujo continuo que termina transformado en una forma de flecha direccional",
   },
   {
     n: 10,
     slug: "errores-al-implementar-ia-empresa",
+    seoTitle: "10 errores al implementar IA en tu empresa",
     title: "10 errores al implementar IA en tu empresa (y cómo evitarlos)",
     description: "Los 10 errores que hacen fracasar proyectos de IA en empresas, con el síntoma temprano de cada uno y cómo corregirlo antes de quemar presupuesto.",
     category: "Inteligencia Artificial",
@@ -229,7 +244,7 @@ export const BLOG_POSTS: readonly BlogPost[] = [
     words: 973,
     readingMinutes: 5,
     cover: "/blog/ciberseguridad-para-pymes-guia-carlos-anaya-ruiz.webp",
-    coverAlt: "Ciberseguridad para PyMEs: guía completa — un escudo geométrico facetado hecho de placas de vidrio cian traslúcido, ensamblándose capa por capa alrededor de un núcleo de luz cálida que representa el negocio",
+    coverAlt: "Un escudo geométrico facetado hecho de placas de vidrio cian traslúcido, ensamblándose capa por capa alrededor de un núcleo de luz cálida que representa el negocio",
   },
   {
     n: 12,
@@ -263,7 +278,7 @@ export const BLOG_POSTS: readonly BlogPost[] = [
     words: 956,
     readingMinutes: 5,
     cover: "/blog/ransomware-como-funciona-prevenirlo-carlos-anaya-ruiz.webp",
-    coverAlt: "Ransomware: cómo funciona y cómo prevenirlo — una retícula ordenada de archivos representados como cubos de cristal que se van sellando progresivamente con capas de cristal rojo opaco, de izquierda a derecha, hasta quedar completamente cerrados",
+    coverAlt: "Una retícula ordenada de archivos representados como cubos de cristal que se van sellando progresivamente con capas de cristal rojo opaco, de izquierda a derecha, hasta quedar completamente cerrados",
   },
   {
     n: 14,
@@ -280,7 +295,7 @@ export const BLOG_POSTS: readonly BlogPost[] = [
     words: 909,
     readingMinutes: 5,
     cover: "/blog/autenticacion-multifactor-mfa-guia-carlos-anaya-ruiz.webp",
-    coverAlt: "Autenticación multifactor (MFA): guía de implementación — tres llaves geométricas abstractas de formas distintas —una placa rectangular, una onda, una espiral estilizada— alineándose en el aire para atravesar simultáneamente tres cerraduras concéntricas hechas de luz cian",
+    coverAlt: "Tres llaves geométricas abstractas de formas distintas —una placa rectangular, una onda, una espiral estilizada— alineándose en el aire para atravesar simultáneamente tres cerraduras concéntricas hechas de luz cian",
   },
   {
     n: 15,
@@ -297,11 +312,12 @@ export const BLOG_POSTS: readonly BlogPost[] = [
     words: 795,
     readingMinutes: 4,
     cover: "/blog/politica-de-contrasenas-empresa-carlos-anaya-ruiz.webp",
-    coverAlt: "Política de contraseñas que la gente sí cumple — una bóveda de acero oscuro entreabierta, de cuyo interior escapan cadenas de caracteres abstractos convertidos en partículas de luz cian que se disuelven en el aire al alejarse",
+    coverAlt: "Una bóveda de acero oscuro entreabierta, de cuyo interior escapan cadenas de caracteres abstractos convertidos en partículas de luz cian que se disuelven en el aire al alejarse",
   },
   {
     n: 16,
     slug: "ingenieria-social-tecnicas-ciberseguridad",
+    seoTitle: "Ingeniería social: las 10 técnicas más usadas",
     title: "Ingeniería social: las 10 técnicas más usadas contra empresas",
     description: "Las 10 técnicas de ingeniería social más usadas contra empresas, cómo se ven en la práctica y el control que corta cada una.",
     category: "Ciberseguridad",
@@ -314,7 +330,7 @@ export const BLOG_POSTS: readonly BlogPost[] = [
     words: 959,
     readingMinutes: 5,
     cover: "/blog/ingenieria-social-tecnicas-ciberseguridad-carlos-anaya-ruiz.webp",
-    coverAlt: "Ingeniería social: las 10 técnicas más usadas contra empresas — una máscara veneciana completamente lisa y sin rasgos faciales, hecha de cromo negro pulido, flotando de perfil en el aire y reflejando en su superficie líneas de luz cian que forman una red de conexiones abstracta",
+    coverAlt: "Una máscara veneciana completamente lisa y sin rasgos faciales, hecha de cromo negro pulido, flotando de perfil en el aire y reflejando en su superficie líneas de luz cian que forman una red de conexiones abstracta",
   },
   {
     n: 17,
@@ -331,7 +347,7 @@ export const BLOG_POSTS: readonly BlogPost[] = [
     words: 890,
     readingMinutes: 4,
     cover: "/blog/arquitectura-zero-trust-como-empezar-carlos-anaya-ruiz.webp",
-    coverAlt: "Zero Trust: qué es y cómo empezar sin rehacer todo — múltiples anillos concéntricos de luz cian rotando en distintos ejes alrededor de un núcleo de datos luminoso, cada anillo con una compuerta abierta en una posición diferente",
+    coverAlt: "Múltiples anillos concéntricos de luz cian rotando en distintos ejes alrededor de un núcleo de datos luminoso, cada anillo con una compuerta abierta en una posición diferente",
   },
   {
     n: 18,
@@ -348,7 +364,7 @@ export const BLOG_POSTS: readonly BlogPost[] = [
     words: 921,
     readingMinutes: 5,
     cover: "/blog/regla-backup-3-2-1-ransomware-carlos-anaya-ruiz.webp",
-    coverAlt: "Backup 3-2-1 a prueba de ransomware — tres bloques de datos idénticos hechos de cristal cian, colocados a distintas profundidades en el espacio: uno cercano y nítido, uno intermedio, uno lejano y desenfocado, conectados por finos haces de luz",
+    coverAlt: "Tres bloques de datos idénticos hechos de cristal cian, colocados a distintas profundidades en el espacio: uno cercano y nítido, uno intermedio, uno lejano y desenfocado, conectados por finos haces de luz",
   },
   {
     n: 19,
@@ -365,7 +381,7 @@ export const BLOG_POSTS: readonly BlogPost[] = [
     words: 1235,
     readingMinutes: 6,
     cover: "/blog/owasp-top-10-explicado-desarrolladores-carlos-anaya-ruiz.webp",
-    coverAlt: "OWASP Top 10 explicado para desarrolladores — una pared construida con ladrillos de vidrio oscuro donde exactamente diez piezas específicas brillan en rojo alerta, formando un patrón irregular disperso",
+    coverAlt: "Una pared construida con ladrillos de vidrio oscuro donde exactamente diez piezas específicas brillan en rojo alerta, formando un patrón irregular disperso",
   },
   {
     n: 20,
@@ -382,7 +398,7 @@ export const BLOG_POSTS: readonly BlogPost[] = [
     words: 1008,
     readingMinutes: 5,
     cover: "/blog/asegurar-security-groups-aws-carlos-anaya-ruiz.webp",
-    coverAlt: "Cómo asegurar los grupos de seguridad en AWS — una compuerta industrial de metal oscuro con múltiples aberturas circulares dispuestas en cuadrícula, la mayoría selladas herméticamente con placas de luz cian y exactamente tres abiertas de par en par emitiendo luz roja intensa hacia el exterior",
+    coverAlt: "Una compuerta industrial de metal oscuro con múltiples aberturas circulares dispuestas en cuadrícula, la mayoría selladas herméticamente con placas de luz cian y exactamente tres abiertas de par en par emitiendo luz roja intensa hacia el exterior",
   },
   {
     n: 21,
@@ -399,7 +415,7 @@ export const BLOG_POSTS: readonly BlogPost[] = [
     words: 924,
     readingMinutes: 5,
     cover: "/blog/deepfake-fraude-voz-como-detectar-carlos-anaya-ruiz.webp",
-    coverAlt: "Deepfakes y fraude por voz: cómo detectarlos — una onda de audio tridimensional que en su recorrido de izquierda a derecha se va corrompiendo: empieza limpia, ordenada y de color cian, se fragmenta progresivamente en glitch rojo y termina disolviéndose en partículas dispersas",
+    coverAlt: "Una onda de audio tridimensional que en su recorrido de izquierda a derecha se va corrompiendo: empieza limpia, ordenada y de color cian, se fragmenta progresivamente en glitch rojo y termina disolviéndose en partículas dispersas",
   },
   {
     n: 22,
@@ -416,7 +432,7 @@ export const BLOG_POSTS: readonly BlogPost[] = [
     words: 984,
     readingMinutes: 5,
     cover: "/blog/plan-de-respuesta-a-incidentes-plantilla-carlos-anaya-ruiz.webp",
-    coverAlt: "Plan de respuesta a incidentes: plantilla y pasos — una sala de control abstracta vista desde arriba: seis paneles hexagonales de luz cian dispuestos en secuencia circular, uno de ellos pulsando en rojo alerta e iluminando los adyacentes",
+    coverAlt: "Una sala de control abstracta vista desde arriba: seis paneles hexagonales de luz cian dispuestos en secuencia circular, uno de ellos pulsando en rojo alerta e iluminando los adyacentes",
   },
   {
     n: 23,
@@ -433,7 +449,7 @@ export const BLOG_POSTS: readonly BlogPost[] = [
     words: 1064,
     readingMinutes: 5,
     cover: "/blog/nextjs-app-router-guia-completa-carlos-anaya-ruiz.webp",
-    coverAlt: "Next.js App Router: guía completa — un árbol de rutas tridimensional creciendo hacia arriba desde una raíz luminosa en la base, con ramas que se subdividen en capas anidadas de placas verdes translúcidas superpuestas",
+    coverAlt: "Un árbol de rutas tridimensional creciendo hacia arriba desde una raíz luminosa en la base, con ramas que se subdividen en capas anidadas de placas verdes translúcidas superpuestas",
   },
   {
     n: 24,
@@ -450,7 +466,7 @@ export const BLOG_POSTS: readonly BlogPost[] = [
     words: 822,
     readingMinutes: 4,
     cover: "/blog/supabase-vs-firebase-comparativa-carlos-anaya-ruiz.webp",
-    coverAlt: "Supabase vs Firebase: comparativa técnica — dos estructuras de datos enfrentadas en el mismo encuadre: a la izquierda un cristal relacional con estructura hexagonal perfectamente ordenada e interconectada, en verde esmeralda; a la derecha una nube de nodos dispersos e independientes flotando en ámbar",
+    coverAlt: "Dos estructuras de datos enfrentadas en el mismo encuadre: a la izquierda un cristal relacional con estructura hexagonal perfectamente ordenada e interconectada, en verde esmeralda; a la derecha una nube de nodos dispersos e independientes flotando en ámbar",
   },
   {
     n: 25,
@@ -467,7 +483,7 @@ export const BLOG_POSTS: readonly BlogPost[] = [
     words: 976,
     readingMinutes: 5,
     cover: "/blog/monorepo-turborepo-pnpm-estructura-carlos-anaya-ruiz.webp",
-    coverAlt: "Monorepo con Turborepo y pnpm: estructura completa — un contenedor único de vidrio traslúcido que alberga en su interior varios módulos cúbicos verdes de distintos tamaños, conectados entre sí por tuberías de luz que comparten un mismo núcleo central luminoso",
+    coverAlt: "Un contenedor único de vidrio traslúcido que alberga en su interior varios módulos cúbicos verdes de distintos tamaños, conectados entre sí por tuberías de luz que comparten un mismo núcleo central luminoso",
   },
   {
     n: 26,
@@ -484,7 +500,7 @@ export const BLOG_POSTS: readonly BlogPost[] = [
     words: 841,
     readingMinutes: 4,
     cover: "/blog/server-components-vs-client-components-carlos-anaya-ruiz.webp",
-    coverAlt: "Server Components vs Client Components: cuándo usar cada uno — un plano dividido en diagonal: la mitad superior contiene volúmenes sólidos, pesados y opacos en verde profundo; la mitad inferior contiene formas ligeras y translúcidas flotando en verde brillante",
+    coverAlt: "Un plano dividido en diagonal: la mitad superior contiene volúmenes sólidos, pesados y opacos en verde profundo; la mitad inferior contiene formas ligeras y translúcidas flotando en verde brillante",
   },
   {
     n: 27,
@@ -501,7 +517,7 @@ export const BLOG_POSTS: readonly BlogPost[] = [
     words: 839,
     readingMinutes: 4,
     cover: "/blog/typescript-strict-mode-por-que-activarlo-carlos-anaya-ruiz.webp",
-    coverAlt: "TypeScript strict mode: por qué activarlo hoy — un flujo continuo de bloques geométricos irregulares y desalineados avanzando hacia una compuerta de precisión industrial que los recorta y alinea perfectamente al salir del otro lado, mientras los fragmentos descartados caen hacia abajo iluminados en rojo tenue",
+    coverAlt: "Un flujo continuo de bloques geométricos irregulares y desalineados avanzando hacia una compuerta de precisión industrial que los recorta y alinea perfectamente al salir del otro lado, mientras los fragmentos descartados caen hacia abajo iluminados en rojo tenue",
   },
   {
     n: 28,
@@ -518,7 +534,7 @@ export const BLOG_POSTS: readonly BlogPost[] = [
     words: 860,
     readingMinutes: 4,
     cover: "/blog/row-level-security-supabase-guia-carlos-anaya-ruiz.webp",
-    coverAlt: "Row Level Security en Supabase: guía práctica — una tabla de datos tridimensional donde cada fila individual está encapsulada dentro de su propia burbuja de vidrio verde sellada, y solo algunas de ellas se iluminan intensamente al paso de un haz de luz horizontal que escanea el conjunto de izquierda a derecha",
+    coverAlt: "Una tabla de datos tridimensional donde cada fila individual está encapsulada dentro de su propia burbuja de vidrio verde sellada, y solo algunas de ellas se iluminan intensamente al paso de un haz de luz horizontal que escanea el conjunto de izquierda a derecha",
   },
   {
     n: 29,
@@ -535,7 +551,7 @@ export const BLOG_POSTS: readonly BlogPost[] = [
     words: 1085,
     readingMinutes: 5,
     cover: "/blog/autenticacion-segura-nextjs-carlos-anaya-ruiz.webp",
-    coverAlt: "Autenticación segura en Next.js: arquitectura completa — un túnel formado por anillos de seguridad verdes concéntricos por el que viaja una cápsula de identidad luminosa, y cada anillo la verifica con un pulso de luz al momento de atravesarlo",
+    coverAlt: "Un túnel formado por anillos de seguridad verdes concéntricos por el que viaja una cápsula de identidad luminosa, y cada anillo la verifica con un pulso de luz al momento de atravesarlo",
   },
   {
     n: 30,
@@ -552,7 +568,7 @@ export const BLOG_POSTS: readonly BlogPost[] = [
     words: 898,
     readingMinutes: 4,
     cover: "/blog/prisma-vs-drizzle-orm-carlos-anaya-ruiz.webp",
-    coverAlt: "Prisma vs Drizzle: qué ORM elegir — dos engranajes de precisión de tamaños muy distintos girando sobre el mismo eje: uno grande, ornamentado y de estructura compleja en verde oscuro; otro pequeño, minimalista y de líneas puras en verde brillante",
+    coverAlt: "Dos engranajes de precisión de tamaños muy distintos girando sobre el mismo eje: uno grande, ornamentado y de estructura compleja en verde oscuro; otro pequeño, minimalista y de líneas puras en verde brillante",
   },
   {
     n: 31,
@@ -569,7 +585,7 @@ export const BLOG_POSTS: readonly BlogPost[] = [
     words: 1037,
     readingMinutes: 5,
     cover: "/blog/optimizar-core-web-vitals-nextjs-carlos-anaya-ruiz.webp",
-    coverAlt: "Cómo optimizar Core Web Vitals en Next.js — tres medidores circulares tridimensionales flotando a distintas profundidades escalonadas en el espacio, sus arcos llenándose progresivamente de luz verde partiendo del rojo",
+    coverAlt: "Tres medidores circulares tridimensionales flotando a distintas profundidades escalonadas en el espacio, sus arcos llenándose progresivamente de luz verde partiendo del rojo",
   },
   {
     n: 32,
@@ -586,7 +602,7 @@ export const BLOG_POSTS: readonly BlogPost[] = [
     words: 962,
     readingMinutes: 5,
     cover: "/blog/expo-lanzar-app-movil-carlos-anaya-ruiz.webp",
-    coverAlt: "Expo: cómo lanzar tu app móvil desde el código que ya tienes — un rectángulo de luz verde terminal desprendiéndose de una pantalla plana grande y transformándose en el aire en la silueta geométrica de un dispositivo móvil vertical, con partículas de código verde suspendidas en la transición entre ambas formas",
+    coverAlt: "Un rectángulo de luz verde terminal desprendiéndose de una pantalla plana grande y transformándose en el aire en la silueta geométrica de un dispositivo móvil vertical, con partículas de código verde suspendidas en la transición entre ambas formas",
   },
   {
     n: 33,
@@ -603,7 +619,7 @@ export const BLOG_POSTS: readonly BlogPost[] = [
     words: 952,
     readingMinutes: 5,
     cover: "/blog/inngest-jobs-background-serverless-carlos-anaya-ruiz.webp",
-    coverAlt: "Inngest: jobs en background sin administrar servidores — una cinta transportadora circular tridimensional por la que viajan cápsulas de tareas verdes, con algunas desviándose hacia un carril lateral de reintento que las devuelve al punto de inicio",
+    coverAlt: "Una cinta transportadora circular tridimensional por la que viajan cápsulas de tareas verdes, con algunas desviándose hacia un carril lateral de reintento que las devuelve al punto de inicio",
   },
   {
     n: 34,
@@ -620,11 +636,12 @@ export const BLOG_POSTS: readonly BlogPost[] = [
     words: 996,
     readingMinutes: 5,
     cover: "/blog/deploy-vercel-costos-control-carlos-anaya-ruiz.webp",
-    coverAlt: "Deploy en Vercel sin sorpresas en la factura — un medidor de flujo industrial de vidrio grueso por el que pasa un caudal de luz verde, con una válvula de control cerrándose parcialmente y desviando el excedente hacia un contador lateral iluminado en ámbar",
+    coverAlt: "Un medidor de flujo industrial de vidrio grueso por el que pasa un caudal de luz verde, con una válvula de control cerrándose parcialmente y desviando el excedente hacia un contador lateral iluminado en ámbar",
   },
   {
     n: 35,
     slug: "que-son-los-agentes-de-ia",
+    seoTitle: "Agentes de IA: en qué se diferencian de un chatbot",
     title: "Qué son los agentes de IA y en qué se diferencian de un chatbot",
     description: "Qué es un agente de IA, cómo usa herramientas y toma decisiones, y en qué se diferencia realmente de un chatbot con un buen prompt.",
     category: "Inteligencia Artificial",
@@ -637,7 +654,7 @@ export const BLOG_POSTS: readonly BlogPost[] = [
     words: 967,
     readingMinutes: 5,
     cover: "/blog/que-son-los-agentes-de-ia-carlos-anaya-ruiz.webp",
-    coverAlt: "Qué son los agentes de IA y en qué se diferencian de un chatbot — una figura geométrica abstracta de luz ámbar, sin ninguna forma humana ni antropomórfica, extendiendo múltiples brazos de luz que toman simultáneamente distintas herramientas geométricas flotantes a su alrededor",
+    coverAlt: "Una figura geométrica abstracta de luz ámbar, sin ninguna forma humana ni antropomórfica, extendiendo múltiples brazos de luz que toman simultáneamente distintas herramientas geométricas flotantes a su alrededor",
   },
   {
     n: 36,
@@ -654,7 +671,7 @@ export const BLOG_POSTS: readonly BlogPost[] = [
     words: 859,
     readingMinutes: 4,
     cover: "/blog/model-context-protocol-mcp-que-es-carlos-anaya-ruiz.webp",
-    coverAlt: "MCP (Model Context Protocol): qué es y por qué importa — un conector universal tridimensional de forma hexagonal en el centro del encuadre, con múltiples cables de luz ámbar de distintos grosores enchufándose a él desde todas direcciones y convergiendo en un único puerto de salida",
+    coverAlt: "Un conector universal tridimensional de forma hexagonal en el centro del encuadre, con múltiples cables de luz ámbar de distintos grosores enchufándose a él desde todas direcciones y convergiendo en un único puerto de salida",
   },
   {
     n: 37,
@@ -671,7 +688,7 @@ export const BLOG_POSTS: readonly BlogPost[] = [
     words: 1018,
     readingMinutes: 5,
     cover: "/blog/automatizar-procesos-con-n8n-carlos-anaya-ruiz.webp",
-    coverAlt: "Cómo automatizar tu operación con n8n — un diagrama de flujo tridimensional flotante compuesto por nodos hexagonales de color ámbar unidos por cables curvos de luz, con paquetes de datos viajando por ellos congelados en pleno movimiento",
+    coverAlt: "Un diagrama de flujo tridimensional flotante compuesto por nodos hexagonales de color ámbar unidos por cables curvos de luz, con paquetes de datos viajando por ellos congelados en pleno movimiento",
   },
   {
     n: 38,
@@ -688,7 +705,7 @@ export const BLOG_POSTS: readonly BlogPost[] = [
     words: 1107,
     readingMinutes: 6,
     cover: "/blog/claude-code-guia-desarrolladores-carlos-anaya-ruiz.webp",
-    coverAlt: "Claude Code: guía práctica para desarrolladores — una losa de obsidiana negra pulida flotando horizontalmente en el aire, de cuya superficie emergen líneas de luz ámbar que se autoorganizan formando estructuras de código abstractas sin caracteres legibles",
+    coverAlt: "Una losa de obsidiana negra pulida flotando horizontalmente en el aire, de cuya superficie emergen líneas de luz ámbar que se autoorganizan formando estructuras de código abstractas sin caracteres legibles",
   },
   {
     n: 39,
@@ -705,11 +722,12 @@ export const BLOG_POSTS: readonly BlogPost[] = [
     words: 903,
     readingMinutes: 5,
     cover: "/blog/prompt-engineering-avanzado-tecnicas-carlos-anaya-ruiz.webp",
-    coverAlt: "Prompt engineering avanzado: 20 técnicas que sí funcionan — un prisma de cristal tallado recibiendo por un lado un haz de luz blanca desordenada y difusa, y emitiendo por el otro un rayo ámbar perfectamente enfocado y direccional",
+    coverAlt: "Un prisma de cristal tallado recibiendo por un lado un haz de luz blanca desordenada y difusa, y emitiendo por el otro un rayo ámbar perfectamente enfocado y direccional",
   },
   {
     n: 40,
     slug: "pipeline-contenido-automatizado-ia",
+    seoTitle: "Pipeline de contenido automatizado con IA",
     title: "Pipeline de contenido automatizado con IA (sin publicar basura)",
     description: "Cómo montar un pipeline de contenido con IA que produce a escala sin caer en spam: investigación, redacción, revisión humana y publicación.",
     category: "Automatización",
@@ -722,7 +740,7 @@ export const BLOG_POSTS: readonly BlogPost[] = [
     words: 1016,
     readingMinutes: 5,
     cover: "/blog/pipeline-contenido-automatizado-ia-carlos-anaya-ruiz.webp",
-    coverAlt: "Pipeline de contenido automatizado con IA (sin publicar basura) — una línea de producción industrial abstracta e isométrica donde bloques informes y rugosos entran por la izquierda y salen por la derecha convertidos en placas pulidas y perfectamente ordenadas, con un puesto de inspección iluminado intensamente en el punto medio del recorrido",
+    coverAlt: "Una línea de producción industrial abstracta e isométrica donde bloques informes y rugosos entran por la izquierda y salen por la derecha convertidos en placas pulidas y perfectamente ordenadas, con un puesto de inspección iluminado intensamente en el punto medio del recorrido",
   },
   {
     n: 41,
@@ -739,7 +757,7 @@ export const BLOG_POSTS: readonly BlogPost[] = [
     words: 1050,
     readingMinutes: 5,
     cover: "/blog/whatsapp-business-api-ia-atencion-clientes-carlos-anaya-ruiz.webp",
-    coverAlt: "Atención a clientes por WhatsApp con IA: arquitectura real — un flujo de burbujas de mensaje abstractas y geométricas ascendiendo en espiral hacia un nodo de procesamiento hexagonal iluminado en ámbar, con algunas burbujas desviándose por una ruta lateral marcada con luz cálida más intensa",
+    coverAlt: "Un flujo de burbujas de mensaje abstractas y geométricas ascendiendo en espiral hacia un nodo de procesamiento hexagonal iluminado en ámbar, con algunas burbujas desviándose por una ruta lateral marcada con luz cálida más intensa",
   },
   {
     n: 42,
@@ -756,7 +774,7 @@ export const BLOG_POSTS: readonly BlogPost[] = [
     words: 953,
     readingMinutes: 5,
     cover: "/blog/human-in-the-loop-cuando-no-automatizar-carlos-anaya-ruiz.webp",
-    coverAlt: "Human-in-the-loop: cuándo NO automatizar con IA — una cadena de engranajes automatizados en movimiento continuo, interrumpida en el centro exacto del encuadre por un espacio vacío con la forma de una mano abstracta y geométrica hecha de luz ámbar sólida que detiene el mecanismo",
+    coverAlt: "Una cadena de engranajes automatizados en movimiento continuo, interrumpida en el centro exacto del encuadre por un espacio vacío con la forma de una mano abstracta y geométrica hecha de luz ámbar sólida que detiene el mecanismo",
   },
   {
     n: 43,
@@ -773,7 +791,7 @@ export const BLOG_POSTS: readonly BlogPost[] = [
     words: 971,
     readingMinutes: 5,
     cover: "/blog/orquestar-multiples-agentes-ia-carlos-anaya-ruiz.webp",
-    coverAlt: "Cómo orquestar múltiples agentes de IA — una estructura jerárquica tridimensional: un nodo superior grande y brillante en ámbar del que descienden hilos de luz hacia seis nodos subordinados más pequeños, cada uno trabajando sobre su propia micro-estructura geométrica",
+    coverAlt: "Una estructura jerárquica tridimensional: un nodo superior grande y brillante en ámbar del que descienden hilos de luz hacia seis nodos subordinados más pequeños, cada uno trabajando sobre su propia micro-estructura geométrica",
   },
   {
     n: 44,
@@ -790,7 +808,7 @@ export const BLOG_POSTS: readonly BlogPost[] = [
     words: 967,
     readingMinutes: 5,
     cover: "/blog/costos-tokens-api-ia-carlos-anaya-ruiz.webp",
-    coverAlt: "Costos de tokens: cómo no quebrar usando APIs de IA — un flujo denso de micro-partículas ámbar descendiendo y atravesando un embudo de vidrio grueso que las comprime drásticamente, saliendo por la parte inferior convertidas en un hilo delgado, ordenado y luminoso",
+    coverAlt: "Un flujo denso de micro-partículas ámbar descendiendo y atravesando un embudo de vidrio grueso que las comprime drásticamente, saliendo por la parte inferior convertidas en un hilo delgado, ordenado y luminoso",
   },
   {
     n: 45,
@@ -807,11 +825,12 @@ export const BLOG_POSTS: readonly BlogPost[] = [
     words: 1058,
     readingMinutes: 5,
     cover: "/blog/geo-generative-engine-optimization-carlos-anaya-ruiz.webp",
-    coverAlt: "GEO: optimización para motores generativos — un buscador tradicional representado como una lista plana de barras grises horizontales que se disuelve en partículas hacia la derecha, y esas partículas se reorganizan formando una única esfera de respuesta densa e iluminada en naranja",
+    coverAlt: "Un buscador tradicional representado como una lista plana de barras grises horizontales que se disuelve en partículas hacia la derecha, y esas partículas se reorganizan formando una única esfera de respuesta densa e iluminada en naranja",
   },
   {
     n: 46,
     slug: "como-aparecer-en-respuestas-de-ia",
+    seoTitle: "Cómo aparecer en ChatGPT, Claude y Perplexity",
     title: "Cómo aparecer en las respuestas de ChatGPT, Claude y Perplexity",
     description: "Las tácticas concretas que hacen que un modelo de IA cite tu sitio: estructura, entidades, datos verificables y presencia distribuida.",
     category: "SEO",
@@ -824,7 +843,7 @@ export const BLOG_POSTS: readonly BlogPost[] = [
     words: 977,
     readingMinutes: 5,
     cover: "/blog/como-aparecer-en-respuestas-de-ia-carlos-anaya-ruiz.webp",
-    coverAlt: "Cómo aparecer en las respuestas de ChatGPT, Claude y Perplexity — una constelación de fuentes representadas como puntos de luz tenue distribuidos en un espacio profundo, con exactamente tres de ellas destacadas en naranja intenso y conectadas por líneas de luz hacia un núcleo de respuesta central luminoso",
+    coverAlt: "Una constelación de fuentes representadas como puntos de luz tenue distribuidos en un espacio profundo, con exactamente tres de ellas destacadas en naranja intenso y conectadas por líneas de luz hacia un núcleo de respuesta central luminoso",
   },
   {
     n: 47,
@@ -841,7 +860,7 @@ export const BLOG_POSTS: readonly BlogPost[] = [
     words: 997,
     readingMinutes: 5,
     cover: "/blog/auditoria-seo-tecnica-paso-a-paso-carlos-anaya-ruiz.webp",
-    coverAlt: "Auditoría SEO técnica: proceso paso a paso — un plano arquitectónico tridimensional de un sitio web representado como un edificio de capas y pisos translúcidos, siendo recorrido por un haz de luz naranja horizontal que revela grietas y huecos oscuros en ciertas secciones",
+    coverAlt: "Un plano arquitectónico tridimensional de un sitio web representado como un edificio de capas y pisos translúcidos, siendo recorrido por un haz de luz naranja horizontal que revela grietas y huecos oscuros en ciertas secciones",
   },
   {
     n: 48,
@@ -858,7 +877,7 @@ export const BLOG_POSTS: readonly BlogPost[] = [
     words: 893,
     readingMinutes: 4,
     cover: "/blog/schema-markup-datos-estructurados-guia-carlos-anaya-ruiz.webp",
-    coverAlt: "Schema markup: guía de datos estructurados — bloques de contenido abstractos siendo envueltos progresivamente por una malla de líneas naranja finas que los etiqueta y estructura, con la malla continuando en el aire hacia bloques que aún no han sido envueltos",
+    coverAlt: "Bloques de contenido abstractos siendo envueltos progresivamente por una malla de líneas naranja finas que los etiqueta y estructura, con la malla continuando en el aire hacia bloques que aún no han sido envueltos",
   },
   {
     n: 49,
@@ -875,7 +894,7 @@ export const BLOG_POSTS: readonly BlogPost[] = [
     words: 1093,
     readingMinutes: 5,
     cover: "/blog/seo-local-google-business-profile-carlos-anaya-ruiz.webp",
-    coverAlt: "SEO local: cómo dominar Google Business Profile — un mapa tridimensional abstracto de una ciudad compuesto por volúmenes oscuros de distintas alturas, con un único pin geométrico naranja elevándose iluminado sobre el conjunto y proyectando ondas concéntricas de luz que se expanden sobre el terreno",
+    coverAlt: "Un mapa tridimensional abstracto de una ciudad compuesto por volúmenes oscuros de distintas alturas, con un único pin geométrico naranja elevándose iluminado sobre el conjunto y proyectando ondas concéntricas de luz que se expanden sobre el terreno",
   },
   {
     n: 50,
@@ -892,7 +911,7 @@ export const BLOG_POSTS: readonly BlogPost[] = [
     words: 1092,
     readingMinutes: 5,
     cover: "/blog/keyword-research-metodo-completo-carlos-anaya-ruiz.webp",
-    coverAlt: "Keyword research: método completo — una raíz semilla luminosa en la base del encuadre de la que crece hacia arriba una red ramificada de nodos naranja de tamaños distintos, donde los nodos más grandes brillan con mayor intensidad",
+    coverAlt: "Una raíz semilla luminosa en la base del encuadre de la que crece hacia arriba una red ramificada de nodos naranja de tamaños distintos, donde los nodos más grandes brillan con mayor intensidad",
   },
   {
     n: 51,
@@ -909,7 +928,7 @@ export const BLOG_POSTS: readonly BlogPost[] = [
     words: 977,
     readingMinutes: 5,
     cover: "/blog/eeat-google-como-demostrarlo-carlos-anaya-ruiz.webp",
-    coverAlt: "E-E-A-T: qué es y cómo demostrarlo en tu sitio — cuatro pilares de piedra oscura de alturas ligeramente distintas sosteniendo una plataforma flotante iluminada en naranja, con el pilar más alto recorrido de arriba a abajo por una veta de luz brillante",
+    coverAlt: "Cuatro pilares de piedra oscura de alturas ligeramente distintas sosteniendo una plataforma flotante iluminada en naranja, con el pilar más alto recorrido de arriba a abajo por una veta de luz brillante",
   },
   {
     n: 52,
@@ -926,7 +945,7 @@ export const BLOG_POSTS: readonly BlogPost[] = [
     words: 943,
     readingMinutes: 5,
     cover: "/blog/contenido-con-ia-seo-penaliza-google-carlos-anaya-ruiz.webp",
-    coverAlt: "Contenido generado con IA y SEO: ¿penaliza Google? — una balanza abstracta donde un platillo sostiene un bloque sólido, denso y valioso iluminado en naranja cálido, y el otro sostiene una masa de bloques huecos y grises que se desmoronan cayendo como polvo",
+    coverAlt: "Una balanza abstracta donde un platillo sostiene un bloque sólido, denso y valioso iluminado en naranja cálido, y el otro sostiene una masa de bloques huecos y grises que se desmoronan cayendo como polvo",
   },
   {
     n: 53,
@@ -943,7 +962,7 @@ export const BLOG_POSTS: readonly BlogPost[] = [
     words: 1051,
     readingMinutes: 5,
     cover: "/blog/link-building-etico-estrategias-carlos-anaya-ruiz.webp",
-    coverAlt: "Link building ético que sí funciona — una red tridimensional de nodos donde cadenas físicas gruesas de metal oscuro conectan unos pocos nodos grandes iluminados en naranja, mientras hilos delgados y frágiles a punto de romperse unen los nodos pequeños y apagados",
+    coverAlt: "Una red tridimensional de nodos donde cadenas físicas gruesas de metal oscuro conectan unos pocos nodos grandes iluminados en naranja, mientras hilos delgados y frágiles a punto de romperse unen los nodos pequeños y apagados",
   },
   {
     n: 54,
@@ -960,7 +979,7 @@ export const BLOG_POSTS: readonly BlogPost[] = [
     words: 1024,
     readingMinutes: 5,
     cover: "/blog/medir-trafico-desde-ia-share-of-voice-carlos-anaya-ruiz.webp",
-    coverAlt: "Cómo medir el tráfico que llega desde IA (AI Share of Voice) — un panel de instrumentos flotante hecho de vidrio traslúcido con curvas de flujo naranja entrando desde fuentes invisibles fuera del encuadre y convergiendo en un contador central luminoso",
+    coverAlt: "Un panel de instrumentos flotante hecho de vidrio traslúcido con curvas de flujo naranja entrando desde fuentes invisibles fuera del encuadre y convergiendo en un contador central luminoso",
   },
   {
     n: 55,
@@ -977,7 +996,7 @@ export const BLOG_POSTS: readonly BlogPost[] = [
     words: 1112,
     readingMinutes: 6,
     cover: "/blog/reducir-costos-aws-auditoria-carlos-anaya-ruiz.webp",
-    coverAlt: "Cómo auditar y reducir tu factura de AWS — una torre de servidores abstracta construida con bloques azules apilados, con varios bloques específicos siendo retirados quirúrgicamente por haces de luz precisos sin que la estructura pierda estabilidad ni se incline",
+    coverAlt: "Una torre de servidores abstracta construida con bloques azules apilados, con varios bloques específicos siendo retirados quirúrgicamente por haces de luz precisos sin que la estructura pierda estabilidad ni se incline",
   },
   {
     n: 56,
@@ -994,7 +1013,7 @@ export const BLOG_POSTS: readonly BlogPost[] = [
     words: 941,
     readingMinutes: 5,
     cover: "/blog/gp3-vs-io2-almacenamiento-aws-carlos-anaya-ruiz.webp",
-    coverAlt: "gp3 vs io2: cómo elegir almacenamiento en AWS — dos tuberías de cristal grueso paralelas transportando flujos de luz azul de densidad y velocidad claramente distintas, con medidores de presión abstractos acoplados a cada una",
+    coverAlt: "Dos tuberías de cristal grueso paralelas transportando flujos de luz azul de densidad y velocidad claramente distintas, con medidores de presión abstractos acoplados a cada una",
   },
   {
     n: 57,
@@ -1011,7 +1030,7 @@ export const BLOG_POSTS: readonly BlogPost[] = [
     words: 958,
     readingMinutes: 5,
     cover: "/blog/reserved-instances-savings-plans-aws-carlos-anaya-ruiz.webp",
-    coverAlt: "Reserved Instances y Savings Plans explicados — un contrato representado como una placa de vidrio azul sólido descendiendo y cerrándose sobre un bloque de cómputo geométrico, con una línea de tiempo de luz azul extendiéndose desde el bloque hacia un horizonte lejano",
+    coverAlt: "Un contrato representado como una placa de vidrio azul sólido descendiendo y cerrándose sobre un bloque de cómputo geométrico, con una línea de tiempo de luz azul extendiéndose desde el bloque hacia un horizonte lejano",
   },
   {
     n: 58,
@@ -1028,7 +1047,7 @@ export const BLOG_POSTS: readonly BlogPost[] = [
     words: 972,
     readingMinutes: 5,
     cover: "/blog/vercel-vs-aws-vs-railway-carlos-anaya-ruiz.webp",
-    coverAlt: "Vercel vs AWS vs Railway: dónde desplegar tu producto — tres plataformas flotantes de escala y complejidad crecientes alineadas en profundidad: una minimalista y pequeña en primer plano, una intermedia en el centro, una enorme y llena de estructura al fondo",
+    coverAlt: "Tres plataformas flotantes de escala y complejidad crecientes alineadas en profundidad: una minimalista y pequeña en primer plano, una intermedia en el centro, una enorme y llena de estructura al fondo",
   },
   {
     n: 59,
@@ -1045,7 +1064,7 @@ export const BLOG_POSTS: readonly BlogPost[] = [
     words: 941,
     readingMinutes: 5,
     cover: "/blog/ci-cd-github-actions-pipeline-carlos-anaya-ruiz.webp",
-    coverAlt: "CI/CD con GitHub Actions: pipeline completo — una cinta transportadora tridimensional por la que un bloque de código luminoso atraviesa cinco compuertas de verificación consecutivas, cada una emitiendo un destello azul en el momento exacto de validarlo",
+    coverAlt: "Una cinta transportadora tridimensional por la que un bloque de código luminoso atraviesa cinco compuertas de verificación consecutivas, cada una emitiendo un destello azul en el momento exacto de validarlo",
   },
   {
     n: 60,
@@ -1062,7 +1081,7 @@ export const BLOG_POSTS: readonly BlogPost[] = [
     words: 930,
     readingMinutes: 5,
     cover: "/blog/observabilidad-logs-metricas-trazas-carlos-anaya-ruiz.webp",
-    coverAlt: "Observabilidad: logs, métricas y trazas explicados — tres flujos de luz azul de texturas claramente distintas —uno granular y discontinuo, uno continuo y liso, uno ramificado en árbol— entrelazándose en una trenza que asciende hacia un ojo geométrico abstracto hecho de cristal facetado",
+    coverAlt: "Tres flujos de luz azul de texturas claramente distintas —uno granular y discontinuo, uno continuo y liso, uno ramificado en árbol— entrelazándose en una trenza que asciende hacia un ojo geométrico abstracto hecho de cristal facetado",
   },
   {
     n: 61,
@@ -1079,7 +1098,7 @@ export const BLOG_POSTS: readonly BlogPost[] = [
     words: 1044,
     readingMinutes: 5,
     cover: "/blog/elegir-region-cloud-latam-carlos-anaya-ruiz.webp",
-    coverAlt: "Cómo elegir región de nube para usuarios en LATAM — un globo terráqueo abstracto construido con una malla oscura de líneas, centrado en América Latina, con nodos azules brillando en puntos geográficos clave y arcos de luz curvos midiendo las distancias entre ellos",
+    coverAlt: "Un globo terráqueo abstracto construido con una malla oscura de líneas, centrado en América Latina, con nodos azules brillando en puntos geográficos clave y arcos de luz curvos midiendo las distancias entre ellos",
   },
   {
     n: 62,
@@ -1096,7 +1115,7 @@ export const BLOG_POSTS: readonly BlogPost[] = [
     words: 1047,
     readingMinutes: 5,
     cover: "/blog/terraform-infraestructura-como-codigo-carlos-anaya-ruiz.webp",
-    coverAlt: "Infraestructura como código con Terraform: primeros pasos — un terreno tridimensional generándose bloque por bloque desde un plano base de líneas azules luminosas, con las estructuras emergiendo del suelo ya completamente formadas y ordenadas",
+    coverAlt: "Un terreno tridimensional generándose bloque por bloque desde un plano base de líneas azules luminosas, con las estructuras emergiendo del suelo ya completamente formadas y ordenadas",
   },
   {
     n: 63,
@@ -1113,7 +1132,7 @@ export const BLOG_POSTS: readonly BlogPost[] = [
     words: 928,
     readingMinutes: 5,
     cover: "/blog/kubernetes-cuando-usarlo-carlos-anaya-ruiz.webp",
-    coverAlt: "Kubernetes: ¿de verdad lo necesitas? — una maquinaria de precisión extremadamente compleja con decenas de engranajes azules entrelazados girando en múltiples planos, cuya única salida visible es un cubo simple y liso que emerge por un extremo",
+    coverAlt: "Una maquinaria de precisión extremadamente compleja con decenas de engranajes azules entrelazados girando en múltiples planos, cuya única salida visible es un cubo simple y liso que emerge por un extremo",
   },
   {
     n: 64,
@@ -1130,7 +1149,7 @@ export const BLOG_POSTS: readonly BlogPost[] = [
     words: 994,
     readingMinutes: 5,
     cover: "/blog/disaster-recovery-rto-rpo-carlos-anaya-ruiz.webp",
-    coverAlt: "Disaster recovery: RTO, RPO y planes que sí funcionan — un reloj de arena tridimensional donde la arena está compuesta por partículas de datos azules luminosas cayendo, con un segundo reloj de arena idéntico y espejo ya completamente lleno esperando en el fondo desenfocado",
+    coverAlt: "Un reloj de arena tridimensional donde la arena está compuesta por partículas de datos azules luminosas cayendo, con un segundo reloj de arena idéntico y espejo ya completamente lleno esperando en el fondo desenfocado",
   },
   {
     n: 65,
@@ -1147,7 +1166,7 @@ export const BLOG_POSTS: readonly BlogPost[] = [
     words: 1075,
     readingMinutes: 5,
     cover: "/blog/validar-idea-saas-antes-de-programar-carlos-anaya-ruiz.webp",
-    coverAlt: "Cómo validar una idea de SaaS antes de escribir código — una idea representada como una esfera de cristal frágil siendo sometida a presión entre dos placas de metal oscuro, con grietas magenta luminosas apareciendo en su superficie y luz escapando por ellas",
+    coverAlt: "Una idea representada como una esfera de cristal frágil siendo sometida a presión entre dos placas de metal oscuro, con grietas magenta luminosas apareciendo en su superficie y luz escapando por ellas",
   },
   {
     n: 66,
@@ -1164,7 +1183,7 @@ export const BLOG_POSTS: readonly BlogPost[] = [
     words: 1170,
     readingMinutes: 6,
     cover: "/blog/pricing-saas-modelos-como-elegir-carlos-anaya-ruiz.webp",
-    coverAlt: "Pricing de SaaS: modelos y cómo elegir el tuyo — una escalera tridimensional de tres peldaños de alturas y materiales distintos, cada uno iluminado con intensidad magenta creciente, ascendiendo hacia la oscuridad de la parte superior del encuadre",
+    coverAlt: "Una escalera tridimensional de tres peldaños de alturas y materiales distintos, cada uno iluminado con intensidad magenta creciente, ascendiendo hacia la oscuridad de la parte superior del encuadre",
   },
   {
     n: 67,
@@ -1181,7 +1200,7 @@ export const BLOG_POSTS: readonly BlogPost[] = [
     words: 1068,
     readingMinutes: 5,
     cover: "/blog/metricas-saas-mrr-churn-ltv-cac-carlos-anaya-ruiz.webp",
-    coverAlt: "Métricas SaaS que importan: MRR, churn, LTV y CAC — cuatro anillos concéntricos rotando en distintos planos y ejes, cada uno con un arco de luz magenta de longitud diferente que representa una métrica distinta",
+    coverAlt: "Cuatro anillos concéntricos rotando en distintos planos y ejes, cada uno con un arco de luz magenta de longitud diferente que representa una métrica distinta",
   },
   {
     n: 68,
@@ -1198,7 +1217,7 @@ export const BLOG_POSTS: readonly BlogPost[] = [
     words: 1045,
     readingMinutes: 5,
     cover: "/blog/lanzar-mvp-en-30-dias-carlos-anaya-ruiz.webp",
-    coverAlt: "Cómo lanzar un MVP en 30 días — un cohete abstracto reducido a su forma geométrica mínima, ensamblado con solo cinco piezas visibles y sin ningún detalle superfluo, capturado en el instante exacto del despegue con una estela magenta luminosa",
+    coverAlt: "Un cohete abstracto reducido a su forma geométrica mínima, ensamblado con solo cinco piezas visibles y sin ningún detalle superfluo, capturado en el instante exacto del despegue con una estela magenta luminosa",
   },
   {
     n: 69,
@@ -1215,7 +1234,7 @@ export const BLOG_POSTS: readonly BlogPost[] = [
     words: 1141,
     readingMinutes: 6,
     cover: "/blog/arquitectura-multi-tenant-saas-carlos-anaya-ruiz.webp",
-    coverAlt: "Arquitectura multi-tenant: cuál elegir — un edificio tridimensional mostrado en corte transversal donde cada piso es un compartimento completamente sellado e independiente, iluminado en magenta, todos compartiendo una única columna central de servicios que los atraviesa verticalmente",
+    coverAlt: "Un edificio tridimensional mostrado en corte transversal donde cada piso es un compartimento completamente sellado e independiente, iluminado en magenta, todos compartiendo una única columna central de servicios que los atraviesa verticalmente",
   },
   {
     n: 70,
@@ -1232,7 +1251,7 @@ export const BLOG_POSTS: readonly BlogPost[] = [
     words: 1092,
     readingMinutes: 5,
     cover: "/blog/stripe-revenuecat-cobros-web-movil-carlos-anaya-ruiz.webp",
-    coverAlt: "Stripe y RevenueCat: cobros en web y móvil sin dolor — dos flujos de partículas magenta procedentes de direcciones opuestas convergiendo en un único nodo de reconciliación hecho de cristal facetado, del que sale un solo hilo de luz unificado",
+    coverAlt: "Dos flujos de partículas magenta procedentes de direcciones opuestas convergiendo en un único nodo de reconciliación hecho de cristal facetado, del que sale un solo hilo de luz unificado",
   },
   {
     n: 71,
@@ -1249,7 +1268,7 @@ export const BLOG_POSTS: readonly BlogPost[] = [
     words: 1139,
     readingMinutes: 6,
     cover: "/blog/web2app-checkout-comision-app-store-carlos-anaya-ruiz.webp",
-    coverAlt: "Web2App: cómo cobrar sin la comisión de la App Store — un puente de luz magenta conectando una plataforma rectangular ancha y horizontal con una plataforma vertical estrecha, pasando por debajo de un arco de peaje oscuro, macizo y completamente apagado",
+    coverAlt: "Un puente de luz magenta conectando una plataforma rectangular ancha y horizontal con una plataforma vertical estrecha, pasando por debajo de un arco de peaje oscuro, macizo y completamente apagado",
   },
   {
     n: 72,
@@ -1266,7 +1285,7 @@ export const BLOG_POSTS: readonly BlogPost[] = [
     words: 1092,
     readingMinutes: 5,
     cover: "/blog/onboarding-saas-reducir-churn-carlos-anaya-ruiz.webp",
-    coverAlt: "Onboarding de SaaS que reduce el churn — un sendero de losas luminosas magenta que van apareciendo en el aire justo antes de cada paso de una figura geométrica abstracta que avanza hacia una puerta de luz al fondo, mientras las losas ya pisadas se apagan detrás",
+    coverAlt: "Un sendero de losas luminosas magenta que van apareciendo en el aire justo antes de cada paso de una figura geométrica abstracta que avanza hacia una puerta de luz al fondo, mientras las losas ya pisadas se apagan detrás",
   },
   {
     n: 73,
@@ -1283,7 +1302,7 @@ export const BLOG_POSTS: readonly BlogPost[] = [
     words: 1083,
     readingMinutes: 5,
     cover: "/blog/growth-organico-tiktok-app-carlos-anaya-ruiz.webp",
-    coverAlt: "Growth orgánico en TikTok para tu app — una cascada vertical de tarjetas rectangulares flotantes descendiendo en columnas paralelas, con unas pocas iluminadas en magenta intenso que proyectan ondas de expansión concéntricas hacia los lados",
+    coverAlt: "Una cascada vertical de tarjetas rectangulares flotantes descendiendo en columnas paralelas, con unas pocas iluminadas en magenta intenso que proyectan ondas de expansión concéntricas hacia los lados",
   },
   {
     n: 74,
@@ -1300,7 +1319,7 @@ export const BLOG_POSTS: readonly BlogPost[] = [
     words: 1128,
     readingMinutes: 6,
     cover: "/blog/de-freelance-a-producto-saas-carlos-anaya-ruiz.webp",
-    coverAlt: "De freelance a producto: cómo hacer la transición — una línea de tiempo tridimensional donde pequeños bloques individuales de horas se van fusionando progresivamente de izquierda a derecha hasta formar un único bloque sólido, continuo y luminoso en magenta",
+    coverAlt: "Una línea de tiempo tridimensional donde pequeños bloques individuales de horas se van fusionando progresivamente de izquierda a derecha hasta formar un único bloque sólido, continuo y luminoso en magenta",
   },
   {
     n: 75,
@@ -1317,7 +1336,7 @@ export const BLOG_POSTS: readonly BlogPost[] = [
     words: 1187,
     readingMinutes: 6,
     cover: "/blog/lfpdppp-ley-datos-personales-mexico-carlos-anaya-ruiz.webp",
-    coverAlt: "LFPDPPP: guía de la ley de datos personales en México — una bóveda de datos tridimensional de piedra oscura con la forma abstracta de un sello oficial en oro pulido incrustado en el centro de su puerta, iluminada por luz cálida dorada rasante",
+    coverAlt: "Una bóveda de datos tridimensional de piedra oscura con la forma abstracta de un sello oficial en oro pulido incrustado en el centro de su puerta, iluminada por luz cálida dorada rasante",
   },
   {
     n: 76,
@@ -1334,7 +1353,7 @@ export const BLOG_POSTS: readonly BlogPost[] = [
     words: 1005,
     readingMinutes: 5,
     cover: "/blog/aviso-de-privacidad-como-redactarlo-carlos-anaya-ruiz.webp",
-    coverAlt: "Aviso de privacidad: cómo redactarlo correctamente — un documento representado como una lámina de vidrio dorado traslúcido flotando en el aire, con secciones internas iluminadas a distinta intensidad que revelan su estructura por bloques",
+    coverAlt: "Un documento representado como una lámina de vidrio dorado traslúcido flotando en el aire, con secciones internas iluminadas a distinta intensidad que revelan su estructura por bloques",
   },
   {
     n: 77,
@@ -1351,7 +1370,7 @@ export const BLOG_POSTS: readonly BlogPost[] = [
     words: 1190,
     readingMinutes: 6,
     cover: "/blog/gdpr-para-empresas-latinoamericanas-carlos-anaya-ruiz.webp",
-    coverAlt: "GDPR para empresas latinoamericanas — un arco de luz dorada cruzando desde un continente abstracto hacia otro sobre un océano oscuro, con una compuerta de verificación geométrica situada exactamente en el punto medio del recorrido",
+    coverAlt: "Un arco de luz dorada cruzando desde un continente abstracto hacia otro sobre un océano oscuro, con una compuerta de verificación geométrica situada exactamente en el punto medio del recorrido",
   },
   {
     n: 78,
@@ -1368,7 +1387,7 @@ export const BLOG_POSTS: readonly BlogPost[] = [
     words: 1003,
     readingMinutes: 5,
     cover: "/blog/eu-ai-act-que-significa-producto-ia-carlos-anaya-ruiz.webp",
-    coverAlt: "EU AI Act: qué significa para tu producto con IA — una pirámide escalonada de cuatro niveles construida en vidrio dorado traslúcido, con el nivel superior más pequeño brillando en rojo tenue de advertencia y los tres inferiores en dorado suave decreciente",
+    coverAlt: "Una pirámide escalonada de cuatro niveles construida en vidrio dorado traslúcido, con el nivel superior más pequeño brillando en rojo tenue de advertencia y los tres inferiores en dorado suave decreciente",
   },
   {
     n: 79,
@@ -1385,7 +1404,7 @@ export const BLOG_POSTS: readonly BlogPost[] = [
     words: 1012,
     readingMinutes: 5,
     cover: "/blog/consentimiento-de-datos-en-apps-carlos-anaya-ruiz.webp",
-    coverAlt: "Consentimiento de datos en apps: cómo hacerlo bien — una mano geométrica abstracta compuesta enteramente de luz dorada, presionando un botón físico de cristal que emite una onda de confirmación circular expandiéndose",
+    coverAlt: "Una mano geométrica abstracta compuesta enteramente de luz dorada, presionando un botón físico de cristal que emite una onda de confirmación circular expandiéndose",
   },
   {
     n: 80,
@@ -1402,7 +1421,7 @@ export const BLOG_POSTS: readonly BlogPost[] = [
     words: 1121,
     readingMinutes: 6,
     cover: "/blog/derechos-arco-solicitudes-datos-carlos-anaya-ruiz.webp",
-    coverAlt: "Derechos ARCO: cómo atender solicitudes de datos — cuatro llaves geométricas doradas de formas claramente distintas suspendidas en fila horizontal, cada una alineada frente a su cerradura correspondiente en un panel de datos oscuro",
+    coverAlt: "Cuatro llaves geométricas doradas de formas claramente distintas suspendidas en fila horizontal, cada una alineada frente a su cerradura correspondiente en un panel de datos oscuro",
   },
   {
     n: 81,
@@ -1419,7 +1438,7 @@ export const BLOG_POSTS: readonly BlogPost[] = [
     words: 1084,
     readingMinutes: 5,
     cover: "/blog/cumplimiento-ia-documentar-modelos-carlos-anaya-ruiz.webp",
-    coverAlt: "Cumplimiento en IA: cómo documentar tus modelos y decisiones — una caja negra opaca abriéndose por capas concéntricas para revelar en su interior una estructura perfectamente ordenada y organizada iluminada en dorado, con etiquetas geométricas sin texto adheridas a cada componente",
+    coverAlt: "Una caja negra opaca abriéndose por capas concéntricas para revelar en su interior una estructura perfectamente ordenada y organizada iluminada en dorado, con etiquetas geométricas sin texto adheridas a cada componente",
   },
   {
     n: 82,
@@ -1436,7 +1455,7 @@ export const BLOG_POSTS: readonly BlogPost[] = [
     words: 1117,
     readingMinutes: 6,
     cover: "/blog/ia-con-datos-de-clientes-privacidad-carlos-anaya-ruiz.webp",
-    coverAlt: "Usar IA con datos de clientes sin violar su privacidad — un flujo de datos dorado atravesando una membrana de filtrado semitransparente que despoja partículas identificables —las cuales caen hacia abajo apagándose— y deja pasar únicamente una señal limpia y anonimizada al otro lado",
+    coverAlt: "Un flujo de datos dorado atravesando una membrana de filtrado semitransparente que despoja partículas identificables —las cuales caen hacia abajo apagándose— y deja pasar únicamente una señal limpia y anonimizada al otro lado",
   },
   {
     n: 83,
@@ -1453,7 +1472,7 @@ export const BLOG_POSTS: readonly BlogPost[] = [
     words: 1067,
     readingMinutes: 5,
     cover: "/blog/stack-desarrollador-solo-completo-carlos-anaya-ruiz.webp",
-    coverAlt: "El stack completo de un desarrollador solo — un banco de trabajo tridimensional flotante con doce herramientas abstractas y geométricas dispuestas en orden preciso sobre su superficie, todas iluminadas en verde azulado y conectadas entre sí por finas líneas de luz",
+    coverAlt: "Un banco de trabajo tridimensional flotante con doce herramientas abstractas y geométricas dispuestas en orden preciso sobre su superficie, todas iluminadas en verde azulado y conectadas entre sí por finas líneas de luz",
   },
   {
     n: 84,
@@ -1470,7 +1489,7 @@ export const BLOG_POSTS: readonly BlogPost[] = [
     words: 921,
     readingMinutes: 5,
     cover: "/blog/trabajar-con-ia-codigo-sin-romper-produccion-carlos-anaya-ruiz.webp",
-    coverAlt: "Cómo trabajar con IA de código sin romper producción — un brazo robótico abstracto y minimalista operando sobre un bloque de código luminoso, contenido dentro de una jaula de luz verde azulado que delimita claramente su alcance de movimiento",
+    coverAlt: "Un brazo robótico abstracto y minimalista operando sobre un bloque de código luminoso, contenido dentro de una jaula de luz verde azulado que delimita claramente su alcance de movimiento",
   },
   {
     n: 85,
@@ -1487,7 +1506,7 @@ export const BLOG_POSTS: readonly BlogPost[] = [
     words: 848,
     readingMinutes: 4,
     cover: "/blog/flujo-git-equipos-pequenos-carlos-anaya-ruiz.webp",
-    coverAlt: "Flujo de trabajo con Git para equipos pequeños — un río de luz verde azulado visto desde arriba, con varias corrientes cortas que se separan del cauce principal y regresan a él rápidamente formando pequeños arcos",
+    coverAlt: "Un río de luz verde azulado visto desde arriba, con varias corrientes cortas que se separan del cauce principal y regresan a él rápidamente formando pequeños arcos",
   },
   {
     n: 86,
@@ -1504,7 +1523,7 @@ export const BLOG_POSTS: readonly BlogPost[] = [
     words: 934,
     readingMinutes: 5,
     cover: "/blog/documentar-proyecto-para-ia-carlos-anaya-ruiz.webp",
-    coverAlt: "Cómo documentar tu proyecto para que la IA lo entienda — un mapa tridimensional desplegándose en el aire por capas superpuestas, cada capa revelando más detalle estructural que la anterior, mientras un haz de luz verde azulado lo recorre verticalmente de arriba abajo leyéndolo",
+    coverAlt: "Un mapa tridimensional desplegándose en el aire por capas superpuestas, cada capa revelando más detalle estructural que la anterior, mientras un haz de luz verde azulado lo recorre verticalmente de arriba abajo leyéndolo",
   },
   {
     n: 87,
@@ -1521,7 +1540,7 @@ export const BLOG_POSTS: readonly BlogPost[] = [
     words: 1014,
     readingMinutes: 5,
     cover: "/blog/herramientas-gratuitas-reemplazan-software-caro-carlos-anaya-ruiz.webp",
-    coverAlt: "Herramientas gratuitas que reemplazan software caro — una estantería modular flotante donde módulos pesados, ornamentados y opacos son sustituidos uno a uno por módulos ligeros y luminosos en verde azulado, con la transición ocurriendo de izquierda a derecha",
+    coverAlt: "Una estantería modular flotante donde módulos pesados, ornamentados y opacos son sustituidos uno a uno por módulos ligeros y luminosos en verde azulado, con la transición ocurriendo de izquierda a derecha",
   },
   {
     n: 88,
@@ -1538,7 +1557,7 @@ export const BLOG_POSTS: readonly BlogPost[] = [
     words: 1070,
     readingMinutes: 5,
     cover: "/blog/cuanto-cobrar-consultor-tecnologico-mexico-carlos-anaya-ruiz.webp",
-    coverAlt: "Cuánto cobrar como consultor tecnológico en México — una balanza asimétrica donde un platillo sostiene un reloj geométrico pequeño y el otro sostiene un bloque de valor sólido mucho más grande iluminado en verde azulado, inclinándose claramente hacia el lado del valor",
+    coverAlt: "Una balanza asimétrica donde un platillo sostiene un reloj geométrico pequeño y el otro sostiene un bloque de valor sólido mucho más grande iluminado en verde azulado, inclinándose claramente hacia el lado del valor",
   },
   {
     n: 89,
@@ -1555,7 +1574,7 @@ export const BLOG_POSTS: readonly BlogPost[] = [
     words: 960,
     readingMinutes: 5,
     cover: "/blog/productividad-para-desarrolladores-sistema-carlos-anaya-ruiz.webp",
-    coverAlt: "Productividad para desarrolladores: un sistema que aguanta — un calendario tridimensional donde bloques de tiempo grandes, sólidos y luminosos en verde azulado desplazan y dispersan a decenas de fragmentos diminutos que se disuelven en polvo al ser empujados",
+    coverAlt: "Un calendario tridimensional donde bloques de tiempo grandes, sólidos y luminosos en verde azulado desplazan y dispersan a decenas de fragmentos diminutos que se disuelven en polvo al ser empujados",
   },
   {
     n: 90,
@@ -1572,7 +1591,7 @@ export const BLOG_POSTS: readonly BlogPost[] = [
     words: 1001,
     readingMinutes: 5,
     cover: "/blog/portafolio-desarrollador-consigue-clientes-carlos-anaya-ruiz.webp",
-    coverAlt: "Portafolio de desarrollador que sí consigue clientes — una galería abstracta de tres marcos flotantes de vidrio, cada uno conteniendo en su interior una estructura de datos tridimensional distinta iluminada en verde azulado, con el marco central adelantado respecto a los otros dos y notablemente más brillante",
+    coverAlt: "Una galería abstracta de tres marcos flotantes de vidrio, cada uno conteniendo en su interior una estructura de datos tridimensional distinta iluminada en verde azulado, con el marco central adelantado respecto a los otros dos y notablemente más brillante",
   },
   {
     n: 91,
@@ -1589,7 +1608,7 @@ export const BLOG_POSTS: readonly BlogPost[] = [
     words: 1027,
     readingMinutes: 5,
     cover: "/blog/tendencias-tecnologicas-2026-carlos-anaya-ruiz.webp",
-    coverAlt: "Tendencias tecnológicas que sí importan este año — un horizonte oscuro del que emergen múltiples columnas de luz de alturas distintas y colores iridiscentes, algunas sólidas y definidas, otras difusas y desvaneciéndose en el aire",
+    coverAlt: "Un horizonte oscuro del que emergen múltiples columnas de luz de alturas distintas y colores iridiscentes, algunas sólidas y definidas, otras difusas y desvaneciéndose en el aire",
   },
   {
     n: 92,
@@ -1606,7 +1625,7 @@ export const BLOG_POSTS: readonly BlogPost[] = [
     words: 1020,
     readingMinutes: 5,
     cover: "/blog/ia-reemplazara-programadores-analisis-carlos-anaya-ruiz.webp",
-    coverAlt: "¿La IA va a reemplazar a los programadores? Análisis honesto — dos manos geométricas abstractas —una de cristal iridiscente translúcido, otra de metal oscuro mate— convergiendo desde lados opuestos sobre un mismo bloque de código luminoso, sin llegar a tocarse",
+    coverAlt: "Dos manos geométricas abstractas —una de cristal iridiscente translúcido, otra de metal oscuro mate— convergiendo desde lados opuestos sobre un mismo bloque de código luminoso, sin llegar a tocarse",
   },
   {
     n: 93,
@@ -1623,7 +1642,7 @@ export const BLOG_POSTS: readonly BlogPost[] = [
     words: 949,
     readingMinutes: 5,
     cover: "/blog/criptografia-post-cuantica-carlos-anaya-ruiz.webp",
-    coverAlt: "Computación cuántica y criptografía post-cuántica — una red de candados geométricos de cristal, la mitad izquierda fracturándose en fragmentos iridiscentes que se dispersan, la mitad derecha reconstruyéndose con una geometría nueva, más compleja y densa",
+    coverAlt: "Una red de candados geométricos de cristal, la mitad izquierda fracturándose en fragmentos iridiscentes que se dispersan, la mitad derecha reconstruyéndose con una geometría nueva, más compleja y densa",
   },
   {
     n: 94,
@@ -1640,7 +1659,7 @@ export const BLOG_POSTS: readonly BlogPost[] = [
     words: 928,
     readingMinutes: 5,
     cover: "/blog/edge-computing-que-es-carlos-anaya-ruiz.webp",
-    coverAlt: "Edge computing: qué es y cuándo te conviene — un núcleo central luminoso rodeado a gran distancia por decenas de micro-nodos iridiscentes situados mucho más cerca del espectador, con la latencia representada por el grosor variable de los hilos de luz que los conectan",
+    coverAlt: "Un núcleo central luminoso rodeado a gran distancia por decenas de micro-nodos iridiscentes situados mucho más cerca del espectador, con la latencia representada por el grosor variable de los hilos de luz que los conectan",
   },
   {
     n: 95,
@@ -1657,7 +1676,7 @@ export const BLOG_POSTS: readonly BlogPost[] = [
     words: 959,
     readingMinutes: 5,
     cover: "/blog/inteligencia-artificial-sector-legal-carlos-anaya-ruiz.webp",
-    coverAlt: "Inteligencia artificial en el sector legal — una balanza de justicia reducida a geometría pura y minimalista, con uno de sus platillos sosteniendo un flujo de datos iridiscente en movimiento y el otro un volumen sólido y macizo de documentos apilados",
+    coverAlt: "Una balanza de justicia reducida a geometría pura y minimalista, con uno de sus platillos sosteniendo un flujo de datos iridiscente en movimiento y el otro un volumen sólido y macizo de documentos apilados",
   },
   {
     n: 96,
@@ -1674,7 +1693,7 @@ export const BLOG_POSTS: readonly BlogPost[] = [
     words: 993,
     readingMinutes: 5,
     cover: "/blog/inteligencia-artificial-en-salud-carlos-anaya-ruiz.webp",
-    coverAlt: "Inteligencia artificial en salud: promesas y límites — una hélice abstracta de luz iridiscente ascendiendo verticalmente, recorrida por un haz de escaneo horizontal que al pasar revela patrones internos ordenados y simétricos",
+    coverAlt: "Una hélice abstracta de luz iridiscente ascendiendo verticalmente, recorrida por un haz de escaneo horizontal que al pasar revela patrones internos ordenados y simétricos",
   },
   {
     n: 97,
@@ -1691,11 +1710,12 @@ export const BLOG_POSTS: readonly BlogPost[] = [
     words: 925,
     readingMinutes: 5,
     cover: "/blog/futuro-del-trabajo-agentes-ia-carlos-anaya-ruiz.webp",
-    coverAlt: "El futuro del trabajo con agentes de IA — una mesa de trabajo circular flotante donde alternan posiciones sólidas construidas en material oscuro y posiciones hechas enteramente de luz iridiscente, todas conectadas radialmente a un núcleo central luminoso",
+    coverAlt: "Una mesa de trabajo circular flotante donde alternan posiciones sólidas construidas en material oscuro y posiciones hechas enteramente de luz iridiscente, todas conectadas radialmente a un núcleo central luminoso",
   },
   {
     n: 98,
     slug: "modelos-ia-abiertos-vs-cerrados",
+    seoTitle: "Modelos de IA abiertos vs cerrados: cuál conviene",
     title: "Modelos de IA abiertos vs cerrados: cuál conviene a tu empresa",
     description: "Modelos abiertos vs cerrados comparados en costo total, calidad, privacidad y esfuerzo operativo, con el punto donde autohospedar sale a cuenta.",
     category: "Inteligencia Artificial",
@@ -1708,7 +1728,7 @@ export const BLOG_POSTS: readonly BlogPost[] = [
     words: 940,
     readingMinutes: 5,
     cover: "/blog/modelos-ia-abiertos-vs-cerrados-carlos-anaya-ruiz.webp",
-    coverAlt: "Modelos de IA abiertos vs cerrados: cuál conviene a tu empresa — dos esferas de energía enfrentadas: una completamente encapsulada en una cáscara de cristal opaco y sellado que oculta su interior, otra abierta con su estructura interna visible y ramificándose hacia el exterior",
+    coverAlt: "Dos esferas de energía enfrentadas: una completamente encapsulada en una cáscara de cristal opaco y sellado que oculta su interior, otra abierta con su estructura interna visible y ramificándose hacia el exterior",
   },
   {
     n: 99,
@@ -1725,11 +1745,12 @@ export const BLOG_POSTS: readonly BlogPost[] = [
     words: 929,
     readingMinutes: 5,
     cover: "/blog/soberania-digital-latam-carlos-anaya-ruiz.webp",
-    coverAlt: "Soberanía digital y dependencia tecnológica en LATAM — un territorio tridimensional abstracto con la forma de América Latina elevándose sobre un plano oscuro, con raíces de luz iridiscente descendiendo hacia el suelo desde su base y cables tensos tirando de él desde fuera del encuadre",
+    coverAlt: "Un territorio tridimensional abstracto con la forma de América Latina elevándose sobre un plano oscuro, con raíces de luz iridiscente descendiendo hacia el suelo desde su base y cables tensos tirando de él desde fuera del encuadre",
   },
   {
     n: 100,
     slug: "prepararte-profesionalmente-decada-ia",
+    seoTitle: "Cómo prepararte para la próxima década de IA",
     title: "Cómo prepararte profesionalmente para la próxima década de IA",
     description: "Qué habilidades suben y bajan de valor con la IA, cómo construir un perfil difícil de automatizar y un plan de 12 meses para lograrlo.",
     category: "Tendencias",
@@ -1742,7 +1763,7 @@ export const BLOG_POSTS: readonly BlogPost[] = [
     words: 1053,
     readingMinutes: 5,
     cover: "/blog/prepararte-profesionalmente-decada-ia-carlos-anaya-ruiz.webp",
-    coverAlt: "Cómo prepararte profesionalmente para la próxima década de IA — un camino ascendente formado por losas iridiscentes que se van materializando en el aire justo un instante antes de cada paso, dirigiéndose hacia un horizonte de luz difusa en la parte superior del encuadre",
+    coverAlt: "Un camino ascendente formado por losas iridiscentes que se van materializando en el aire justo un instante antes de cada paso, dirigiéndose hacia un horizonte de luz difusa en la parte superior del encuadre",
   },
 ] as const
 

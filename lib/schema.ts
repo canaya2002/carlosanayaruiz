@@ -1110,6 +1110,13 @@ export function generateBooksPageGraph(
   return graph([
     buildPageNode({
       locale,
+      /* `description` faltaba, y /libros era una de las DOS únicas rutas de
+         treinta cuyo nodo de página no la llevaba, aunque la ruta sirve un
+         `<meta name="description">` perfectamente bueno. Las otras 28 sí. */
+      description:
+        locale === 'en'
+          ? 'Technical writing by Carlos Anaya Ruiz on technical SEO, Next.js and web performance.'
+          : 'Lo que Carlos Anaya Ruiz ha escrito sobre SEO técnico, Next.js y rendimiento web.',
       pageUrl,
       name:
         locale === 'en'

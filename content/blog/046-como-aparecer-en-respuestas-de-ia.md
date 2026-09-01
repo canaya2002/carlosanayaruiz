@@ -2,6 +2,7 @@
 n: 46
 title: "Cómo aparecer en las respuestas de ChatGPT, Claude y Perplexity"
 slug: "como-aparecer-en-respuestas-de-ia"
+seoTitle: "Cómo aparecer en ChatGPT, Claude y Perplexity"
 description: "Las tácticas concretas que hacen que un modelo de IA cite tu sitio: estructura, entidades, datos verificables y presencia distribuida."
 category: "SEO"
 keyword: "aparecer en chatgpt búsquedas"

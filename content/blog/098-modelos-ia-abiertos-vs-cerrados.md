@@ -2,6 +2,7 @@
 n: 98
 title: "Modelos de IA abiertos vs cerrados: cuál conviene a tu empresa"
 slug: "modelos-ia-abiertos-vs-cerrados"
+seoTitle: "Modelos de IA abiertos vs cerrados: cuál conviene"
 description: "Modelos abiertos vs cerrados comparados en costo total, calidad, privacidad y esfuerzo operativo, con el punto donde autohospedar sale a cuenta."
 category: "Inteligencia Artificial"
 keyword: "modelos de ia open source"

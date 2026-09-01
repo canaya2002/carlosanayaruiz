@@ -2,6 +2,7 @@
 n: 1
 title: "Qué es la inteligencia artificial generativa y cómo usarla en tu empresa"
 slug: "que-es-inteligencia-artificial-generativa-empresas"
+seoTitle: "Qué es la IA generativa y cómo usarla en tu empresa"
 description: "Qué es la inteligencia artificial generativa, cómo funciona y 12 formas concretas de aplicarla en tu empresa este año. Guía sin humo."
 category: "Inteligencia Artificial"
 keyword: "inteligencia artificial generativa"

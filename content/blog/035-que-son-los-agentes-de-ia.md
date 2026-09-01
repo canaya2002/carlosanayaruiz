@@ -2,6 +2,7 @@
 n: 35
 title: "Qué son los agentes de IA y en qué se diferencian de un chatbot"
 slug: "que-son-los-agentes-de-ia"
+seoTitle: "Agentes de IA: en qué se diferencian de un chatbot"
 description: "Qué es un agente de IA, cómo usa herramientas y toma decisiones, y en qué se diferencia realmente de un chatbot con un buen prompt."
 category: "Inteligencia Artificial"
 keyword: "agentes de ia"

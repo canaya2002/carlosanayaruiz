@@ -38,6 +38,16 @@ export interface Award {
    * the UI must treat it as optional.
    */
   image?: string
+  /**
+   * Texto alternativo de `image`. Opcional, y separado del `title` a propósito:
+   * el `alt` del certificado del NASA era `award.title`, o sea el NOMBRE DEL
+   * PROYECTO —«AuraScope – Monitoreo de Calidad del Aire vía Satélite»— que ya
+   * está impreso literal unos 500 caracteres antes en la misma página. Un
+   * lector de pantalla oía el título, la descripción y otra vez el título; y
+   * para un buscador el `alt` de un documento escaneado tiene que describir el
+   * DOCUMENTO, no el proyecto que lo ganó.
+   */
+  imageAlt?: string
 }
 
 const awardsData: Localized<Award[]> = {
@@ -60,6 +70,8 @@ const awardsData: Localized<Award[]> = {
         'Distinción «Galactic Problem Solver». Cita literal del certificado: «for outstanding participation and efforts to address challenges we face on Earth and in space». Firmado por Dr. Keith Gaddis, Program Scientist. 5–6 de octubre de 2024.',
       image:
         '/credenciales/certificado-nasa-space-apps-galactic-problem-solver-carlos-anaya-ruiz.webp',
+      imageAlt:
+        'Certificado Galactic Problem Solver del NASA International Space Apps Challenge 2024, firmado por Dr. Keith Gaddis, Program Scientist, a nombre de Carlos Anaya Ruiz',
     },
     {
       id: 'logiroute-ai',
@@ -95,6 +107,8 @@ const awardsData: Localized<Award[]> = {
         '“Galactic Problem Solver” distinction. Literal citation on the certificate: “for outstanding participation and efforts to address challenges we face on Earth and in space.” Signed by Dr. Keith Gaddis, Program Scientist. October 5–6, 2024.',
       image:
         '/credenciales/certificado-nasa-space-apps-galactic-problem-solver-carlos-anaya-ruiz.webp',
+      imageAlt:
+        'Galactic Problem Solver certificate from the 2024 NASA International Space Apps Challenge, signed by Dr. Keith Gaddis, Program Scientist, issued to Carlos Anaya Ruiz',
     },
     {
       id: 'logiroute-ai',

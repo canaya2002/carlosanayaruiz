@@ -99,6 +99,9 @@ for (const file of files) {
   posts.push({
     n: Number(fm.n),
     slug: fm.slug,
+    /* Opcional: solo lo llevan los 10 títulos que pasan de ~60 caracteres.
+       `?? undefined` para que la clave no se emita cuando no existe. */
+    seoTitle: fm.seoTitle ?? undefined,
     title: fm.title,
     description: fm.description,
     category: fm.category,
@@ -132,12 +135,34 @@ try {
   console.warn('  (sin data/blog-covers.json: los artículos van sin portada)')
 }
 
+/**
+ * Quita el prefijo «{título} — » del texto alternativo de la portada.
+ *
+ * 97 de las 99 entradas de `data/blog-covers-map.json` arrancan con una copia
+ * LITERAL del título, y el `<h1>` está 396 caracteres antes en el mismo
+ * documento. Un lector de pantalla oía el titular, la descripción y otra vez el
+ * titular; y para un buscador un `alt` que empieza repitiendo el h1 no aporta
+ * señal nueva. Medían entre 254 y 312 caracteres y la mitad era eso.
+ *
+ * Va en el GENERADOR y no en `data/blog.ts`, que se reescribe con
+ * `npm run blog:data`: un arreglo en el archivo derivado se perdería en la
+ * siguiente corrida. Y no en el mapa de portadas, porque ese es la
+ * transcripción de lo que describía cada prompt y el dato crudo se conserva.
+ *
+ * Las dos entradas que no llevan el prefijo pasan intactas.
+ */
+function altSinTitulo(alt, titulo) {
+  const prefijo = `${titulo} — `
+  const limpio = alt.startsWith(prefijo) ? alt.slice(prefijo.length) : alt
+  return limpio.charAt(0).toUpperCase() + limpio.slice(1)
+}
+
 const lines = posts.map((p, i) => {
   const c = clusterOf(p.n)
   const cover = covers[String(p.n)]
   return `  {
     n: ${p.n},
-    slug: ${JSON.stringify(p.slug)},
+    slug: ${JSON.stringify(p.slug)},${p.seoTitle ? `\n    seoTitle: ${JSON.stringify(p.seoTitle)},` : ''}
     title: ${JSON.stringify(p.title)},
     description: ${JSON.stringify(p.description)},
     category: ${JSON.stringify(p.category)},
@@ -152,7 +177,7 @@ const lines = posts.map((p, i) => {
       cover
         ? `
     cover: ${JSON.stringify(cover.src)},
-    coverAlt: ${JSON.stringify(cover.alt)},`
+    coverAlt: ${JSON.stringify(altSinTitulo(cover.alt, p.title))},`
         : ''
     }
   },`
@@ -184,6 +209,17 @@ export interface BlogPost {
   /** Número del artículo en el índice maestro, 1–100. Es su orden de salida. */
   n: number
   slug: string
+  /**
+   * Título para el elemento title, el OG y la tarjeta social, cuando el visible
+   * pasa de ~60 caracteres y Google lo recortaría con puntos suspensivos.
+   *
+   * Ausente en 90 de los 100: solo lo llevan los que lo necesitan. El h1
+   * SIEMPRE usa 'title' — ahí no hay límite de píxeles, y recortar el titular
+   * visible para complacer a una SERP sería cambiar el contenido por el
+   * envoltorio. (Sin backticks: este bloque vive dentro de un template
+   * literal.)
+   */
+  seoTitle?: string
   title: string
   description: string
   /** Categoría del frontmatter: 12 valores. */

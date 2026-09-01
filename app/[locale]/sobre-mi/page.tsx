@@ -323,7 +323,7 @@ export default async function AboutPage({ params }: Props) {
                   <span className="portrait-shutter" aria-hidden="true" />
                   <Image
                     src={SEO_IMAGES.portraitBw}
-                    alt={SEO_IMAGES.avatarAlt[locale]}
+                    alt={SEO_IMAGES.portraitBwAlt[locale]}
                     width={SEO_IMAGES.portraitBwSize}
                     height={SEO_IMAGES.portraitBwSize}
                     sizes="(min-width: 768px) 15rem, 60vw"
@@ -333,7 +333,7 @@ export default async function AboutPage({ params }: Props) {
                        precarga, y un candidato a LCP sin precargar es
                        exactamente la regresión que este sitio vende arreglar.
                        El bloque equivalente de /cv ya lo llevaba. */
-                    priority
+                    loading="eager"
                   />
                 </span>
                 <figcaption className="stamp mt-4 tabular-nums">

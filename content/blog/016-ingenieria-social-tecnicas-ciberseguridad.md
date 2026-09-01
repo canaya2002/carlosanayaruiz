@@ -2,6 +2,7 @@
 n: 16
 title: "Ingeniería social: las 10 técnicas más usadas contra empresas"
 slug: "ingenieria-social-tecnicas-ciberseguridad"
+seoTitle: "Ingeniería social: las 10 técnicas más usadas"
 description: "Las 10 técnicas de ingeniería social más usadas contra empresas, cómo se ven en la práctica y el control que corta cada una."
 category: "Ciberseguridad"
 keyword: "ingeniería social ciberseguridad"

@@ -1,5 +1,29 @@
+import { statSync } from 'node:fs'
+import { join } from 'node:path'
 import { getPublishedPosts, postUrl, blogUrl } from '@/lib/blog'
 import { SITE_CONFIG, NAP } from '@/lib/constants'
+
+/**
+ * El tamaño real de una portada, en bytes.
+ *
+ * `<enclosure length>` es OBLIGATORIO en RSS 2.0 y significa el tamaño del
+ * archivo. Estaba cableado a `length="0"`, así que las tres entradas del feed
+ * declaraban un archivo de cero bytes: un lector que decida si precargar el
+ * adjunto por su peso decide con un dato falso, y un validador de RSS lo marca.
+ *
+ * Se mide del archivo en `public/` en vez de guardarlo en `data/blog.ts`: el
+ * dato exacto está a una llamada de distancia y así no puede desincronizarse de
+ * la imagen si alguna se vuelve a optimizar. Si el archivo no está —no debería
+ * pasar, las 99 están en el repo— se omite el atributo entero antes que
+ * inventarlo.
+ */
+function coverBytes(cover: string): number | null {
+  try {
+    return statSync(join(process.cwd(), 'public', cover)).size
+  } catch {
+    return null
+  }
+}
 
 /**
  * ════════════════════════════════════════════════════════════════
@@ -55,9 +79,9 @@ export async function GET() {
       <description>${xml(post.description)}</description>
       <category>${xml(post.cluster)}</category>
       <dc:creator>${xml(SITE_CONFIG.name)}</dc:creator>${
-        post.cover
+        post.cover && coverBytes(post.cover) !== null
           ? `
-      <enclosure url="${SITE_CONFIG.url}${post.cover}" type="image/webp" length="0" />`
+      <enclosure url="${SITE_CONFIG.url}${post.cover}" type="image/webp" length="${coverBytes(post.cover)}" />`
           : ''
       }
     </item>`

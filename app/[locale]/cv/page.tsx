@@ -561,11 +561,16 @@ export default async function CvPage({ params }: Props) {
                       <span className="portrait-shutter" aria-hidden="true" />
                       <Image
                         src={SEO_IMAGES.portraitBw}
-                        alt={SEO_IMAGES.avatarAlt[locale]}
+                        alt={SEO_IMAGES.portraitBwAlt[locale]}
                         width={SEO_IMAGES.portraitBwSize}
                         height={SEO_IMAGES.portraitBwSize}
                         sizes="(min-width: 768px) 15rem, 60vw"
-                        priority
+                        /* `loading="eager"` y NO `priority`. La foto se pinta a 15rem
+                           dentro del héroe, así que tiene que pedirse de inmediato — pero
+                           el candidato a LCP de esta ruta es el `<h1>`, no ella, y
+                           `priority` añade un `<link rel=preload>` a prioridad máxima que
+                           compite con él. /sobre-mi lleva ahora el mismo tratamiento. */
+                        loading="eager"
                       />
                     </span>
                     <figcaption className="stamp mt-4">
