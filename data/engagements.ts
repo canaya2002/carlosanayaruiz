@@ -24,18 +24,15 @@
  *    entonces no afirma nada sobre el resultado, igual que `awards.ts` no
  *    afirma un impacto que no puede citar.
  *
- * ⚠ SOBRE `outcome`, Y ESTO IMPORTA
- * Nueve de los dieciocho traen una cifra de resultado. Están escritas aquí
- * porque el dueño las dictó, pero el campo NO se renderiza todavía: en el mismo
- * mensaje en que llegaron, llegaron también once imágenes de Search Console que
- * resultaron ser generadas con IA (llevan credenciales C2PA de OpenAI en los
- * metadatos, y una contiene el texto «blurred-domain-example.com»). Publicar
- * nueve cifras de resultado de cliente en una página comercial pide una
- * confirmación explícita de que son mediciones reales, y esa confirmación no ha
- * llegado. Ver `docs/ENCARGOS.md`.
+ * SOBRE `outcome`
+ * Nueve de los dieciocho traen una cifra de resultado y el dueño confirmó
+ * explícitamente que son mediciones reales del trabajo. Se publican tal como
+ * las dictó, bajo el rótulo «resultado medido» — el mismo tratamiento que
+ * `awards.ts` da a su campo `impact`.
  *
- * En cuanto el dueño confirme, se enciende el campo en la página y nada más
- * cambia aquí.
+ * Los otros nueve no traen cifra porque no se midieron, y ahí la página no
+ * afirma nada: la ausencia del campo ES el dato. Es la regla que hace creíbles
+ * a los nueve que sí la tienen.
  * ════════════════════════════════════════════════════════════════
  */
 
@@ -74,7 +71,10 @@ export interface Engagement {
   delivered: string
   /** Tecnologías. Vacío cuando el encargo no fue de construcción. */
   stack: readonly string[]
-  /** Resultado MEDIDO. Ausente = no se midió. Ver el aviso de la cabecera. */
+  /**
+   * Resultado MEDIDO por el dueño. Ausente significa que no se midió, y
+   * entonces la página no afirma nada: la ausencia es el dato.
+   */
   outcome?: string
   service?: EngagementService
 }
@@ -374,3 +374,6 @@ export function engagementsForService(
 ): readonly Engagement[] {
   return ENGAGEMENTS.filter((e) => e.service === service)
 }
+
+/** Cuántos traen resultado medido. Es la cifra honesta: nueve de dieciocho. */
+export const ENGAGEMENTS_MEASURED = ENGAGEMENTS.filter((e) => e.outcome).length

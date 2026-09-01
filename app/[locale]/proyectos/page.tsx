@@ -11,6 +11,7 @@ import {
   ENGAGEMENT_WEEKS,
   ENGAGEMENT_COUNTRIES,
   ENGAGEMENT_YEARS,
+  ENGAGEMENTS_MEASURED,
   engagementsByKind,
   type EngagementKind,
 } from '@/data/engagements'
@@ -522,12 +523,11 @@ export default async function ProyectosPage({ params }: Props) {
               semana más larga del registro, y su fila la ordena el año. El
               dibujo no puede desmentir la tabla porque sale de ella.
 
-              El `outcome` NO se pinta todavía. Nueve encargos traen cifra de
-              resultado y están en el archivo, pero llegaron en el mismo mensaje
-              que once capturas de Search Console generadas con IA (credenciales
-              C2PA de OpenAI en los metadatos). Publicar nueve resultados de
-              cliente en una página comercial pide una confirmación explícita de
-              que son mediciones reales. Cuando llegue, se enciende aquí. */}
+              EL RESULTADO MEDIDO se imprime tal cual, bajo su rótulo mono —
+              el mismo tratamiento que `impact` en /premios. Nueve de los
+              dieciocho lo traen; los otros nueve no se midieron y ahí la fila no
+              afirma nada. Esa asimetría es lo que hace creíbles a los nueve que
+              sí: si todos tuvieran cifra, ninguna valdría. */}
           <section
             id="encargos"
             className="border-t border-hairline px-5 py-20 sm:px-10"
@@ -577,6 +577,21 @@ export default async function ProyectosPage({ params }: Props) {
                         <p className="mt-2 max-w-[62ch] text-ink-muted">
                           {e.delivered}
                         </p>
+
+                        {/* El resultado, cuando se midió. Va con su rótulo
+                            porque una cifra sin etiqueta es un número suelto, y
+                            en tinta plena porque es el dato que el visitante
+                            vino a buscar. */}
+                        {e.outcome ? (
+                          <p className="mt-4">
+                            <span className="stamp">
+                              {en ? 'measured result' : 'resultado medido'}
+                            </span>
+                            <span className="mt-1.5 block max-w-[62ch] text-ink">
+                              {e.outcome}
+                            </span>
+                          </p>
+                        ) : null}
 
                         {/* LA BARRA. Su largo es `weeks` sobre la semana más
                             larga del registro, así que las dieciocho se leen
@@ -634,6 +649,22 @@ export default async function ProyectosPage({ params }: Props) {
                   </span>
                   <span className="margin-read tabular-nums">
                     {ENGAGEMENT_COUNTRIES}
+                  </span>
+                </div>
+
+                {/* La cifra honesta: nueve de dieciocho. Decirlo así vale más
+                    que decir «resultados medidos» sin cuenta — y es lo que
+                    distingue este registro de una lista de logros. */}
+                <div className="margin-row">
+                  <span className="margin-key">
+                    {en ? 'with measured result' : 'con resultado medido'}
+                  </span>
+                  <span className="margin-read tabular-nums">
+                    {ENGAGEMENTS_MEASURED}
+                    <span className="text-ink-subtle">
+                      {' / '}
+                      {ENGAGEMENT_COUNT}
+                    </span>
                   </span>
                 </div>
 
