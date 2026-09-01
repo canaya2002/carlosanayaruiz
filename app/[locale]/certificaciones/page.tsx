@@ -173,13 +173,36 @@ export default async function CertificationsPage({ params }: Props) {
    * desmienta. Dos direcciones opuestas dan la profundidad que en otro sitio
    * daría una sombra.
    */
-  const ribbonNames = credentials.map((credential) => credential.name)
-  const ribbonIssuers = credentials.map((credential) => {
+  /**
+   * UNA sola cinta, y cada item se lleva su emisor dentro.
+   *
+   * ── POR QUÉ SE FUSIONARON DOS EN UNA ──
+   * Eran dos: `ribbonNames` arriba y `ribbonIssuers` abajo, las dos derivadas
+   * del MISMO array por índice, o sea pensadas para leerse como pares. Y
+   * corrían a distinta velocidad y en direcciones OPUESTAS (`large` da 64 px/s,
+   * `reverse` un 72% de eso hacia atrás), así que el nombre de una credencial y
+   * su emisor se separaban un poco más en cada frame y no volvían a
+   * coincidir nunca.
+   *
+   * Medido en captura a 1440: encima de «TOEFL – Certificación de Inglés»
+   * pasaba el rótulo del PMP. Es el caso más literal del defecto que se
+   * reportó —«no se entiende qué corresponde a qué»— y no era una cuestión de
+   * espaciado: dos carriles de datos EMPAREJADOS a distinta velocidad no
+   * pueden entenderse, por construcción.
+   *
+   * Fusionadas, cada item es una unidad indivisible y nada puede desalinearse.
+   * El movimiento que pidió el brief se conserva; lo que se va es la
+   * posibilidad de mentir. La profundidad de dos planos a distinta velocidad
+   * sigue viva en la portada, donde los dos carriles llevan items
+   * INDEPENDIENTES (el stack partido en mitades) y la deriva es inofensiva.
+   */
+  const ribbonItems = credentials.map((credential) => {
     // El año de cierre del registro, y solo si el registro lo trae: el PMP no
     // lo tiene y la cinta se queda sin él en lugar de inventarlo.
     const year = (credential.dateEnd ?? credential.date)?.slice(0, 4)
-    const parts = [kindLabel[credential.kind], credential.issuer, year]
-    return parts.filter(Boolean).join(' · ')
+    return [credential.name, credential.issuer, year]
+      .filter(Boolean)
+      .join(' · ')
   })
 
   // Tres cifras, las tres contadas de los datos de arriba. Ninguna escrita a
@@ -400,7 +423,7 @@ export default async function CertificationsPage({ params }: Props) {
               Primero corren, después se leen. Las cintas dan el movimiento
               que el brief pidió; la lista de abajo es donde alguien se
               detiene a comprobar el emisor y la fecha. */}
-          <section className="mt-20 border-t border-hairline px-5 py-20 sm:px-10">
+          <section className="mt-20 border-t border-hairline px-5 pb-24 pt-14 sm:px-10">
             <p className="stamp">{t('gridEyebrow')}</p>
             <h2 className="mt-5 max-w-[18ch] text-d1 text-ink">
               {t('gridTitle')}
@@ -409,14 +432,13 @@ export default async function CertificationsPage({ params }: Props) {
               {t('gridSubtitle')}
             </p>
 
-            {/* Las cintas rompen el margen de la sección: una cinta que se
-                corta contra un borde deja de leerse como cinta. La máscara
-                de `.ribbon` las desvanece en los cantos. */}
+            {/* La cinta rompe el margen de la sección: una cinta que se corta
+                contra un borde deja de leerse como cinta. La máscara de
+                `.ribbon` la desvanece en los cantos.
+
+                UNA, no dos. Ver la nota de `ribbonItems`. */}
             <div className="-mx-5 mt-14 overflow-hidden sm:-mx-10">
-              <Ribbon items={ribbonNames} label={tl('certsRail')} large />
-              <div className="mt-4">
-                <Ribbon items={ribbonIssuers} label={t('issuedBy')} reverse />
-              </div>
+              <Ribbon items={ribbonItems} label={tl('certsRail')} large />
             </div>
 
             <ul className="reveal-stagger mt-16">
@@ -504,7 +526,7 @@ export default async function CertificationsPage({ params }: Props) {
               del archivo, nunca escritas a mano. */}
           <section
             id="cursos"
-            className="border-t border-hairline px-5 py-20 sm:px-10"
+            className="border-t border-hairline px-5 pb-24 pt-14 sm:px-10"
           >
             <p className="stamp">
               {en ? 'training · the documents' : 'formación · los documentos'}
@@ -630,7 +652,7 @@ export default async function CertificationsPage({ params }: Props) {
               código existe para el día que haya archivos en `public/pdf/`;
               fingir una descarga que no existe sería peor que no tenerla. */}
           {certificatePdfs.length > 0 ? (
-            <section className="border-t border-hairline px-5 py-20 sm:px-10">
+            <section className="border-t border-hairline px-5 pb-24 pt-14 sm:px-10">
               <p className="stamp">{t('pdfEyebrow')}</p>
               <h2 className="mt-5 max-w-[18ch] text-d1 text-ink">
                 {t('pdfTitle')}
@@ -663,7 +685,7 @@ export default async function CertificationsPage({ params }: Props) {
           {/* ═══ IDIOMAS ═════════════════════════════════════════
               La barra no es adorno: su largo se calcula desde el mismo nivel
               MCER que está impreso al lado, así que no puede contradecirlo. */}
-          <section className="border-t border-hairline px-5 py-20 sm:px-10">
+          <section className="border-t border-hairline px-5 pb-24 pt-14 sm:px-10">
             <p className="stamp">{t('languagesEyebrow')}</p>
             <h2 className="mt-5 max-w-[18ch] text-d1 text-ink">
               {t('languagesTitle')}
@@ -708,7 +730,7 @@ export default async function CertificationsPage({ params }: Props) {
           </section>
 
           {/* ═══ LO DEMÁS QUE SE PUEDE REVISAR ═══════════════════ */}
-          <section className="border-t border-hairline px-5 py-20 sm:px-10">
+          <section className="border-t border-hairline px-5 pb-24 pt-14 sm:px-10">
             <p className="stamp">{t('moreEyebrow')}</p>
             <h2 className="mt-5 max-w-[18ch] text-d1 text-ink">
               {t('moreTitle')}
@@ -732,7 +754,7 @@ export default async function CertificationsPage({ params }: Props) {
           </section>
 
           {/* ═══ CIERRE ══════════════════════════════════════════ */}
-          <section className="border-t border-hairline px-5 py-24 sm:px-10">
+          <section className="border-t border-hairline px-5 pb-28 pt-16 sm:px-10">
             <h2 className="max-w-[18ch] text-d1 text-ink">{t('ctaTitle')}</h2>
             <p className="mt-6 max-w-[52ch] font-human text-lead text-ink-muted">
               {t('ctaLead')}

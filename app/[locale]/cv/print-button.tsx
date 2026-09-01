@@ -1,7 +1,5 @@
 'use client'
 
-import { Button } from '@/components/ui/button'
-
 interface PrintButtonProps {
   /** Etiqueta visible. Llega traducida desde el server component. */
   label: string
@@ -31,13 +29,14 @@ interface PrintButtonProps {
  */
 export function PrintButton({ label }: PrintButtonProps) {
   return (
-    <Button
-      type="button"
-      size="lg"
-      className="press"
-      onClick={() => window.print()}
-    >
+    /* `.pull-tab`, que es el «botón» documentado de este sistema: una regla
+       arriba, el rótulo en mono y 44 px de objetivo táctil. Era el `<Button>`
+       de shadcn, con `rounded-lg` y el relleno de gradiente del sistema
+       anterior — el mismo hallazgo que el CTA del nav, y el último de los tres.
+       Con esto `components/ui/button.tsx` se queda sin un solo consumidor. */
+    <button type="button" className="pull-tab press" onClick={() => window.print()}>
       {label}
-    </Button>
+      <span aria-hidden="true">→</span>
+    </button>
   )
 }

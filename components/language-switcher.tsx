@@ -4,7 +4,6 @@ import type { ComponentProps } from 'react'
 import { useLocale, useTranslations } from 'next-intl'
 import { useParams } from 'next/navigation'
 import { Link, usePathname } from '@/i18n/navigation'
-import { Button } from '@/components/ui/button'
 import { Locale } from '@/data/types'
 
 /**
@@ -86,34 +85,35 @@ export function LanguageSwitcher() {
         : pathname
 
   return (
-    // El padding y el gap se aprietan solo por debajo de sm, donde la
-    // etiqueta es "EN"/"ES" y no el nombre del idioma: ahi el control medía
-    // 71px de los 320 utiles de la barra a 360px. Desde sm vuelve al espaciado
-    // normal, porque ya hay sitio y un control de 64px se siente apretado.
-    <Button
-      asChild
-      variant="ghost"
-      size="sm"
-      className="gap-1.5 px-2.5 text-sm font-medium sm:gap-2 sm:px-3"
+    // El padding y el gap se aprietan solo por debajo de sm, donde la etiqueta
+    // es "EN"/"ES" y no el nombre del idioma: ahí el control medía 71 px de los
+    // 320 útiles de la barra a 360. Desde sm vuelve al espaciado normal.
+    //
+    // ── ERA UN BOTÓN DE SHADCN ──
+    // `<Button variant="ghost" size="sm">` traía `rounded-lg` y un
+    // `hover:bg-ground-tint`: un lavado de fondo dentro de una CAJA redondeada,
+    // el patrón que la regla cero de este proyecto prohíbe, y el único de los
+    // siete controles de la barra que lo tenía. Ahora es un enlace de nav como
+    // los demás —44 px de alto, misma tinta, mismo cambio de color al
+    // apuntar— así que la fila se lee de una pieza.
+    <Link
+      href={href}
+      locale={targetLocale}
+      // La etiqueta visible es un nombre de idioma, que por sí solo no dice qué
+      // va a pasar; el nombre accesible enuncia la acción.
+      aria-label={`${t('label')}: ${t('switchTo')}`}
+      // Decirle al crawler qué hay del otro lado de este enlace.
+      hrefLang={targetLocale}
+      className="press inline-flex h-11 items-center gap-1.5 whitespace-nowrap px-2 text-sm text-ink-muted transition-colors hover:text-ink sm:gap-2 sm:px-3"
     >
-      <Link
-        href={href}
-        locale={targetLocale}
-        // La etiqueta visible es un nombre de idioma, que por sí solo no dice
-        // qué va a pasar; el nombre accesible enuncia la acción.
-        aria-label={`${t('label')}: ${t('switchTo')}`}
-        // Decirle al crawler qué hay del otro lado de este enlace.
-        hrefLang={targetLocale}
-      >
-        {/* Iba un globo de lucide delante del nombre del idioma, y con él
-            venía `lucide-react` a un componente de CLIENTE montado en las
-            quince páginas. No se sustituyó por nada, y es la decisión: las dos
-            líneas de abajo ya resuelven los dos anchos —el nombre completo en
-            escritorio, el código de dos letras en móvil— así que el icono solo
-            repetía lo que la etiqueta de al lado ya decía. */}
-        <span className="hidden sm:inline">{t('switchTo')}</span>
-        <span className="sm:hidden">{targetLocale.toUpperCase()}</span>
-      </Link>
-    </Button>
+      {/* Iba un globo de lucide delante del nombre del idioma, y con él venía
+          `lucide-react` a un componente de CLIENTE montado en las quince
+          páginas. No se sustituyó por nada, y es la decisión: las dos líneas de
+          abajo ya resuelven los dos anchos —el nombre completo en escritorio,
+          el código de dos letras en móvil— así que el icono solo repetía lo que
+          la etiqueta de al lado ya decía. */}
+      <span className="hidden sm:inline">{t('switchTo')}</span>
+      <span className="sm:hidden">{targetLocale.toUpperCase()}</span>
+    </Link>
   )
 }

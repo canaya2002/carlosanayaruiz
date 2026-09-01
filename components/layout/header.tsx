@@ -4,7 +4,6 @@ import { useCallback, useEffect, useMemo, useRef, useState } from 'react'
 import { useTranslations } from 'next-intl'
 import { Link, usePathname } from '@/i18n/navigation'
 import { cn } from '@/lib/utils'
-import { Button } from '@/components/ui/button'
 import { LanguageSwitcher } from '@/components/language-switcher'
 import type { Pathname, StaticPathname } from '@/i18n/routing'
 
@@ -551,26 +550,46 @@ export function Header() {
             {/* El clic de mayor intención se queda en el dominio: el CTA del
                 header lleva a /contacto y no a ningún perfil externo.
 
-                No lleva `.press`: el botón ya trae su propia
-                `transition-property` y la clase, al estar sin capa, se la
-                comería entera — el levantamiento de hover pasaría a ser
-                instantáneo. El hundido al pulsar se consigue con `scale`, que
-                es una propiedad distinta de `translate` y compone con ella;
-                `tailwind-merge` sustituye la lista de transición del botón por
-                esta, que la incluye. */}
-            <Button
-              asChild
-              className="hidden active:scale-[0.98] sm:inline-flex"
+                ── ERA UN BOTÓN DE SHADCN, Y ESO ESTABA ROTO ──
+                Reportado: «ve si no hay nada roto, como el contáctame». Lo
+                había, y era este. El enlace más pulsado del sitio venía del
+                `<Button>` del sistema anterior y traía, medido en el HTML
+                servido: `rounded-lg`, `bg-[image:var(--grad-fill)]`,
+                `hover:shadow-glow-brand`, `.sheen` y
+                `hover:[transform:translateY(-2px)]`.
+
+                El puente de tokens neutralizaba tres de esas cinco —
+                `--grad-fill` resuelve a un COLOR, así que `bg-[image:…]`
+                caía a `none`; `--shadow-glow-brand` es `none`; el `::after`
+                de `.sheen` está apagado con `!important`. Pero las otras dos
+                seguían vivas y se veían:
+
+                  · `text-white` = #ffffff. Este sistema no tiene blanco puro:
+                    su tinta es `--paper`, #ebe6d9. El CTA era el ÚNICO texto
+                    blanco de la barra, justo al lado de la marca en papel.
+                  · el salto de 2 px al pasar el puntero. Nada en «Papel
+                    Ahumado» se levanta: aquí la respuesta al puntero es un
+                    trazo que se escribe, no un objeto que flota.
+
+                Lo que queda es el vocabulario que el resto de la fila ya usa:
+                tinta plena, peso alto y la flecha que avanza. Sin caja, sin
+                radio, sin sombra y sin salto.
+
+                La flecha es el glifo de texto, que es el idioma del resto del
+                sitio —«{t('ctaMain')} →» en las quince páginas— y no un
+                `<svg>` que obliga a traer una librería de iconos al cliente. */}
+            <Link
+              href="/contacto"
+              className="group/cta press hidden h-11 items-center gap-2 whitespace-nowrap px-1 text-sm font-semibold text-ink transition-colors sm:inline-flex"
             >
-              {/* La flecha es el glifo de texto, que es el idioma del resto
-                  del sitio —«{t('ctaMain')} →» en las quince páginas— y no un
-                  `<svg>` que obliga a traer una librería de iconos al
-                  cliente. */}
-              <Link href="/contacto">
-                {t('hireMe')}
-                <span aria-hidden="true">→</span>
-              </Link>
-            </Button>
+              {t('hireMe')}
+              <span
+                className="transition-transform duration-300 group-hover/cta:translate-x-1"
+                aria-hidden="true"
+              >
+                →
+              </span>
+            </Link>
 
             <button
               ref={menuButtonRef}
@@ -715,12 +734,20 @@ export function Header() {
             ))}
           </ul>
 
-          <Button asChild size="lg" className="mt-6 w-full active:scale-[0.98]">
-            <Link href="/contacto" onClick={() => setMenuOpen(false)}>
-              {t('hireMe')}
-              <span aria-hidden="true">→</span>
-            </Link>
-          </Button>
+          {/* Aquí SÍ va `.pull-tab`, que es el «botón» documentado de este
+              sistema: una regla arriba, el rótulo en mono y la flecha. En la
+              fila del nav una regla superior no tendría sentido —no hay nada
+              que separar—, pero al pie de un panel apilado a todo el ancho es
+              exactamente su sitio. Y trae sus 44 px de objetivo táctil, que es
+              lo único que este control necesita cumplir. */}
+          <Link
+            href="/contacto"
+            onClick={() => setMenuOpen(false)}
+            className="pull-tab press mt-8 w-full"
+          >
+            {t('hireMe')}
+            <span aria-hidden="true">→</span>
+          </Link>
         </nav>
       </div>
     </header>
@@ -956,71 +983,70 @@ function NavDropdown({
         ref={panelRef}
         id={group.panelId}
         hidden={!open}
-        style={{ animationDuration: '340ms' }}
-        /* `.drop-panel` en vez de `border + bg-surface + shadow`: es la
-           misma gota del enlace, a otra escala. Un rectángulo opaco con
-           borde de cuatro lados justo debajo de una gota de agua se leía
-           como otra cosa pegada al nav. Ver globals.css. */
+        /* `.drop-panel` es ahora una HOJA opaca de humo con el grosor del papel
+           por canto: radio cero, sin `backdrop-filter` y sin sombra de marco.
+           Antes era cristal translúcido al 86% colgando de un header que ya
+           lleva cristal, y en captura a 1440 se leía el masthead ATRAVESANDO
+           las filas del menú. Ver el bloque de globals.css.
+
+           `.drop-unroll` reemplaza a `.enter`: la hoja se despliega con
+           `clip-path` en 200 ms y las filas NO se mueven. La versión anterior
+           trasladaba el panel 24 px y cada fila otros 24 dentro de él, con
+           retardos que no asentaban la última hasta los 585 ms.
+
+           `mt-0` y no `mt-2`: el panel arranca en el canto inferior de la fila
+           del nav, así que su línea de luz superior continúa el menisco del
+           cristal en vez de flotar dos píxeles por debajo como un objeto
+           aparte. */
         className={cn(
-          'enter drop-panel absolute left-0 top-full z-10 mt-2 origin-top p-2',
+          'drop-unroll drop-panel absolute left-0 top-full z-10 origin-top py-1',
           group.width
         )}
       >
         <ul className="relative">
-          {group.items.map((item, index) => {
-            return (
-              // Los renglones entran escalonados detrás del panel: es la
-              // cascada que hace que un menú se sienta de aplicación. Duración y
-              // retardo en línea por el mismo motivo que el panel — `.enter`
-              // trae el atajo `animation` sin capa, así que `step-N` y las
-              // utilidades de duración no lo pueden mover.
-              <li
-                key={item.href}
-                className="enter"
-                style={{
-                  animationDuration: '380ms',
-                  animationDelay: `${70 + index * 45}ms`,
-                }}
+          {group.items.map((item) => (
+            <li key={item.href}>
+              <Link
+                href={item.href}
+                onClick={onClose}
+                aria-current={isCurrent(item.href) ? 'page' : undefined}
+                className="drop-row press"
               >
-                <Link
-                  href={item.href}
-                  onClick={onClose}
-                  aria-current={isCurrent(item.href) ? 'page' : undefined}
-                  className={cn(
-                    'group/item press flex min-h-11 items-center gap-3 text-sm',
-                    isCurrent(item.href)
-                      ? 'bg-brand-wash font-semibold text-ink'
-                      : 'text-ink-muted hover:bg-brand-wash/70 hover:text-ink'
-                  )}
-                >
-                  {item.ch ? (
-                    <span className="nav-ch" aria-hidden="true">
-                      {item.ch}
-                    </span>
-                  ) : null}
-                  {item.label}
-                </Link>
-              </li>
-            )
-          })}
+                {/* La marca ocupa el MISMO hueco en los dos menús: la letra
+                    del canal donde hay canal, y un tick de 1 px donde no.
+                    Sin el tick, las cuatro páginas de Trayectoria quedaban
+                    flotando sin nada que las alineara ni que dijera que
+                    pertenecían al mismo grupo — que es exactamente lo que se
+                    reportó. Las páginas de trayectoria siguen SIN letra: no
+                    son canales ni una secuencia, y este proyecto prohíbe
+                    numerar lo que no lo es. */}
+                {item.ch ? (
+                  <span className="nav-ch" aria-hidden="true">
+                    {item.ch}
+                  </span>
+                ) : (
+                  <span className="drop-tick" aria-hidden="true" />
+                )}
+                {item.label}
+              </Link>
+            </li>
+          ))}
         </ul>
 
         {group.all && (
-          <div className="relative mt-2 border-t border-hairline pt-2">
-            <Link
-              href={group.all.href}
-              onClick={onClose}
-              className="group/all press flex min-h-11 items-center gap-2 text-sm font-semibold text-ink transition-colors hover:text-paper"
+          <Link
+            href={group.all.href}
+            onClick={onClose}
+            className="drop-all group/all press relative"
+          >
+            {group.all.label}
+            <span
+              className="transition-transform duration-300 group-hover/all:translate-x-1"
+              aria-hidden="true"
             >
-              {group.all.label}
-              <span
-                className="transition-transform duration-300 group-hover/all:translate-x-1"
-                aria-hidden="true"
-              >
-                →
-              </span>
-            </Link>
-          </div>
+              →
+            </span>
+          </Link>
         )}
       </div>
     </div>

@@ -264,7 +264,7 @@ export default async function AwardsPage({ params }: Props) {
               mismos tres registros con menos datos. Aquí está todo: la
               clase, la fecha, el emisor, la descripción y el resultado
               tal como está escrito en el archivo de datos. */}
-          <section className="border-t border-hairline px-5 py-20 sm:px-10">
+          <section className="border-t border-hairline px-5 pb-24 pt-14 sm:px-10">
             <p className="stamp">{t('listEyebrow')}</p>
             <h2 className="mt-5 max-w-[18ch] text-d1 text-ink">
               {t('listTitle')}
@@ -428,7 +428,7 @@ export default async function AwardsPage({ params }: Props) {
           </section>
 
           {/* ═══ CIERRE ══════════════════════════════════════════ */}
-          <section className="border-t border-hairline px-5 py-24 sm:px-10">
+          <section className="border-t border-hairline px-5 pb-28 pt-16 sm:px-10">
             <h2 className="max-w-[18ch] text-d1 text-ink">{t('ctaTitle')}</h2>
             <p className="mt-6 max-w-[52ch] font-human text-lead text-ink-muted">
               {t('ctaLead')}

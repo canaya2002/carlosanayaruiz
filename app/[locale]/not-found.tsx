@@ -117,7 +117,7 @@ export default async function LocaleNotFound() {
           </p>
         </section>
 
-        <section className="border-t border-hairline px-5 py-20 sm:px-10">
+        <section className="border-t border-hairline px-5 pb-24 pt-14 sm:px-10">
           <p className="stamp">{t('orTry')}</p>
 
           <ul className="reveal-stagger mt-10">

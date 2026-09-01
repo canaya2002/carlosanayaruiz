@@ -1347,9 +1347,9 @@ el dueño no puede desincronizarse del sitio.
 
 Prioridad, y no todos valen lo mismo:
 
-1. **`home-evidencia`** — una curva real de Search Console o CrUX con su eje de
-   tiempo. Si de toda la lista llega **un solo archivo, que sea este**: es la
-   prueba de todo lo demás que dice la portada.
+1. ~~**`home-evidencia`**~~ — **LLENADO.** Ver «La evidencia»: son tres capturas
+   reales del panel de Search Console de `manuelsolis.com`. Era el único archivo
+   que valía la pena conseguir si solo llegaba uno, y llegó.
 2. Los **ocho de servicios**, dos por servicio: el crawl, el schema, el
    Lighthouse, el PR, el flujo, el chat, el dashboard, el modelo.
 3. Las capturas de proyectos.
@@ -1714,7 +1714,201 @@ columnas con su regla superior, la lista de navegación partida en dos con `colu
 las cuatro acaban a la misma altura y desaparece la franja muerta que quedaba debajo— y
 `.sheet` como único margen.
 
-## El nav está migrado — era el último rincón
+## La evidencia — tres capturas reales, y por qué llevan placa
+
+`data/evidence.ts` + `components/instrument/evidence.tsx` + `.evidence-doc`.
+
+Reportado tres veces: «no se ven en ningún lado las imágenes de mejoras en Google Search
+Console, del Core Web Vitals ni del alcance, y esas son muy importantes». Lo eran y no
+estaban. Ahora hay tres, y **son reales**: capturas del panel de Search Console de
+`manuelsolis.com`, la propiedad que el dueño administra como Director de Tecnologías del
+despacho (`data/experience.ts`).
+
+> ⚠ Antes de esto llegaron otras once imágenes que **no** eran capturas: traían manifiesto
+> C2PA/JUMBF de OpenAI y una de ellas el texto literal `blurred-domain-example.com`. Se
+> rechazaron dos veces y no están en el repo. La lección operativa: **una captura de
+> instrumento se verifica con `exiftool`/JUMBF antes de publicarla**, no con la vista.
+
+| Archivo | Qué mide | Dónde vive |
+|---|---|---|
+| `search-console-clics-impresiones-12-meses-…` | 30.5K clics · 1.4M impresiones · CTR 2.2% · posición 11.5, 12 meses | **portada**, sección «El registro» |
+| `core-web-vitals-urls-buenas-search-console-…` | 133 URLs buenas en escritorio, desde el nivel de 60 el 2 jun 2026 · fuente Chrome UX Report | **/seo-tecnico**, debajo de lo que el servicio promete |
+| `core-web-vitals-grupo-de-urls-search-console-…` | 99 el 31 jul → 133 el 30 ago · grupo de 131 URLs con una de ejemplo | **/proyectos/law-offices-manuel-solis** |
+
+### La lectura va en TEXTO y la captura debajo
+
+Es la decisión que define el componente, y son tres razones medidas:
+
+1. **Un buscador no lee los píxeles de una gráfica.** Servir «1.4M impresiones» solo dentro
+   de un WebP es servirlo a nadie: el dato más fuerte del sitio quedaría fuera del índice.
+2. **A 375 px una captura de 1592 va al 24%.** El «133» de Search Console mide 44 px en el
+   archivo y ahí bajaría a 10. Medido en captura: en móvil la imagen es ilegible y las
+   cuatro cifras de la placa se leen a tamaño completo. Esa comparación ES el argumento del
+   diseño.
+3. Es la tesis del sitio aplicada a sí misma: el veredicto se lee contra una regla, no
+   dentro de una tarjeta. La placa de datos ES esa regla.
+
+### Tres reglas del dato
+
+- **Toda cifra de `readings` está IMPRESA en su propia imagen.** Si Google escribe «30.5K»,
+  el repo dice «30.5K» — no 30 500, que sería inventar precisión que el panel no da. La
+  única derivada es `+34`, y sale de restar dos números impresos (133 y 99) en la MISMA
+  página donde las dos capturas están a la vista.
+- **La propiedad se declara en el pie.** No son números de este dominio, y callarlo sería la
+  clase de afirmación sin respaldo que este repo lleva tres rondas quitando.
+- **La captura solo se recortó y se tapó cromo.** Fuera la columna de navegación (~24% del
+  ancho, cero datos, ilegible en un teléfono) y el bloque de una ventana del sistema que
+  cortaba por la mitad la fila de iconos. **Ni un píxel de dato, eje, rótulo o cifra.**
+
+**Y ningún filtro de color.** Los dos retratos llevan `grayscale` y `sepia` porque su luz es
+azul y este negro es cálido. Una gráfica cuyas SERIES son de color —azul los clics, morado
+las impresiones, verde las URLs buenas— **no se tiñe: sería alterar la evidencia para que
+combine.** `.evidence-doc` tampoco atenúa en reposo, a diferencia de `.credential`, que vive
+al 92%: la cifra medida es el argumento de la sección.
+
+El archivo trae horneado un margen del 4.5% del color de fondo del panel para que la máscara
+de cantos se coma ese margen y no el eje. Sin él, difuminar el canto se come el rótulo.
+
+## El desplegable del nav era del sistema anterior
+
+Reportado: «no me gusta cómo se ve el desplegado de las opciones en servicios y trayectoria
+cuando pongo el mouse encima». Medido en captura a 1440 con el puntero encima, y eran
+**seis** defectos concretos:
+
+| Estaba | Se veía | Va |
+|---|---|---|
+| fondo en rgba al 86–90% + `backdrop-filter: blur(13px)` | **el masthead se leía A TRAVÉS del menú** — «que tu» cruzando la fila de «Dashboards» | humo OPACO, el único escalón de superficie del sistema |
+| cristal dentro de cristal (cuelga de `.chrome-glass`) | se pagaba dos veces por verse peor | sin `backdrop-filter` |
+| `border-radius: … 1.5rem 1.5rem` | `rounded-2xl` exacto, la forma que la regla cero prohíbe por su nombre | radio 0, y por canto el GROSOR DEL PAPEL (`.plate`: 1 px claro arriba, 1 px oscuro abajo) |
+| sombra de 50 px de radio | una tarjeta flotando del nav | penumbra sin desplazamiento: el aire bajo una hoja levantada |
+| `.enter` en el panel **y** en cada fila, con retardos | cuatro filas trasladándose 24 px DENTRO de un panel que también se trasladaba 24; la última no se asentaba hasta los **585 ms** | `.drop-unroll`: `clip-path` en 200 ms, de una pieza, y las filas no se mueven |
+| `.drop::before` con radio 999 px y dos `inset` | un **chip gris redondeado** alrededor de «Servicios» y «Trayectoria», y solo en 2 de los 7 enlaces | el cuerpo radial apagado en los cantos con máscara: un brillo, no un marco |
+
+El comentario del JSX **afirmaba que el panel era opaco** mientras el CSS lo hacía de
+cristal. El archivo se contradecía consigo mismo.
+
+### Y las filas no decían a qué grupo pertenecían
+
+`.drop-row`. En Trayectoria eran cuatro etiquetas flotando sin marca, sin letra y sin regla.
+Ahora es la gramática de `.band`: regla superior por renglón y la marca **al mismo x en los
+dos menús** — la letra del canal donde hay canal (`a`–`d`), un tick de 1 px de `1.125rem`
+—el ancho exacto de `.nav-ch`— donde no. Sin ese tick, Trayectoria caía 1.75 rem a la
+izquierda y los dos paneles no se reconocían como el mismo objeto. Las páginas de
+trayectoria siguen SIN letra: no son canales ni una secuencia.
+
+El hover era `bg-brand-wash`, o sea humo a sangre detrás del texto: una píldora, y del mismo
+color que la superficie nueva del panel, o sea invisible. Ahora es la PLUMA (`.channel-pen`),
+con su gemela en `:focus-visible`.
+
+**Dos trampas medidas, las dos del mismo tipo — un token vale para la superficie para la que
+se midió:**
+
+- ⚠ **`.drop-row:first-child` casa con LAS CUATRO filas.** El renglón es el `<a>` dentro del
+  `<li>`, así que todos son el primer hijo de su propio `<li>`: el selector apagaba las
+  cuatro reglas. Tiene que ser `li:first-child > .drop-row`. Se detectó en captura, no
+  leyendo el código.
+- ⚠ **Sobre HUMO, `--hairline` mide 1.13:1 y `--hairline-strong` 1.43.** Los dos por debajo
+  de lo que un trazo de 1 px necesita. Ceniza (4.4) sí se lee y convierte el menú en tabla.
+  Papel al 20% cae en 1.7. Es la misma lección que `--ink-plate`.
+
+## La regla que separa dos temas caía en medio de 160 px
+
+Reportado: «mejora la separación de las cosas y cómo están colocadas, porque no se entiende
+en casi ningún lado qué corresponde a qué». Medido con `getComputedStyle` sobre las
+secciones de /servicios y /premios: **cada una era `py-20`**, o sea 80 px de relleno arriba
+y 80 abajo. Con la regla de separación en `border-top`, eso deja el trazo **exactamente
+equidistante** entre el contenido que cierra y el rótulo que abre.
+
+Una regla a la misma distancia de las dos cosas no dice a cuál pertenece. En imprenta el
+trazo que abre una sección va PEGADO a lo que introduce y LEJOS de lo que cierra.
+
+**98 secciones** con `border-t border-hairline` pasaron a padding asimétrico, ~1.7:1, con el
+total casi igual:
+
+| era | ahora | regla → rótulo | contenido → siguiente regla |
+|---|---|---|---|
+| `py-20` | `pb-24 pt-14` | 56 px | 96 px |
+| `py-16` | `pb-20 pt-11` | 44 px | 80 px |
+| `py-24` | `pb-28 pt-16` | 64 px | 112 px |
+| `py-10` | `pb-12 pt-7` | 28 px | 48 px |
+
+**La `.plate` NO cambia.** Es una superficie invertida, y el cambio de superficie ES el
+separador: ahí el `py-20` simétrico es correcto.
+
+### Dos carriles de datos EMPAREJADOS no pueden entenderse
+
+En /certificaciones había dos cintas: `ribbonNames` arriba y `ribbonIssuers` abajo, las dos
+derivadas del MISMO array **por índice**, o sea pensadas para leerse como pares. Y corrían a
+distinta velocidad y en direcciones OPUESTAS (`large` da 64 px/s, `reverse` un 72% de eso
+hacia atrás), así que el nombre de una credencial y su emisor se separaban un poco más en
+cada frame y no volvían a coincidir nunca. Medido en captura: encima de «TOEFL – Certificación
+de Inglés» pasaba el rótulo del PMP.
+
+Es el caso más literal del defecto que se reportó, y no era espaciado: **por construcción**.
+Fusionadas en UNA cinta donde cada item es `nombre · emisor · año`, nada puede desalinearse.
+
+**Y cuatro páginas pasaban el MISMO array a las dos cintas** —/seo-tecnico, /sobre-mi,
+/desarrollo-web y /automatizacion-ia (esta con `[...items].reverse()`, que es el mismo array
+otra vez)—. Con la duplicación interna de `Ribbon` para cerrar el bucle, **cada etiqueta
+salía cuatro veces en el HTML servido**: exactamente el defecto que la portada ya tiene
+documentado como corregido. Repartidas en mitades sale dos veces y los dos carriles siguen a
+distinta velocidad, porque `reverse` no cambia.
+
+## Los botones de shadcn: el nav NO estaba migrado
+
+La sección de abajo dice «el nav está migrado — era el último rincón». Era falso, y lo
+destapó el brief: «ve si no hay nada roto, como el contáctame».
+
+**El enlace más pulsado del sitio** —«Contrátame» en la barra— venía del `<Button>` del
+sistema anterior y traía, medido en el HTML servido: `rounded-lg`,
+`bg-[image:var(--grad-fill)]`, `hover:shadow-glow-brand`, `.sheen` y
+`hover:[transform:translateY(-2px)]`.
+
+El puente de tokens neutralizaba tres de las cinco —`--grad-fill` resuelve a un COLOR, así
+que `bg-[image:…]` caía a `none`; `--shadow-glow-brand` es `none`; el `::after` de `.sheen`
+está apagado con `!important`—. **Las otras dos seguían vivas y se veían:**
+
+- `text-white` = `#ffffff`. Este sistema no tiene blanco puro: su tinta es `--paper`,
+  `#ebe6d9`. El CTA era el ÚNICO texto blanco de la barra, al lado de la marca en papel.
+- El salto de 2 px al pasar el puntero. Nada en «Papel Ahumado» se levanta.
+
+Lo mismo el conmutador de idioma (`variant="ghost"`: `rounded-lg` + `hover:bg-ground-tint`,
+un lavado de fondo dentro de una caja redondeada) y el botón de imprimir el CV.
+
+Los tres migrados: el CTA del nav al vocabulario de la fila (tinta plena, peso alto, la
+flecha que avanza), el del panel móvil y el de imprimir a **`.pull-tab`** —que es el «botón»
+documentado de este sistema— y el idioma a un enlace de nav como los demás. Con eso
+`components/ui/button.tsx` se quedó sin un solo consumidor.
+
+### Y con él se fueron ocho archivos más
+
+`components/ui/` entero: `badge`, `card`, `disclosure`, `field`, `glass-panel`, `input`,
+`metric`, `textarea`. **Cero importadores, verificado en todo el repo.** El motivo es el
+mismo que documenta «Siete archivos de código muerto, fuera»: eran trampas. `glass-panel`,
+`card` y `badge` reintroducen `rounded`, `shadow` y `.glass` en cuanto alguien los importe
+por descuido.
+
+Con eso `@radix-ui/react-slot` y `class-variance-authority` quedan sin uso, además de
+`embla-carousel-react` y `@radix-ui/react-separator` que ya estaban. **No se desinstalaron**:
+no viajan al navegador y tocar el lockfile merece revisión aparte.
+
+También se retiró `docs/IMAGENES.md` y `scripts/generate-image-manifest.mjs`: describían
+`<ImageSlot>`, que se borró hace dos rondas, y el documento anunciaba «31 huecos, 0 con
+imagen» mientras `docs/MEDIA.md` —generado del dato que de verdad pinta las páginas— dice
+otra cosa. Dos inventarios de lo mismo y uno de los dos mentía.
+
+> ⚠ **Turbopack cachea el CSS más fuerte de lo que dice esta guía.** La nota de «Trampas»
+> dice que `touch` no invalida y que hay que cambiar contenido. **No basta:** en esta ronda
+> `.drop-panel` se recompiló y `.drop-row`, añadida quince minutos después al MISMO bloque,
+> no llegó nunca a la hoja servida — `grep -c drop-row` sobre el `.css` daba 0. Hubo que
+> matar el proceso y borrar `.next/dev`. **Si un cambio de CSS no aparece, compruébalo
+> contra la hoja servida antes de dudar del selector.**
+
+## El nav está migrado — pero no era el último rincón
+
+> ⚠ Este título fue falso durante dos rondas: el `<Button>` de shadcn del CTA sobrevivió.
+> Ver «Los botones de shadcn» arriba.
+
 
 Como el pie en su día, el nav sobrevivió a dos rediseños porque es el componente que
 nadie vuelve a mirar. Llevaba, **visible en captura**, un icono de lucide dentro de un
@@ -1826,7 +2020,10 @@ cuando se quiera.
   Lo que sí se puede decir con datos: el usuario nunca espera esa tarea, porque ocurre
   **antes** de que pueda interactuar, y el LCP en esa misma corrida en frío es de 144–224 ms.
   Las corridas 2 y 3 no tienen ninguna.
-- **Faltan 40 imágenes y una son las claves.** `docs/CONECTAR.md` y `docs/MEDIA.md` son
+- ~~El hueco `home-evidencia`, el más importante del sitio.~~ **Resuelto con tres capturas
+  reales de Search Console.** Ver «La evidencia» arriba. Con eso el registro de medios queda
+  en **12 pendientes y 5 puestos**, no 40.
+- **Faltan 12 imágenes y una son las claves.** `docs/CONECTAR.md` y `docs/MEDIA.md` son
   la lista para el dueño; hasta que llegue, el código de los tres canales está escrito y
   desplegable pero **`ch c` no se pinta** y el formulario dice honestamente que la
   recepción no está conectada. Eso es lo correcto, no un pendiente de código.

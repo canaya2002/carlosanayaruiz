@@ -1128,6 +1128,15 @@
     transform: perspective(1200px) rotateX(0) translate3d(0, 0, 0);
   }
 }
+/* El desplegable saliendo del tambor. `inset()` desde el pie: la hoja crece
+   hacia abajo y su canto inferior es lo único que se mueve. No hay `translate`
+   porque el contenido NO se desplaza — era el defecto: cuatro filas
+   trasladándose dentro de un panel que también se trasladaba.
+   El 6% de opacidad inicial y no 0 para que el canto no aparezca de golpe. */
+@keyframes drop-unroll {
+  from { opacity: 0.06; clip-path: inset(0 0 100% 0); }
+  to   { opacity: 1;    clip-path: inset(0 0 0 0); }
+}
 @keyframes pulse-ring {
   0%   { opacity: 0.55; transform: scale(1); }
   70%  { opacity: 0; transform: scale(1.5); }
@@ -1616,50 +1625,244 @@
      negativo se queda dentro de ella, encima de su fondo y debajo de su
      texto. Sin ese `isolate` subiría hasta el header y el cristal se lo
      comería. */
+  /* ── LA GOTA YA NO ES UNA CÁPSULA ──
+     Medida en captura a 1440 con el puntero encima: los dos `inset` de arriba
+     dibujaban un contorno completo sobre un radio de 999 px, así que en
+     pantalla eran un CHIP GRIS REDONDEADO alrededor de «Servicios» y
+     «Trayectoria» — palabra por palabra el patrón que la regla cero de este
+     proyecto prohíbe, y encima solo en dos de los siete enlaces del nav, así
+     que la fila se leía a lumpos.
+
+     El brief pidió cristal líquido y el cristal se queda: es `.chrome-glass`,
+     la barra. Lo que se retira es el MARCO. Queda el cuerpo radial —un brillo
+     detrás de la etiqueta— apagado en los dos cantos con la misma máscara que
+     usa el menisco, así que no hay un solo borde recto que delate una caja.
+     Es la frase que este archivo ya tenía escrita para el menisco: un brillo,
+     no un marco. */
   .drop::before {
     content: "";
     position: absolute;
     inset: -0.4375rem -0.8125rem;
     z-index: -1;
-    border-radius: 999px;
     opacity: 0;
-    transform: scale(0.84) translateY(1px);
+    transform: scale(0.9);
     pointer-events: none;
+    /* El origen va DEBAJO de la etiqueta (`at 50% 112%`) y no encima. Con el
+       foco arriba, la parte brillante caía en el relleno del header y en
+       captura se veía como una neblina flotando SOBRE la palabra, separada de
+       ella. Desde abajo es la pluma apoyándose, que es el gesto que este
+       sistema usa en todos sus enlaces. */
     background: radial-gradient(
-      118% 150% at 50% -22%,
-      rgb(235 230 217 / 0.17),
-      rgb(235 230 217 / 0.05) 46%,
-      transparent 74%
+      125% 150% at 50% 112%,
+      rgb(235 230 217 / 0.16),
+      rgb(235 230 217 / 0.05) 52%,
+      transparent 82%
     );
-    box-shadow:
-      inset 0 1px 0 0 rgb(235 230 217 / 0.34),
-      inset 0 -7px 12px -8px rgb(235 230 217 / 0.32);
+    -webkit-mask-image: linear-gradient(
+      to right,
+      transparent 0%,
+      #000 22%,
+      #000 78%,
+      transparent 100%
+    );
+    mask-image: linear-gradient(
+      to right,
+      transparent 0%,
+      #000 22%,
+      #000 78%,
+      transparent 100%
+    );
   }
 
-  /* La GOTA QUE CRECIÓ: el panel del desplegable. Era un rectángulo
-     opaco con borde de cuatro lados y una sombra dura — el vocabulario
-     del sistema anterior, y justo debajo de una gota de agua se veía
-     como otra cosa pegada.
+  /* ── EL PANEL DEL DESPLEGABLE — UNA HOJA, NO UNA TARJETA ──────
+     Reportado: «no me gusta cómo se ve el desplegado de las opciones en
+     servicios y trayectoria cuando pongo el mouse encima». Medido en
+     captura a 1440 con el puntero encima, y tenía razón por cuatro
+     motivos concretos, no de gusto:
 
-     Ahora es la misma óptica a otra escala: mismo scrim, mismo
-     desenfoque, mismo remache de luz arriba, y el canto inferior más
-     redondo que el superior porque el agua cae. Sin borde. La sombra
-     que queda no dibuja un marco: es la penumbra que deja un cuerpo
-     translúcido sobre el papel. */
+     1. **SE LEÍA EL TITULAR A TRAVÉS DEL MENÚ.** El fondo iba en rgba al
+        86–90% con `backdrop-filter`, y detrás hay un masthead de 120 px en
+        papel: en la captura se lee «que tu» ATRAVESANDO la fila de
+        «Dashboards». Un menú por el que se ve el contenido no es un menú.
+        Y el comentario del JSX afirmaba que el panel «es OPACO
+        (bg-surface), no de cristal» mientras el CSS hacía exactamente lo
+        contrario — el archivo se contradecía consigo mismo.
+     2. **Cristal dentro de cristal.** El panel cuelga de un `<header>` que
+        ya lleva `backdrop-filter`, y anidar desenfoque es el defecto que la
+        cabecera de este mismo archivo documenta en su lista de por qué se
+        retiró `.glass`. Se pagaba dos veces por verse peor.
+     3. **`border-radius` de 1.5 rem abajo**, que es `rounded-2xl` exacto: la
+        forma que la regla cero prohíbe por su nombre. Con el degradado
+        apagándose hacia el pie, la última fila quedaba sobre una curva
+        medio transparente y se leía como un borrón.
+     4. La sombra de 50 px de radio dibujaba un marco flotante alrededor de
+        todo, o sea una TARJETA colgando del nav.
+
+     Lo que entra es lo que este sistema ya tiene y no había usado aquí: la
+     hoja. Humo OPACO sobre hollín —el único escalón de superficie del
+     sistema—, radio cero, y por canto el GROSOR DEL PAPEL: la misma pareja
+     de reglas de 1 px, una clara arriba y una oscura abajo, con la que
+     `.plate` dibuja el borde de una hoja real. La penumbra que queda no
+     tiene desplazamiento lateral ni expansión: es el aire bajo una hoja
+     levantada, no el halo de una tarjeta. */
   .drop-panel {
-    border-radius: 0.25rem 0.25rem 1.5rem 1.5rem;
-    background: linear-gradient(
-      to bottom,
-      rgb(35 32 28 / 0.9) 0%,
-      rgb(24 21 18 / 0.86) 62%,
-      rgb(18 16 14 / 0.9) 100%
-    );
-    -webkit-backdrop-filter: blur(13px) saturate(180%);
-    backdrop-filter: blur(13px) saturate(180%);
+    border-radius: 0;
+    background-color: var(--smoke);
     box-shadow:
-      inset 0 1px 0 0 rgb(235 230 217 / 0.16),
-      inset 0 -14px 22px -18px rgb(235 230 217 / 0.22),
-      0 26px 50px -28px rgb(0 0 0 / 0.92);
+      /* el canto de la hoja: luz arriba, sombra abajo */
+      inset 0 1px 0 0 rgb(235 230 217 / 0.14),
+      inset 0 -1px 0 0 rgb(0 0 0 / 0.5),
+      /* el aire debajo */
+      0 18px 34px -22px rgb(0 0 0 / 0.85);
+  }
+
+  /* ── EL DESPLIEGUE — LA HOJA SALE DEL TAMBOR ───────────────────
+     El panel entraba con `.enter` (`translate3d` de 1.5 rem) y CADA FILA
+     entraba con la misma animación y un retardo de 70 + i·45 ms encima. O
+     sea: cuatro filas trasladándose 24 px DENTRO de un panel que también se
+     trasladaba 24 px, y la última no se asentaba hasta los 585 ms. En un
+     menú de hover eso es medio segundo de contenido moviéndose respecto a
+     su propio contenedor — es literalmente lo que se ve mal.
+
+     Un registrador no lanza tarjetas: saca papel. Así que el panel se
+     DESPLIEGA con `clip-path`, que es el mismo recurso con el que el riel
+     se despliega al cargar, en 200 ms y de una pieza. Las filas ya están en
+     su sitio y no se mueven: lo único que avanza es el canto de la hoja.
+
+     `clip-path` no toca el layout y se compone, así que el coste es el
+     mismo que un `opacity`. Y al ser UNA animación en vez de cinco, no hay
+     nada que promover. */
+  .drop-unroll {
+    animation: drop-unroll 200ms var(--ease-out) both;
+  }
+
+  /* ── EL RENGLÓN DEL DESPLEGABLE ────────────────────────────────
+     Reportado en la misma frase: «no se entiende en casi ningún lado qué
+     corresponde a qué». En el menú de Trayectoria eso era literal —cuatro
+     etiquetas flotando sin una marca, sin una letra y sin una regla, así
+     que nada decía que fueran las cuatro páginas de un mismo grupo— y en
+     el de Servicios las letras de canal existían pero cada fila las
+     colocaba por su cuenta.
+
+     La respuesta es la gramática que el sitio ya usa para una lista: la
+     BANDA. Cada renglón lleva su regla superior y su marca al mismo x, así
+     que las cuatro se leen como cuatro renglones del mismo registro. El
+     canal pone su letra; una página que no es canal pone un tick de 1 px,
+     que es el vocabulario del riel. **La marca ocupa el mismo hueco en los
+     dos casos**, que es lo que hace que la columna exista.
+
+     Y el hover NO es un lavado de fondo. Iba con `bg-brand-wash`, o sea
+     humo a sangre detrás del texto: una píldora, en un sistema que no tiene
+     píldoras, y encima del mismo color que la superficie nueva del panel —
+     invisible. Ahora es la PLUMA: el trazo se escribe bajo la fila, igual
+     que en `.channel-pen`. Con su gemela en `:focus-visible`, porque un
+     efecto que no existe para quien tabula es una trampa. */
+  .drop-row {
+    position: relative;
+    display: flex;
+    align-items: center;
+    gap: 0.625rem;
+    min-height: 2.75rem;
+    padding-inline: 0.625rem;
+    /* `--hairline-strong` y no `--hairline`. La regla fina del sistema está
+       calibrada sobre HOLLÍN; aquí la superficie es HUMO, un escalón más
+       claro, y ahí #2a2620 sobre #23201c es literalmente invisible —medido en
+       captura: cuatro filas sin una sola separación a la vista. Es la misma
+       clase de error que ya está documentado con `--ink-plate`: un token de
+       contraste vale para la superficie para la que se midió. */
+    /* Un valor propio, y no un token: sobre humo, `--hairline` mide 1.13:1 y
+       `--hairline-strong` 1.43 — los dos por debajo de lo que un trazo de 1 px
+       necesita para leerse. Ceniza (`--control`, 4.4) sí se lee, pero cuatro
+       reglas a ese peso convierten el menú en una TABLA. Papel al 20% cae en
+       1.7, que es donde una separación se ve sin gritar. Se escribe como mezcla
+       y no como token nuevo porque solo vale para esta superficie. */
+    border-top: 1px solid rgb(235 230 217 / 0.2);
+    font-size: 0.875rem;
+    color: var(--ink-muted);
+    transition: color 160ms var(--ease-stylus);
+  }
+
+  /* El primero no lleva regla: el canto de la hoja ya está a 1 px de ahí y
+     dos líneas juntas se leen como un error de impresión.
+
+     ⚠ Tiene que ser `li:first-child > .drop-row` y NO `.drop-row:first-child`.
+     El renglón es el `<a>` DENTRO del `<li>`, así que TODOS son el primer hijo
+     de su propio `<li>`: con el selector directo se apagaban las cuatro reglas
+     y las filas volvían a flotar sin separación. Medido en captura antes de
+     verlo en el código. */
+  li:first-child > .drop-row {
+    border-top-color: transparent;
+  }
+
+  .drop-row:hover,
+  .drop-row:focus-visible {
+    color: var(--ink);
+  }
+
+  /* La pluma. Se escribe de izquierda a derecha bajo el renglón. */
+  .drop-row::after {
+    content: "";
+    position: absolute;
+    inset-inline: 0.625rem;
+    bottom: 0.375rem;
+    height: 1px;
+    background-color: var(--paper);
+    transform: scaleX(0);
+    transform-origin: left;
+    transition: transform 260ms var(--ease-stylus);
+  }
+
+  .drop-row:hover::after,
+  .drop-row:focus-visible::after {
+    transform: scaleX(1);
+  }
+
+  /* La página en la que ya estás: tinta plena y el trazo ya escrito. Un
+     estado, no un hover — de ahí que no dependa del puntero. */
+  .drop-row[aria-current='page'] {
+    color: var(--ink);
+    font-weight: 600;
+  }
+
+  .drop-row[aria-current='page']::after {
+    transform: scaleX(1);
+  }
+
+  /* El tick de las páginas que no son canal. Ocupa EXACTAMENTE el ancho de
+     `.nav-ch` (1.125 rem) para que la columna de marcas caiga al mismo x en
+     los dos menús. Sin esto, Trayectoria quedaba 1.75 rem a la izquierda de
+     Servicios y los dos paneles no se reconocían como el mismo objeto. */
+  .drop-tick {
+    flex: none;
+    width: 1.125rem;
+    height: 1px;
+    background-color: var(--hairline-strong);
+    transition: background-color 160ms var(--ease-stylus);
+  }
+
+  .drop-row:hover > .drop-tick,
+  .drop-row:focus-visible > .drop-tick,
+  .drop-row[aria-current='page'] > .drop-tick {
+    background-color: var(--paper);
+  }
+
+  /* El pie del panel: «todos los servicios». Va separado por la regla
+     completa y con el rótulo en mono, que es como este sistema marca un
+     control frente a un renglón de lista. */
+  .drop-all {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    min-height: 2.75rem;
+    margin-top: 0.375rem;
+    padding-inline: 0.625rem;
+    /* Más marcada que la de un renglón: separa la LISTA del control. */
+    border-top: 1px solid var(--control);
+    font-family: var(--font-mono);
+    font-size: var(--text-grad);
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+    color: var(--ink);
   }
 
   /* ── LA HOJA VIVA ─────────────────────────────────────────────  /* ── LA HOJA VIVA ─────────────────────────────────────────────
@@ -4644,6 +4847,57 @@
   a:hover .credential img,
   a:focus-visible .credential img {
     opacity: 1;
+  }
+
+  /* ═══ EL DOCUMENTO DE UNA EVIDENCIA ═══════════════════════════
+     Una captura de Google Search Console es de la misma familia que un
+     certificado escaneado —existe para ser LEÍDA, no para ambientar— así
+     que hereda su tratamiento: cantos disueltos con los dos degradados
+     cruzados, fondo de humo y ni borde ni radio ni sombra.
+
+     Tres diferencias con `.credential`, y las tres salen del archivo:
+
+     1. **Sin `aspect-ratio` y sin `object-fit`.** Los tres archivos traen
+        proporciones distintas (1.76, 1.46, 1.82) porque cada informe de
+        Search Console tiene la suya. Encajarlos todos en una fracción
+        redonda con `contain` dejaría franjas de humo a los lados, y con
+        `cover` recortaría el eje — que es justo la prueba. El `<Image>`
+        lleva su `width`/`height` reales, así que el hueco se reserva solo
+        y el CLS sigue en cero.
+     2. **Cantos MÁS suaves aún (3–4.5%).** Un certificado tiene márgenes
+        impresos que se pueden difuminar; una gráfica lleva el rótulo del
+        eje casi al canto. Los tres archivos traen horneado un margen del
+        4.5% del color de fondo del panel para que la máscara se coma ese
+        margen y no un dato.
+     3. **Sin atenuar en reposo.** `.credential img` vive al 92% para no
+        competir con la tipografía. Aquí no: la cifra medida ES el
+        argumento de la sección, y bajarla al 92% para que se vea elegante
+        es exactamente el orden de prioridades equivocado.
+
+     Y NINGÚN filtro de color. Los dos retratos del sitio llevan
+     `grayscale` y `sepia` porque su luz es azul y este negro es cálido;
+     una gráfica cuyas SERIES son de color (azul los clics, morado las
+     impresiones, verde las URLs buenas) no se tiñe: sería alterar la
+     evidencia para que combine. */
+  .evidence-doc {
+    display: block;
+    position: relative;
+    overflow: hidden;
+    background-color: var(--smoke);
+    -webkit-mask-image:
+      linear-gradient(to bottom, transparent 0%, #000 4.5%, #000 95.5%, transparent 100%),
+      linear-gradient(to right, transparent 0%, #000 3%, #000 97%, transparent 100%);
+    mask-image:
+      linear-gradient(to bottom, transparent 0%, #000 4.5%, #000 95.5%, transparent 100%),
+      linear-gradient(to right, transparent 0%, #000 3%, #000 97%, transparent 100%);
+    -webkit-mask-composite: source-in;
+    mask-composite: intersect;
+  }
+
+  .evidence-doc img {
+    display: block;
+    width: 100%;
+    height: auto;
   }
 
   /* ═══ EL ÍNDICE DEL ARTÍCULO ══════════════════════════════════

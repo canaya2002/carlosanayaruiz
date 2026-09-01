@@ -121,8 +121,13 @@ export default async function AiAutomationPage({ params }: Props) {
      es una sola lista corriendo en dos direcciones, no dos listas distintas.
      La lectura accesible de esos nombres vive en el <dl> de abajo, agrupada
      y etiquetada, así que la cinta va oculta para lectores de pantalla. */
-  const tapeItems = stack.flatMap((group) => group.items)
-  const tapeItemsBack = [...tapeItems].reverse()
+  const tapeAll = stack.flatMap((group) => group.items)
+  /* Se REPARTE entre los dos carriles. `tapeItemsBack` era
+     `[...tapeItems].reverse()`, o sea el mismo array otra vez: con la
+     duplicación interna de `Ribbon` para cerrar el bucle, cada herramienta
+     salía cuatro veces en el HTML. Repartido sale dos. */
+  const tapeItems = tapeAll.slice(0, Math.ceil(tapeAll.length / 2))
+  const tapeItemsBack = tapeAll.slice(Math.ceil(tapeAll.length / 2))
 
   return (
     <>
@@ -242,7 +247,7 @@ export default async function AiAutomationPage({ params }: Props) {
               La única zona serif de la página. Cuatro párrafos en primera
               persona: es el operador argumentando, no el catálogo
               describiéndose. */}
-          <section className="border-t border-hairline px-5 py-20 sm:px-10">
+          <section className="border-t border-hairline px-5 pb-24 pt-14 sm:px-10">
             <p className="stamp">{en ? 'context' : 'contexto'}</p>
             <h2 className="mt-5 max-w-[18ch] text-d1 text-ink">
               {t('whyTitle')}
@@ -273,7 +278,7 @@ export default async function AiAutomationPage({ params }: Props) {
           </section>
 
           {/* ═══ ALCANCE ═════════════════════════════════════════ */}
-          <section className="border-t border-hairline px-5 py-20 sm:px-10">
+          <section className="border-t border-hairline px-5 pb-24 pt-14 sm:px-10">
             <p className="stamp">{en ? 'scope' : 'alcance'}</p>
             <h2 className="mt-5 max-w-[18ch] text-d1 text-ink">
               {t('whatTitle')}
@@ -312,7 +317,7 @@ export default async function AiAutomationPage({ params }: Props) {
               Aquí el número SÍ manda: son cuatro pasos en un orden que no se
               puede alterar, que es la única condición bajo la que este
               sistema acepta una numeración. */}
-          <section className="border-t border-hairline px-5 py-20 sm:px-10">
+          <section className="border-t border-hairline px-5 pb-24 pt-14 sm:px-10">
             <p className="stamp">{ts('process')}</p>
             <h2 className="mt-5 max-w-[16ch] text-d1 text-ink">
               {en ? 'How the work runs' : 'Cómo corre el trabajo'}
@@ -347,7 +352,7 @@ export default async function AiAutomationPage({ params }: Props) {
               Mismo peso visual en las dos columnas, a propósito. La segunda
               no se suaviza ni se esconde: es la mitad que hace creíble a la
               primera. El estado lo dice el encabezado, nunca un color. */}
-          <section className="border-t border-hairline px-5 py-20 sm:px-10">
+          <section className="border-t border-hairline px-5 pb-24 pt-14 sm:px-10">
             <p className="stamp">{en ? 'fit' : 'encaje'}</p>
             <h2 className="mt-5 max-w-[20ch] text-d1 text-ink">
               {en
@@ -409,7 +414,7 @@ export default async function AiAutomationPage({ params }: Props) {
               cruce es lo que da profundidad, sin una sombra y sin una caja.
               La lectura ordenada y etiquetada va debajo, en el registro. */}
           <section
-            className="overflow-hidden border-t border-hairline py-16"
+            className="overflow-hidden border-t border-hairline pb-20 pt-11"
             aria-labelledby="stack-heading"
           >
             <div className="px-5 sm:px-10">
@@ -449,7 +454,7 @@ export default async function AiAutomationPage({ params }: Props) {
               servidor, que es el mismo texto que emite el FAQPage de arriba.
               El `name` compartido da el acordeón exclusivo sin una línea de
               JavaScript. */}
-          <section className="border-t border-hairline px-5 py-20 sm:px-10">
+          <section className="border-t border-hairline px-5 pb-24 pt-14 sm:px-10">
             <p className="stamp">FAQ</p>
             <h2 className="mt-5 max-w-[16ch] text-d1 text-ink">
               {t('faqTitle')}
@@ -488,7 +493,7 @@ export default async function AiAutomationPage({ params }: Props) {
               Los otros dos canales del mismo registrador, con la letra que
               les toca en la home. Al pasar el puntero no se enciende una
               caja: avanza el trazo. */}
-          <section className="border-t border-hairline px-5 py-20 sm:px-10">
+          <section className="border-t border-hairline px-5 pb-24 pt-14 sm:px-10">
             <p className="stamp">{en ? 'keep reading' : 'sigue leyendo'}</p>
             <h2 className="mt-5 max-w-[16ch] text-d1 text-ink">
               {t('relatedTitle')}
@@ -552,7 +557,7 @@ export default async function AiAutomationPage({ params }: Props) {
               su padre; `anySlotFilled` sí. Cuando llegue una captura real, la
               sección reaparece sola. */}
           {anySlotFilled('automatizacion-ia-chat') ? (
-            <section className="border-t border-hairline px-5 py-16 sm:px-10">
+            <section className="border-t border-hairline px-5 pb-20 pt-11 sm:px-10">
               <p className="stamp">
                 {en
                   ? 'the proof · file pending'
@@ -583,7 +588,7 @@ export default async function AiAutomationPage({ params }: Props) {
               solo si hay algo publicado que encaje. */}
           <BlogStrip route="automatizacionIa" locale={locale} title="Escrito sobre IA aplicada" />
 
-          <section className="border-t border-hairline px-5 py-20 sm:px-10">
+          <section className="border-t border-hairline px-5 pb-24 pt-14 sm:px-10">
             <ContactChannels
               locale={locale}
               waMessage={
@@ -595,7 +600,7 @@ export default async function AiAutomationPage({ params }: Props) {
           </section>
 
           {/* ═══ CIERRE ══════════════════════════════════════════ */}
-          <section className="border-t border-hairline px-5 py-24 sm:px-10">
+          <section className="border-t border-hairline px-5 pb-28 pt-16 sm:px-10">
             <h2 className="max-w-[16ch] text-d1 text-ink">{t('ctaMain')}</h2>
             <p className="mt-6 max-w-[56ch] text-lead text-ink-muted">
               {en

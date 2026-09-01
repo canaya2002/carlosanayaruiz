@@ -382,7 +382,7 @@ export default async function ProyectosPage({ params }: Props) {
               decorativo de un continente. Cada pin es un enlace de verdad
               a la ficha de esa empresa. */}
           <section
-            className="border-t border-hairline px-5 py-20 sm:px-10"
+            className="border-t border-hairline px-5 pb-24 pt-14 sm:px-10"
             aria-labelledby="mapa-heading"
           >
             <h2 id="mapa-heading" className="sr-only">
@@ -410,7 +410,7 @@ export default async function ProyectosPage({ params }: Props) {
               direcciones opuestas. Sin flechas y sin puntos: no hay nada
               que encuadrar, es texto impreso que corre. */}
           <section
-            className="overflow-hidden border-t border-hairline py-10"
+            className="overflow-hidden border-t border-hairline pb-12 pt-7"
             aria-labelledby="cintas-heading"
           >
             <h2 id="cintas-heading" className="sr-only">
@@ -425,7 +425,7 @@ export default async function ProyectosPage({ params }: Props) {
           {/* ═══ EL REGISTRO POR PAÍS ════════════════════════════
               Una lista de filas medidas, no una rejilla de tarjetas. Los
               id de país son el destino de los enlaces del mapa. */}
-          <section className="border-t border-hairline px-5 py-20 sm:px-10">
+          <section className="border-t border-hairline px-5 pb-24 pt-14 sm:px-10">
             <p className="stamp">{t('byCountry')}</p>
 
             {groups.map((group, groupIndex) => (
@@ -596,7 +596,7 @@ export default async function ProyectosPage({ params }: Props) {
               sí: si todos tuvieran cifra, ninguna valdría. */}
           <section
             id="encargos"
-            className="border-t border-hairline px-5 py-20 sm:px-10"
+            className="border-t border-hairline px-5 pb-24 pt-14 sm:px-10"
           >
             <div className="ledger">
               <div className="min-w-0">

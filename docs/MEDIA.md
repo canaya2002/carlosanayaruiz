@@ -3,7 +3,7 @@
 > **Generado.** No lo edites a mano: sale de `data/media-slots.ts` con
 > `npm run media:manifest`. Si editas aquí, el siguiente build lo sobrescribe.
 
-**14 archivos pendientes** · 3 ya puestos.
+**12 archivos pendientes** · 5 ya puestos.
 
 Cada hueco está marcado en la página con cruces de registro y la ruta exacta
 escrita encima, así que también puedes ir navegando el sitio y verlos.
@@ -19,20 +19,6 @@ escrita encima, así que también puedes ir navegando el sitio y verlos.
    dejarlo marcado.
 
 ## Prioridad alta — la página se ve incompleta sin esto
-
-### Captura de Search Console o de un informe de Core Web Vitals mostrando una mejora real, con el eje de tiempo visible
-
-| | |
-|---|---|
-| **Archivo** | `public/media/servicios/seo-tecnico-antes-despues.png` |
-| **Tipo** | Imagen |
-| **Tamaño** | 1600 × 900 px |
-| **Página** | `/es/seo-tecnico` |
-| **Dónde** | Sección de resultados |
-
-Captura de Search Console o de un informe de Core Web Vitals mostrando una mejora real, con el eje de tiempo visible. Es la prueba del servicio.
-
-> Puedes tapar el nombre del dominio. Lo que importa es la curva.
 
 ### Captura de Screaming Frog o Sitebulb a mitad de un crawl real: el árbol de URLs, los códigos de estado y los avisos a la vista
 
@@ -74,20 +60,6 @@ Informe de Lighthouse de un sitio tuyo en producción, con los cuatro círculos 
 
 Un dashboard tuyo completo, con gráficas reales y filtros a la vista. Datos anonimizados pero PLAUSIBLES: cifras de ejemplo genéricas se notan y restan.
 
-### UNA sola imagen que sea la prueba de todo el sitio: Search Console o CrUX con un antes y un después, el eje de tiempo visible y la curva moviéndose en la dirección correcta
-
-| | |
-|---|---|
-| **Archivo** | `public/media/home/antes-despues.png` |
-| **Tipo** | Imagen |
-| **Tamaño** | 1600 × 900 px |
-| **Página** | `/es` |
-| **Dónde** | Sección «El registro», debajo de la gráfica de trayectoria |
-
-UNA sola imagen que sea la prueba de todo el sitio: Search Console o CrUX con un antes y un después, el eje de tiempo visible y la curva moviéndose en la dirección correcta. Si solo consigues un archivo de toda esta lista, que sea este.
-
-> Puedes tapar el dominio. Lo que importa es la curva y que se vea CUÁNDO cambió.
-
 ## Prioridad media
 
 ### Captura de una aplicación Next
@@ -102,7 +74,7 @@ UNA sola imagen que sea la prueba de todo el sitio: Search Console o CrUX con un
 
 Captura de una aplicación Next.js construida por ti, en uso. Preferible con datos reales pero anonimizados.
 
-### Captura de un flujo de automatización real (n8n, Make, o el diagrama de un agente) o de un chatbot respondiendo
+### Captura de un chatbot o de un agente respondiendo, o del diagrama del flujo en la herramienta que sea
 
 | | |
 |---|---|
@@ -112,7 +84,7 @@ Captura de una aplicación Next.js construida por ti, en uso. Preferible con dat
 | **Página** | `/es/automatizacion-ia` |
 | **Dónde** | Sección de alcance |
 
-Captura de un flujo de automatización real (n8n, Make, o el diagrama de un agente) o de un chatbot respondiendo.
+Captura de un chatbot o de un agente respondiendo, o del diagrama del flujo en la herramienta que sea. Sin n8n: el dueño lo descartó explícitamente y pedirlo por nombre en el documento de encargo era pedir una herramienta concreta en vez de la prueba.
 
 ### Captura de un dashboard que hayas construido
 
@@ -212,5 +184,7 @@ El modelo de datos detrás del tablero: el diagrama de relaciones de Power BI, o
 ## Ya puestos
 
 - `public/carlos-anaya-ruiz.jpg` — Sección «El operador» · YA EXISTE pero a 800×800 con fondo de oficina desenfocado.
+- `public/evidencia/core-web-vitals-urls-buenas-search-console-carlos-anaya-ruiz.webp` — Sección de resultados — YA RESUELTO por `data/evidence.ts` · Ya NO lo pinta `<MediaSlot>`: lo pinta `<Evidence>`, porque una captura de instrumento necesita dos cosas que este registro no sabe dar — la lectura en TEXTO (un buscador no lee los píxeles de una gráfica) y la declaración de qué propiedad es.
 - `public/credenciales/certificado-nasa-space-apps-galactic-problem-solver-carlos-anaya-ruiz.webp` — La fila del NASA Space Apps · De los tres registros de data/awards.
 - `public/credenciales/certificado-full-stack-web-development-bootcamp-carlos-anaya-ruiz.webp` — La sección de cursos · NO tapes el folio: es lo que hace verificable la fila, y es justo lo que la página promete en su h1.
+- `public/evidencia/search-console-clics-impresiones-12-meses-carlos-anaya-ruiz.webp` — Sección «El registro», debajo de la gráfica de trayectoria — YA RESUELTO por `data/evidence.ts` · Lo pinta `<Evidence>` y no `<MediaSlot>`.

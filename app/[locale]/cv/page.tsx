@@ -645,7 +645,7 @@ export default async function CvPage({ params }: Props) {
             {/* ═══ EXPERIENCIA ═══════════════════════════════════════ */}
             <section
               id="experiencia"
-              className="border-t border-hairline px-5 py-20 sm:px-10"
+              className="border-t border-hairline px-5 pb-24 pt-14 sm:px-10"
             >
               <p className="stamp">
                 {tt('companiesLabel')} ·{' '}
@@ -753,7 +753,7 @@ export default async function CvPage({ params }: Props) {
             {/* ═══ FORMACIÓN ═════════════════════════════════════════ */}
             <section
               id="formacion"
-              className="border-t border-hairline px-5 py-20 sm:px-10"
+              className="border-t border-hairline px-5 pb-24 pt-14 sm:px-10"
             >
               <h2 className="max-w-[16ch] text-d1 text-ink">
                 {t('education')}
@@ -784,7 +784,7 @@ export default async function CvPage({ params }: Props) {
             {/* ═══ CERTIFICACIONES ═══════════════════════════════════ */}
             <section
               id="certificaciones"
-              className="border-t border-hairline px-5 py-20 sm:px-10"
+              className="border-t border-hairline px-5 pb-24 pt-14 sm:px-10"
             >
               <h2 className="max-w-[16ch] text-d1 text-ink">
                 {t('certifications')}
@@ -838,7 +838,7 @@ export default async function CvPage({ params }: Props) {
             {/* ═══ PREMIOS ═══════════════════════════════════════════ */}
             <section
               id="premios"
-              className="border-t border-hairline px-5 py-20 sm:px-10"
+              className="border-t border-hairline px-5 pb-24 pt-14 sm:px-10"
             >
               <h2 className="max-w-[16ch] text-d1 text-ink">{t('awards')}</h2>
               <p className="mt-5 max-w-[58ch] text-ink-muted">
@@ -893,7 +893,7 @@ export default async function CvPage({ params }: Props) {
                 un documento y se lee como un documento. */}
             <section
               id="stack"
-              className="border-t border-hairline px-5 py-20 sm:px-10"
+              className="border-t border-hairline px-5 pb-24 pt-14 sm:px-10"
             >
               <h2 className="max-w-[16ch] text-d1 text-ink">{t('stack')}</h2>
               <p className="mt-5 max-w-[58ch] text-ink-muted">
@@ -924,7 +924,7 @@ export default async function CvPage({ params }: Props) {
                 que no puede contradecirlo. */}
             <section
               id="idiomas"
-              className="border-t border-hairline px-5 py-20 sm:px-10"
+              className="border-t border-hairline px-5 pb-24 pt-14 sm:px-10"
             >
               <h2 className="max-w-[16ch] text-d1 text-ink">
                 {t('languages')}
@@ -969,7 +969,7 @@ export default async function CvPage({ params }: Props) {
                 impreso. */}
             <section
               data-print-hide=""
-              className="border-t border-hairline px-5 py-24 sm:px-10"
+              className="border-t border-hairline px-5 pb-28 pt-16 sm:px-10"
             >
               <h2 className="max-w-[18ch] text-d1 text-ink">{t('ctaTitle')}</h2>
               <p className="mt-6 max-w-[52ch] font-human text-lead text-ink-muted">

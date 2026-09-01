@@ -217,7 +217,7 @@ export default async function BlogIndexPage({ params }: Props) {
               mostrarla es lo que le dice al lector —y al crawler— que esto
               es un cuerpo de trabajo y no un montón de posts. */}
           {posts.length === 0 ? (
-            <section className="border-t border-hairline px-5 py-20 sm:px-10">
+            <section className="border-t border-hairline px-5 pb-24 pt-14 sm:px-10">
               <p className="stamp">todavía nada</p>
               <h2 className="mt-5 max-w-[24ch] text-d1 text-ink">
                 El primero sale el{' '}
@@ -236,7 +236,7 @@ export default async function BlogIndexPage({ params }: Props) {
               return (
                 <section
                   key={cluster}
-                  className="border-t border-hairline px-5 py-16 sm:px-10"
+                  className="border-t border-hairline px-5 pb-20 pt-11 sm:px-10"
                   aria-labelledby={`c-${cluster.replace(/\s+/g, '-')}`}
                 >
                   <p className="stamp">

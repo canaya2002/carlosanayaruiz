@@ -66,7 +66,7 @@ export function BlogStrip({
   if (posts.length === 0) return null
 
   return (
-    <section className="border-t border-hairline px-5 py-16 sm:px-10">
+    <section className="border-t border-hairline px-5 pb-20 pt-11 sm:px-10">
       <p className="stamp">{eyebrow}</p>
       <h2 className="mt-5 max-w-[20ch] text-d2 text-ink">{title}</h2>
 

@@ -218,7 +218,7 @@ export default async function BooksPage({ params }: Props) {
 
           {/* ═══ LA CINTA ════════════════════════════════════════ */}
           <section
-            className="overflow-hidden border-t border-hairline py-10"
+            className="overflow-hidden border-t border-hairline pb-12 pt-7"
             aria-labelledby="ribbon-heading"
           >
             <h2 id="ribbon-heading" className="sr-only">
@@ -231,7 +231,7 @@ export default async function BooksPage({ params }: Props) {
           </section>
 
           {/* ═══ EN ESCRITURA ════════════════════════════════════ */}
-          <section className="border-t border-hairline px-5 py-20 sm:px-10">
+          <section className="border-t border-hairline px-5 pb-24 pt-14 sm:px-10">
             <p className="stamp">{t('upcoming')}</p>
             <h2 className="mt-5 max-w-[16ch] text-d1 text-ink">
               {en ? 'What I am writing' : 'Lo que estoy escribiendo'}
@@ -408,7 +408,7 @@ export default async function BooksPage({ params }: Props) {
               veces por semana; esto es un aviso único sobre el libro, escrito a
               mano. Decir «sin lista de correo» a secas era falso —el pie de
               esta página monta el alta— así que se dice de qué no hay lista. */}
-          <section className="border-t border-hairline px-5 py-24 sm:px-10">
+          <section className="border-t border-hairline px-5 pb-28 pt-16 sm:px-10">
             <h2 className="max-w-[20ch] text-d1 text-ink">
               {en
                 ? 'Want to know the day the book exists?'

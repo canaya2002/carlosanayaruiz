@@ -248,7 +248,7 @@ export default async function DashboardsPage({ params }: Props) {
           </section>
 
           {/* ═══ CONTEXTO ════════════════════════════════════════ */}
-          <section className="border-t border-hairline px-5 py-20 sm:px-10">
+          <section className="border-t border-hairline px-5 pb-24 pt-14 sm:px-10">
             <p className="stamp">{en ? 'Context' : 'Contexto'}</p>
             <h2 className="mt-5 max-w-[16ch] text-d1 text-ink">
               {t('whyTitle')}
@@ -279,7 +279,7 @@ export default async function DashboardsPage({ params }: Props) {
               Lo que se construye, y qué es distinto después. Son filas de un
               registro, no tarjetas: el alcance no es una secuencia, así que
               tampoco lleva números. */}
-          <section className="border-t border-hairline px-5 py-20 sm:px-10">
+          <section className="border-t border-hairline px-5 pb-24 pt-14 sm:px-10">
             <p className="stamp">{en ? 'Scope' : 'Alcance'}</p>
             <h2 className="mt-5 max-w-[16ch] text-d1 text-ink">
               {t('whatTitle')}
@@ -324,7 +324,7 @@ export default async function DashboardsPage({ params }: Props) {
           {/* ═══ PROCESO ═════════════════════════════════════════
               Aquí el número SÍ manda: cuatro etapas que ocurren en este orden
               y no en otro. Es la única numeración de la página. */}
-          <section className="border-t border-hairline px-5 py-20 sm:px-10">
+          <section className="border-t border-hairline px-5 pb-24 pt-14 sm:px-10">
             <p className="stamp">{ts('process')}</p>
             <h2 className="mt-5 max-w-[16ch] text-d1 text-ink">
               {en ? 'How it works' : 'Cómo trabajamos'}
@@ -359,7 +359,7 @@ export default async function DashboardsPage({ params }: Props) {
               Las dos columnas pesan igual: mismo tamaño de título, misma
               medida, misma tinta. La lista de «no encaja» es la razón por la
               que la otra es creíble, así que nunca va más chica ni más gris. */}
-          <section className="border-t border-hairline px-5 py-20 sm:px-10">
+          <section className="border-t border-hairline px-5 pb-24 pt-14 sm:px-10">
             <p className="stamp">{en ? 'Fit' : 'Encaje'}</p>
             <h2 className="mt-5 max-w-[18ch] text-d1 text-ink">
               {en
@@ -428,7 +428,7 @@ export default async function DashboardsPage({ params }: Props) {
               flechas, sin puntos de paginación, sin tarjetas — es la lista
               larga de nombres cortos para la que existe la cinta. */}
           <section
-            className="overflow-hidden border-t border-hairline py-16"
+            className="overflow-hidden border-t border-hairline pb-20 pt-11"
             aria-labelledby="stack-heading"
           >
             <div className="px-5 sm:px-10">
@@ -464,7 +464,7 @@ export default async function DashboardsPage({ params }: Props) {
               servidor, así que un crawler lo lee completo. Estas preguntas y
               respuestas son exactamente las que emite el nodo FAQPage de
               arriba — el markup nunca puede decir algo que la página no dice. */}
-          <section className="border-t border-hairline px-5 py-20 sm:px-10">
+          <section className="border-t border-hairline px-5 pb-24 pt-14 sm:px-10">
             <p className="stamp">{en ? 'Questions' : 'Preguntas'}</p>
             <h2 className="mt-5 max-w-[16ch] text-d1 text-ink">
               {t('faqTitle')}
@@ -494,7 +494,7 @@ export default async function DashboardsPage({ params }: Props) {
               La letra de cada canal sale del orden real del catálogo, la misma
               que imprime la home. Al pasar el puntero avanza el trazo de la
               pluma bajo la fila: no se enciende una caja ni se eleva nada. */}
-          <section className="border-t border-hairline px-5 py-20 sm:px-10">
+          <section className="border-t border-hairline px-5 pb-24 pt-14 sm:px-10">
             <p className="stamp">{tn('services')}</p>
             <h2 className="mt-5 max-w-[16ch] text-d1 text-ink">
               {t('relatedTitle')}
@@ -575,7 +575,7 @@ export default async function DashboardsPage({ params }: Props) {
               su padre; `anySlotFilled` sí. Cuando llegue una captura real, la
               sección reaparece sola. */}
           {anySlotFilled('dashboards-vista', 'dashboards-modelo') ? (
-            <section className="border-t border-hairline px-5 py-16 sm:px-10">
+            <section className="border-t border-hairline px-5 pb-20 pt-11 sm:px-10">
               <p className="stamp">
                 {en
                   ? 'the proof · file pending'
@@ -606,7 +606,7 @@ export default async function DashboardsPage({ params }: Props) {
               solo si hay algo publicado que encaje. */}
           <BlogStrip route="dashboards" locale={locale} title="Escrito sobre medición y costos" />
 
-          <section className="border-t border-hairline px-5 py-20 sm:px-10">
+          <section className="border-t border-hairline px-5 pb-24 pt-14 sm:px-10">
             <ContactChannels
               locale={locale}
               waMessage={
@@ -618,7 +618,7 @@ export default async function DashboardsPage({ params }: Props) {
           </section>
 
           {/* ═══ CIERRE ══════════════════════════════════════════ */}
-          <section className="border-t border-hairline px-5 py-24 sm:px-10">
+          <section className="border-t border-hairline px-5 pb-28 pt-16 sm:px-10">
             <h2 className="max-w-[18ch] text-d1 text-ink">
               {en
                 ? 'Tell me which decisions you make every week.'

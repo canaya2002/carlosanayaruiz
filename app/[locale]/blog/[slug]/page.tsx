@@ -437,7 +437,7 @@ export default async function BlogPostPage({ params }: Props) {
               sin volver a un índice de cien entradas, y un crawler tiene por
               dónde seguir sin depender del índice. Solo entre publicados, así
               que nunca apunta a un 404. */}
-          <section className="border-t border-hairline px-5 py-16 sm:px-10">
+          <section className="border-t border-hairline px-5 pb-20 pt-11 sm:px-10">
             <div className="grid gap-8 sm:grid-cols-2">
               <div className="min-w-0">
                 {vecinos.anterior ? (

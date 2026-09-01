@@ -362,7 +362,7 @@ export default async function AboutPage({ params }: Props) {
           {/* ═══ HECHOS DE PERFIL ════════════════════════════════
               Cuatro filas, no cuatro paneles. El término a la izquierda y el
               dato a la derecha: es una ficha, y una ficha se lee en columna. */}
-          <section className="border-t border-hairline px-5 py-20 sm:px-10">
+          <section className="border-t border-hairline px-5 pb-24 pt-14 sm:px-10">
             <p className="stamp">
               {en ? 'identity · on record' : 'identidad · en registro'}
             </p>
@@ -420,7 +420,7 @@ export default async function AboutPage({ params }: Props) {
               HTML del servidor y se leen enteras, sin arrastrar nada. */}
           <section
             id="experiencia"
-            className="border-t border-hairline px-5 py-20 sm:px-10"
+            className="border-t border-hairline px-5 pb-24 pt-14 sm:px-10"
           >
             <p className="stamp">{en ? 'track record' : 'trayectoria'}</p>
             <h2 className="mt-5 max-w-[16ch] text-d1 text-ink">
@@ -505,7 +505,7 @@ export default async function AboutPage({ params }: Props) {
               pregunta, y un solo enlace de verificación cubre las dos. */}
           <section
             id="credenciales"
-            className="border-t border-hairline px-5 py-20 sm:px-10"
+            className="border-t border-hairline px-5 pb-24 pt-14 sm:px-10"
           >
             <p className="stamp">
               {en ? 'credentials · verifiable' : 'credenciales · verificables'}
@@ -596,7 +596,7 @@ export default async function AboutPage({ params }: Props) {
               debajo. Dos lecturas del mismo dato sin repetir un solo nombre. */}
           <section
             id="stack"
-            className="border-t border-hairline px-5 py-20 sm:px-10"
+            className="border-t border-hairline px-5 pb-24 pt-14 sm:px-10"
           >
             <p className="stamp tabular-nums">
               {en
@@ -613,12 +613,20 @@ export default async function AboutPage({ params }: Props) {
                 la página a lo ancho en 375 px. */}
             <div className="-mx-5 mt-12 overflow-hidden sm:-mx-10">
               <Ribbon
-                items={stack}
+                items={stack.slice(0, Math.ceil(stack.length / 2))}
                 label={en ? 'Stack and tools' : 'Stack y herramientas'}
               />
               <div className="mt-3">
+                {/* EL ARRAY SE REPARTE entre los dos carriles. Los dos
+                    recibían el MISMO, y `Ribbon` además duplica su contenido
+                    internamente para cerrar el bucle: cada etiqueta salía
+                    CUATRO veces en el HTML servido. Es el defecto que la
+                    portada ya tenía documentado como corregido y que seguía
+                    vivo en cuatro páginas. Repartido sale dos veces (la copia
+                    del bucle) y los dos carriles siguen a distinta velocidad,
+                    porque `reverse` no cambia. */}
                 <Ribbon
-                  items={stack}
+                  items={stack.slice(Math.ceil(stack.length / 2))}
                   label={en ? 'Stack, second rail' : 'Stack, segundo carril'}
                   reverse
                 />
@@ -656,7 +664,7 @@ export default async function AboutPage({ params }: Props) {
               contradecir la etiqueta. */}
           <section
             id="idiomas"
-            className="border-t border-hairline px-5 py-20 sm:px-10"
+            className="border-t border-hairline px-5 pb-24 pt-14 sm:px-10"
           >
             <p className="stamp">
               {en ? 'languages · cefr' : 'idiomas · mcer'}
@@ -687,7 +695,7 @@ export default async function AboutPage({ params }: Props) {
           {/* ═══ RECONOCIMIENTOS ═════════════════════════════════ */}
           <section
             id="reconocimientos"
-            className="border-t border-hairline px-5 py-20 sm:px-10"
+            className="border-t border-hairline px-5 pb-24 pt-14 sm:px-10"
           >
             <p className="stamp">
               {en ? 'selected work' : 'trabajo destacado'}
@@ -740,7 +748,7 @@ export default async function AboutPage({ params }: Props) {
           </section>
 
           {/* ═══ CIERRE ══════════════════════════════════════════ */}
-          <section className="border-t border-hairline px-5 py-24 sm:px-10">
+          <section className="border-t border-hairline px-5 pb-28 pt-16 sm:px-10">
             <h2 className="max-w-[18ch] text-d1 text-ink">{t('philosophy')}</h2>
             <p className="mt-6 max-w-[56ch] text-lead text-ink-muted">
               {t('philosophyDesc')}

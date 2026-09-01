@@ -290,7 +290,7 @@ export default async function DesarrolloWebPage({ params }: Props) {
               El único bloque de la página escrito en primera persona, y por
               eso el único en serif. Es ~3% del tipo del sitio; gastarlo en
               otra parte lo devaluaría. */}
-          <section className="border-t border-hairline px-5 py-20 sm:px-10">
+          <section className="border-t border-hairline px-5 pb-24 pt-14 sm:px-10">
             <p className="stamp">{en ? 'context' : 'contexto'}</p>
             <h2 className="mt-5 max-w-[16ch] text-d1 text-ink">
               {t('whyTitle')}
@@ -319,7 +319,7 @@ export default async function DesarrolloWebPage({ params }: Props) {
               Antes: carrusel con flechas, puntos y tarjetas numeradas 01–03.
               Ahora: filas. Lo que se construye no es una secuencia, así que
               no lleva número. */}
-          <section className="border-t border-hairline px-5 py-20 sm:px-10">
+          <section className="border-t border-hairline px-5 pb-24 pt-14 sm:px-10">
             <p className="stamp">{ts('benefits')}</p>
             <h2 className="mt-5 max-w-[18ch] text-d1 text-ink">
               {t('whatTitle')}
@@ -362,7 +362,7 @@ export default async function DesarrolloWebPage({ params }: Props) {
               Esto SÍ es una secuencia real —una fase no puede correr antes
               que la anterior—, así que aquí el número es un dato y no un
               adorno. Se imprime como posición sobre el total. */}
-          <section className="border-t border-hairline px-5 py-20 sm:px-10">
+          <section className="border-t border-hairline px-5 pb-24 pt-14 sm:px-10">
             <p className="stamp">{ts('process')}</p>
             <h2 className="mt-5 max-w-[20ch] text-d1 text-ink">
               {en
@@ -396,7 +396,7 @@ export default async function DesarrolloWebPage({ params }: Props) {
               tipo, mismo ritmo, misma fila. Una limitación degradada
               visualmente deja de ser una limitación. Lo que separa las dos
               listas es la ETIQUETA, no un color ni un ícono. */}
-          <section className="border-t border-hairline px-5 py-20 sm:px-10">
+          <section className="border-t border-hairline px-5 pb-24 pt-14 sm:px-10">
             <p className="stamp">{en ? 'fit' : 'encaje'}</p>
             <h2 className="mt-5 max-w-[18ch] text-d1 text-ink">
               {en
@@ -441,7 +441,7 @@ export default async function DesarrolloWebPage({ params }: Props) {
           </section>
 
           {/* ═══ ENTREGABLES ═════════════════════════════════════ */}
-          <section className="border-t border-hairline px-5 py-20 sm:px-10">
+          <section className="border-t border-hairline px-5 pb-24 pt-14 sm:px-10">
             <p className="stamp">{ts('includes')}</p>
             <h2 className="mt-5 max-w-[16ch] text-d1 text-ink">
               {t('deliverablesTitle')}
@@ -467,7 +467,7 @@ export default async function DesarrolloWebPage({ params }: Props) {
               sin una caja. El pie dice en qué orden viajan los nombres, así
               que la agrupación no se pierde y no se repite. */}
           <section
-            className="overflow-hidden border-t border-hairline py-16"
+            className="overflow-hidden border-t border-hairline pb-20 pt-11"
             aria-labelledby="stack-heading"
           >
             <div className="px-5 sm:px-10">
@@ -482,12 +482,20 @@ export default async function DesarrolloWebPage({ params }: Props) {
 
             <div className="mt-10">
               <Ribbon
-                items={stack}
+                items={stack.slice(0, Math.ceil(stack.length / 2))}
                 label={en ? 'Stack and tools' : 'Stack y herramientas'}
               />
               <div className="mt-3">
+                {/* EL ARRAY SE REPARTE entre los dos carriles. Los dos
+                    recibían el MISMO, y `Ribbon` además duplica su contenido
+                    internamente para cerrar el bucle: cada etiqueta salía
+                    CUATRO veces en el HTML servido. Es el defecto que la
+                    portada ya tenía documentado como corregido y que seguía
+                    vivo en cuatro páginas. Repartido sale dos veces (la copia
+                    del bucle) y los dos carriles siguen a distinta velocidad,
+                    porque `reverse` no cambia. */}
                 <Ribbon
-                  items={stack}
+                  items={stack.slice(Math.ceil(stack.length / 2))}
                   label={en ? 'Stack, second rail' : 'Stack, segundo carril'}
                   reverse
                 />
@@ -504,7 +512,7 @@ export default async function DesarrolloWebPage({ params }: Props) {
               <details> nativo: las respuestas están en el HTML del servidor,
               que es exactamente lo que declara el markup FAQPage de arriba.
               Sin JavaScript y sin panel. */}
-          <section className="border-t border-hairline px-5 py-20 sm:px-10">
+          <section className="border-t border-hairline px-5 pb-24 pt-14 sm:px-10">
             <p className="stamp">FAQ</p>
             <h2 className="mt-5 max-w-[16ch] text-d1 text-ink">
               {t('faqTitle')}
@@ -611,7 +619,7 @@ export default async function DesarrolloWebPage({ params }: Props) {
               su padre; `anySlotFilled` sí. Cuando llegue una captura real, la
               sección reaparece sola. */}
           {anySlotFilled('desarrollo-web-lighthouse', 'desarrollo-web-codigo') ? (
-            <section className="border-t border-hairline px-5 py-16 sm:px-10">
+            <section className="border-t border-hairline px-5 pb-20 pt-11 sm:px-10">
               <p className="stamp">
                 {en
                   ? 'the proof · file pending'
@@ -642,7 +650,7 @@ export default async function DesarrolloWebPage({ params }: Props) {
               solo si hay algo publicado que encaje. */}
           <BlogStrip route="desarrolloWeb" locale={locale} title="Escrito sobre desarrollo" />
 
-          <section className="border-t border-hairline px-5 py-20 sm:px-10">
+          <section className="border-t border-hairline px-5 pb-24 pt-14 sm:px-10">
             <ContactChannels
               locale={locale}
               waMessage={
@@ -654,7 +662,7 @@ export default async function DesarrolloWebPage({ params }: Props) {
           </section>
 
           {/* ═══ CIERRE ══════════════════════════════════════════ */}
-          <section className="border-t border-hairline px-5 py-24 sm:px-10">
+          <section className="border-t border-hairline px-5 pb-28 pt-16 sm:px-10">
             <h2 className="max-w-[18ch] text-d1 text-ink">
               {en
                 ? 'Tell me what you need to build.'

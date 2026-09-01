@@ -9,7 +9,7 @@ import { Rail } from '@/components/instrument/rail'
 import { Marks } from '@/components/instrument/marks'
 import { Ribbon } from '@/components/instrument/ribbon'
 import { BlogStrip } from '@/components/sections/blog-strip'
-import { MediaSlot } from '@/components/instrument/media-slot'
+import { Evidence } from '@/components/instrument/evidence'
 import { getServices, servicePath } from '@/data/services'
 import { getSkillCategories } from '@/data/skills'
 import { getExperiences, type Experience } from '@/data/experience'
@@ -299,7 +299,7 @@ export default async function HomePage({ params }: Props) {
           {/* ═══ EL REGISTRO ═════════════════════════════════════
               Cambio de escala: aquí el eje ya no mide segundos, mide
               años. El cambio se anuncia; no se disimula. */}
-          <section className="border-t border-hairline px-5 py-20 sm:px-10">
+          <section className="border-t border-hairline px-5 pb-24 pt-14 sm:px-10">
             <p className="stamp">
               {en
                 ? 'scale change · 1 s ───▸ 1 year'
@@ -375,14 +375,25 @@ export default async function HomePage({ params }: Props) {
                   : 'los huecos entre bandas son reales y no se rellenan.'}
               </p>
 
-              {/* EL hueco más importante del sitio. Si de toda la lista de
-                  docs/MEDIA.md solo llega un archivo, que sea este: una curva
-                  real con su eje de tiempo es la prueba de todo lo demás que
-                  dice esta página. */}
-              <div className="mt-14 max-w-[54rem]">
-                <MediaSlot
-                  id="home-evidencia"
-                  sizes="(min-width: 1024px) 54rem, 100vw"
+              {/* LA PRUEBA de todo lo que dice esta página, y durante meses fue
+                  el hueco más importante del sitio: `docs/MEDIA.md` lo pedía
+                  como el único archivo que valía la pena conseguir si solo
+                  llegaba uno. Ya llegó, y es de un instrumento de terceros —el
+                  panel de Google— sobre una propiedad real.
+
+                  Va aquí y no en el héroe a propósito. El héroe ya tiene su
+                  prueba: `<Marks>` mide la página que el visitante tiene
+                  abierta. Esa dice «mido»; esta dice «y esto salió». Son dos
+                  afirmaciones distintas y competirían en la misma pantalla.
+
+                  UNA sola en la portada. Las otras dos viven en /seo-tecnico y
+                  en la ficha del despacho, que es donde el detalle pertenece:
+                  tres gráficas seguidas aquí serían un dossier, no una
+                  portada. */}
+              <div className="reveal mt-16 max-w-[54rem]">
+                <Evidence
+                  id="search-console-alcance"
+                  sizes="(min-width: 1024px) 54rem, 92vw"
                 />
               </div>
             </div>
@@ -393,7 +404,7 @@ export default async function HomePage({ params }: Props) {
               sensación de profundidad —dos planos moviéndose distinto— sin
               una sola sombra y sin una sola caja. */}
           <section
-            className="overflow-hidden border-t border-hairline py-10"
+            className="overflow-hidden border-t border-hairline pb-12 pt-7"
             aria-labelledby="stack-heading"
           >
             <h2 id="stack-heading" className="sr-only">
@@ -506,7 +517,7 @@ export default async function HomePage({ params }: Props) {
           </section>
 
           {/* ═══ EL OPERADOR ═════════════════════════════════════ */}
-          <section className="border-t border-hairline px-5 py-20 sm:px-10">
+          <section className="border-t border-hairline px-5 pb-24 pt-14 sm:px-10">
             <p className="stamp">{en ? 'the operator' : 'el operador'}</p>
 
             {/* ── QUÉ CAMBIÓ Y POR QUÉ ──
@@ -684,7 +695,7 @@ export default async function HomePage({ params }: Props) {
               cada regla mide la mitad, así que la pregunta la llena y su «+»
               queda a un palmo. Abrir una no reflúa la otra columna porque son
               dos contenedores independientes, no una sola columna partida. */}
-          <section className="border-t border-hairline px-5 py-20 sm:px-10">
+          <section className="border-t border-hairline px-5 pb-24 pt-14 sm:px-10">
             <div className="grid gap-x-14 gap-y-8 lg:grid-cols-[minmax(0,1fr)_minmax(0,26rem)] lg:items-end">
               <div>
                 <p className="stamp">{en ? 'index' : 'índice del registro'}</p>
@@ -738,7 +749,7 @@ export default async function HomePage({ params }: Props) {
               cien píxeles de nada debajo del enlace. Ahora el enlace se va al
               otro extremo de la hoja, alineado por su base con el párrafo —
               el gesto de firmar al pie— y el campo del tambor ocupa el fondo. */}
-          <section className="border-t border-hairline px-5 py-20 sm:px-10">
+          <section className="border-t border-hairline px-5 pb-24 pt-14 sm:px-10">
             <div className="grid items-end gap-x-14 gap-y-10 lg:grid-cols-[minmax(0,1fr)_minmax(0,20rem)]">
               <div>
                 <h2 className="max-w-[18ch] text-d1 text-ink">{tc('title')}</h2>
