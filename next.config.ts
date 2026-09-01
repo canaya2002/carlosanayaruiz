@@ -171,6 +171,18 @@ const IMMUTABLE_ASSETS = [
   '/carlos-anaya-ruiz-retrato.webp',
   '/blog/:slug*',
   '/credenciales/:slug*',
+  /**
+   * Y las tres capturas de evidencia, por la MISMA razón. Se sirvieron una
+   * ronda con `max-age=0, must-revalidate` —medido en producción— porque
+   * añadir archivos a `public/` sin añadir su carpeta aquí reintroduce el
+   * defecto de arriba entero.
+   *
+   * Regla operativa: **una carpeta nueva bajo `public/` con imágenes que las
+   * páginas sirven por `<Image>` entra en esta lista en el mismo commit.**
+   * Estos nombres también llevan su contenido (métrica + persona), así que la
+   * convención de «no se reemplaza, se renombra» se cumple.
+   */
+  '/evidencia/:slug*',
 ]
 
 const nextConfig: NextConfig = {
