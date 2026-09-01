@@ -46,6 +46,8 @@ interface FooterLink {
    */
   href: StaticPathname
   label: string
+  /** Ruta solo en español: fuerza `locale="es"`. */
+  soloEs?: boolean
 }
 
 export async function Footer() {
@@ -77,7 +79,14 @@ export async function Footer() {
   const navigation: readonly FooterLink[] = [
     { href: '/', label: tn('home') },
     { href: '/sobre-mi', label: tn('about') },
-    { href: '/blog', label: tn('blog') },
+    /* El blog SOLO existe en español, así que su enlace fuerza `locale="es"`
+       en las dos lenguas. Sin esto, `<Link href="/blog">` localizaba al
+       locale activo y las 15 páginas EN emitían `/en/blog` — una URL que
+       responde 308. Eran 45 enlaces internos a un redirect solo desde aquí
+       y el pie. `app/sitemap.ts` ya resuelve lo mismo con `url('blog','es')`
+       y el middleware con `alternateLinks: false`; el nav era el tercer
+       canal, y el de más volumen. */
+    { href: '/blog', soloEs: true, label: tn('blog') },
     { href: '/proyectos', label: tn('projects') },
     { href: '/premios', label: tn('awards') },
     { href: '/certificaciones', label: tn('certifications') },
@@ -197,7 +206,11 @@ export async function Footer() {
             <ul className="mt-3 sm:columns-2 sm:gap-x-8">
               {navigation.map((item) => (
                 <li key={item.href}>
-                  <Link href={item.href} className={linkClass}>
+                  <Link
+                    href={item.href}
+                    locale={item.soloEs ? 'es' : undefined}
+                    className={linkClass}
+                  >
                     {item.label}
                   </Link>
                 </li>

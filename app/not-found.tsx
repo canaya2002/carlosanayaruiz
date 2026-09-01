@@ -1,5 +1,5 @@
 import Link from 'next/link'
-import { Archivo, Chivo_Mono, Fraunces } from 'next/font/google'
+import { FONT_VARS } from '@/lib/fonts'
 
 // Importado por precaución: app/layout.tsx ya trae globals.css, pero este es
 // el único archivo que renderiza un documento completo por su cuenta, y un 404
@@ -40,30 +40,6 @@ import './globals.css'
  * un 404 en Segoe UI dentro de un sitio compuesto en otra cosa se lee como
  * una página rota, que es justo lo contrario de lo que tiene que transmitir.
  */
-const archivo = Archivo({
-  subsets: ['latin', 'latin-ext'],
-  variable: '--font-archivo',
-  display: 'swap',
-  axes: ['wdth'],
-  adjustFontFallback: true,
-})
-
-const chivoMono = Chivo_Mono({
-  subsets: ['latin', 'latin-ext'],
-  variable: '--font-chivo-mono',
-  display: 'swap',
-  weight: ['400', '500'],
-  adjustFontFallback: true,
-})
-
-const fraunces = Fraunces({
-  subsets: ['latin', 'latin-ext'],
-  variable: '--font-fraunces',
-  display: 'swap',
-  style: ['italic'],
-  axes: ['SOFT', 'WONK', 'opsz'],
-  adjustFontFallback: true,
-})
 
 /**
  * `noindex` va como <meta> literal en el markup y no como objeto `metadata`
@@ -76,7 +52,7 @@ export default function NotFound() {
   return (
     <html
       lang="es"
-      className={`${archivo.variable} ${chivoMono.variable} ${fraunces.variable}`}
+      className={FONT_VARS}
     >
       <head>
         <meta name="robots" content="noindex, nofollow" />

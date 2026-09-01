@@ -52,8 +52,16 @@ export interface Course {
   /** Dimensiones nativas, para reservar el espacio y no mover el layout. */
   width?: number
   height?: number
-  /** Texto alternativo. Obligatorio: sin esto la imagen no es indexable. */
-  alt: string
+  /**
+   * Texto alternativo, en las dos lenguas.
+   *
+   * Era una sola cadena en español y se servía igual en `/en/certifications`,
+   * una página con `<html lang="en">`: siete `alt` en español en un documento
+   * declarado en inglés. Un lector de pantalla en inglés los lee con fonética
+   * inglesa y un buscador los indexa como contenido en otro idioma que el que
+   * la página declara.
+   */
+  alt: { es: string; en: string }
 }
 
 const DIR = '/credenciales'
@@ -70,7 +78,10 @@ export const COURSES: readonly Course[] = [
     image: `${DIR}/certificado-full-stack-web-development-bootcamp-carlos-anaya-ruiz.webp`,
     width: 1142,
     height: 818,
-    alt: 'Certificado de Udemy del bootcamp completo de desarrollo web full-stack, 61.5 horas, a nombre de Carlos Anaya Ruiz',
+    alt: {
+      es: 'Certificado de Udemy del bootcamp completo de desarrollo web full-stack, 61.5 horas, a nombre de Carlos Anaya Ruiz',
+      en: 'Udemy certificate for the complete full-stack web development bootcamp, 61.5 hours, issued to Carlos Anaya Ruiz',
+    },
   },
   {
     id: 'master-react',
@@ -83,7 +94,10 @@ export const COURSES: readonly Course[] = [
     image: `${DIR}/certificado-master-react-hooks-mern-nodejs-carlos-anaya-ruiz.webp`,
     width: 1600,
     height: 1152,
-    alt: 'Certificado de Udemy del máster en React, Hooks, MERN y NodeJS, 39.5 horas, a nombre de Carlos Anaya Ruiz',
+    alt: {
+      es: 'Certificado de Udemy del máster en React, Hooks, MERN y NodeJS, 39.5 horas, a nombre de Carlos Anaya Ruiz',
+      en: 'Udemy certificate for the React, Hooks, MERN and NodeJS master course, 39.5 hours, issued to Carlos Anaya Ruiz',
+    },
   },
   {
     id: 'nextjs-produccion',
@@ -92,7 +106,10 @@ export const COURSES: readonly Course[] = [
     platform: 'Udemy',
     date: '2025-05-27',
     hours: 36.5,
-    alt: 'Certificado de Udemy del curso de Next.js para producción',
+    alt: {
+      es: 'Certificado de Udemy del curso de Next.js para producción',
+      en: 'Udemy certificate for the Next.js for production course',
+    },
   },
   {
     id: 'pmp-exam-prep',
@@ -101,7 +118,10 @@ export const COURSES: readonly Course[] = [
     platform: 'Udemy',
     date: '2025-05-27',
     hours: 35,
-    alt: 'Certificado de Udemy del curso de preparación para el examen PMP, 35 horas de contacto PDU',
+    alt: {
+      es: 'Certificado de Udemy del curso de preparación para el examen PMP, 35 horas de contacto PDU',
+      en: 'Udemy certificate for the PMP exam prep course, 35 PDU contact hours',
+    },
   },
   {
     id: 'ia-deep-learning',
@@ -114,7 +134,10 @@ export const COURSES: readonly Course[] = [
     image: `${DIR}/certificado-inteligencia-artificial-deep-learning-python-carlos-anaya-ruiz.webp`,
     width: 704,
     height: 508,
-    alt: 'Certificado de Udemy del curso de inteligencia artificial y deep learning en Python, 27 horas, a nombre de Carlos Anaya Ruiz',
+    alt: {
+      es: 'Certificado de Udemy del curso de inteligencia artificial y deep learning en Python, 27 horas, a nombre de Carlos Anaya Ruiz',
+      en: 'Udemy certificate for the artificial intelligence and deep learning in Python course, 27 hours, issued to Carlos Anaya Ruiz',
+    },
   },
   {
     id: 'javascript-total',
@@ -127,7 +150,10 @@ export const COURSES: readonly Course[] = [
     image: `${DIR}/certificado-javascript-total-carlos-anaya-ruiz.webp`,
     width: 707,
     height: 508,
-    alt: 'Certificado de Udemy del curso JavaScript TOTAL, 26.5 horas, a nombre de Carlos Anaya Ruiz',
+    alt: {
+      es: 'Certificado de Udemy del curso JavaScript TOTAL, 26.5 horas, a nombre de Carlos Anaya Ruiz',
+      en: 'Udemy certificate for the JavaScript TOTAL course, 26.5 hours, issued to Carlos Anaya Ruiz',
+    },
   },
   {
     id: 'ia-negocios',
@@ -140,7 +166,10 @@ export const COURSES: readonly Course[] = [
     image: `${DIR}/certificado-inteligencia-artificial-negocios-empresas-carlos-anaya-ruiz.webp`,
     width: 1600,
     height: 1152,
-    alt: 'Certificado de Udemy del curso de inteligencia artificial aplicada a negocios y empresas, 20.5 horas, a nombre de Carlos Anaya Ruiz',
+    alt: {
+      es: 'Certificado de Udemy del curso de inteligencia artificial aplicada a negocios y empresas, 20.5 horas, a nombre de Carlos Anaya Ruiz',
+      en: 'Udemy certificate for the artificial intelligence applied to business course, 20.5 hours, issued to Carlos Anaya Ruiz',
+    },
   },
   {
     id: 'firebase-in-depth',
@@ -153,7 +182,10 @@ export const COURSES: readonly Course[] = [
     image: `${DIR}/certificado-firebase-in-depth-carlos-anaya-ruiz.webp`,
     width: 1600,
     height: 1151,
-    alt: 'Certificado de Udemy del curso Firebase In Depth de Angular University, 10 horas, a nombre de Carlos Anaya Ruiz',
+    alt: {
+      es: 'Certificado de Udemy del curso Firebase In Depth de Angular University, 10 horas, a nombre de Carlos Anaya Ruiz',
+      en: 'Udemy certificate for the Firebase In Depth course by Angular University, 10 hours, issued to Carlos Anaya Ruiz',
+    },
   },
   {
     id: 'docker-devops',
@@ -166,7 +198,10 @@ export const COURSES: readonly Course[] = [
     image: `${DIR}/certificado-docker-devops-carlos-anaya-ruiz.webp`,
     width: 705,
     height: 508,
-    alt: 'Certificado de Udemy del curso de Docker y DevOps de KodeKloud, 4.5 horas, a nombre de Carlos Anaya Ruiz',
+    alt: {
+      es: 'Certificado de Udemy del curso de Docker y DevOps de KodeKloud, 4.5 horas, a nombre de Carlos Anaya Ruiz',
+      en: 'Udemy certificate for the Docker and DevOps course by KodeKloud, 4.5 hours, issued to Carlos Anaya Ruiz',
+    },
   },
   {
     id: 'scrum-practico',
@@ -175,7 +210,10 @@ export const COURSES: readonly Course[] = [
     platform: 'Udemy',
     date: '2025-05-27',
     hours: 4.5,
-    alt: 'Certificado de Udemy del curso de SCRUM práctico en proyectos de software',
+    alt: {
+      es: 'Certificado de Udemy del curso de SCRUM práctico en proyectos de software',
+      en: 'Udemy certificate for the practical SCRUM in software projects course',
+    },
   },
 ]
 

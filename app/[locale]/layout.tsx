@@ -1,5 +1,5 @@
 import type { Metadata, Viewport } from 'next'
-import { Archivo, Chivo_Mono, Fraunces } from 'next/font/google'
+import { FONT_VARS } from '@/lib/fonts'
 import { NextIntlClientProvider } from 'next-intl'
 import { getMessages, setRequestLocale, getTranslations } from 'next-intl/server'
 import { notFound } from 'next/navigation'
@@ -42,44 +42,13 @@ import { Analytics } from '@vercel/analytics/react'
  * El sitio NO nombra ninguna de estas variables directamente: todo apunta a
  * `--face-display`, `--face-mono` y `--face-human` en globals.css.
  *
- * `latin-ext` es obligatorio: el copy en español usa á é í ó ú ñ ¿ ¡.
+ * Las tres se declaran en `lib/fonts.ts` y NO aquí: `app/not-found.tsx` también
+ * renderiza un documento completo, y declararlas dos veces hacía que el build
+ * emitiera dos hojas de fuentes idénticas, las dos precargadas en todas las
+ * rutas. Ahí está también medido por qué el subset es `latin` a secas.
  * ════════════════════════════════════════════════════════════════
  */
 
-/** Display y cuerpo. El eje `wdth` da la condensación industrial del masthead. */
-const archivo = Archivo({
-  subsets: ['latin', 'latin-ext'],
-  variable: '--font-archivo',
-  display: 'swap',
-  axes: ['wdth'],
-  adjustFontFallback: true,
-})
-
-/** La voz de la máquina: toda cifra, unidad, graduación y etiqueta. */
-const chivoMono = Chivo_Mono({
-  subsets: ['latin', 'latin-ext'],
-  variable: '--font-chivo-mono',
-  display: 'swap',
-  weight: ['400', '500'],
-  adjustFontFallback: true,
-})
-
-/**
- * La voz humana, y solo eso: frases en primera persona. Nunca navegación,
- * nunca datos, nunca un titular. Alrededor del 3% del tipo del sitio — la
- * oposición es el concepto, así que si crece deja de significar.
- *
- * Solo la itálica. Una serifa recta aquí competiría con el display; inclinada
- * se lee como algo escrito a mano al margen, que es el registro que se busca.
- */
-const fraunces = Fraunces({
-  subsets: ['latin', 'latin-ext'],
-  variable: '--font-fraunces',
-  display: 'swap',
-  style: ['italic'],
-  axes: ['SOFT', 'WONK', 'opsz'],
-  adjustFontFallback: true,
-})
 
 export function generateStaticParams() {
   return routing.locales.map((locale) => ({ locale }))
@@ -207,7 +176,7 @@ export default async function LocaleLayout({
      */
     <html
       lang={locale}
-      className={`${archivo.variable} ${chivoMono.variable} ${fraunces.variable}`}
+      className={FONT_VARS}
     >
       <head>
         {/* Person + ProfessionalService + WebSite. Los hechos de la entidad

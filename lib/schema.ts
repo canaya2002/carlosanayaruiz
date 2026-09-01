@@ -319,9 +319,38 @@ function postalAddress(locale: Locale): JsonLdNode {
   }
 }
 
+/**
+ * Los idiomas en que se PRESTA EL SERVICIO. Dos, y es correcto: el sitio y la
+ * atención existen en español e inglés.
+ */
 const AVAILABLE_LANGUAGES: JsonLdNode[] = [
   { '@type': 'Language', name: 'Spanish', alternateName: 'es' },
   { '@type': 'Language', name: 'English', alternateName: 'en' },
+]
+
+/**
+ * Los idiomas que HABLA LA PERSONA. Tres.
+ *
+ * Son dos conceptos distintos y estaban compartiendo una constante:
+ * `ProfessionalService.availableLanguage` y `Person.knowsLanguage` leían el
+ * mismo array de dos, mientras /es/cv y /es/certificaciones publican TRES con
+ * su nivel MCER —Español C2, Inglés C1 (TOEFL 92), Francés A2— y la placa
+ * rotula «Idiomas 3». El grafo se contradecía con la página en la misma
+ * respuesta.
+ *
+ * `/llms.txt` ya listaba los tres, así que la contradicción era interna al
+ * repo, no una duda sobre el dato.
+ *
+ * ⚠ Si se añade o quita un idioma en `data/personal.ts`, se actualiza aquí.
+ * Derivarlo del dato pediría importar `getPersonalInfo` en este archivo, que
+ * hoy no depende de `data/personal.ts` y es el nodo que se emite en las 32
+ * rutas — el `name` en inglés tampoco sale de ahí, porque el dato está en
+ * español.
+ */
+const KNOWS_LANGUAGE: JsonLdNode[] = [
+  { '@type': 'Language', name: 'Spanish', alternateName: 'es' },
+  { '@type': 'Language', name: 'English', alternateName: 'en' },
+  { '@type': 'Language', name: 'French', alternateName: 'fr' },
 ]
 
 /**
@@ -410,7 +439,7 @@ export function generatePersonSchema(locale: Locale): JsonLdNode {
       address: postalAddress(locale),
     },
     nationality: { '@type': 'Country', name: 'Mexico' },
-    knowsLanguage: AVAILABLE_LANGUAGES,
+    knowsLanguage: KNOWS_LANGUAGE,
     knowsAbout: KNOWS_ABOUT,
     hasCredential: [
       {

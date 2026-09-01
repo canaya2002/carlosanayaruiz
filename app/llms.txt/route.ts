@@ -91,7 +91,9 @@ function buildDocument(): string {
     '',
     `Canonical site: ${SITE_CONFIG.url}`,
     'Primary language: Spanish (es-MX, x-default). English (en-US) at the `/en`',
-    'prefix. Every page exists in both locales.',
+    'prefix. Every page exists in both locales EXCEPT the blog, which is',
+    'Spanish-only: /en/blog* redirects (308) to /es/blog*, and those pages',
+    'declare only es-MX and x-default.',
     ''
   )
 
@@ -150,6 +152,21 @@ function buildDocument(): string {
   push('## Pages', '')
   for (const key of routeKeys) {
     const label = ROUTE_LABELS[key]
+
+    /* EL BLOG SALE SOLO EN ESPAÑOL, por la misma razón ya resuelta en
+       `app/sitemap.ts`, en el nav, en el pie y en el middleware: `/en/blog`
+       responde 308 a `/es/blog`.
+
+       Este bucle publicaba el par EN|ES para las dieciséis rutas, así que la
+       línea del blog anunciaba `…/en/blog` justo después de decir «Technical
+       blog in Spanish» — un documento escrito para máquinas entregando una URL
+       que redirige, en la misma frase en que explica que no existe en inglés.
+       Era el último canal por el que se filtraba. */
+    if (key === 'blog') {
+      push(`- ${label.es} — ${SITE_CONFIG.url}/es${ROUTES[key].es}`)
+      continue
+    }
+
     push(
       `- ${label.en} — ${SITE_CONFIG.url}/en${ROUTES[key].en}` +
         `  |  ${label.es} — ${SITE_CONFIG.url}/es${ROUTES[key].es}`

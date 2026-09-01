@@ -35,6 +35,11 @@ interface NavItem {
   href: StaticPathname
   /** Clave dentro del namespace `nav`. */
   key: 'about' | 'blog' | 'books' | 'contact'
+  /**
+   * La ruta existe SOLO en español. Fuerza `locale="es"` en el enlace, en las
+   * dos lenguas. Ver la nota junto al item del blog.
+   */
+  soloEs?: boolean
 }
 
 interface GroupSource {
@@ -58,7 +63,14 @@ interface GroupSource {
 /** Inicio va primero, luego los dos grupos, luego estos. */
 const NAV_ITEMS: readonly NavItem[] = [
   { href: '/sobre-mi', key: 'about' },
-  { href: '/blog', key: 'blog' },
+  /* El blog SOLO existe en español, así que su enlace fuerza `locale="es"`
+     en las dos lenguas. Sin esto, `<Link href="/blog">` localizaba al
+     locale activo y las 15 páginas EN emitían `/en/blog` — una URL que
+     responde 308. Eran 45 enlaces internos a un redirect solo desde aquí
+     y el pie. `app/sitemap.ts` ya resuelve lo mismo con `url('blog','es')`
+     y el middleware con `alternateLinks: false`; el nav era el tercer
+     canal, y el de más volumen. */
+  { href: '/blog', soloEs: true, key: 'blog' },
   { href: '/libros', key: 'books' },
   { href: '/contacto', key: 'contact' },
 ]
@@ -517,6 +529,7 @@ export function Header() {
               <Link
                 key={item.key}
                 href={item.href}
+                locale={item.soloEs ? 'es' : undefined}
                 aria-current={isCurrent(item.href) ? 'page' : undefined}
                 className={cn(
                   NAV_LINK,
@@ -693,6 +706,7 @@ export function Header() {
               <li key={item.key} className="border-b border-hairline">
                 <MobileLink
                   href={item.href}
+                  soloEs={item.soloEs}
                   label={t(item.key)}
                   current={isCurrent(item.href)}
                   onNavigate={() => setMenuOpen(false)}
@@ -1040,15 +1054,18 @@ function MobileLink({
   label,
   current,
   onNavigate,
+  soloEs,
 }: {
   href: StaticPathname
   label: string
   current: boolean
   onNavigate: () => void
+  soloEs?: boolean
 }) {
   return (
     <Link
       href={href}
+        locale={soloEs ? 'es' : undefined}
       onClick={onNavigate}
       aria-current={current ? 'page' : undefined}
       className={cn(

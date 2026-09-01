@@ -55,6 +55,26 @@ export function LanguageSwitcher() {
    * enlace roto en cada ficha de proyecto. El slug se vuelve a inyectar desde
    * `useParams`, que es donde sí está.
    */
+  /**
+   * EN EL BLOG NO SE PINTA, y es la decisión.
+   *
+   * El blog existe solo en español: `/en/blog*` responde 308 a `/es/blog*` a
+   * propósito, y el `<head>` de esas páginas declara solo `es-MX` y
+   * `x-default`. Este control apuntaba a `/blog`, que next-intl localizaba al
+   * locale de destino — así que en un artículo en español, pulsar «English» te
+   * llevaba a `/en/blog`, de ahí a `/es/blog`, y perdías el artículo. Pedías
+   * inglés, recibías español y te quedabas sin lo que estabas leyendo.
+   *
+   * Encima el `<a>` llevaba `hrefLang="en"`, contradiciendo el `<head>` de esa
+   * misma página. Medido: era el único destino interno no-200 de los 52 únicos
+   * del sitio, con 4 emisores hoy y 101 cuando el calendario se cumpla.
+   *
+   * La media tinta —dejar el enlace y quitarle el `hrefLang`— borra la señal
+   * contradictoria y deja un botón «English» que no lleva a inglés. Un control
+   * que no puede cumplir lo que ofrece no se pinta.
+   */
+  if (pathname === POST_ROUTE || pathname === '/blog') return null
+
   const href: LinkHref =
     pathname === PROJECT_ROUTE && params.slug
       ? { pathname: PROJECT_ROUTE, params: { slug: params.slug } }
@@ -63,10 +83,7 @@ export function LanguageSwitcher() {
         // con corchetes.
         pathname === PROJECT_ROUTE
         ? '/proyectos'
-        : // Un artículo no tiene versión en inglés: el destino es el índice.
-          pathname === POST_ROUTE
-          ? '/blog'
-          : pathname
+        : pathname
 
   return (
     // El padding y el gap se aprietan solo por debajo de sm, donde la

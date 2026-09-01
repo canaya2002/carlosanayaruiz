@@ -488,7 +488,7 @@ export default async function CertificationsPage({ params }: Props) {
                 Quien quiera leerlo entero tiene el enlace a Udemy, que es
                 además la versión que de verdad comprueba algo. */}
             <ul className="reveal-stagger mt-14 grid gap-x-10 gap-y-12 sm:grid-cols-2 xl:grid-cols-3">
-              {COURSES.filter((course) => course.image).map((course, i) => {
+              {COURSES.filter((course) => course.image).map((course) => {
                 const url = courseVerifyUrl(course)
                 return (
                   <li key={course.id} className="max-w-[24rem]">
@@ -501,14 +501,21 @@ export default async function CertificationsPage({ params }: Props) {
                       <span className="credential">
                         <Image
                           src={course.image!}
-                          alt={course.alt}
+                          alt={course.alt[en ? 'en' : 'es']}
                           width={course.width!}
                           height={course.height!}
                           sizes="(min-width: 1280px) 24rem, (min-width: 640px) 44vw, 90vw"
-                          /* El primero entra eager: es el que puede ser
-                             candidato a LCP si alguien llega por ancla. Los
-                             demás cargan de forma diferida. */
-                          loading={i === 0 ? 'eager' : 'lazy'}
+                          /* TODOS diferidos, sin excepción.
+                             El primero iba `eager`, y con eso Next emite además
+                             un `<link rel="preload" as="image">` en el `<head>`.
+                             Ese certificado NO está en la primera pantalla —vive
+                             a más de tres mil píxeles del `<h1>`— así que la
+                             precarga competía por ancho de banda contra el
+                             elemento que sí es candidato a LCP en esta ruta, que
+                             es el titular. Precargar lo que no se ve es
+                             exactamente la regresión que este sitio vende
+                             arreglar. */
+                          loading="lazy" 
                         />
                       </span>
 
