@@ -1,10 +1,17 @@
 import type { Metadata } from 'next'
+import Image from 'next/image'
 import { setRequestLocale, getTranslations } from 'next-intl/server'
 import { Link } from '@/i18n/navigation'
 import { Rail } from '@/components/instrument/rail'
 import { Span } from '@/components/instrument/span'
 import { Ribbon } from '@/components/instrument/ribbon'
 import { getAwards } from '@/data/awards'
+import {
+  COURSES,
+  COURSE_HOURS,
+  COURSES_VERIFIABLE,
+  courseVerifyUrl,
+} from '@/data/courses'
 import { getEducation } from '@/data/education'
 import { getPersonalInfo } from '@/data/personal'
 import { cefrProficiency, type Locale } from '@/data/types'
@@ -429,6 +436,129 @@ export default async function CertificationsPage({ params }: Props) {
             </p>
 
             <p className="stamp mt-6">{t('verifyNote')}</p>
+          </section>
+
+          {/* ═══ LOS DOCUMENTOS ══════════════════════════════════
+              Aquí es donde la promesa del h1 deja de ser una frase.
+
+              Los ocho archivos de `public/credenciales/` estaban en el repo y
+              NINGUNA página los pintaba: `award.image` no lo lee nadie y esta
+              ruta no montaba un solo hueco de medio. Se servían con 200 y no
+              existían para el visitante.
+
+              Cada documento se disuelve en el material con `.credential` — sin
+              rectángulo, sin borde y sin radio, igual que los dos retratos y
+              las portadas del blog. Y cada uno es un ENLACE a su verificación
+              pública en Udemy: el folio impreso en la esquina se difumina con
+              el canto, así que va escrito como texto, que además es lo que un
+              buscador puede leer.
+
+              Las horas van en cifra grande porque son el dato: 265.5 contadas
+              del archivo, nunca escritas a mano. */}
+          <section
+            id="cursos"
+            className="border-t border-hairline px-5 py-20 sm:px-10"
+          >
+            <p className="stamp">
+              {en ? 'training · the documents' : 'formación · los documentos'}
+            </p>
+
+            <h2 className="mt-5 max-w-[22ch] text-d1 text-ink">
+              {en
+                ? `${COURSE_HOURS} hours with a certificate`
+                : `${COURSE_HOURS} horas con certificado`}
+            </h2>
+
+            <p className="mt-8 max-w-[62ch] text-lead text-ink-muted">
+              {en
+                ? `Course completions, not professional certifications — the label matters and this page keeps it. ${COURSES_VERIFIABLE} of ${COURSES.length} carry a credential number, so you can open the issuer and check the document yourself.`
+                : `Son cursos con certificado de finalización, no certificaciones profesionales: la etiqueta importa y esta página la respeta. ${COURSES_VERIFIABLE} de ${COURSES.length} traen folio, así que puedes abrir al emisor y comprobar el documento por tu cuenta.`}
+            </p>
+
+            {/* Dos columnas a partir de 64rem. A tres el título del curso caía
+                a cinco líneas y el documento quedaba en 18rem, ilegible. */}
+            <ul className="reveal-stagger mt-14 grid gap-x-12 gap-y-14 lg:grid-cols-2">
+              {COURSES.filter((course) => course.image).map((course, i) => {
+                const url = courseVerifyUrl(course)
+                return (
+                  <li key={course.id}>
+                    <a
+                      className="group block outline-none"
+                      href={url}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                    >
+                      <span className="credential">
+                        <Image
+                          src={course.image!}
+                          alt={course.alt}
+                          width={course.width!}
+                          height={course.height!}
+                          sizes="(min-width: 1024px) 32rem, 92vw"
+                          /* El primero entra eager: es el que puede ser
+                             candidato a LCP si alguien llega por ancla. Los
+                             demás cargan de forma diferida. */
+                          loading={i === 0 ? 'eager' : 'lazy'}
+                        />
+                      </span>
+
+                      <p className="stamp mt-5 tabular-nums">
+                        {course.hours}
+                        {en ? ' h · ' : ' h · '}
+                        <time dateTime={course.date}>
+                          {formatShortDate(course.date.slice(0, 7), locale)}
+                        </time>
+                        {' · '}
+                        {course.platform}
+                      </p>
+
+                      <h3 className="mt-3 max-w-[36ch] text-d3 text-ink">
+                        {course.title}
+                      </h3>
+
+                      <p className="mt-2 text-sm text-ink-muted">
+                        {course.instructors}
+                      </p>
+
+                      <p className="link-stylus mt-4 inline-block text-sm">
+                        {en ? 'verify at Udemy' : 'verificar en Udemy'} →
+                      </p>
+
+                      {/* El folio, como texto. Difuminado en la imagen por la
+                          máscara, y aquí legible y copiable. */}
+                      <p className="stamp mt-3 break-all text-ink-subtle">
+                        {course.credentialId}
+                      </p>
+                    </a>
+                  </li>
+                )
+              })}
+            </ul>
+
+            {/* Los que no tienen documento a la mano van igual, como fila: el
+                curso existe y sus horas cuentan. Sin enlace de verificación,
+                porque sin folio no se puede ofrecer. */}
+            <ol className="mt-16">
+              {COURSES.filter((course) => !course.image).map((course) => (
+                <li key={course.id} className="band">
+                  <p className="stamp tabular-nums">
+                    {course.hours}
+                    {' h · '}
+                    <time dateTime={course.date}>
+                      {formatShortDate(course.date.slice(0, 7), locale)}
+                    </time>
+                    {' · '}
+                    {course.platform}
+                  </p>
+                  <h3 className="mt-2 max-w-[44ch] text-d3 text-ink">
+                    {course.title}
+                  </h3>
+                  <p className="mt-1 text-sm text-ink-muted">
+                    {course.instructors}
+                  </p>
+                </li>
+              ))}
+            </ol>
           </section>
 
           {/* ═══ CERTIFICADOS EN PDF ═════════════════════════════

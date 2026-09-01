@@ -4569,6 +4569,77 @@
       linear-gradient(to right, transparent 0%, #000 4%, #000 96%, transparent 100%);
   }
 
+  /* ═══ EL DOCUMENTO DE UNA CREDENCIAL ══════════════════════════
+     Un certificado escaneado es la ÚNICA imagen de este sitio que existe para
+     ser LEÍDA, no para ambientar. De ahí las tres diferencias con `.cover`:
+
+     1. `object-fit: contain` y no `cover`. Recortar un documento le corta el
+        texto, que es justamente la prueba. Los siete de Udemy miden 1.34–1.35
+        de proporción, así que 4/3 los encaja con menos de medio por ciento de
+        holgura; el del NASA es 16/9 y lleva su propia clase.
+     2. El difuminado es MÁS SUAVE (4–5% por canto contra 6–14%). El del blog
+        puede comerse el borde de una ilustración; aquí un canto agresivo se
+        empieza a comer el nombre y la fecha impresos.
+     3. Fondo de humo. Con `contain` puede sobrar aire a los lados si un archivo
+        futuro trae otra proporción, y el hollín pelado dejaría el documento
+        flotando sin sitio. El humo es el único escalón de superficie que este
+        sistema tiene, así que el aire queda dentro del material.
+
+     Sigue sin rectángulo, sin borde y sin radio, con los dos degradados
+     cruzados y `mask-composite: intersect` — la lección ya medida aquí: un
+     degradado radial sobre una caja ancha deja los cantos medios al 86% y el
+     rectángulo se sigue viendo. */
+  .credential {
+    display: block;
+    position: relative;
+    overflow: hidden;
+    /* 1.39, que es la proporción REAL de los siete documentos de Udemy una vez
+       recortados sus márgenes (1.386–1.396). Estaba en 4/3 = 1.333, calculado
+       ANTES del recorte, y con `contain` eso dejaba franjas de humo a los lados
+       de cada certificado. La proporción sale del archivo, no de una fracción
+       redonda. */
+    aspect-ratio: 1.39;
+    background-color: var(--smoke);
+    -webkit-mask-image:
+      linear-gradient(to bottom, transparent 0%, #000 5%, #000 95%, transparent 100%),
+      linear-gradient(to right, transparent 0%, #000 4%, #000 96%, transparent 100%);
+    mask-image:
+      linear-gradient(to bottom, transparent 0%, #000 5%, #000 95%, transparent 100%),
+      linear-gradient(to right, transparent 0%, #000 4%, #000 96%, transparent 100%);
+    -webkit-mask-composite: source-in;
+    mask-composite: intersect;
+  }
+
+  .credential img {
+    display: block;
+    width: 100%;
+    height: 100%;
+    object-fit: contain;
+  }
+
+  /* El premio del NASA: 16/9 y a todo el ancho de la columna. Es UNA imagen y
+     es la credencial insignia del sitio, así que no comparte rejilla con nada
+     ni se encaja en la proporción de los cursos. */
+  .credential-wide {
+    /* 1.49: el certificado del NASA mide 1600×1075 tras quitarle los 156 px de
+       blanco puro que traía a cada lado la captura original de 1920×1080. */
+    aspect-ratio: 1.49;
+  }
+
+  /* Al apuntar, el documento se aclara. No es un `hover:opacity-80`: la imagen
+     vive al 92% para que no compita con la tipografía en reposo, y sube a 100
+     cuando alguien la va a leer de verdad. Y su gemela en `:focus-visible`,
+     porque un efecto que no existe para quien tabula es una trampa. */
+  .credential img {
+    opacity: 0.92;
+    transition: opacity 0.28s var(--ease-out);
+  }
+
+  a:hover .credential img,
+  a:focus-visible .credential img {
+    opacity: 1;
+  }
+
   /* ═══ EL ÍNDICE DEL ARTÍCULO ══════════════════════════════════
      En el margen de anotación, pegajoso. Sale de los encabezados que el
      renderizador ya extrajo, así que no puede discrepar del cuerpo. Solo

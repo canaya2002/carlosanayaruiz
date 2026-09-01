@@ -72,7 +72,17 @@ for (const { archivo, slug } of CREDENCIALES) {
   }
 
   const meta = await sharp(origen).metadata()
+
+  /* RECORTE DE MÁRGENES UNIFORMES, y no es cosmético.
+     El certificado del NASA llegó como captura de 1920×1080 con 156 px de
+     BLANCO PURO (255,255,255) a cada lado: el documento real mide 1608×1080.
+     Al pintarlo con la máscara de `.credential` esas franjas quedaban como dos
+     barras blancas verticales a los cantos — se leían como un defecto de
+     maquetación, no como parte del documento.
+     `trim` quita el borde uniforme mirando el color de la esquina. Si un
+     archivo no tiene márgenes, no hace nada. */
   const info = await sharp(origen)
+    .trim({ background: '#ffffff', threshold: 12 })
     .resize({ width: Math.min(ANCHO_MAX, meta.width ?? ANCHO_MAX), withoutEnlargement: true })
     .webp({ quality: CALIDAD, effort: 6 })
     .toFile(destino)

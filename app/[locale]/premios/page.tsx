@@ -1,4 +1,5 @@
 import type { Metadata } from 'next'
+import Image from 'next/image'
 import { setRequestLocale, getTranslations } from 'next-intl/server'
 import { Link } from '@/i18n/navigation'
 import { Rail } from '@/components/instrument/rail'
@@ -325,6 +326,43 @@ export default async function AwardsPage({ params }: Props) {
                           {award.impact}
                         </p>
                       </div>
+                    ) : null}
+
+                    {/* EL DOCUMENTO. Es la pieza que faltaba: el archivo
+                        estaba en `public/credenciales/` y `award.image` no lo
+                        leía nadie, así que se servía con 200 y no existía para
+                        el visitante.
+
+                        Va a todo el ancho de la columna porque es UNA imagen y
+                        es la credencial insignia del sitio — la que encabeza
+                        esta página, la que va en la descripción SEO y la que se
+                        repite en /sobre-mi, /cv y /proyectos/aurascope. A este
+                        tamaño la cita impresa se lee, que es el punto: la
+                        página promete que no hace falta creerle.
+
+                        `.credential-wide` porque el archivo es 16/9; los
+                        certificados de curso son 4/3 y llevan la clase base.
+
+                        Sin `priority`: el candidato a LCP de esta ruta es el
+                        h1, y este documento vive dos pantallas más abajo. */}
+                    {award.image ? (
+                      <figure className="mt-8 m-0 max-w-[54rem]">
+                        <span className="credential credential-wide">
+                          <Image
+                            src={award.image}
+                            alt={award.title}
+                            width={1600}
+                            height={1075}
+                            sizes="(min-width: 1024px) 54rem, 92vw"
+                            loading="lazy"
+                          />
+                        </span>
+                        <figcaption className="stamp mt-4">
+                          {en
+                            ? 'the certificate, as issued'
+                            : 'el certificado, tal como se emitió'}
+                        </figcaption>
+                      </figure>
                     ) : null}
 
                     {/* Enlazado interno real: la página del proyecto que ganó
