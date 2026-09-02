@@ -1668,6 +1668,110 @@ item y `/en/blog` sigue consolidando con 308.
 >
 > Es idempotente: si el correo ya salió, contesta `ya-enviado` y no manda nada.
 
+## El titular de la portada se cortaba en TODOS los teléfonos
+
+El defecto más caro que ha tenido este sitio, y estuvo vivo hasta el 2026-09-02
+sin que ningún chequeo lo viera. **El `<h1>` de la portada —el elemento LCP— se
+cortaba en seco en un teléfono**, en pantalla se leía «tarda en respond», y
+`npm run check:overflow` respondía «✓ sin desbordamiento en ningún ancho».
+
+### La causa: `white-space: nowrap` en las cinco frases del morph
+
+La celda es `inline-grid`, así que su ancho lo fija el `max-content` de la frase
+más larga. Con `nowrap` ese `max-content` es inalcanzable en un teléfono y la
+caja entera se sale del documento. Medido, frase por frase:
+
+| ancho | columna del h1 | frases que NO caben en una línea |
+|---|---|---|
+| 320 px | 252 px | **las cinco** (42 a 144 px de más) |
+| 360 px | 292 px | **las cinco** (2 a 104 px) |
+| 390 px | 314 px | cuatro de cinco (33 a 98 px) |
+| 414 px | 338 px | cuatro de cinco (20 a 87 px) |
+
+O sea: 14 de los 17.5 segundos del ciclo, con el titular recortado.
+
+**Partir NO reintroduce CLS, y es el punto.** Las cinco frases viven en LA MISMA
+celda, así que la fila mide lo que la más ALTA en todo momento y la línea base de
+la primera no se mueve nunca. Lo único que cambia es que en un teléfono el bloque
+ocupa dos líneas. Medido después: **CLS 0.0000**, y a 1440 la celda sigue midiendo
+997 px y llegando a x=1093 — exactamente lo que este archivo ya documentaba, o sea
+**en escritorio no cambió un píxel**.
+
+Tampoco hace falta guion: la palabra más larga («responder.», 210–226 px) cabe en
+la columna más estrecha (252 px) en todos los anchos. `text-wrap: balance` reparte
+las dos líneas.
+
+⚠ **Si añades una frase al morph, mide su PALABRA más larga contra 252 px**, no la
+frase entera. La frase ya puede partir; una palabra no.
+
+### Por qué la sonda no lo veía, y qué se cambió para que lo vea
+
+`check:overflow` preguntaba **quién recorta** y excusaba a todo elemento con un
+ancestro de `overflow-x: hidden|clip`. Dos ancestros excusaban al titular a la vez,
+y **los dos son legítimos**:
+
+1. `overflow-x: clip` en el `body`, que es la red de seguridad del proyecto.
+2. `overflow-hidden` en la sección del héroe, que existe para que el retrato
+   sangre al canto de la pantalla.
+
+El reporte decía literalmente «culpables=0 (contenidos: clip=259)». **259
+excusados, y uno era el titular.**
+
+La pregunta correcta no es quién recorta sino **QUÉ se recorta**: una caja
+decorativa que sangra al canto es intención del diseño; una línea de texto cortada
+es un defecto, siempre, sin importar quién la corte. Hay una segunda pasada con
+tres filtros:
+
+- **Solo elementos que llevan texto** — nodos de texto propios, o un
+  pseudo-elemento cuyo `content` resuelve a una cadena. Lo segundo no es teórico:
+  las cuatro frases de paso viajan en `data-w` y las pinta `content: attr()`, así
+  que una sonda que solo mire nodos de texto no las ve.
+- **Nada que se MUEVA.** Una marquesina está cortada por definición. Pero el filtro
+  tiene que ser «anima `transform`», no «está animado»: las frases del morph
+  también llevan una animación infinita —el cruce de opacidad— y con el filtro
+  ancho quedaban excusadas otra vez. Se inspeccionan los keyframes.
+- **Nada dentro de un carril desplazable**: ahí el contenido de más se alcanza
+  desplazando, no se pierde.
+
+**Verificado en los dos sentidos, que es la única prueba que vale de un chequeo:**
+con el arreglo puesto pasa las 33 rutas en 7 anchos; **reintroduciendo `nowrap` a
+propósito falla con exit 1** y reporta «78 px de texto fuera del encuadre» a 390 y
+67 a 414 — las mismas cifras medidas a mano.
+
+Y de paso **`WIDTHS` empieza ahora en 320**, que cierra el hueco que este archivo
+tenía declarado como deuda («check:overflow empieza a probar en 360»).
+
+## Cuatro defectos más de esta ronda
+
+- **El panel móvil tenía la misma jerarquía roja que el desplegable.** Los cuatro
+  hijos de «Trayectoria» no llevaban marca, así que su texto arrancaba en x=120
+  mientras el rótulo de su propio grupo estaba en x=130: **los hijos quedaban menos
+  indentados que el padre** y se leían como hermanos suyos. Ahora llevan la misma
+  gramática que escritorio —`.drop-row` con la letra del canal o el tick de 1 px—
+  y las ocho filas de los dos grupos caen al mismo x. La sangría la da la MARCA, no
+  un `pl-*` en la lista: un padding indentaba el texto de Servicios (que ya tenía su
+  letra) y no el de Trayectoria (que no tenía nada).
+
+- **«DESCARGAR EN PDF → →», dos flechas.** `.pull-tab::after` ya pinta la flecha y
+  yo añadí otra en el JSX al migrar el botón de imprimir y el CTA del panel móvil.
+  Los dos consumidores viejos de la clase —/contacto y el pie— nunca la pusieron.
+  **La flecha es parte de la pestaña, no del texto.**
+
+- **La ficha del despacho imprimía el rótulo «Stack» sin un solo valor**, y con él
+  112 px de aire hasta el borde de la sección. `check:layout` lo reportaba como
+  SECCIÓN MUDA y tenía razón: `stack: []` en `data/companies.ts`. Ahora el rótulo,
+  los dos renglones del margen y el `keywords` del JSON-LD **solo se emiten si hay
+  stack** — el `keywords` salía como `""`, una propiedad vacía declarada. Es la
+  regla que este proyecto ya escribió tres veces: si un dato no está en el repo, no
+  aparece **ni su etiqueta**.
+
+- **El rótulo del instrumento era la `<figcaption>` y el pie real un `<p> `suelto.**
+  Una `<figure>` admite UNA sola `<figcaption>`, primer o último hijo, así que solo
+  una de las dos líneas podía serlo — y la que describe la figura es la de abajo,
+  no la etiqueta del panel. Un lector de pantalla anunciaba «Google Search Console ·
+  rendimiento» como pie de una imagen cuyo texto explicativo estaba tres nodos más
+  allá. Invertido.
+
 ## Verificación — en este orden
 
 ```bash
@@ -1981,10 +2085,11 @@ cuando se quiera.
 - **La foto en blanco y negro son 400×400.** A 15rem (240 px) va bien en 1× y aceptable
   en 2×. **No la sirvas más grande que 15rem** en ningún sitio nuevo, o se va a ver
   blanda.
-- **A 320 px la fila del nav desbordaba 6 px** y ningún chequeo lo veía, porque
-  `check:overflow` empieza a probar en 360. Está arreglado —el riel baja a 28 px y el
-  margen de `.sheet` a 16 por debajo de 22.5rem— pero **el hueco del chequeo sigue
-  ahí**: si toca la fila del nav, hay que medir a 320 a mano.
+- ~~A 320 px la fila del nav desbordaba 6 px y ningún chequeo lo veía, porque
+  `check:overflow` empieza a probar en 360.~~ **El hueco del chequeo está cerrado:
+  `WIDTHS` empieza en 320.** El desborde del nav ya estaba arreglado —el riel baja a
+  28 px y el margen de `.sheet` a 16 por debajo de 22.5rem— y ahora la sonda lo
+  comprueba en cada corrida en vez de dejarlo a la memoria de quien toque el nav.
 - **Las etiquetas de año del registro se pisaban** por debajo de 48rem: 18 px de solape
   a 320 px, se leía «20221», porque cinco cifras de cuatro dígitos no caben en 248 px
   de eje. Ahora van giradas (`.axis-year`), que es lo que hace un instrumento cuando el
@@ -2071,11 +2176,23 @@ hechos que no están en el repo**, y cada uno bloquea algo concreto:
    existe, se copia su texto exacto y se llena `awards.ts:image`. Y si es la
    afirmación estelar del sitio, el hueco `premios-diplomas` no debería seguir en
    `priority: 'baja'`.
-3. **¿Número de certificación PMP y fecha de emisión?** Con ellos la fila puede
-   volver a decir «Vigente», con `validFrom`/`expires` e `identifier` en el
-   `hasCredential` del grafo. **Hasta ese día, no.** El PMI tiene registro público
-   de titulares: no ponerlo, en la página titulada «Credenciales que se pueden
-   comprobar», es la omisión más cara del sitio.
+3. ~~**¿Número de certificación PMP y fecha de emisión?**~~ **CONTESTADO el
+   2026-09-02, y la respuesta cierra el tema.** El dueño confirmó que tiene la
+   certificación del PMI emitida y vigente, y que **no va a publicar el folio ni
+   la fecha**. Se le preguntó entre tres opciones explícitas —la tiene sin dar
+   folio, solo tiene el curso de preparación de 35 PDU, o está en trámite— y
+   eligió la primera.
+
+   **Las 29 afirmaciones de «Certificado PMP» del repo se quedan intactas**, y
+   eso incluye el `hasCredential` del JSON-LD, el `<title>` de
+   /certificaciones, `llms.txt`, las cuatro tarjetas OG y el `summary` de
+   `data/personal.ts`. Son ciertas.
+
+   Lo que sigue sin poder escribirse, y no es un pendiente sino el estado
+   correcto: la fila dice «sin fecha» y no «Vigente», el `hasCredential` va sin
+   `identifier`/`validFrom`/`expires`, y no hay enlace al registro del PMI
+   —que se consulta por número—. ⚠ **No reabrir.** El detalle está en
+   `docs/CREDENCIALES.md`.
 4. **¿Se conecta Supabase?** Mientras `SUPABASE_URL` esté vacía, el aviso lo
    declara «previsto y no conectado» y la cláusula de seguridad no afirma nada
    sobre row level security. ⚠ Al conectarlo: comprobar RLS, nombrar al proveedor

@@ -219,7 +219,14 @@ function buildGraph(
           inLanguage: lang,
           author: { '@id': PERSON_ID },
           creator: { '@id': PERSON_ID },
-          keywords: company.stack.join(', '),
+          /* `keywords` solo si hay stack: con `stack: []` se emitía
+             `"keywords": ""` en el JSON-LD, una propiedad vacía declarada.
+             Marcar lo que no es cierto es peor que no marcar — la regla ya
+             está escrita en `lib/schema.ts` para SearchAction y
+             contactOption. */
+          ...(company.stack.length > 0
+            ? { keywords: company.stack.join(', ') }
+            : {}),
           ...(company.url ? { url: company.url } : {}),
         },
       ]
@@ -402,31 +409,41 @@ export default async function ProjectPage({ params }: Props) {
                   quiere saber, y son datos, así que van en la cara de
                   máquina. */}
               <aside className="margin margin-sticky">
-                <div className="margin-row">
-                  <span className="margin-key">{en ? 'stack' : 'stack'}</span>
-                  <span className="margin-read">{company.stack.length}</span>
-                  <span className="margin-val">
-                    {en
-                      ? 'technologies on the record.'
-                      : 'tecnologías en el registro.'}
-                  </span>
-                </div>
+                {/* Los dos renglones del stack, solo si hay stack. Con
+                    `stack: []` el primero leía «stack · 0 · tecnologías en el
+                    registro» —una cifra de cero presentada como lectura de
+                    instrumento— y el segundo, «construido con» sobre una lista
+                    vacía. El margen de una gráfica lleva la LECTURA; un cero
+                    ahí no es una lectura, es un hueco con rótulo. */}
+                {company.stack.length > 0 ? (
+                  <>
+                    <div className="margin-row">
+                      <span className="margin-key">stack</span>
+                      <span className="margin-read">{company.stack.length}</span>
+                      <span className="margin-val">
+                        {en
+                          ? 'technologies on the record.'
+                          : 'tecnologías en el registro.'}
+                      </span>
+                    </div>
 
-                <div className="margin-row">
-                  <span className="margin-key">
-                    {en ? 'built with' : 'construido con'}
-                  </span>
-                  <ul className="mt-2 grid gap-1">
-                    {company.stack.map((tech) => (
-                      <li
-                        key={tech}
-                        className="font-mono text-[0.6875rem] leading-[1.4] tracking-[0.04em] text-ink"
-                      >
-                        {tech}
-                      </li>
-                    ))}
-                  </ul>
-                </div>
+                    <div className="margin-row">
+                      <span className="margin-key">
+                        {en ? 'built with' : 'construido con'}
+                      </span>
+                      <ul className="mt-2 grid gap-1">
+                        {company.stack.map((tech) => (
+                          <li
+                            key={tech}
+                            className="font-mono text-[0.6875rem] leading-[1.4] tracking-[0.04em] text-ink"
+                          >
+                            {tech}
+                          </li>
+                        ))}
+                      </ul>
+                    </div>
+                  </>
+                ) : null}
 
                 {company.docs.length > 0 ? (
                   <div className="margin-row">
@@ -479,14 +496,26 @@ export default async function ProjectPage({ params }: Props) {
               ))}
             </dl>
 
-            <h3 className="stamp mt-12 block">{t('stackTitle')}</h3>
-            <ul className="mt-4 flex flex-wrap gap-x-7 gap-y-2">
-              {company.stack.map((item) => (
-                <li key={item} className="font-mono text-sm text-ink">
-                  {item}
-                </li>
-              ))}
-            </ul>
+            {/* El rótulo SOLO si hay stack. Con `stack: []` —el caso del
+                despacho— esto imprimía «Stack» y debajo una `<ul>` vacía:
+                un rótulo sin valor y 112 px de aire hasta el borde de la
+                sección. `check:layout` lo reportaba como SECCIÓN MUDA y
+                tenía razón. Es la misma regla que ya aplican `docs` y la
+                galería treinta líneas más abajo, y la que este proyecto
+                escribió para `.plaque`: si un dato no está en el repo, no
+                aparece — ni su etiqueta. */}
+            {company.stack.length > 0 ? (
+              <>
+                <h3 className="stamp mt-12 block">{t('stackTitle')}</h3>
+                <ul className="mt-4 flex flex-wrap gap-x-7 gap-y-2">
+                  {company.stack.map((item) => (
+                    <li key={item} className="font-mono text-sm text-ink">
+                      {item}
+                    </li>
+                  ))}
+                </ul>
+              </>
+            ) : null}
           </section>
 
           {/* ═══ LA PLACA: QUÉ HICE ══════════════════════════════

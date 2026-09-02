@@ -58,7 +58,15 @@ export async function Evidence({
 
   return (
     <figure className={`m-0 ${className ?? ''}`}>
-      <figcaption className="stamp">{ev.instrument}</figcaption>
+      {/* El rótulo del instrumento va como `<p>` y NO como `<figcaption>`.
+          Una `<figure>` admite UNA sola `<figcaption>` y tiene que ser el
+          primer o el último hijo, así que solo una de las dos líneas puede
+          serlo — y la que describe la figura es la de abajo, no la etiqueta
+          del panel. Con la etiqueta arriba como figcaption, el pie real
+          quedaba como un párrafo sin asociar y un lector de pantalla
+          anunciaba «Google Search Console · rendimiento» como el pie de una
+          imagen cuyo texto explicativo estaba tres nodos más allá. */}
+      <p className="stamp">{ev.instrument}</p>
 
       {/* La placa. Dos columnas en teléfono y cuatro a partir de 40rem: a
           375 px, cuatro celdas dejarían «Chrome UX Report» en cinco líneas
@@ -89,9 +97,13 @@ export async function Evidence({
         />
       </span>
 
-      <p className="mt-4 max-w-[62ch] text-sm leading-relaxed text-ink-muted">
+      {/* El pie de verdad, y último hijo de la `<figure>`, que es donde el
+          HTML permite la `<figcaption>`. Dice de qué propiedad son los
+          números y con qué papel se accede a ella: sin eso, un visitante
+          asumiría que son de este dominio. */}
+      <figcaption className="mt-4 max-w-[62ch] text-sm leading-relaxed text-ink-muted">
         {ev.caption}
-      </p>
+      </figcaption>
     </figure>
   )
 }

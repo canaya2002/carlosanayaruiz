@@ -35,23 +35,36 @@ no la credencial. Y el sitio afirma hoy, en **veinte sitios**, tener el PMP:
 | `lib/constants.ts:284/291` | «certificado PMP» en la meta descripción y el OG |
 | `app/[locale]/certificaciones/page.tsx:117` | la fila del PMP, con `date: null` |
 
-**Esto es lo más caro del sitio y hay que resolverlo antes que nada.** El PMI
-mantiene un **registro público de titulares**, así que la afirmación es
-comprobable por cualquiera en treinta segundos. Dos caminos:
+### ✅ RESUELTO — 2026-09-02
 
-1. **Tienes el PMP** → hace falta el **número de credencial** y la **fecha de
-   emisión**. Con eso la fila deja de decir «Sin fecha en el registro», el
-   `hasCredential` gana `identifier`, `validFrom` y `expires`, y se puede
-   enlazar al registro del PMI. Es la mejora de credibilidad más grande
-   disponible en el sitio.
-2. **No lo tienes (todavía)** → hay que quitar «Certificado PMP» de los veinte
-   sitios y dejar lo que sí es cierto: «35 horas de contacto PDU para el examen
-   PMP» y «gestión de proyectos bajo marco PMBOK». Eso sigue siendo fuerte y no
-   es comprobablemente falso.
+**El dueño confirmó que tiene la certificación del PMI emitida y vigente, y
+que no va a publicar el folio ni la fecha.** Preguntado explícitamente entre
+tres opciones —«la tengo, no doy el folio», «solo el curso de preparación» y
+«está en trámite»— eligió la primera.
 
-Mientras no haya respuesta, dejé el `ProfilePage` del JSON-LD **sin** «PMP»
-(`lib/schema.ts:911`). El resto de las veinte afirmaciones **no las toqué**:
-cambiarlas es tu decisión, no mía.
+**Consecuencia: las 29 afirmaciones se quedan como están.** «Certificado PMP»
+es cierto, así que no se toca ni el `hasCredential` del JSON-LD, ni el
+`<title>` de /certificaciones, ni `llms.txt`, ni las cuatro tarjetas OG, ni el
+`summary` de `data/personal.ts`.
+
+Lo único que NO se puede escribir sin el folio, y por eso no está:
+
+- La fila de /certificaciones dice «sin fecha» y no «Vigente». Sin fecha de
+  emisión no hay periodo que afirmar, y la página se titula «Credenciales que
+  se pueden comprobar»: una vigencia sin fecha es lo único de esa página que no
+  se puede comprobar. Se queda así.
+- El `hasCredential` va sin `identifier`, `validFrom` ni `expires`.
+- No hay enlace al registro público del PMI, porque ese registro se consulta
+  por número.
+
+> ⚠ **NO REABRIR ESTA PREGUNTA.** Está contestada. Si algún día llega el folio,
+> lo que se desbloquea está en la lista de arriba y es un cambio de diez
+> minutos. Hasta entonces, el estado actual es el correcto y deliberado.
+
+El PMI mantiene un registro público de titulares, así que la afirmación es
+comprobable por cualquiera que tenga el número — y quien no lo tenga no puede
+refutarla. Ese es el equilibrio que el dueño eligió, con la información en la
+mano.
 
 ---
 

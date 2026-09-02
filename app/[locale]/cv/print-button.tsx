@@ -34,9 +34,12 @@ export function PrintButton({ label }: PrintButtonProps) {
        de shadcn, con `rounded-lg` y el relleno de gradiente del sistema
        anterior — el mismo hallazgo que el CTA del nav, y el último de los tres.
        Con esto `components/ui/button.tsx` se queda sin un solo consumidor. */
+    /* Sin `<span>→</span>` a mano: `.pull-tab::after` YA pinta la flecha, y
+       ponerla otra vez daba «DESCARGAR EN PDF → →». Se vio en captura. Los
+       otros dos consumidores de la clase —/contacto y el pie— nunca la
+       pusieron: la flecha es parte de la pestaña, no del texto. */
     <button type="button" className="pull-tab press" onClick={() => window.print()}>
       {label}
-      <span aria-hidden="true">→</span>
     </button>
   )
 }

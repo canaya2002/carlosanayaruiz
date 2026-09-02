@@ -1373,11 +1373,42 @@
     vertical-align: baseline;
   }
 
+  /* ── LAS FRASES PARTEN, Y ESO NO ROMPE EL CERO CLS ────────────
+     Aquí había `white-space: nowrap` y era un defecto medido en los cuatro
+     anchos de teléfono. La celda es `inline-grid`, así que su ancho lo fija
+     el `max-content` de la frase más larga; con `nowrap` ese max-content es
+     inalcanzable y la caja entera se sale del documento:
+
+       320px · columna 252 · las CINCO frases se salen (42 a 144 px)
+       360px · columna 292 · las CINCO se salen (2 a 104 px)
+       390px · columna 314 · CUATRO de cinco (33 a 98 px)
+       414px · columna 338 · CUATRO de cinco (20 a 87 px)
+
+     Y no lo veía ningún chequeo: `body` lleva `overflow-x: clip`, así que
+     `scrollWidth` del documento seguía dando 390 mientras el titular se
+     cortaba en seco. En pantalla eso era «tarda en respond» — el elemento
+     LCP de la portada, recortado, 14 de los 17.5 segundos del ciclo.
+
+     Partir NO reintroduce CLS, y es el punto: las cinco frases viven en LA
+     MISMA celda de grid, así que la fila mide lo que la más ALTA en todo
+     momento y la línea base de la primera no se mueve nunca. Lo único que
+     cambia es que en un teléfono el bloque ocupa dos líneas.
+
+     Tampoco hace falta guion: medido, la palabra más larga («responder.»,
+     210–226 px) cabe en la columna más estrecha (252 px) en todos los
+     anchos. No hay nada que partir por sílabas.
+
+     `text-wrap: balance` reparte las dos líneas en vez de dejar una llena y
+     una con dos palabras. En escritorio no cambia nada: ahí el max-content
+     entra en una línea y el reparto es trivial.
+
+     ⚠ Si añades una frase, mide su PALABRA más larga contra 252 px, no la
+     frase entera. La frase ya puede partir; una palabra no. */
   .morph > span {
     grid-area: 1 / 1;
     opacity: 0;
-    white-space: nowrap;
     text-align: left;
+    text-wrap: balance;
   }
 
   .morph > span[data-w]::after {

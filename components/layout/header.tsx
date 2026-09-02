@@ -686,7 +686,11 @@ export function Header() {
                   current={isCurrent(group.hub)}
                   onNavigate={() => setMenuOpen(false)}
                 />
-                <ul className="pb-3 pl-1">
+                {/* Sin `pl-*`: la sangría la da la MARCA de cada renglón, que
+                    es lo que la hace consistente entre los dos grupos. Un
+                    padding en la lista indentaba el texto de Servicios (que ya
+                    tenía su letra) y no el de Trayectoria (que no tenía nada). */}
+                <ul className="pb-2">
                   {group.items.map((item) => {
                     return (
                       <li key={item.href}>
@@ -696,22 +700,34 @@ export function Header() {
                           aria-current={
                             isCurrent(item.href) ? 'page' : undefined
                           }
-                          className={cn(
-                            'group/row press flex min-h-11 items-center gap-3 text-sm',
-                            isCurrent(item.href)
-                              ? 'bg-brand-wash font-semibold text-ink'
-                              : 'text-ink-muted hover:bg-brand-wash/60'
-                          )}
+                          className="drop-row press"
                         >
-                          {/* La letra del canal, o nada. Ver «El nav,
-                              migrado» en globals.css: el recuadro con sombra
-                              que se inclinaba era el patrón que la regla cero
-                              prohíbe. */}
+                          {/* MISMA gramática que el desplegable de escritorio,
+                              y el motivo se vio en captura a 390: los cuatro
+                              hijos de «Trayectoria» no llevaban marca, así que
+                              su texto arrancaba a x=120 mientras el rótulo de
+                              su propio grupo estaba en x=130. Los hijos
+                              quedaban MENOS indentados que el padre y se leían
+                              como hermanos suyos, no como su contenido.
+
+                              Con la marca —la letra del canal donde hay canal,
+                              un tick de 1 px donde no— las ocho filas de los
+                              dos grupos caen al mismo x y la jerarquía se lee
+                              sola. Las páginas de trayectoria siguen SIN letra:
+                              no son canales ni una secuencia.
+
+                              Y el estado activo deja de ser `bg-brand-wash`, un
+                              lavado de fondo a sangre detrás del texto, o sea
+                              una píldora en un sistema que no tiene píldoras.
+                              `.drop-row` lo resuelve con tinta plena y el trazo
+                              de la pluma ya escrito. */}
                           {item.ch ? (
                             <span className="nav-ch" aria-hidden="true">
                               {item.ch}
                             </span>
-                          ) : null}
+                          ) : (
+                            <span className="drop-tick" aria-hidden="true" />
+                          )}
                           {item.label}
                         </Link>
                       </li>
@@ -745,8 +761,9 @@ export function Header() {
             onClick={() => setMenuOpen(false)}
             className="pull-tab press mt-8 w-full"
           >
+            {/* Sin flecha a mano: la pinta `.pull-tab::after`. Puesta dos
+                veces daba «Contrátame → →». */}
             {t('hireMe')}
-            <span aria-hidden="true">→</span>
           </Link>
         </nav>
       </div>
