@@ -9,7 +9,7 @@ import { Rail } from '@/components/instrument/rail'
 import { Marks } from '@/components/instrument/marks'
 import { Ribbon } from '@/components/instrument/ribbon'
 import { BlogStrip } from '@/components/sections/blog-strip'
-import { Evidence } from '@/components/instrument/evidence'
+import { DocStrip } from '@/components/instrument/doc-strip'
 import { getServices, servicePath } from '@/data/services'
 import { getSkillCategories } from '@/data/skills'
 import { getExperiences, type Experience } from '@/data/experience'
@@ -375,27 +375,40 @@ export default async function HomePage({ params }: Props) {
                   : 'los huecos entre bandas son reales y no se rellenan.'}
               </p>
 
-              {/* LA PRUEBA de todo lo que dice esta página, y durante meses fue
-                  el hueco más importante del sitio: `docs/MEDIA.md` lo pedía
-                  como el único archivo que valía la pena conseguir si solo
-                  llegaba uno. Ya llegó, y es de un instrumento de terceros —el
-                  panel de Google— sobre una propiedad real.
+              {/* LOS DOCUMENTOS, CORRIENDO.
+                  Aquí iba una figura con capturas del panel de Search Console
+                  de la propiedad del despacho, y el dueño la cortó con razón:
+                  son datos de su empleador y llevaban el dominio a la vista.
+                  Ver «La evidencia que se retiró» en CLAUDE.md.
 
-                  Va aquí y no en el héroe a propósito. El héroe ya tiene su
-                  prueba: `<Marks>` mide la página que el visitante tiene
-                  abierta. Esa dice «mido»; esta dice «y esto salió». Son dos
-                  afirmaciones distintas y competirían en la misma pantalla.
+                  Lo que va en su lugar son los ocho documentos que SÍ son
+                  suyos y llevan su nombre impreso. Es la misma clase de
+                  prueba —un tercero firmando— sin datos de nadie más, y en el
+                  vocabulario del sitio: una tira de papel que sale del tambor.
 
-                  UNA sola en la portada. Las otras dos viven en /seo-tecnico y
-                  en la ficha del despacho, que es donde el detalle pertenece:
-                  tres gráficas seguidas aquí serían un dossier, no una
-                  portada. */}
-              <div className="reveal mt-16 max-w-[54rem]">
-                <Evidence
-                  id="search-console-alcance"
-                  sizes="(min-width: 1024px) 54rem, 92vw"
+                  El enlace no es decorativo: la portada tiene prioridad 1.0 y
+                  hasta ahora no mandaba nada a /certificaciones. */}
+              <p className="stamp mt-16">
+                {en
+                  ? 'the documents, as issued'
+                  : 'los documentos, tal como se emitieron'}
+              </p>
+              <div className="reveal -mx-5 mt-6 sm:-mx-10">
+                <DocStrip
+                  label={
+                    en
+                      ? 'Certificates and awards, as issued'
+                      : 'Certificados y reconocimientos, tal como se emitieron'
+                  }
                 />
               </div>
+              <p className="mt-6">
+                <Link href="/certificaciones" className="link-stylus">
+                  {en
+                    ? 'every credential, with its issuer and folio →'
+                    : 'cada credencial, con su emisor y su folio →'}
+                </Link>
+              </p>
             </div>
           </section>
 

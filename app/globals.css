@@ -1270,6 +1270,7 @@
     clip-path: none !important;
   }
   .drum-marks,
+  .doc-track,
   .sheet-field::before,
   .dial-sweep,
   .dial-bezel,
@@ -2697,61 +2698,29 @@
   }
 
   /* ── EL RETRATO EN BLANCO Y NEGRO ─────────────────────────────
-     Aquí vivía `.portrait`: una plancha de papel con la foto en duotono
-     de media tinta y una trama de rayas de 3 px encima. Existía para
-     salvar una foto de 800 px con fondo de oficina — la convertía en un
-     artefacto de imprenta deliberado en vez de una limitación de
-     resolución.
+     Va en «el operador», en /sobre-mi y en el CV. Jubiló a la foto de
+     800×800 con fondo de oficina que era deuda declarada, y con ella se
+     retiró `.portrait` entero: la plancha de papel, el duotono de media
+     tinta y la trama de rayas de 3 px. Esa muleta existía para convertir
+     una foto pobre en un artefacto de imprenta deliberado; con una de
+     estudio no hace falta.
 
-     Llegó una foto en blanco y negro de estudio, así que la muleta se
-     retiró: «quita esas líneas sobre mi imagen». Sin las rayas, la
-     plancha clara tampoco tiene sentido —el fondo oscuro de la foto
-     contra papel sería un rectángulo negro— así que lo que queda es la
-     misma regla que el retrato del héroe: se DISUELVE en el material.
+     ── ⚠ AQUÍ HABÍA UNA MÁSCARA Y SE RETIRÓ, PERO NO BASTA ──
+     Llevaba los dos degradados lineales cruzados con
+     `mask-composite: intersect`, y se fueron con el resto por la misma
+     instrucción del dueño. La diferencia con los certificados y las
+     portadas del blog es que **este archivo SÍ trae el difuminado horneado
+     en su canal alfa**: medido, 50 px por los cuatro lados de un cuadro de
+     400×400, con el núcleo opaco en 300×300 exactos.
 
-     La máscara radial está descentrada (42% / 34%) porque ahí está la
-     cara: se mantiene nítida y lo que se va son las esquinas. Y el
-     `sepia` mínimo existe porque la foto es gris neutro y el negro de
-     este sistema es cálido; sin él, la foto se lee azulada al lado del
-     hollín. */
-  /* ── POR QUÉ LA VIÑETA NO ESTÁ AQUÍ ──
-     Estaba, y no funcionaba. Sobre un CUADRADO, un degradado radial que
-     llegue a cero en las esquinas se come también los bordes medios —solo
-     están 1.41 veces más cerca del centro—, así que en CSS había que
-     elegir entre dejar el rectángulo visible o comerse los hombros. Con
-     140% de extensión las esquinas seguían al 60% de opacidad y el
-     rectángulo se veía entero.
+     O sea que quitar el CSS deja de DUPLICARLO —que era el efecto más
+     visible— pero el canto suave sigue viniendo del archivo. Recortar al
+     núcleo cuesta el 25% del ancho y el borde superior pasa a 2 px del
+     nacimiento del pelo, así que no se recorta: **un canto duro en esta
+     foto necesita el original.**
 
-     Así que la viñeta va HORNEADA en el canal alfa del `.webp`, con la
-     curva exacta que hace falta (opaco hasta el 52% del radio, 0 al
-     100%). Ahí también va el ajuste de niveles que baja el fondo de
-     estudio al nivel del hollín. El archivo llega listo y el CSS no tiene
-     que pelear con la geometría de un cuadrado.
-
-     Lo único que queda en CSS es el matiz: la foto es gris NEUTRO y el
-     negro de este sistema es cálido. Sin el sepia mínimo se lee azulada
-     al lado del hollín. */
-  /* El difuminado va TAMBIÉN en CSS, y no es cinturón y tirantes: el alfa
-     horneado en el archivo pasa por el optimizador de imágenes de Next, y ahí
-     medí que no siempre llega intacto —una variante del srcset volvía opaca y
-     el canto duro reaparecía. Un doble degradado con  difumina los CUATRO cantos por igual sin depender de nada más
-     que del navegador.
-
-     Y tiene que ser RECTANGULAR, no radial: sobre un cuadrado, un radial que
-     llegue a cero en las esquinas deja los bordes medios al 86% de opacidad
-     —solo están 1.41 veces más cerca del centro— así que el rectángulo se
-     seguía viendo entero. Ya se probó. */
-  /* El difuminado va TAMBIÉN en CSS, y no es cinturón y tirantes: el alfa
-     horneado en el archivo pasa por el optimizador de imágenes de Next y ahí
-     medí que no llega intacto — una variante del srcset volvía opaca y el
-     canto duro reaparecía. Un doble degradado con `mask-composite: intersect`
-     difumina los CUATRO cantos por igual sin depender de nada más que del
-     navegador.
-
-     Y tiene que ser RECTANGULAR, no radial. Sobre un cuadrado, un degradado
-     radial que llegue a cero en las esquinas deja los bordes medios al 86% de
-     opacidad —solo están 1.41 veces más cerca del centro— así que el
-     rectángulo se seguía viendo entero. Ya se probó dos veces. */
+     El `sepia(0.13)` se queda: la foto es gris NEUTRO y el negro de este
+     sistema es cálido, así que sin él se lee azulada al lado del hollín. */
   .figure-bw {
     position: relative;
     display: block;
@@ -2759,25 +2728,15 @@
        contenedor sin límite: por debajo de 768px la foto se servía a más de 400
        px de ancho y se veía blanda. CLAUDE.md ya tenía la regla escrita —«no la
        sirvas más grande que 15rem en ningún sitio nuevo»— y no había nada que la
-       hiciera cumplir. Un solo cambio cubre las seis rutas que la montan. */
+       hiciera cumplir. Un solo cambio cubre las seis rutas que la montan.
+
+       ⚠ Al retirar la máscara se me fue este tope y con él entraron dos
+       defectos: la foto volvió a estirarse y `check:layout` reportó cortes de
+       240 a 299 px en tres rutas. NO añadir `overflow: hidden` ni un
+       `background-color` aquí: el archivo lleva 50 px de alfa difuminado por
+       lado, así que un fondo de humo se vería COMO UN HALO a través de esos
+       píxeles semitransparentes. */
     max-width: 15rem;
-    mask-image:
-      linear-gradient(
-        to right,
-        transparent 0%,
-        #000 12%,
-        #000 88%,
-        transparent 100%
-      ),
-      linear-gradient(
-        to bottom,
-        transparent 0%,
-        #000 11%,
-        #000 89%,
-        transparent 100%
-      );
-    mask-composite: intersect;
-    -webkit-mask-composite: source-in;
   }
 
   .figure-bw img {
@@ -3302,12 +3261,30 @@
 
     /* El obturador que IMPRIME el retrato al entrar: baja fuera del
        encuadre llevando en el borde una línea de papel. */
+    /* ── LA PERSIANA VA HACIA ARRIBA, NO HACIA ABAJO ──────────────
+       Iba de `translateY(0)` a `translateY(100%)`, y ese es EXACTAMENTE el
+       defecto que este archivo ya documenta como corregido en
+       `.figure-scan`: con el final abajo la capa se queda 240 px POR DEBAJO
+       del encuadre y el `scrollHeight` de la figura queda al doble de su
+       alto. Medido: `.figure-bw` de 240×240 con `scrollHeight` 480, y la
+       capa a 240 px del canto superior.
+
+       Y aquí se veía, no solo se medía: la capa lleva
+       `border-bottom: 1px solid var(--paper)`, así que quedaba una raya de
+       papel de 240 px flotando 480 px más abajo del retrato, sobre nada. El
+       cuerpo en hollín sobre hollín no se notaba; la raya sí.
+
+       Ahora sube: de `translateY(0)` a `translateY(-100%)`, y la regla pasa
+       al canto SUPERIOR de la capa para que sea el filo de la persiana que
+       se levanta. Al terminar, la capa está entera por ENCIMA del encuadre —
+       y `scrollHeight` solo mide lo que sobra por abajo, así que arriba no
+       cuenta. Es la misma razón que invirtió `drum-turn`. */
     @keyframes shutter-lift {
       from {
         transform: translate3d(0, 0, 0);
       }
       to {
-        transform: translate3d(0, 100%, 0);
+        transform: translate3d(0, -100%, 0);
       }
     }
 
@@ -3316,7 +3293,7 @@
       inset: 0;
       z-index: 2;
       background: var(--soot);
-      border-bottom: 1px solid var(--paper);
+      border-top: 1px solid var(--paper);
       animation: shutter-lift 1ms linear both;
       animation-timeline: view();
       animation-range: var(--reveal-range);
@@ -3547,6 +3524,76 @@
     will-change: transform;
   }
 
+  /* ── LA CINTA DE DOCUMENTOS ────────────────────────────────────
+     El mismo mecanismo que `.ribbon` pero con documentos en vez de
+     etiquetas. Vive en la portada, en el sitio que ocupaba la figura de
+     evidencia que se retiró.
+
+     ── LOS CANTOS VAN DUROS ──
+     «Sin esos efectos en los márgenes, no me gustó en ningún lado.» Así
+     que un documento aquí NO lleva máscara de disolución: se acaba donde
+     se acaba el papel. Lo único que queda es el degradado de los EXTREMOS
+     de la tira, que no es el canto de una imagen sino el de la cinta —una
+     cinta cortada en seco contra el borde de la pantalla deja de leerse
+     como cinta.
+
+     El alto lo fija `--doc-h` y el ancho de cada uno sale de su propia
+     proporción, así que el certificado del NASA (1.49) pasa más ancho que
+     los de curso (1.39) sin que nada se deforme. `object-fit` no hace
+     falta: la caja la dicta la imagen.
+
+     ── NI EL DEGRADADO DE LOS EXTREMOS ──
+     `.ribbon` desvanece sus dos cantos con una máscara de 7 rem para que la
+     cinta «entre y salga del tambor». Aquí NO, y se probó en captura antes
+     de decidirlo: sobre TEXTO un canto desvanecido se lee como «hay más
+     fuera de cuadro», pero sobre un DOCUMENTO se lee como un error de
+     impresión — el certificado del NASA, que es la credencial insignia,
+     entraba medio apagado. Con `overflow: hidden` a secas el papel se corta
+     limpio contra el canto de la pantalla, que es lo que hace una tira
+     pasando por detrás de una ventana.
+
+     Las cintas de TEXTO conservan la suya: ahí el degradado sí ayuda y
+     llevan varias rondas sin que nadie se queje. */
+  .doc-strip {
+    --doc-h: 11rem;
+    position: relative;
+    overflow: hidden;
+    pointer-events: none;
+    user-select: none;
+  }
+
+  .doc-track {
+    display: flex;
+    width: max-content;
+    align-items: center;
+    will-change: transform;
+  }
+
+  .doc-copy {
+    display: flex;
+    align-items: center;
+    gap: 1.5rem;
+    margin: 0;
+    padding: 0 0.75rem 0 0;
+    list-style: none;
+    flex: none;
+  }
+
+  .doc-item {
+    flex: none;
+    height: var(--doc-h);
+    /* El humo por detrás: un documento escaneado tiene fondo blanco, y si
+       el archivo trajera aire a los lados quedaría flotando sobre el
+       hollín pelado. Es el único escalón de superficie del sistema. */
+    background-color: var(--smoke);
+  }
+
+  .doc-item img {
+    display: block;
+    height: 100%;
+    width: auto;
+  }
+
   .ribbon-item {
     display: inline-flex;
     align-items: center;
@@ -3719,6 +3766,13 @@
     to {
       transform: translate3d(-50%, 0, 0);
     }
+  }
+
+  /* La cinta de documentos comparte el keyframe: la pista lleva el
+     contenido duplicado, así que el 50% exacto devuelve al punto de
+     partida sin medir nada. */
+  .doc-track {
+    animation: ribbon-run var(--doc-dur, 96s) linear infinite;
   }
 
   .ribbon-track {
@@ -4766,11 +4820,12 @@
   }
 
   /* ═══ LA PORTADA ══════════════════════════════════════════════
-     Se disuelve en el material, igual que los dos retratos: sin rectángulo,
-     sin borde y sin radio. Dos degradados lineales cruzados con
-     `mask-composite: intersect`, que es la lección ya medida en este
-     proyecto — un degradado radial sobre una caja ancha deja los cantos
-     medios al 86% de opacidad y el rectángulo se sigue viendo.
+     ⚠ **LLEVABA los dos degradados cruzados y se retiraron.** «Sin esos
+     efectos en los márgenes, no me gustó en ningún lado.» La portada de un
+     artículo se acaba ahora donde se acaba la imagen: rectángulo sí, pero
+     sin borde, sin radio y sin sombra. Los 99 archivos NO llevan alfa
+     —comprobado con sharp—, así que quitar la máscara del CSS deja el canto
+     limpio sin tocar un solo archivo. Ver la nota larga de `.credential`.
 
      El color de las portadas (violeta, cian, ámbar, magenta, dorado) es el
      acento del clúster y vive AQUÍ y en ningún otro sitio de la interfaz:
@@ -4781,14 +4836,6 @@
     position: relative;
     overflow: hidden;
     aspect-ratio: 16 / 9;
-    -webkit-mask-image:
-      linear-gradient(to bottom, transparent 0%, #000 14%, #000 84%, transparent 100%),
-      linear-gradient(to right, transparent 0%, #000 6%, #000 94%, transparent 100%);
-    mask-image:
-      linear-gradient(to bottom, transparent 0%, #000 14%, #000 84%, transparent 100%),
-      linear-gradient(to right, transparent 0%, #000 6%, #000 94%, transparent 100%);
-    -webkit-mask-composite: source-in;
-    mask-composite: intersect;
   }
 
   .cover img {
@@ -4800,14 +4847,6 @@
 
   /* En la rejilla del índice la portada es pequeña y el difuminado vertical
      se le comería el título rotulado. Ahí solo se disuelven los cantos. */
-  .cover-thumb {
-    -webkit-mask-image:
-      linear-gradient(to bottom, transparent 0%, #000 8%, #000 92%, transparent 100%),
-      linear-gradient(to right, transparent 0%, #000 4%, #000 96%, transparent 100%);
-    mask-image:
-      linear-gradient(to bottom, transparent 0%, #000 8%, #000 92%, transparent 100%),
-      linear-gradient(to right, transparent 0%, #000 4%, #000 96%, transparent 100%);
-  }
 
   /* ═══ EL DOCUMENTO DE UNA CREDENCIAL ══════════════════════════
      Un certificado escaneado es la ÚNICA imagen de este sitio que existe para
@@ -4825,10 +4864,26 @@
         flotando sin sitio. El humo es el único escalón de superficie que este
         sistema tiene, así que el aire queda dentro del material.
 
-     Sigue sin rectángulo, sin borde y sin radio, con los dos degradados
-     cruzados y `mask-composite: intersect` — la lección ya medida aquí: un
-     degradado radial sobre una caja ancha deja los cantos medios al 86% y el
-     rectángulo se sigue viendo. */
+     ── ⚠ EL DIFUMINADO DE LOS CANTOS SE RETIRÓ ──
+     «Sin esos efectos en los márgenes, no me gustó en ningún lado.» Iban
+     dos degradados lineales cruzados con `mask-composite: intersect`, y la
+     razón original era buena —«sin rectángulo, sin borde y sin radio»— pero
+     el brief gana, y este proyecto ya tiene escrito que el brief gana.
+
+     Lo que se pierde y lo que no: la caja vuelve a ser un rectángulo, sí,
+     pero sigue sin borde, sin radio y sin sombra. Y lo que se gana es que
+     el documento se lee entero: sobre una captura clara el degradado se
+     veía como una viñeta sucia, no como una disolución.
+
+     Los archivos NO llevan alfa (comprobado con sharp en los ocho
+     certificados y en dos portadas del blog), así que quitar la máscara del
+     CSS basta para que el canto quede limpio. La única excepción del sitio
+     es `carlos-anaya-ruiz-bn.webp`, que trae 50 px de difuminado HORNEADO
+     en su canal alfa por los cuatro lados: ahí quitar el CSS deja de
+     duplicarlo, pero el canto suave sigue viniendo del archivo. Un canto
+     duro en esa foto necesita el original.
+
+     ⚠ NO LO VUELVAS A PONER sin que el dueño lo pida. */
   .credential {
     display: block;
     position: relative;
@@ -4840,14 +4895,6 @@
        redonda. */
     aspect-ratio: 1.39;
     background-color: var(--smoke);
-    -webkit-mask-image:
-      linear-gradient(to bottom, transparent 0%, #000 5%, #000 95%, transparent 100%),
-      linear-gradient(to right, transparent 0%, #000 4%, #000 96%, transparent 100%);
-    mask-image:
-      linear-gradient(to bottom, transparent 0%, #000 5%, #000 95%, transparent 100%),
-      linear-gradient(to right, transparent 0%, #000 4%, #000 96%, transparent 100%);
-    -webkit-mask-composite: source-in;
-    mask-composite: intersect;
   }
 
   .credential img {
@@ -4878,57 +4925,6 @@
   a:hover .credential img,
   a:focus-visible .credential img {
     opacity: 1;
-  }
-
-  /* ═══ EL DOCUMENTO DE UNA EVIDENCIA ═══════════════════════════
-     Una captura de Google Search Console es de la misma familia que un
-     certificado escaneado —existe para ser LEÍDA, no para ambientar— así
-     que hereda su tratamiento: cantos disueltos con los dos degradados
-     cruzados, fondo de humo y ni borde ni radio ni sombra.
-
-     Tres diferencias con `.credential`, y las tres salen del archivo:
-
-     1. **Sin `aspect-ratio` y sin `object-fit`.** Los tres archivos traen
-        proporciones distintas (1.76, 1.46, 1.82) porque cada informe de
-        Search Console tiene la suya. Encajarlos todos en una fracción
-        redonda con `contain` dejaría franjas de humo a los lados, y con
-        `cover` recortaría el eje — que es justo la prueba. El `<Image>`
-        lleva su `width`/`height` reales, así que el hueco se reserva solo
-        y el CLS sigue en cero.
-     2. **Cantos MÁS suaves aún (3–4.5%).** Un certificado tiene márgenes
-        impresos que se pueden difuminar; una gráfica lleva el rótulo del
-        eje casi al canto. Los tres archivos traen horneado un margen del
-        4.5% del color de fondo del panel para que la máscara se coma ese
-        margen y no un dato.
-     3. **Sin atenuar en reposo.** `.credential img` vive al 92% para no
-        competir con la tipografía. Aquí no: la cifra medida ES el
-        argumento de la sección, y bajarla al 92% para que se vea elegante
-        es exactamente el orden de prioridades equivocado.
-
-     Y NINGÚN filtro de color. Los dos retratos del sitio llevan
-     `grayscale` y `sepia` porque su luz es azul y este negro es cálido;
-     una gráfica cuyas SERIES son de color (azul los clics, morado las
-     impresiones, verde las URLs buenas) no se tiñe: sería alterar la
-     evidencia para que combine. */
-  .evidence-doc {
-    display: block;
-    position: relative;
-    overflow: hidden;
-    background-color: var(--smoke);
-    -webkit-mask-image:
-      linear-gradient(to bottom, transparent 0%, #000 4.5%, #000 95.5%, transparent 100%),
-      linear-gradient(to right, transparent 0%, #000 3%, #000 97%, transparent 100%);
-    mask-image:
-      linear-gradient(to bottom, transparent 0%, #000 4.5%, #000 95.5%, transparent 100%),
-      linear-gradient(to right, transparent 0%, #000 3%, #000 97%, transparent 100%);
-    -webkit-mask-composite: source-in;
-    mask-composite: intersect;
-  }
-
-  .evidence-doc img {
-    display: block;
-    width: 100%;
-    height: auto;
   }
 
   /* ═══ EL ÍNDICE DEL ARTÍCULO ══════════════════════════════════

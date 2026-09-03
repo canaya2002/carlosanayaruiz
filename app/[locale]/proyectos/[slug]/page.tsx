@@ -3,7 +3,6 @@ import { notFound } from 'next/navigation'
 import { setRequestLocale, getTranslations } from 'next-intl/server'
 import { Link } from '@/i18n/navigation'
 import { Rail } from '@/components/instrument/rail'
-import { Evidence } from '@/components/instrument/evidence'
 import { MediaSlot } from '@/components/instrument/media-slot'
 import {
   getCompanies,
@@ -559,55 +558,6 @@ export default async function ProjectPage({ params }: Props) {
               Qué falta y dónde va sigue estando en `docs/MEDIA.md`, que se
               genera del MISMO dato — que es donde esa instrucción sirve, porque
               es el documento que lee el dueño y no el prospecto. */}
-          {/* ═══ LA MEDICIÓN ═════════════════════════════════════
-              SOLO en la ficha del despacho, y la condición no es un atajo: las
-              capturas son del panel de Search Console de `manuelsolis.com`.
-              Montarlas en las cinco fichas pondría la medición de una propiedad
-              debajo del nombre de otras cuatro, que es exactamente la clase de
-              afirmación sin respaldo que este repo lleva dos rondas quitando.
-
-              Aquí van las DOS, y aquí es donde el detalle pertenece: la ficha de
-              un trabajo es el sitio donde alguien viene a comprobarlo. La
-              portada lleva una sola y /seo-tecnico la suya. */}
-          {company.slug === 'law-offices-manuel-solis' ? (
-            <section
-              className="border-t border-hairline px-5 pb-24 pt-14 sm:px-10"
-              aria-labelledby="medicion-heading"
-            >
-              <p className="stamp">
-                {en ? 'measured' : 'medido'}
-              </p>
-
-              <h2
-                id="medicion-heading"
-                className="mt-5 max-w-[22ch] text-d1 text-ink"
-              >
-                {en
-                  ? 'What the instrument says'
-                  : 'Lo que dice el instrumento'}
-              </h2>
-
-              <p className="mt-6 max-w-[68ch] text-ink-muted">
-                {en
-                  ? 'Two readings from Google’s own panel on the property I administer at the firm. Not a lab tool and not a report I wrote: the source is the Chrome UX Report, which is real users.'
-                  : 'Dos lecturas del propio panel de Google sobre la propiedad que administro en el despacho. No es una herramienta de laboratorio ni un informe escrito por mí: la fuente es el Chrome UX Report, o sea usuarios reales.'}
-              </p>
-
-              <div className="mt-14 grid gap-16 max-w-[54rem]">
-                <Evidence
-                  id="core-web-vitals-urls"
-                  className="reveal"
-                  sizes="(min-width: 1024px) 54rem, 92vw"
-                />
-                <Evidence
-                  id="core-web-vitals-grupo"
-                  className="reveal"
-                  sizes="(min-width: 1024px) 54rem, 92vw"
-                />
-              </div>
-            </section>
-          ) : null}
-
           <section className="border-t border-hairline px-5 pb-24 pt-14 sm:px-10">
             <p className="stamp">{company.name}</p>
 

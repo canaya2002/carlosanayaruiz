@@ -137,9 +137,23 @@ const PROBE = `(() => {
     }
   }
 
-  /* ── 5. IMÁGENES SIN ALT ───────────────────────────────────────── */
+  /* ── 5. IMÁGENES SIN ALT ─────────────────────────────────────────
+     Un alt VACIO no es un defecto cuando la imagen esta dentro de un subarbol
+     con aria-hidden true: ahi es la forma correcta de decir «esto es la copia
+     decorativa, saltatela». La cinta de documentos de la portada duplica su
+     contenido para cerrar el bucle y la segunda copia va oculta al arbol de
+     accesibilidad, asi que sus 16 imagenes se reportaban como 16 defectos.
+     Lo que sigue siendo defecto es un alt AUSENTE, o un alt vacio en una
+     imagen que si esta expuesta.
+
+     ⚠ NADA DE BACKTICKS EN ESTE COMENTARIO: vive dentro del template literal
+     del PROBE y cada uno lo cierra. Es la tercera vez que pasa en este repo. */
   for (const img of document.querySelectorAll('img')) {
-    if (!img.getAttribute('alt')) out.noAlt.push({ src: img.getAttribute('src') || '?' })
+    const alt = img.getAttribute('alt')
+    if (alt === null) { out.noAlt.push({ src: img.getAttribute('src') || '?' }); continue }
+    if (alt.trim() === '' && !img.closest('[aria-hidden="true"]')) {
+      out.noAlt.push({ src: img.getAttribute('src') || '?' })
+    }
   }
 
   /* ── 6. ORDEN DE ENCABEZADOS ───────────────────────────────────── */

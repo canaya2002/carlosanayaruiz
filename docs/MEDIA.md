@@ -3,7 +3,7 @@
 > **Generado.** No lo edites a mano: sale de `data/media-slots.ts` con
 > `npm run media:manifest`. Si editas aquí, el siguiente build lo sobrescribe.
 
-**12 archivos pendientes** · 5 ya puestos.
+**14 archivos pendientes** · 3 ya puestos.
 
 Cada hueco está marcado en la página con cruces de registro y la ruta exacta
 escrita encima, así que también puedes ir navegando el sitio y verlos.
@@ -154,6 +154,20 @@ Loop de 8 a 12 segundos, sin audio y sin cortes visibles, de una aguja de regist
 
 > YA NO HACE FALTA, y bajó de prioridad alta a baja por eso. El fondo del héroe lo pinta ahora `.drum-field` en CSS —la retícula del papel de registro y la curvatura del tambor, que además derivan con el scroll— y pesa cero. El hueco marcado que esperaba este archivo era una caja de cuatrocientos píxeles de nada, o sea el mismo «espacio vacío enorme» que se vino a arreglar. Este registro se conserva porque el video sigue siendo una mejora posible, no un pendiente: si algún día llega, entra detrás del titular y el CSS se apaga. WebM VP9 con MP4 H.264 de respaldo, menos de 2 MB, sin logotipos.
 
+### RETIRADO POR DECISIÓN DEL DUEÑO
+
+| | |
+|---|---|
+| **Archivo** | `public/media/servicios/seo-tecnico-antes-despues.png` |
+| **Tipo** | Imagen |
+| **Tamaño** | 1600 × 900 px |
+| **Página** | `/es/seo-tecnico` |
+| **Dónde** | RETIRADO — no se va a llenar con datos de un cliente |
+
+RETIRADO POR DECISIÓN DEL DUEÑO. Se llenó una ronda con una captura del panel de Search Console de la propiedad del despacho y se quitó: «no pongas las imágenes de las mejoras de las empresas, eso está mal, no pongas los nombres». Son datos de su empleador. Para volver a pedirlo tendría que ser una propiedad PROPIA, o una captura sin dominio ni cifras identificables y con permiso por escrito — así que dejó de ser una tarea y pasó a ser una pregunta legal.
+
+> La sección de resultados de /seo-tecnico se quedó SIN prueba visual a propósito. Una promesa sin imagen es honesta; la imagen que la respaldaba no lo era.
+
 ### Portada del libro
 
 | | |
@@ -180,11 +194,23 @@ Portada del libro. Si son tuyos, el arte final; si son recomendaciones, la porta
 
 El modelo de datos detrás del tablero: el diagrama de relaciones de Power BI, o el esquema en dbt. Es lo que separa un tablero que aguanta de uno que se rompe al añadir una fuente.
 
+### RETIRADO POR DECISIÓN DEL DUEÑO, por la misma razón que el de /seo-tecnico: eran datos de Search Console de su empleador, con el dominio a la vista
+
+| | |
+|---|---|
+| **Archivo** | `public/media/home/antes-despues.png` |
+| **Tipo** | Imagen |
+| **Tamaño** | 1600 × 900 px |
+| **Página** | `/es` |
+| **Dónde** | RETIRADO — ese sitio lo ocupa ahora la cinta de documentos |
+
+RETIRADO POR DECISIÓN DEL DUEÑO, por la misma razón que el de /seo-tecnico: eran datos de Search Console de su empleador, con el dominio a la vista. Ese sitio de la portada lo ocupa ahora `<DocStrip>`, la cinta con los ocho certificados que SÍ son suyos y llevan su nombre impreso.
+
+> No lo reabras como prioridad alta. La portada ya tiene DOS pruebas propias: `<Marks>`, que mide la página que el visitante tiene abierta, y la cinta de documentos firmados por terceros. La curva de un cliente sería una tercera que no es suya.
+
 
 ## Ya puestos
 
 - `public/carlos-anaya-ruiz.jpg` — Sección «El operador» · YA EXISTE pero a 800×800 con fondo de oficina desenfocado.
-- `public/evidencia/core-web-vitals-urls-buenas-search-console-carlos-anaya-ruiz.webp` — Sección de resultados — YA RESUELTO por `data/evidence.ts` · Ya NO lo pinta `<MediaSlot>`: lo pinta `<Evidence>`, porque una captura de instrumento necesita dos cosas que este registro no sabe dar — la lectura en TEXTO (un buscador no lee los píxeles de una gráfica) y la declaración de qué propiedad es.
 - `public/credenciales/certificado-nasa-space-apps-galactic-problem-solver-carlos-anaya-ruiz.webp` — La fila del NASA Space Apps · De los tres registros de data/awards.
 - `public/credenciales/certificado-full-stack-web-development-bootcamp-carlos-anaya-ruiz.webp` — La sección de cursos · NO tapes el folio: es lo que hace verificable la fila, y es justo lo que la página promete en su h1.
-- `public/evidencia/search-console-clics-impresiones-12-meses-carlos-anaya-ruiz.webp` — Sección «El registro», debajo de la gráfica de trayectoria — YA RESUELTO por `data/evidence.ts` · Lo pinta `<Evidence>` y no `<MediaSlot>`.

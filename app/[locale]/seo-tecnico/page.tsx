@@ -7,7 +7,6 @@ import { BlogStrip } from '@/components/sections/blog-strip'
 import { Pens } from '@/components/instrument/pens'
 import { ContactChannels } from '@/components/sections/contact-channels'
 import { Ribbon } from '@/components/instrument/ribbon'
-import { Evidence } from '@/components/instrument/evidence'
 import { MediaSlot } from '@/components/instrument/media-slot'
 import { anySlotFilled } from '@/data/media-slots'
 import { getServiceById } from '@/data/services'
@@ -313,18 +312,6 @@ export default async function SeoTecnicoPage({ params }: Props) {
               ))}
             </ul>
 
-            {/* La prueba del servicio va justo debajo de lo que promete, y
-                ya no es un hueco: es el informe de Core Web Vitals de Google
-                sobre una propiedad real, con el eje de tiempo a la vista.
-
-                Esta y no la del alcance, porque este servicio se llama SEO
-                TÉCNICO: lo que vende es que las URLs pasen el umbral de
-                experiencia de página, y esa es la gráfica que lo dice. La de
-                clics e impresiones es la consecuencia y vive en la portada. */}
-            <Evidence
-              id="core-web-vitals-urls"
-              className="reveal mt-14 max-w-[54rem]"
-            />
           </section>
 
           {/* ═══ PROCESO ═════════════════════════════════════════

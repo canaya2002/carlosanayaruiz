@@ -1347,9 +1347,11 @@ el dueño no puede desincronizarse del sitio.
 
 Prioridad, y no todos valen lo mismo:
 
-1. ~~**`home-evidencia`**~~ — **LLENADO.** Ver «La evidencia»: son tres capturas
-   reales del panel de Search Console de `manuelsolis.com`. Era el único archivo
-   que valía la pena conseguir si solo llegaba uno, y llegó.
+1. ~~**`home-evidencia`**~~ — **RETIRADO por decisión del dueño**, no llenado. Se
+   llenó una ronda con capturas del panel de Search Console de la propiedad del
+   despacho y se quitó: son datos de su empleador. Ese sitio de la portada lo ocupa
+   ahora la cinta de documentos. Ver «La evidencia que se retiró». **No lo reabras
+   como prioridad alta.**
 2. Los **ocho de servicios**, dos por servicio: el crawl, el schema, el
    Lighthouse, el PR, el flujo, el chat, el dashboard, el modelo.
 3. Las capturas de proyectos.
@@ -1818,60 +1820,127 @@ columnas con su regla superior, la lista de navegación partida en dos con `colu
 las cuatro acaban a la misma altura y desaparece la franja muerta que quedaba debajo— y
 `.sheet` como único margen.
 
-## La evidencia — tres capturas reales, y por qué llevan placa
+## La evidencia que se retiró, y la cinta de documentos que la reemplazó
 
-`data/evidence.ts` + `components/instrument/evidence.tsx` + `.evidence-doc`.
+Durante una ronda la portada, /seo-tecnico y la ficha del despacho publicaron tres
+capturas del panel de Google Search Console de **`manuelsolis.com`**: 30.5K clics,
+1.4M impresiones, 133 URLs buenas. Eran auténticas y estaban bien atribuidas.
 
-Reportado tres veces: «no se ven en ningún lado las imágenes de mejoras en Google Search
-Console, del Core Web Vitals ni del alcance, y esas son muy importantes». Lo eran y no
-estaban. Ahora hay tres, y **son reales**: capturas del panel de Search Console de
-`manuelsolis.com`, la propiedad que el dueño administra como Director de Tecnologías del
-despacho (`data/experience.ts`).
+**El dueño las cortó, y tenía razón:**
 
-> ⚠ Antes de esto llegaron otras once imágenes que **no** eran capturas: traían manifiesto
-> C2PA/JUMBF de OpenAI y una de ellas el texto literal `blurred-domain-example.com`. Se
-> rechazaron dos veces y no están en el repo. La lección operativa: **una captura de
-> instrumento se verifica con `exiftool`/JUMBF antes de publicarla**, no con la vista.
+> «Aquí no pongas las imágenes de las mejoras de las empresas, eso está mal, no
+> pongas los nombres.»
 
-| Archivo | Qué mide | Dónde vive |
+Son datos de su **empleador**, con el dominio y una URL de blog a la vista, en un
+panel al que se accede con credenciales. Que la atribución fuera correcta no lo
+convierte en suyo para publicar. Se retiró todo: el componente, `data/evidence.ts`,
+los tres archivos de `public/evidencia/`, la clase `.evidence-doc`, los tres
+montajes y la entrada de `IMMUTABLE_ASSETS`.
+
+> ⚠ **Y los dos huecos del registro de medios se RETIRARON, no se reabrieron.**
+> `home-evidencia` era «el archivo más importante de toda la lista» y ahora está en
+> prioridad baja con el motivo escrito. Volver a pedir una curva de Search Console
+> sería pedirle exactamente lo que acaba de decir que está mal. Para que vuelva
+> tendría que ser una propiedad PROPIA, o una captura sin dominio ni cifras
+> identificables y con permiso por escrito — o sea que dejó de ser una tarea de
+> diseño y pasó a ser una pregunta legal.
+
+**`/seo-tecnico` se quedó sin prueba visual a propósito.** Una promesa sin imagen es
+honesta; la imagen que la respaldaba no lo era.
+
+### `<DocStrip>` — los ocho documentos, corriendo
+
+`components/instrument/doc-strip.tsx` + `.doc-strip`. Lo que ocupa ese sitio de la
+portada son los ocho documentos que **sí son suyos y llevan su nombre impreso**: los
+siete certificados de curso con archivo y el del NASA, que va primero porque es la
+credencial insignia. Misma clase de prueba —un tercero firmando— sin datos de nadie
+más.
+
+- **Sale de los MISMOS datos** que las páginas de credenciales (`COURSES` y
+  `getAwards`), así que la cinta no puede mostrar uno que la lista niegue. Los tres
+  cursos sin archivo no aparecen.
+- **El ancho de cada uno sale de su propio archivo.** El del NASA es 1.49 y los de
+  curso 1.39; con una fracción común uno de los dos se deformaría. El alto lo fija
+  `--doc-h` y el ancho lo calcula la proporción.
+- **26 px/s**, más lento que la cinta de nombres (38). Un objeto de 176 px a la misma
+  velocidad angular que una etiqueta de 11 se percibe disparado.
+- Mismo keyframe y mismo bucle que `<Ribbon>`: contenido duplicado, `translateX(-50%)`.
+  Y la segunda copia va con `aria-hidden` y `alt=""`, que es la forma correcta de
+  decir «esta es la copia decorativa».
+- **Enlaza a /certificaciones.** La portada tiene prioridad 1.0 y hasta esta ronda no
+  mandaba nada ahí.
+
+## Los cantos difuminados de las imágenes: FUERA
+
+> «Sin esos efectos en los márgenes, no me gustó en ningún lado.»
+
+Iban los dos degradados lineales cruzados con `mask-composite: intersect` en cinco
+sitios, y la razón original estaba bien argumentada —«sin rectángulo, sin borde y sin
+radio»—. **Pero el brief gana, y este archivo ya tiene escrito que el brief gana.**
+
+| Clase | Qué es | Ahora |
 |---|---|---|
-| `search-console-clics-impresiones-12-meses-…` | 30.5K clics · 1.4M impresiones · CTR 2.2% · posición 11.5, 12 meses | **portada**, sección «El registro» |
-| `core-web-vitals-urls-buenas-search-console-…` | 133 URLs buenas en escritorio, desde el nivel de 60 el 2 jun 2026 · fuente Chrome UX Report | **/seo-tecnico**, debajo de lo que el servicio promete |
-| `core-web-vitals-grupo-de-urls-search-console-…` | 99 el 31 jul → 133 el 30 ago · grupo de 131 URLs con una de ejemplo | **/proyectos/law-offices-manuel-solis** |
+| `.credential` | los 8 certificados | canto duro |
+| `.cover` · `.cover-thumb` | las 99 portadas del blog | canto duro (`.cover-thumb` se quedó vacía y se borró) |
+| `.figure-bw` | el retrato en blanco y negro | máscara fuera, **pero ver abajo** |
+| `.evidence-doc` | las capturas de Search Console | retirada con la sección |
+| `.doc-strip` | la cinta nueva | nace sin máscara, ni por imagen ni en los extremos |
 
-### La lectura va en TEXTO y la captura debajo
+**Los archivos NO llevan alfa** —comprobado con sharp en los ocho certificados y en
+dos portadas—, así que quitar la máscara del CSS basta para que el canto quede
+limpio. Y se ve mejor de lo que la nota original suponía: sobre una captura clara el
+degradado se leía como una viñeta sucia, no como una disolución. El certificado del
+NASA ahora se lee entero, firma incluida.
 
-Es la decisión que define el componente, y son tres razones medidas:
+**Dos excepciones, y las dos por un motivo que no es estético:**
 
-1. **Un buscador no lee los píxeles de una gráfica.** Servir «1.4M impresiones» solo dentro
-   de un WebP es servirlo a nadie: el dato más fuerte del sitio quedaría fuera del índice.
-2. **A 375 px una captura de 1592 va al 24%.** El «133» de Search Console mide 44 px en el
-   archivo y ahí bajaría a 10. Medido en captura: en móvil la imagen es ilegible y las
-   cuatro cifras de la placa se leen a tamaño completo. Esa comparación ES el argumento del
-   diseño.
-3. Es la tesis del sitio aplicada a sí misma: el veredicto se lee contra una regla, no
-   dentro de una tarjeta. La placa de datos ES esa regla.
+1. **`carlos-anaya-ruiz-bn.webp` trae el difuminado HORNEADO** en su canal alfa:
+   medido, 50 px por los cuatro lados de un cuadro de 400×400, con el núcleo opaco en
+   300×300 exactos. Quitar el CSS deja de duplicarlo, que era lo más visible, pero el
+   canto suave sigue viniendo del archivo. Recortar al núcleo cuesta el 25% del ancho y
+   deja el borde superior a 2 px del nacimiento del pelo. **Un canto duro en esa foto
+   necesita el original.**
+2. **`.figure-hero`** —el recorte con alfa del héroe— conserva su máscara vertical.
+   No es el canto de un rectángulo: es lo que hace que un recorte TERMINE. Y el
+   difuminado de arriba tiene una razón medida: a 1440 la celda del morph llega a
+   x=1093 y el retrato arranca en x=792, así que el titular CRUZA la franja que el
+   retrato gana por arriba. Sin ese apagado, el texto caería sobre su pelo; sin el de
+   abajo, la foto se cortaría en una línea recta a media caja.
 
-### Tres reglas del dato
+### ⚠ Al quitar la máscara de `.figure-bw` se me fue su tope de 15rem
 
-- **Toda cifra de `readings` está IMPRESA en su propia imagen.** Si Google escribe «30.5K»,
-  el repo dice «30.5K» — no 30 500, que sería inventar precisión que el panel no da. La
-  única derivada es `+34`, y sale de restar dos números impresos (133 y 99) en la MISMA
-  página donde las dos capturas están a la vista.
-- **La propiedad se declara en el pie.** No son números de este dominio, y callarlo sería la
-  clase de afirmación sin respaldo que este repo lleva tres rondas quitando.
-- **La captura solo se recortó y se tapó cromo.** Fuera la columna de navegación (~24% del
-  ancho, cero datos, ilegible en un teléfono) y el bloque de una ventana del sistema que
-  cortaba por la mitad la fila de iconos. **Ni un píxel de dato, eje, rótulo o cifra.**
+Y con él entraron dos defectos que `check:layout` cazó: la foto volvió a estirarse al
+100% del contenedor —el archivo es 400×400 y CLAUDE.md ya tenía escrita la regla— y
+los cortes de 240 a 299 px en tres rutas. **NO añadir `overflow: hidden` ni un
+`background-color` a esa clase:** el archivo lleva 50 px de alfa difuminado por lado,
+así que un fondo de humo se vería COMO UN HALO a través de esos píxeles.
 
-**Y ningún filtro de color.** Los dos retratos llevan `grayscale` y `sepia` porque su luz es
-azul y este negro es cálido. Una gráfica cuyas SERIES son de color —azul los clics, morado
-las impresiones, verde las URLs buenas— **no se tiñe: sería alterar la evidencia para que
-combine.** `.evidence-doc` tampoco atenúa en reposo, a diferencia de `.credential`, que vive
-al 92%: la cifra medida es el argumento de la sección.
+## La persiana del retrato acababa por debajo del encuadre
 
-El archivo trae horneado un margen del 4.5% del color de fondo del panel para que la máscara
-de cantos se coma ese margen y no el eje. Sin él, difuminar el canto se come el rótulo.
+Salió midiendo `.figure-bw` para lo anterior, y es **exactamente el defecto que este
+archivo ya documenta como corregido en `.figure-scan`**, vivo en su gemelo.
+
+`shutter-lift` iba de `translateY(0)` a `translateY(100%)`, así que al terminar la
+capa quedaba 240 px POR DEBAJO del encuadre y el `scrollHeight` de la figura al doble
+de su alto. Y aquí además **se veía**: la capa lleva
+`border-bottom: 1px solid var(--paper)`, o sea una raya de papel de 240 px flotando
+sobre nada, 480 px más abajo del retrato. El cuerpo en hollín sobre hollín no se
+notaba; la raya sí.
+
+Ahora sube —de `translateY(0)` a `translateY(-100%)`— y la regla pasa al canto
+SUPERIOR, que es el filo de una persiana que se levanta. `scrollHeight` solo mide lo
+que sobra por abajo, así que arriba no cuenta. Misma razón que invirtió `drum-turn`.
+
+**La lección, por tercera vez en este repo: una capa de revelado termina ARRIBA.**
+
+## `alt=""` dentro de `aria-hidden` no es un defecto
+
+`check:layout` reportaba 32 imágenes «SIN ALT» en la portada, y eran las 16 de la
+segunda copia de la cinta de documentos —la que existe solo para cerrar el bucle y va
+oculta al árbol de accesibilidad—. Un `alt` vacío ahí es la forma CORRECTA de decir
+«sáltate esto». La sonda usaba `!img.getAttribute('alt')`, que trata la cadena vacía
+como ausente. Ahora distingue: `alt` ausente siempre falla; `alt` vacío falla solo si
+la imagen NO está dentro de un `aria-hidden="true"`.
 
 ## El desplegable del nav era del sistema anterior
 
@@ -2125,10 +2194,14 @@ cuando se quiera.
   Lo que sí se puede decir con datos: el usuario nunca espera esa tarea, porque ocurre
   **antes** de que pueda interactuar, y el LCP en esa misma corrida en frío es de 144–224 ms.
   Las corridas 2 y 3 no tienen ninguna.
-- ~~El hueco `home-evidencia`, el más importante del sitio.~~ **Resuelto con tres capturas
-  reales de Search Console.** Ver «La evidencia» arriba. Con eso el registro de medios queda
-  en **12 pendientes y 5 puestos**, no 40.
-- **Faltan 12 imágenes y una son las claves.** `docs/CONECTAR.md` y `docs/MEDIA.md` son
+- ~~El hueco `home-evidencia`, el más importante del sitio.~~ **Retirado, no llenado:**
+  el dueño no publica métricas de su empleador. Ver «La evidencia que se retiró». El
+  registro de medios queda en **14 pendientes y 3 puestos**.
+- **La portada ya tiene sus dos pruebas propias**, y por eso el hueco de arriba dejó de
+  ser prioridad: `<Marks>` mide la página que el visitante tiene abierta, y `<DocStrip>`
+  pasa los ocho documentos firmados por terceros. Lo que falta es la tercera —resultados
+  de cliente— y esa no se puede llenar sin un cliente que autorice por escrito.
+- **Faltan 14 imágenes y una son las claves.** `docs/CONECTAR.md` y `docs/MEDIA.md` son
   la lista para el dueño; hasta que llegue, el código de los tres canales está escrito y
   desplegable pero **`ch c` no se pinta** y el formulario dice honestamente que la
   recepción no está conectada. Eso es lo correcto, no un pendiente de código.
