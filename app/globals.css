@@ -2941,6 +2941,37 @@
     color: var(--ink);
   }
 
+  /* La casilla de aceptación. La única caja de cuatro lados que queda es la
+     del control nativo, y se queda porque ES el control: reimplementarla con
+     un pseudo-elemento la empeora con teclado y con lector de pantalla.
+     `accent-color` la tiñe de papel en vez del azul del sistema operativo,
+     que este material no tiene. 44 px de alto de fila: objetivo táctil. */
+  .field-check {
+    display: flex;
+    align-items: flex-start;
+    gap: 0.875rem;
+    min-height: 2.75rem;
+    padding-block: 0.625rem;
+    font-size: 0.875rem;
+    line-height: 1.55;
+    color: var(--ink-muted);
+    cursor: pointer;
+  }
+
+  .field-check input {
+    flex: none;
+    width: 1.125rem;
+    height: 1.125rem;
+    margin-top: 0.125rem;
+    accent-color: var(--paper);
+    cursor: pointer;
+  }
+
+  .field-check input:focus-visible {
+    outline: 1px solid var(--paper);
+    outline-offset: 3px;
+  }
+
   /* ── Etiqueta mono ────────────────────────────────────────────
      Sustituye a `.eyebrow`: sin píldora, sin punto de gradiente. */
   .stamp {

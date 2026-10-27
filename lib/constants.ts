@@ -275,6 +275,16 @@ export const ROUTES = {
   blog: { es: '/blog', en: '/blog' },
   privacidad: { es: '/privacidad', en: '/privacy' },
   terminos: { es: '/terminos', en: '/terms' },
+  /**
+   * La revisión gratis de la ficha de Google, y su acuse. La de gracias va
+   * con `noindex` y FUERA del sitemap y de llms.txt: solo existe después de
+   * un envío, así que listarla sería ofrecer una conversión que no ocurrió.
+   */
+  revisionFicha: { es: '/revision-ficha-google', en: '/google-profile-review' },
+  revisionFichaGracias: {
+    es: '/revision-ficha-google/gracias',
+    en: '/google-profile-review/thanks',
+  },
 } as const
 
 export type RouteKey = keyof typeof ROUTES

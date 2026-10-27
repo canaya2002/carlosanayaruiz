@@ -69,6 +69,12 @@ const ROUTE_LABELS: Record<RouteKey, { es: string; en: string }> = {
   cv: { es: 'CV completo', en: 'Full CV' },
   privacidad: { es: 'Aviso de privacidad', en: 'Privacy notice' },
   terminos: { es: 'Términos de uso', en: 'Terms of use' },
+  revisionFicha: {
+    es: 'Revisión gratis de tu ficha de Google (hasta el 30/11/2026)',
+    en: 'Free Google Business Profile review (until 2026-11-30)',
+  },
+  /* No se publica: ver el `continue` del bucle. */
+  revisionFichaGracias: { es: 'Solicitud recibida', en: 'Request received' },
 }
 
 function buildDocument(): string {
@@ -162,6 +168,9 @@ function buildDocument(): string {
        blog in Spanish» — un documento escrito para máquinas entregando una URL
        que redirige, en la misma frase en que explica que no existe en inglés.
        Era el último canal por el que se filtraba. */
+    /* El acuse lleva `noindex` y solo existe después de un envío. */
+    if (key === 'revisionFichaGracias') continue
+
     if (key === 'blog') {
       push(`- ${label.es} — ${SITE_CONFIG.url}/es${ROUTES[key].es}`)
       continue

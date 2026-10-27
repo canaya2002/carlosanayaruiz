@@ -43,10 +43,13 @@
  *   - No hay cuentas de usuario, ni cookies publicitarias, ni Google
  *     Analytics, ni píxel de Meta, ni rastreadores de terceros.
  *   - El sitio no escribe en localStorage ni en sessionStorage.
- *   - No hay casilla de consentimiento en el formulario: el consentimiento se
- *     da al enviarlo, y la cláusula lo dice así. Añadir la casilla y dejar el
- *     texto viejo no habría arreglado nada, porque el texto viejo también
- *     afirmaba que del consentimiento no queda registro.
+ *   - El formulario de /contacto no lleva casilla de consentimiento: se da al
+ *     enviarlo, y la cláusula lo dice así. El de la revisión gratis de ficha
+ *     (/revision-ficha-google, app/[locale]/review-action.ts) SÍ la lleva, sin
+ *     marcar y obligatoria, y el servidor la comprueba. Pide otros campos
+ *     —negocio, ciudad, enlace a la ficha, web, qué le preocupa— y entrega
+ *     por el mismo `sendLead`: mismos dos destinos, mismos plazos. Sin
+ *     teléfono. La cláusula de datos y la de consentimiento lo describen.
  *
  * REGLA DE MANTENIMIENTO: si el flujo de datos cambia —un proveedor nuevo, un
  * destino más para el formulario, una herramienta de medición que sí ponga
@@ -303,13 +306,35 @@ export default async function PrivacyPage({ params }: Props) {
             <>
               <h3>What you choose to write</h3>
               <p>
-                The five fields of the form: your name, your email address,
+                The five fields of the contact form: your name, your email address,
                 what it is about — picked from a list — your site&rsquo;s URL
                 and your message. The URL is optional; the rest are what I need
                 in order to reply. Two more travel with them that you do not
                 type: which page of the site you sent the form from, and which
                 language you were reading it in. None of this is needed in
                 order to browse the site.
+              </p>
+              <h3>If you request the free review of your Google listing</h3>
+              <p>
+                The form for the{' '}
+                <Link href="/revision-ficha-google">
+                  free review of your Google Business Profile
+                </Link>{' '}
+                asks for your name, your email address, your business name as
+                it appears on Google and its city. The link to your Google Maps
+                listing, your website and what worries you most about your
+                listing are optional. It also carries a consent box, and a
+                separate, optional one for the newsletter. It does not ask for a
+                phone number.
+              </p>
+              <p>
+                That data is used solely to review your Google listing, send you
+                the recommendations and reply about that request. It travels the
+                same way as the contact form — the email to my inbox and the copy
+                in my case-management system — and is kept for the same periods.
+                To do the review I look at what your business already publishes
+                on Google Maps and in Search; I do not ask for or need access to
+                your Google account.
               </p>
               <h3>Technical request data</h3>
               <p>
@@ -396,6 +421,11 @@ export default async function PrivacyPage({ params }: Props) {
               <ul>
                 <li>Reading your enquiry, answering it and following up.</li>
                 <li>
+                  If you requested the free review of your Google listing,
+                  reviewing it, sending you the recommendations and replying
+                  about that request.
+                </li>
+                <li>
                   If the conversation progresses, preparing and sending you a
                   service proposal.
                 </li>
@@ -440,6 +470,12 @@ export default async function PrivacyPage({ params }: Props) {
                 You give your consent by submitting the form. This notice tells
                 you beforehand what for: I use what you write in order to reply
                 to you and to follow your message up. For nothing else.
+              </p>
+              <p>
+                On the free listing review form you also give it by ticking a
+                box that comes unticked: without it the request is not sent. The
+                newsletter box is separate and optional; leaving it unticked
+                changes nothing about the review.
               </p>
               <p>
                 A record of that submission is kept. The email that reaches me
@@ -812,13 +848,34 @@ export default async function PrivacyPage({ params }: Props) {
             <>
               <h3>Lo que tú decides escribir</h3>
               <p>
-                Los cinco campos del formulario: tu nombre, tu correo, de qué
+                Los cinco campos del formulario de contacto: tu nombre, tu correo, de qué
                 va —elegido de una lista—, la URL de tu sitio y tu mensaje. La
                 URL es opcional; los otros son lo que necesito para poder
                 responderte. Con ellos viajan dos datos que no escribes tú:
                 desde qué página del sitio enviaste el formulario y en qué
                 idioma lo estabas leyendo. Nada de esto hace falta para navegar
                 el sitio.
+              </p>
+              <h3>Si pides la revisión gratis de tu ficha de Google</h3>
+              <p>
+                El formulario de la{' '}
+                <Link href="/revision-ficha-google">
+                  revisión gratis de tu ficha de Google
+                </Link>{' '}
+                pide tu nombre, tu correo, el nombre de tu negocio como aparece
+                en Google y su ciudad. Son opcionales el enlace a tu ficha de
+                Google Maps, tu página web y qué te preocupa más de tu ficha. Lleva
+                además una casilla de aceptación, y otra aparte y opcional para
+                el boletín. No pide teléfono.
+              </p>
+              <p>
+                Esos datos se usan únicamente para revisar tu ficha de Google,
+                enviarte las recomendaciones y responder sobre esa solicitud.
+                Viajan por el mismo camino que el formulario de contacto —el
+                correo a mi buzón y la copia en mi sistema de gestión— y con los
+                mismos plazos de conservación. Para hacer la revisión consulto lo
+                que tu negocio ya publica en Google Maps y en la Búsqueda; no
+                pido ni necesito acceso a tu cuenta de Google.
               </p>
               <h3>Datos técnicos de la solicitud</h3>
               <p>
@@ -906,6 +963,10 @@ export default async function PrivacyPage({ params }: Props) {
               <ul>
                 <li>Leer tu consulta, responderla y darle seguimiento.</li>
                 <li>
+                  Si pediste la revisión gratis de tu ficha de Google, revisarla,
+                  enviarte las recomendaciones y responder sobre esa solicitud.
+                </li>
+                <li>
                   Si la conversación avanza, preparar y enviarte una propuesta
                   de servicio.
                 </li>
@@ -950,6 +1011,12 @@ export default async function PrivacyPage({ params }: Props) {
                 El consentimiento lo das al enviar el formulario. Este aviso te
                 dice antes para qué: uso lo que escribas para responderte y
                 para dar seguimiento a tu mensaje. Para nada más.
+              </p>
+              <p>
+                En el formulario de la revisión gratis de tu ficha, además, lo
+                das marcando una casilla que viene sin marcar: sin ella la
+                solicitud no se envía. La casilla del boletín es aparte y
+                opcional; no marcarla no cambia nada de la revisión.
               </p>
               <p>
                 Del envío queda constancia. El correo que me llega trae tu

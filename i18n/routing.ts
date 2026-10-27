@@ -104,6 +104,16 @@ export const routing = defineRouting({
     // Legal
     '/privacidad': { es: '/privacidad', en: '/privacy' },
     '/terminos': { es: '/terminos', en: '/terms' },
+
+    // La revisión gratis de la ficha de Google y su acuse
+    '/revision-ficha-google': {
+      es: '/revision-ficha-google',
+      en: '/google-profile-review',
+    },
+    '/revision-ficha-google/gracias': {
+      es: '/revision-ficha-google/gracias',
+      en: '/google-profile-review/thanks',
+    },
   },
 })
 

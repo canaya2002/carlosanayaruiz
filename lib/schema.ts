@@ -1179,3 +1179,79 @@ export function generateLegalPageGraph(
     ),
   ])
 }
+
+/**
+ * La revisión gratis de la ficha de Google: WebPage + Service con su Offer +
+ * breadcrumbs + FAQ.
+ *
+ * El Offer lleva `price: '0'` en MXN porque ES gratis y eso es lo que se
+ * ofrece, y `validThrough` con la misma fecha que dice la página: un precio
+ * sin vigencia en el grafo seguiría ofreciendo la revisión después de que
+ * la página dejó de recibir solicitudes.
+ *
+ * `areaServed` es solo México, y no el `areaServed()` compartido: la página
+ * dice «negocios con local o zona de servicio en México», y el grafo no
+ * puede ofrecer más que eso.
+ */
+export function generateRevisionFichaGraph(
+  locale: Locale,
+  faqs: readonly FaqEntry[],
+  options: { name: string; description: string; validThrough: string } & PageDates
+): SchemaGraph {
+  const pageUrl = routeUrl('revisionFicha', locale)
+  const serviceId = `${BASE_URL}/#service-revision-ficha-google`
+
+  return graph([
+    buildPageNode({
+      locale,
+      pageUrl,
+      name: options.name,
+      description: options.description,
+      mainEntityId: serviceId,
+      hasBreadcrumb: true,
+      datePublished: options.datePublished,
+      dateModified: options.dateModified,
+    }),
+    {
+      '@type': 'Service',
+      '@id': serviceId,
+      name: options.name,
+      description: options.description,
+      serviceType:
+        locale === 'en'
+          ? 'Google Business Profile review'
+          : 'Revisión de ficha de Google Business Profile',
+      url: pageUrl,
+      provider: { '@id': ID.business },
+      areaServed: {
+        '@type': 'Country',
+        name: locale === 'en' ? 'Mexico' : 'México',
+      },
+      availableLanguage: AVAILABLE_LANGUAGES,
+      offers: {
+        '@type': 'Offer',
+        price: '0',
+        priceCurrency: 'MXN',
+        validThrough: options.validThrough,
+        url: pageUrl,
+        seller: { '@id': ID.business },
+      },
+      mainEntityOfPage: { '@id': pageIdFor(pageUrl) },
+    },
+    generateBreadcrumbSchema(
+      [
+        homeCrumb(locale),
+        {
+          name:
+            locale === 'en'
+              ? 'Google Business Profile review'
+              : 'Revisión de ficha de Google',
+          route: 'revisionFicha',
+        },
+      ],
+      locale,
+      pageUrl
+    ),
+    ...(faqs.length > 0 ? [generateFAQSchema(faqs, { locale, pageUrl })] : []),
+  ])
+}

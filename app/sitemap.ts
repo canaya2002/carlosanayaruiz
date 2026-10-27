@@ -64,6 +64,8 @@ type ChangeFrequency = NonNullable<
 interface SitemapMeta {
   changeFrequency: ChangeFrequency
   priority: number
+  /** Solo si la ruta cambió después de CONTENT_UPDATED o nació después. */
+  lastModified?: string
 }
 
 /**
@@ -112,7 +114,27 @@ const PAGE_META: Record<RouteKey, SitemapMeta> = {
   // but they should never outrank anything.
   privacidad: { changeFrequency: 'yearly', priority: 0.3 },
   terminos: { changeFrequency: 'yearly', priority: 0.3 },
+
+  /* La oferta trae su propia fecha: no existía el día de CONTENT_UPDATED, y
+     declarar un lastmod anterior a la página es un dato falso. */
+  revisionFicha: {
+    changeFrequency: 'monthly',
+    priority: 0.7,
+    lastModified: '2026-10-27',
+  },
+  /* Tiene entrada porque la tabla es exhaustiva, pero NO se emite: ver
+     FUERA_DEL_SITEMAP. */
+  revisionFichaGracias: { changeFrequency: 'yearly', priority: 0.1 },
 }
+
+/**
+ * Rutas que existen y NO van al sitemap. Hoy una sola: el acuse de la
+ * revisión de ficha, que lleva `noindex` — un sitemap que lista una URL con
+ * `noindex` le manda a Google dos órdenes contrarias.
+ */
+const FUERA_DEL_SITEMAP: ReadonlySet<RouteKey> = new Set([
+  'revisionFichaGracias',
+])
 
 /** Absolute URL for a route in a locale, e.g. https://…/en/technical-seo */
 function url(key: RouteKey, locale: Locale): string {
@@ -154,11 +176,11 @@ export default function sitemap(): MetadataRoute.Sitemap {
    * una segunda fuente de verdad.
    */
   const paginas = keys
-    .filter((key) => key !== 'blog')
+    .filter((key) => key !== 'blog' && !FUERA_DEL_SITEMAP.has(key))
     .flatMap((key) =>
       SITE_CONFIG.locales.map((locale) => ({
         url: url(key, locale),
-        lastModified: CONTENT_UPDATED,
+        lastModified: PAGE_META[key].lastModified ?? CONTENT_UPDATED,
         changeFrequency: PAGE_META[key].changeFrequency,
         priority: PAGE_META[key].priority,
         alternates: alternates(key),
