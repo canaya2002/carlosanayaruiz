@@ -78,11 +78,22 @@ export const chivoMono = Chivo_Mono({
  *
  * Solo la itálica. Una serifa recta aquí competiría con el display; inclinada
  * se lee como algo escrito a mano al margen, que es el registro que se busca.
+ *
+ * ── `preload: false`, Y ES LA MAYOR PALANCA DEL LCP MÓVIL ──
+ * Es el woff2 más pesado de los tres (149 512 B con SOFT, WONK y opsz, más
+ * que Archivo y Chivo Mono juntos) y pinta el ~3% del tipo, nunca el
+ * titular. Precargado, se bajaba con prioridad alta ANTES del primer pintado
+ * y competía por el ancho de banda con la hoja de estilos y con la cara del
+ * `<h1>`. Medido con Lighthouse móvil en local, mediana de 3: ver el commit
+ * «perf: quitar retraso de render del LCP móvil». Sin precarga se pide
+ * cuando una regla la usa de verdad, y `swap` + `adjustFontFallback` pintan
+ * mientras tanto la itálica de reserva con las métricas ajustadas.
  */
 export const fraunces = Fraunces({
   subsets: ['latin'],
   variable: '--font-fraunces',
   display: 'swap',
+  preload: false,
   style: ['italic'],
   axes: ['SOFT', 'WONK', 'opsz'],
   adjustFontFallback: true,

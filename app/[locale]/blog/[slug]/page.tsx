@@ -242,8 +242,15 @@ export default async function BlogPostPage({ params }: Props) {
                       alt={post.coverAlt ?? post.title}
                       width={1600}
                       height={900}
-                      sizes="(min-width: 80rem) 54rem, 100vw"
+                      /* El ancho REAL de la figura en cada tramo: sangra
+                         hasta el riel por debajo de 64rem (100vw menos
+                         `--tape-w`, que vale 2.25rem en teléfono y 3.5rem
+                         arriba) y vuelve a la columna después. Con `100vw`
+                         a secas pedía la variante del ancho de la pantalla
+                         entera. */
+                      sizes="(min-width: 80rem) 54rem, (min-width: 64rem) calc(100vw - 8.5rem), (min-width: 40rem) calc(100vw - 3.5rem), calc(100vw - 2.25rem)"
                       priority
+                      fetchPriority="high"
                     />
                   </figure>
                 ) : null}

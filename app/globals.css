@@ -3049,6 +3049,16 @@
     animation-delay: calc(var(--i) * 110ms);
   }
 
+  /* En un teléfono el saludo no barre: «Hola.» se queda quieto desde el
+     primer pintado. Es la primera palabra del `<h1>` —el elemento LCP de la
+     portada en móvil— y durante 880 ms del barrido estaba en opacidad 0,
+     o sea, el titular arrancaba con un hueco donde iba su primera palabra. */
+  @media (max-width: 48rem) {
+    .greet > span {
+      animation: none;
+    }
+  }
+
   /* ── EL CICLO DEL TITULAR ─────────────────────────────────────
      17.5 s ÷ 5 frases = 3.5 s por frase. La ventana visible ocupa el 20%
      del ciclo con 350 ms de entrada y 350 ms de salida, y la salida de una
@@ -3148,6 +3158,64 @@
      arreglar. Se queda quieto y lo demás llega alrededor. */
   .hero-in > h1 {
     animation: none;
+  }
+
+  /* ── …Y TAMPOCO SUS ANCESTROS ─────────────────────────────────
+     La regla de arriba solo veía un `<h1>` HIJO DIRECTO, y eso solo pasa
+     en la portada. En las otras páginas `.hero-in` va en la `<section>` y
+     el titular vive dentro de `.ledger > div`, así que el que entraba con
+     `opacity: 0` era su contenedor — y el `<h1>` con él. Medido en
+     /es/seo-tecnico con Lighthouse móvil: el elemento LCP era el NOMBRE del
+     nav, porque el titular no existía en el primer pintado.
+
+     Ahora no anima nada que contenga un `<h1>`, y la entrada baja un nivel:
+     los hermanos del titular —y los de cada contenedor intermedio— siguen
+     llegando escalonados alrededor de él. */
+  .hero-in :has(h1),
+  .hero-in > :has(h1) {
+    animation: none;
+  }
+
+  .hero-in :has(h1) > :not(h1, :has(h1)) {
+    animation: hero-rise 600ms var(--ease-stylus) both;
+  }
+  .hero-in :has(h1) > :nth-child(1) {
+    animation-delay: 120ms;
+  }
+  .hero-in :has(h1) > :nth-child(2) {
+    animation-delay: 200ms;
+  }
+  .hero-in :has(h1) > :nth-child(3) {
+    animation-delay: 280ms;
+  }
+  .hero-in :has(h1) > :nth-child(4) {
+    animation-delay: 360ms;
+  }
+  .hero-in :has(h1) > :nth-child(n + 5) {
+    animation-delay: 440ms;
+  }
+
+  /* ── EN UN TELÉFONO LA ENTRADA NO OCULTA NADA ─────────────────
+     Medido con Lighthouse móvil y red real (devtools, Slow 4G): en la
+     portada el elemento LCP no es el titular sino el PÁRRAFO de entrada —
+     a 390 px ocupa más área que cualquier renglón del `<h1>`— y ese
+     párrafo arrancaba en `opacity: 0`, así que el LCP esperaba a la
+     animación. Aquí la entrada es solo el desplazamiento: el texto está
+     pintado desde el primer frame y lo único que llega es su posición. */
+  @keyframes hero-nudge {
+    from {
+      transform: translate3d(0, 0.875rem, 0);
+    }
+    to {
+      transform: none;
+    }
+  }
+
+  @media (max-width: 48rem) {
+    .hero-in > :not(h1, :has(h1)),
+    .hero-in :has(h1) > :not(h1, :has(h1)) {
+      animation-name: hero-nudge;
+    }
   }
 
   .hero-in > *:nth-child(1) {

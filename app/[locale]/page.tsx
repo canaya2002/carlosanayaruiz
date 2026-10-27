@@ -246,8 +246,16 @@ export default async function HomePage({ params }: Props) {
                 </p>
 
                 {/* La medición de esta visita. Es el signature del sitio y
-                    vive solo aquí: en cada página sería decoración. */}
-                <div className="mt-11">
+                    vive solo aquí: en cada página sería decoración.
+
+                    El alto va RESERVADO: `<Marks>` no pinta nada hasta que
+                    el primer observer responde y sus tres filas llegan una a
+                    una, así que la nota de abajo bajaba 190–220 px después
+                    del primer pintado. Medido con Lighthouse móvil y red
+                    real: CLS 0.0178, todo de `.stamp`. La reserva sale de
+                    medir `.readout` ya completa: 223 px a 320, 205 a 390,
+                    189 a 1280. */}
+                <div className="mt-11 min-h-[14rem] min-[22.5rem]:min-h-[13rem] sm:min-h-[12rem]">
                   <Marks
                     label={
                       en ? 'reading · this visit' : 'lectura · esta visita'
@@ -293,6 +301,10 @@ export default async function HomePage({ params }: Props) {
                   height={SEO_IMAGES.portraitHeight}
                   sizes="(min-width: 1536px) 39rem, (min-width: 1280px) 34rem, (min-width: 1024px) 23rem, 100vw"
                   priority
+                  /* En Next 16 `priority` solo emite la precarga: el `<img>`
+                     sale sin `fetchpriority`. En escritorio el retrato ES el
+                     elemento LCP, así que se pide explícito. */
+                  fetchPriority="high"
                 />
                 {/* La aguja escribiéndolo: una línea de papel que baja una
                     sola vez al cargar. El gesto del sitio, sobre la foto. */}
