@@ -125,13 +125,16 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
 
   const canonical = projectUrl(locale, slug)
   const config = getSiteConfig(locale)
-  const title = `${company.name} — ${company.role}`
+  // `seoTitle` / `seoDescription` solo existen donde `nombre — rol` pasaba de
+  // 60 o el `summary` se quedaba corto como descripción. Ver data/companies.ts.
+  const title = company.seoTitle ?? `${company.name} — ${company.role}`
+  const description = company.seoDescription ?? company.summary
 
   const base = generatePageMetadata({
     locale,
     route: 'proyectos',
     title,
-    description: company.summary,
+    description,
   })
 
   return {
@@ -152,7 +155,7 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
       alternateLocale: locale === 'es' ? 'en_US' : 'es_MX',
       url: canonical,
       title,
-      description: company.summary,
+      description,
       siteName: SITE_CONFIG.name,
     },
   }

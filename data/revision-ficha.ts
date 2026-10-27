@@ -191,7 +191,7 @@ const ES: ReviewCopy = {
 }
 
 const EN: ReviewCopy = {
-  metaTitle: 'Free review of your Google Business Profile | Carlos Anaya Ruiz',
+  metaTitle: 'Free Google Business Profile review | Carlos Anaya Ruiz',
   metaDescription:
     'I review your Google Maps listing for free and email you 3 recommendations within 3 business days. No access to your account. Valid until 11/30/2026.',
   h1: 'Free review of your Google Business Profile',

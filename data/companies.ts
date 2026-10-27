@@ -61,6 +61,18 @@ export interface Company {
   endDate: YearMonth | null
   /** Una línea para la tarjeta de la rejilla. */
   summary: string
+  /**
+   * Solo metadata. El `<title>` se arma como `nombre — rol` más el sufijo
+   * de la plantilla (20 caracteres), y con algunos roles pasaba de 60. Esto
+   * lo sustituye SIN tocar el rol que se lee en la página. Máx. 40.
+   */
+  seoTitle?: string
+  /**
+   * Solo metadata, cuando `summary` queda por debajo de 120 caracteres. La
+   * línea de la tarjeta sigue siendo `summary`. Sale de `detail`: nada que
+   * no diga ya la página.
+   */
+  seoDescription?: string
   /** Qué se hizo, en párrafos. El cuerpo de su página. */
   detail: string[]
   /** Tecnologías. Alimentan las etiquetas de la página. */
@@ -146,6 +158,7 @@ const companiesData: Localized<Company[]> = {
       endDate: '2023-08',
       summary:
         'Gestión de proyectos de tecnología con metodología PMP: alcance cerrado, seguimiento de entregables y coordinación entre áreas.',
+      seoTitle: 'Master Loyalty Group — Project Manager',
       detail: [
         'Llevé proyectos de tecnología de principio a fin: definición de alcance, estimación, seguimiento y cierre, aplicando el marco del PMBOK con el que me certifiqué como PMP.',
         'Coordinar entre desarrollo, operación y negocio es donde aprendí que la mayoría de los proyectos no fallan por un problema técnico, sino porque nadie escribió qué se iba a entregar. Por eso hoy cada propuesta que mando lleva alcance, entregables y métrica de éxito por escrito.',
@@ -164,6 +177,8 @@ const companiesData: Localized<Company[]> = {
       endDate: '2022-08',
       summary:
         'Responsable de infraestructura y sistemas internos en la operación mexicana de una naviera internacional.',
+      seoDescription:
+        'Responsable de infraestructura y sistemas internos en la operación mexicana de una naviera internacional: redes, servidores, soporte y continuidad.',
       detail: [
         'Fui responsable de la infraestructura y los sistemas internos de la operación en México de una naviera internacional: redes, servidores, soporte y continuidad de los sistemas que sostienen la operación logística diaria.',
         'Aquí entendí lo que significa que un sistema esté caído: no es una métrica en un dashboard, es carga que no se mueve. Esa noción de costo real de la indisponibilidad es la que traigo a las migraciones de sitios que hago ahora.',
@@ -184,6 +199,7 @@ const companiesData: Localized<Company[]> = {
       endDate: '2024-10',
       summary:
         'Monitoreo de calidad del aire con datos satelitales. Reconocimiento "Galactic Problem Solver" del NASA Space Apps Challenge.',
+      seoTitle: 'AuraScope — Visualización de datos',
       detail: [
         'AuraScope cruza datos satelitales de calidad del aire con visualización geográfica para hacer legible algo que normalmente vive en archivos que nadie abre.',
         'AuraScope recibió el reconocimiento "Galactic Problem Solver" del NASA Space Apps Challenge 2024.',
@@ -204,6 +220,9 @@ const companiesData: Localized<Company[]> = {
       endDate: '2022-04',
       summary:
         'Optimización de rutas de logística urbana. Primer lugar en hackathon 2022.',
+      seoTitle: 'LogiRoute AI — Optimización de rutas',
+      seoDescription:
+        'Optimización de rutas de logística urbana: ordenar entregas con restricciones de tráfico para reducir distancia y tiempo. Primer lugar en hackathon 2022.',
       detail: [
         'LogiRoute AI ataca el problema de ruteo urbano: dado un conjunto de entregas y restricciones de tráfico, encontrar el orden que reduce distancia y tiempo.',
         'Ganó el primer lugar del hackathon en 2022. La reducción de consumo de combustible que reportamos era una proyección del modelo, no una medición en operación real — vale decirlo así porque es la diferencia entre un resultado y una estimación.',
@@ -286,6 +305,7 @@ const companiesData: Localized<Company[]> = {
       endDate: '2023-08',
       summary:
         'Technology project management under PMP practice: fixed scope, deliverable tracking, and coordination across teams.',
+      seoTitle: 'Master Loyalty Group — Project Manager',
       detail: [
         'I ran technology projects end to end — scoping, estimating, tracking, and closing — applying the PMBOK framework I certified in as a PMP.',
         'Coordinating between development, operations, and the business is where I learned that most projects do not fail on a technical problem; they fail because nobody wrote down what was going to be delivered. That is why every proposal I send now carries scope, deliverables, and a success metric in writing.',
@@ -304,6 +324,8 @@ const companiesData: Localized<Company[]> = {
       endDate: '2022-08',
       summary:
         'Owned infrastructure and internal systems for the Mexican operation of an international shipping line.',
+      seoDescription:
+        'Owned infrastructure and internal systems for the Mexican operation of an international shipping line: networks, servers, support and continuity.',
       detail: [
         'I owned the infrastructure and internal systems for the Mexico operation of an international shipping line: networks, servers, support, and the continuity of the systems that hold up daily logistics.',
         'This is where I learned what a system being down actually means. It is not a metric on a dashboard, it is freight that does not move. That sense of the real cost of unavailability is what I bring to the site migrations I run now.',
@@ -324,6 +346,7 @@ const companiesData: Localized<Company[]> = {
       endDate: '2024-10',
       summary:
         'Air quality monitoring from satellite data. "Galactic Problem Solver" recognition, NASA Space Apps Challenge.',
+      seoTitle: 'AuraScope — Data visualisation',
       detail: [
         'AuraScope joins satellite air-quality data with geographic visualisation, to make legible something that normally lives in files nobody opens.',
         'AuraScope received the "Galactic Problem Solver" recognition at the 2024 NASA Space Apps Challenge.',
@@ -343,6 +366,9 @@ const companiesData: Localized<Company[]> = {
       startDate: '2022-04',
       endDate: '2022-04',
       summary: 'Urban logistics route optimisation. First place, 2022 hackathon.',
+      seoTitle: 'LogiRoute AI — Route optimisation',
+      seoDescription:
+        'Urban logistics route optimisation: ordering deliveries under traffic constraints to cut distance and time. First place at a 2022 hackathon.',
       detail: [
         'LogiRoute AI takes on urban routing: given a set of deliveries and traffic constraints, find the order that cuts distance and time.',
         'It won first place at the 2022 hackathon. The fuel reduction we reported was a projection from the model, not a measurement in real operation — worth saying plainly, because that is the difference between a result and an estimate.',
