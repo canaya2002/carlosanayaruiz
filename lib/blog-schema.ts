@@ -136,7 +136,7 @@ export function generateBlogIndexGraph(posts: readonly BlogPost[]): SchemaGraph 
         url,
         name: 'Blog de Carlos Anaya Ruiz',
         description:
-          'Artículos técnicos sobre inteligencia artificial aplicada, ciberseguridad, desarrollo full-stack, SEO técnico, cloud y SaaS. Publicación cada martes y viernes.',
+          'Artículos técnicos sobre inteligencia artificial aplicada, ciberseguridad, desarrollo full-stack, SEO técnico, cloud y SaaS. Nuevos cada semana.',
         inLanguage: 'es-MX',
         author: { '@id': AUTHOR_ID },
         publisher: { '@id': AUTHOR_ID },

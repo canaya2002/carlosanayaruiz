@@ -96,7 +96,7 @@ export async function GET() {
     <title>${xml(SITE_CONFIG.name)} — Blog técnico</title>
     <link>${blogUrl()}</link>
     <atom:link href="${self}" rel="self" type="application/rss+xml" />
-    <description>Artículos técnicos sobre IA aplicada, ciberseguridad, desarrollo full-stack, SEO y cloud. Publicación cada martes y viernes.</description>
+    <description>Artículos técnicos sobre IA aplicada, ciberseguridad, desarrollo full-stack, SEO y cloud. Nuevos cada semana.</description>
     <language>es-MX</language>
     <copyright>${xml(SITE_CONFIG.name)}</copyright>
     <managingEditor>${xml(NAP.email)} (${xml(SITE_CONFIG.name)})</managingEditor>

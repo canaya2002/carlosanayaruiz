@@ -59,8 +59,8 @@ export default async function Image({ params }: Params) {
   return renderOgCard({
     locale: locale as Locale,
     eyebrow: en
-      ? 'Technical blog · Tuesdays and Fridays'
-      : 'Blog técnico · martes y viernes',
+      ? 'Technical blog · every week'
+      : 'Blog técnico · cada semana',
     title: en
       ? 'What actually works in production'
       : 'Lo que sí funciona en producción',

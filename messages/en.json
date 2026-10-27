@@ -272,15 +272,15 @@
     ]
   },
   "newsletter": {
-    "eyebrow": "newsletter · tuesdays and fridays",
+    "eyebrow": "newsletter · every week",
     "title": "Every article, in your inbox",
-    "lead": "One hundred articles written and scheduled: development, AI, security, SEO, cloud and compliance. One every Tuesday and Friday, in your inbox the same day.",
+    "lead": "Every week I publish new articles on development, AI, security, SEO, cloud and compliance, and send them to you by email.",
     "label": "Your email",
     "placeholder": "you@email.com",
     "submit": "Subscribe",
     "consent": "For the newsletter only. No spam, no third parties, and one click to unsubscribe.",
     "privacy": "How I handle your data",
-    "ok": "Done. The next article reaches you Tuesday or Friday.",
+    "ok": "Done. Every new article will reach your inbox.",
     "yaEstaba": "You were already on the list. Nothing to do.",
     "invalido": "That email does not look right. Check it and try again.",
     "sinConfigurar": "The list is not connected yet. Write to me directly and I will add you by hand.",

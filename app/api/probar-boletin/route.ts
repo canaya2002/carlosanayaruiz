@@ -67,7 +67,7 @@ export async function GET(request: Request) {
   const post = BLOG_POSTS.find((p) => p.n === n)
   if (!post) {
     return Response.json(
-      { ok: false, error: `no hay artículo con n=${n} (el rango es 1–100)` },
+      { ok: false, error: `no hay artículo con n=${n} (los que existen van del 1 al ${Math.max(...BLOG_POSTS.map((p) => p.n))})` },
       { status: 400 }
     )
   }
@@ -83,7 +83,7 @@ export async function GET(request: Request) {
       id: r.id,
       status: r.status,
       respuesta: r.detalle,
-      nota: 'Lleva el prefijo «prueba-» a propósito: así este envío NO consume la clave de idempotencia del cron y el martes el artículo se manda igual a la lista.',
+      nota: 'Lleva el prefijo «prueba-» a propósito: así este envío NO consume la clave de idempotencia del cron y en su día el cron manda el artículo igual a la lista.',
     })
   }
   return Response.json({

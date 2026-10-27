@@ -4600,6 +4600,10 @@
     max-width: 66ch;
     color: var(--ink-muted);
     text-wrap: pretty;
+    /* Una URL escrita tal cual (las fuentes del 101) no tiene por dónde
+       partirse: a 360 px empujaba la hoja 168 px a la derecha. `break-word`
+       y no `anywhere`, para no tocar el ancho mínimo de las tablas. */
+    overflow-wrap: break-word;
   }
 
   .article > * + * {

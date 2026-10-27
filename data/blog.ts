@@ -1765,6 +1765,24 @@ export const BLOG_POSTS: readonly BlogPost[] = [
     cover: "/blog/prepararte-profesionalmente-decada-ia-carlos-anaya-ruiz.webp",
     coverAlt: "Un camino ascendente formado por losas iridiscentes que se van materializando en el aire justo un instante antes de cada paso, dirigiéndose hacia un horizonte de luz difusa en la parte superior del encuadre",
   },
+  {
+    n: 101,
+    slug: "google-business-profile-mexico",
+    seoTitle: "Google Business Profile en México: guía 2026 para Maps",
+    title: "Google Business Profile en México: guía 2026 para aparecer en Maps",
+    description: "Reclama y optimiza tu Perfil de Negocio de Google paso a paso: categorías, horarios, fotos, reseñas y tu web. Guía 2026 para negocios en México.",
+    category: "SEO",
+    cluster: "SEO, GEO y AEO",
+    keyword: "google business profile méxico",
+    tipo: "satelite",
+    tags: ["seo local","google business profile","google maps","reseñas","pymes"],
+    publishedAt: "2026-12-03T14:00:00Z",
+    file: "101-google-business-profile-mexico.md",
+    words: 3006,
+    readingMinutes: 15,
+    cover: "/blog/google-business-profile-mexico-carlos-anaya-ruiz.webp",
+    coverAlt: "Tarjeta de negocio con estrellas y palomita sobre un mapa azul marino con un pin dorado.",
+  },
 ] as const
 
 /** Los diez clústeres, en el orden en que salen. */

@@ -51,7 +51,7 @@ interface Props {
  */
 const TITLE = 'Blog técnico: IA, código y SEO'
 const DESCRIPTION =
-  'Artículos técnicos sobre IA aplicada, ciberseguridad, desarrollo full-stack, SEO y cloud. Sin humo y con lo que sí funciona en producción. Cada martes y viernes.'
+  'Artículos técnicos sobre IA aplicada, ciberseguridad, desarrollo full-stack, SEO y cloud. Sin humo y con lo que sí funciona en producción. Nuevos cada semana.'
 
 export async function generateMetadata({ params }: Props): Promise<Metadata> {
   const { locale } = await params
@@ -163,7 +163,7 @@ export default async function BlogIndexPage({ params }: Props) {
                 <div className="margin-row">
                   <span className="margin-key">cadencia</span>
                   <span className="margin-val !text-ink">
-                    martes y viernes
+                    cada semana
                   </span>
                   <span className="margin-val">08:00, Ciudad de México</span>
                 </div>

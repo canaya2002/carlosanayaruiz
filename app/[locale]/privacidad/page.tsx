@@ -85,7 +85,7 @@ interface Props {
 }
 
 /** Fecha real de la última edición de fondo. También alimenta el JSON-LD. */
-const LAST_UPDATED = '2026-08-24'
+const LAST_UPDATED = '2026-10-27'
 
 export async function generateMetadata({ params }: Props): Promise<Metadata> {
   const { locale } = await params
@@ -330,7 +330,8 @@ export default async function PrivacyPage({ params }: Props) {
               </p>
               <p>
                 <strong>What you receive, and how often.</strong> One email per
-                new blog article: two a week, on Tuesdays and Fridays. No
+                new blog article, and no others: I publish new articles every
+                week and send them to you by email. No
                 promotional sends, nothing from third parties, nothing that is
                 not an article published on this site. The email carries the
                 title, the standfirst and a link — and that link includes
@@ -838,8 +839,9 @@ export default async function PrivacyPage({ params }: Props) {
               </p>
               <p>
                 <strong>Qué recibes y cada cuánto.</strong> Un correo por
-                artículo nuevo del blog: dos por semana, los martes y los
-                viernes. No hay envíos promocionales, ni de terceros, ni de
+                artículo nuevo del blog, y ninguno más: cada semana publico
+                artículos nuevos y te los envío por correo. No hay envíos
+                promocionales, ni de terceros, ni de
                 nada que no sea un artículo publicado en este sitio. El correo
                 trae el título, la entradilla y un enlace — y ese enlace lleva
                 parámetros de campaña (<code>utm_source</code>) para saber

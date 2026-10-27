@@ -272,15 +272,15 @@
     ]
   },
   "newsletter": {
-    "eyebrow": "boletín · martes y viernes",
+    "eyebrow": "boletín · cada semana",
     "title": "Cada artículo, en tu correo",
-    "lead": "Cien artículos escritos y programados: desarrollo, IA, ciberseguridad, SEO, cloud y cumplimiento. Uno cada martes y cada viernes, y el mismo día te llega al correo.",
+    "lead": "Cada semana publico artículos nuevos sobre desarrollo, IA, ciberseguridad, SEO, cloud y cumplimiento, y te los envío por correo.",
     "label": "Tu correo",
     "placeholder": "tu@correo.com",
     "submit": "Suscribirme",
     "consent": "Solo para el boletín. Nada de spam, nada de terceros, y te das de baja con un clic.",
     "privacy": "Cómo trato tus datos",
-    "ok": "Listo. El próximo artículo te llega el martes o el viernes.",
+    "ok": "Listo. Cada artículo nuevo te llegará por correo.",
     "yaEstaba": "Ya estabas en la lista. Nada que hacer.",
     "invalido": "Ese correo no se ve bien. Revísalo y vuelve a intentar.",
     "sinConfigurar": "La lista todavía no está conectada. Escríbeme directo y te apunto a mano.",
