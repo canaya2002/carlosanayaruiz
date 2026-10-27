@@ -391,7 +391,7 @@ export default async function CertificationsPage({ params }: Props) {
               <div className="min-w-0">
                 <p className="stamp">{t('eyebrow')}</p>
 
-                <h1 className="mt-6 max-w-[16ch] text-hero text-ink">
+                <h1 className="hero-fit mt-6 max-w-[16ch] text-hero text-ink [--fit:6.1]">
                   {t('h1Lead')}
                   <span className="block">{t('h1Accent')}</span>
                 </h1>

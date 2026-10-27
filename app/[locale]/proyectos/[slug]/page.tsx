@@ -440,7 +440,7 @@ export default async function ProjectPage({ params }: Props) {
                         {company.stack.map((tech) => (
                           <li
                             key={tech}
-                            className="font-mono text-[0.6875rem] leading-[1.4] tracking-[0.04em] text-ink"
+                            className="font-mono text-[length:var(--text-grad)] leading-[1.4] tracking-[0.04em] text-ink"
                           >
                             {tech}
                           </li>
@@ -459,7 +459,7 @@ export default async function ProjectPage({ params }: Props) {
                       {company.docs.map((doc) => (
                         <li key={doc.href}>
                           <a
-                            className="link-stylus font-mono text-[0.6875rem] tracking-[0.04em]"
+                            className="link-stylus font-mono text-[length:var(--text-grad)] tracking-[0.04em]"
                             href={doc.href}
                             target="_blank"
                             rel="noopener noreferrer"

@@ -855,7 +855,7 @@ export default async function TermsPage({ params }: Props) {
                       >
                         <span
                           data-numeric=""
-                          className="mt-[0.2em] shrink-0 font-mono text-[0.6875rem] tracking-[0.09em] text-ink-subtle"
+                          className="mt-[0.2em] shrink-0 font-mono text-[length:var(--text-grad)] tracking-[0.09em] text-ink-subtle"
                         >
                           {clause(index)}
                         </span>

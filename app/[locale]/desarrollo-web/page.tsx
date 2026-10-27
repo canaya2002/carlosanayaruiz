@@ -214,7 +214,10 @@ export default async function DesarrolloWebPage({ params }: Props) {
                     : 'servicio · desarrollo web'}
                 </p>
 
-                <h1 className="mt-7 max-w-[15ch] text-hero text-ink">
+                {/* `.hero-fit` por la versión inglesa: «Development» mide
+                    264 px a 320 y la columna 252. En español no encoge nada:
+                    `min()` solo actúa donde la palabra no cabe. */}
+                <h1 className="hero-fit mt-7 max-w-[15ch] text-hero text-ink [--fit:6.2]">
                   {t('title')}
                 </h1>
 

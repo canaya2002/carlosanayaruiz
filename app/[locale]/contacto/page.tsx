@@ -316,7 +316,7 @@ export default async function ContactPage({ params }: Props) {
                   </span>
                   <span className="margin-read">
                     &lt;24
-                    <span className="ml-1.5 text-[0.6875rem] tracking-[0.12em] text-ink-subtle">
+                    <span className="ml-1.5 text-[length:var(--text-grad)] tracking-[0.12em] text-ink-subtle">
                       h
                     </span>
                   </span>

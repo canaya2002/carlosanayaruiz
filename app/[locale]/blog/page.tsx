@@ -151,7 +151,7 @@ export default async function BlogIndexPage({ params }: Props) {
                   <span className="margin-key">publicados</span>
                   <span className="margin-read">
                     {posts.length}
-                    <span className="ml-1.5 text-[0.6875rem] tracking-[0.12em] text-ink-subtle">
+                    <span className="ml-1.5 text-[length:var(--text-grad)] tracking-[0.12em] text-ink-subtle">
                       / {BLOG_POSTS.length}
                     </span>
                   </span>
@@ -185,7 +185,7 @@ export default async function BlogIndexPage({ params }: Props) {
                 <div className="margin-row">
                   <span className="margin-key">rss</span>
                   <a
-                    className="link-stylus font-mono text-[0.6875rem] tracking-[0.04em]"
+                    className="link-stylus font-mono text-[length:var(--text-grad)] tracking-[0.04em]"
                     href="/feed.xml"
                   >
                     /feed.xml →

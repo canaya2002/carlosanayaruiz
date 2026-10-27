@@ -199,7 +199,11 @@ export default async function HomePage({ params }: Props) {
               negativo y sin recorte se escaparía al documento. Lo verifica
               `check:overflow`. */}
           <section className="relative flex flex-col overflow-hidden px-5 pt-16 pb-16 sm:px-10 lg:pb-28">
-            <h1 className="max-w-[20ch] text-hero text-ink">
+            {/* `relative z-[1]`: en un teléfono el retrato sale del flujo y
+                se compone detrás de la esquina derecha del titular. Sin esto
+                la figura absoluta, que va después en el DOM, se pintaría
+                encima de las letras. */}
+            <h1 className="relative z-[1] max-w-[20ch] text-hero text-ink">
               <Greeting locale={lc} />{' '}
               {/* El espacio entre los dos `span` de bloque es deliberado: sin
                   él `textContent` concatena «sitiotarda». `innerText` lo
@@ -308,7 +312,11 @@ export default async function HomePage({ params }: Props) {
                   alt={SEO_IMAGES.avatarAlt[lc]}
                   width={SEO_IMAGES.portraitWidth}
                   height={SEO_IMAGES.portraitHeight}
-                  sizes="(min-width: 1536px) 39rem, (min-width: 1280px) 34rem, (min-width: 1024px) 23rem, 100vw"
+                  /* Por debajo de 40rem la figura es el recorte de cabeza y
+                     hombros: 10.5rem de ancho con la imagen al 167%, o sea
+                     ~18rem pintados. Con `100vw` ahí un teléfono pedía la
+                     variante de 828 o 1080 para mostrar 280 px. */
+                  sizes="(min-width: 1536px) 39rem, (min-width: 1280px) 34rem, (min-width: 1024px) 23rem, (min-width: 40.0625rem) 100vw, 18rem"
                   priority
                   /* En Next 16 `priority` solo emite la precarga: el `<img>`
                      sale sin `fetchpriority`. En escritorio el retrato ES el
@@ -395,7 +403,7 @@ export default async function HomePage({ params }: Props) {
                 ))}
               </ol>
 
-              <p className="gap mt-6 pt-3 font-mono text-[0.6875rem] tracking-[0.09em]">
+              <p className="gap mt-6 pt-3 font-mono text-[length:var(--text-grad)] tracking-[0.09em]">
                 {en
                   ? 'gaps between bands are real and are not filled in.'
                   : 'los huecos entre bandas son reales y no se rellenan.'}

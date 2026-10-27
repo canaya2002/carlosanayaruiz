@@ -175,7 +175,7 @@ export default async function RevisionFichaPage({ params }: Props) {
                   <span className="margin-key">{copy.termTitle}</span>
                   <span className="margin-read">
                     {plazoDias}
-                    <span className="ml-1.5 text-[0.6875rem] tracking-[0.12em] text-ink-subtle">
+                    <span className="ml-1.5 text-[length:var(--text-grad)] tracking-[0.12em] text-ink-subtle">
                       {en ? 'business days' : 'días hábiles'}
                     </span>
                   </span>

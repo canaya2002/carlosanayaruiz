@@ -101,7 +101,13 @@ export function LanguageSwitcher() {
       locale={targetLocale}
       // La etiqueta visible es un nombre de idioma, que por sí solo no dice qué
       // va a pasar; el nombre accesible enuncia la acción.
-      aria-label={`${t('label')}: ${t('switchTo')}`}
+      //
+      // Y EMPIEZA por lo que se ve. En móvil la etiqueta es «EN», y un nombre
+      // «Idioma: English» no la contenía: quien maneja la voz dice lo que lee
+      // («EN») y el control no responde. Es `label-content-name-mismatch`
+      // (WCAG 2.5.3). Con el código delante, el nombre contiene las dos
+      // etiquetas visibles —«EN» en móvil, «English» desde sm.
+      aria-label={`${targetLocale.toUpperCase()} – ${t('label')}: ${t('switchTo')}`}
       // Decirle al crawler qué hay del otro lado de este enlace.
       hrefLang={targetLocale}
       className="press inline-flex h-11 items-center gap-1.5 whitespace-nowrap px-2 text-sm text-ink-muted transition-colors hover:text-ink sm:gap-2 sm:px-3"

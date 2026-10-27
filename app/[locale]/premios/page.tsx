@@ -216,7 +216,7 @@ export default async function AwardsPage({ params }: Props) {
               <div className="min-w-0">
                 <p className="stamp">{t('eyebrow')}</p>
 
-                <h1 className="mt-6 max-w-[14ch] text-hero text-ink">
+                <h1 className="hero-fit mt-6 max-w-[14ch] text-hero text-ink [--fit:7.8]">
                   {t('h1Lead')}
                   {t('h1Accent')}
                 </h1>

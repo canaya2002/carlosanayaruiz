@@ -170,11 +170,11 @@ export default async function AiAutomationPage({ params }: Props) {
                     : `canal ${channelId('ai-automation')} · automatización con ia`}
                 </p>
 
-                {/* `hyphens` solo por debajo de 640: «Automatización» son catorce
-                caracteres sin un punto de corte natural y a 375 px mide más
-                que la columna. Arriba de sm sobra sitio y la partición se
-                apaga, que es donde se vería mal. */}
-                <h1 className="mt-6 text-hero text-ink [hyphens:auto] [overflow-wrap:break-word] sm:[hyphens:manual]">
+                {/* «Automatización» son catorce caracteres y a 390 medía
+                    322 px en una columna de 314. Antes se partía por sílabas
+                    («Automatizació-n»); ahora el titular se encoge lo justo
+                    para que quepa entera. Ver `.hero-fit` en globals.css. */}
+                <h1 className="hero-fit mt-6 text-hero text-ink [--fit:7.2]">
                   {t('title')}
                 </h1>
 
@@ -627,7 +627,7 @@ export default async function AiAutomationPage({ params }: Props) {
                 0.16em de tracking se leen bien en una etiqueta de tres
                 palabras y mal en una oración. Mismo token de tamaño, sin la
                 caja de mayúsculas. */}
-            <p className="mt-8 max-w-[56ch] font-mono text-grad leading-relaxed text-ink-subtle">
+            <p className="mt-8 max-w-[56ch] font-mono text-[length:var(--text-grad)] leading-relaxed text-ink-subtle">
               {t('ctaNote')}
             </p>
           </section>

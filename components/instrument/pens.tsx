@@ -50,7 +50,7 @@ export function Pens({ steps, label, unit, legend }: PensProps) {
           cuatro. */}
       <span className="margin-read">
         {steps.length}
-        <span className="ml-1.5 text-[0.6875rem] tracking-[0.12em] text-ink-subtle">
+        <span className="ml-1.5 text-[length:var(--text-grad)] tracking-[0.12em] text-ink-subtle">
           {unit}
         </span>
       </span>
@@ -85,7 +85,7 @@ export function Pens({ steps, label, unit, legend }: PensProps) {
         {steps.map((step, i) => (
           <li
             key={step.title}
-            className="grid grid-cols-[1.5rem_minmax(0,1fr)] gap-x-3 font-mono text-[0.6875rem] leading-[1.4] tracking-[0.04em] text-ink-muted"
+            className="grid grid-cols-[1.5rem_minmax(0,1fr)] gap-x-3 font-mono text-[length:var(--text-grad)] leading-[1.4] tracking-[0.04em] text-ink-muted"
           >
             <span aria-hidden="true" className="text-ink-subtle">
               {String.fromCharCode(97 + i)}
@@ -95,7 +95,7 @@ export function Pens({ steps, label, unit, legend }: PensProps) {
         ))}
       </ol>
 
-      <p className="mt-4 font-mono text-[0.6875rem] leading-[1.45] tracking-[0.04em] text-ink-subtle">
+      <p className="mt-4 font-mono text-[length:var(--text-grad)] leading-[1.45] tracking-[0.04em] text-ink-subtle">
         {legend}
       </p>
     </div>

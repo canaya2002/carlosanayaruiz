@@ -212,6 +212,11 @@
   :root {
     --tape-w: 2.25rem;   /* 36 px */
     --rail-tick: 0.5rem;
+    /* La graduación sube a 12 px en un teléfono. A 11 px, en mono, en
+       mayúsculas y con tracking abierto, los rótulos de la hoja se leían
+       mal a un brazo de distancia. El ratio de la escala es de escritorio
+       —masthead 120 ÷ 11— y aquí el masthead ya no pasa de 44 px. */
+    --text-grad: 0.75rem;
   }
 }
 
@@ -370,10 +375,21 @@
 
      Solo por debajo de 30rem: en escritorio ningún titular necesita
      partirse y un guion ahí sería un defecto, no un arreglo. */
+  /* ── Y AHORA SIN GUION ──
+     `hyphens: auto` evitaba el desborde pero lo cambiaba por otro defecto:
+     «Automatizació-n» y «reconoci-mientos» partidos en el titular más grande
+     de la página. Un masthead partido por sílabas no se lee como una caja de
+     imprenta, se lee como un error. Ahora la regla es la contraria: la
+     palabra CABE, porque el titular que la lleva se encoge (`.hero-fit`,
+     abajo), y `break-word` queda solo como red para que nunca vuelva a
+     desbordar el documento. Medido a 320, 360 y 390 en las 18 rutas: las
+     palabras que no cabían eran «Automatización», «reconocimientos»,
+     «Credenciales» y, en inglés, «Development»; sus titulares llevan
+     `.hero-fit`. */
   @media (max-width: 30rem) {
     h1,
     h2 {
-      hyphens: auto;
+      hyphens: manual;
       overflow-wrap: break-word;
     }
   }
@@ -2370,6 +2386,48 @@
     }
   }
 
+  /* ── EN UN TELÉFONO, LA CARA EN EL PRIMER PANTALLAZO ──────────
+     En flujo el retrato caía DEBAJO de la lectura en vivo: a 390×844 no
+     se veía sin hacer scroll, y la cara es la mejor prueba de que detrás
+     hay una persona. Ahora sale del flujo y se compone arriba a la
+     derecha, junto a «Hola. / Mido lo» —las dos líneas cortas del
+     titular—, así que NO empuja nada: el CTA sigue donde estaba.
+
+     El recorte es cabeza y hombros: la imagen se pinta al 167% del ancho
+     de la figura y corrida un 38% a la izquierda, que centra la cabeza
+     (x 330–730 de 1000 en el archivo) y deja el torso fuera por abajo.
+
+     Área ≈ 168 × 208 px. Es la mitad que el párrafo de entrada, así que el
+     elemento LCP en móvil sigue siendo TEXTO y no espera a la foto.
+
+     Se disuelve por la izquierda —por ahí pasa «que tu sitio»— y por
+     abajo, por la misma razón que en escritorio: sin canto, sin caja. El
+     `right` compensa el `-mr-5` de la figura: con él el retrato toca el
+     canto de la pantalla. */
+  @media (max-width: 40rem) {
+    .figure-hero {
+      position: absolute;
+      top: 0.75rem;
+      right: 1.25rem;
+      width: min(10.5rem, 44vw);
+      height: min(13rem, 38svh);
+      min-height: 0;
+      pointer-events: none;
+      mask-image:
+        linear-gradient(to right, transparent 0%, #000 34%),
+        linear-gradient(to bottom, #000 58%, transparent 97%);
+      mask-composite: intersect;
+    }
+
+    .figure-hero img {
+      inset: 0 auto auto -38%;
+      width: 167%;
+      height: auto;
+      max-width: none;
+      object-fit: fill;
+    }
+  }
+
   /* La aguja escribiéndolo. Una línea de papel dentro de una capa a
      toda altura, barrida de arriba abajo UNA vez al cargar: así el
      gesto no depende de la altura del encuadre y solo mueve un
@@ -2653,12 +2711,15 @@
     border-top: 1px solid currentColor;
   }
 
+  /* Ceniza sólida y no tinta al 60%: atenuar texto con `opacity` es como
+     se cuelan los fallos de contraste (ver «Trampas» en CLAUDE.md). Ceniza
+     mide 5.30 sobre el hollín; en la placa la sobrescribe `--ink-plate`. */
   .channel-id {
     font-family: var(--font-mono);
     font-size: var(--text-grad);
     letter-spacing: 0.14em;
     text-transform: uppercase;
-    opacity: 0.6;
+    color: var(--ink-subtle);
   }
 
   /* A partir de 64rem la fila se abre en dos plumas: el nombre a la
@@ -5273,6 +5334,30 @@
   .channel > :nth-child(2) > .channel-note {
     margin-top: 0;
     max-width: 62ch;
+  }
+}
+
+/* ── EL MASTHEAD QUE SE ENCOGE PARA QUE LA PALABRA QUEPA ─────────
+   Fuera de toda capa por la misma razón que lo de arriba: `text-hero` es
+   una utilidad y una regla de `@layer components` nunca le gana.
+
+   La columna de un teléfono mide `100vw − 4.75rem` (riel de 2.25rem más
+   1.25rem de margen a cada lado; a 22.5rem el riel baja y sobra holgura).
+   `--fit` es cuántas veces el tamaño de letra mide la palabra más larga
+   del titular, MEDIDO en el navegador con Archivo cargada, más un 2–3% de
+   holgura: «Automatización» 7.03 → 7.2, «reconocimientos» 7.58 → 7.8,
+   «Credenciales» 5.93 → 6.1, «Development» (EN) 6.0 → 6.2. `min()` hace
+   que solo encoja donde la palabra no cabe; en cuanto cabe, manda la
+   escala del sistema.
+
+   El clamp se repite literal y no por `var(--text-hero)`: es el valor del
+   token, y un `@theme inline` no garantiza que la variable llegue a :root. */
+@media (max-width: 40rem) {
+  .hero-fit {
+    font-size: min(
+      clamp(2.75rem, 1.35rem + 6.2vw, 7.5rem),
+      calc((100vw - 4.75rem) / var(--fit, 7.2))
+    );
   }
 }
 

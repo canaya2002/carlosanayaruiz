@@ -346,7 +346,7 @@ export default async function BlogPostPage({ params }: Props) {
                   <span className="margin-key">lectura</span>
                   <span className="margin-read">
                     {post.readingMinutes}
-                    <span className="ml-1.5 text-[0.6875rem] tracking-[0.12em] text-ink-subtle">
+                    <span className="ml-1.5 text-[length:var(--text-grad)] tracking-[0.12em] text-ink-subtle">
                       min
                     </span>
                   </span>

@@ -363,7 +363,7 @@ export default async function BooksPage({ params }: Props) {
               ))}
             </ol>
 
-            <p className="gap mt-10 pt-3 font-mono text-[0.6875rem] tracking-[0.09em]">
+            <p className="gap mt-10 pt-3 font-mono text-[length:var(--text-grad)] tracking-[0.09em]">
               {t('comingSoon')}
             </p>
           </section>

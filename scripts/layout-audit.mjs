@@ -81,7 +81,11 @@ const PROBE = `(() => {
      marcas, y rotar un elemento cuadrado agranda su caja alineada a los ejes
      aunque lo que se ve dentro sea un circulo quieto. Lo que se recorta es
      caja vacia. */
-  const VENTANAS = ['trace', 'ribbon', 'portrait', 'media-slot', 'dial']
+  /* 'figure-hero' tambien: por debajo de 40rem el retrato es un recorte de
+     cabeza y hombros, la imagen pintada al 167% de la figura y el torso
+     fuera por abajo A PROPOSITO. Lo que se corta es la foto que no se quiere
+     ensenar, no contenido. */
+  const VENTANAS = ['trace', 'ribbon', 'portrait', 'media-slot', 'dial', 'figure-hero']
   for (const el of document.querySelectorAll('main *')) {
     const cs = getComputedStyle(el)
     const hidden = cs.overflowY === 'hidden' || cs.overflowY === 'clip'

@@ -79,7 +79,7 @@ export function Span({ entries, label, spanLabel, rangeEnd }: SpanProps) {
       <span className="margin-read">
         {newest === oldest ? newest : `${oldest}–${newest}`}
       </span>
-      <span className="margin-val !mt-1 !text-[0.6875rem] !tracking-[0.12em] !text-ink-subtle">
+      <span className="margin-val !mt-1 !text-[length:var(--text-grad)] !tracking-[0.12em] !text-ink-subtle">
         {spanLabel}
       </span>
 

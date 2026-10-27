@@ -968,8 +968,20 @@ function NavDropdown({
 
              Ahora ocupa 1rem de ancho visual y conserva los 44px de alto,
              así que el objetivo táctil sigue cumpliendo el piso sin robarle
-             espacio horizontal a la fila. */
-          'press -ml-0.5 inline-flex h-11 w-4 items-center justify-center text-ink-subtle transition-colors hover:text-ink',
+             espacio horizontal a la fila.
+
+             ── 24 px DE ANCHO, LOS MISMOS 14 DE HUECO ──
+             Lighthouse lo marcaba en `target-size`: 16 × 44 no llega al
+             mínimo de 24 × 24 de WCAG 2.5.8. Ahora mide 24 y los márgenes
+             negativos (−4 a la izquierda, −6 a la derecha) dejan su aporte a
+             la fila en 14 px, igual que antes, así que nada se mueve: el
+             chevron queda 2 px más a la derecha y la fila no crece.
+
+             `relative` no es decorativo: la etiqueta de al lado lo es, y un
+             elemento posicionado se pinta encima de uno que no lo está. Sin
+             esto la etiqueta tapaba los 4 px que se solapan y axe medía un
+             objetivo de 20 px «parcialmente oculto». */
+          'press relative -ml-1 -mr-1.5 inline-flex h-11 w-6 items-center justify-center text-ink-subtle transition-colors hover:text-ink',
           'group-hover/nav:text-ink',
           open && 'text-ink'
         )}
