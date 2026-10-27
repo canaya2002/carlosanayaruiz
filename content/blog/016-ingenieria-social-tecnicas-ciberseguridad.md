@@ -15,6 +15,8 @@ tags: ["ingeniería social","fraude","capacitación","seguridad"]
 
 Es el vector más rentable que existe porque no requiere vulnerabilidades técnicas. Requiere entender a la organización, y eso hoy se investiga en redes profesionales en una tarde.
 
+Cuando la manipulación llega por correo, SMS o WhatsApp tiene nombre propio: en otro artículo explico [qué es el phishing](/es/blog/que-es-phishing-como-protegerte) y las 8 señales que lo delatan.
+
 Conocer las técnicas importa, pero lo que realmente protege son los controles de proceso al final de este artículo. La atención humana falla; los procesos no.
 
 ---

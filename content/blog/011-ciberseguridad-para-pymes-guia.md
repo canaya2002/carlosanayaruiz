@@ -68,7 +68,7 @@ Escritorio remoto, bases de datos y paneles de administración no deben ser acce
 Un antivirus tradicional ya no basta. Necesitas una solución que detecte comportamiento anómalo, no solo firmas conocidas.
 
 **11. Capacitación con simulacros.**
-Una plática anual no sirve. Envía simulacros de correo malicioso cada trimestre, mide quién hace clic, y capacita sin castigar. El objetivo es que reporten, no que se escondan.
+Una plática anual no sirve. Envía simulacros de correo malicioso cada trimestre, mide quién hace clic, y capacita sin castigar. El objetivo es que reporten, no que se escondan. Para lo que cada persona tiene que saber reconocer, aquí explico [qué es el phishing](/es/blog/que-es-phishing-como-protegerte) y las señales que sí funcionan hoy.
 
 **12. Plan de respuesta a incidentes escrito.**
 Quién decide, a quién se llama, qué se desconecta primero, cómo se comunica. Una hoja, impresa, accesible sin acceso a la red. Nadie improvisa bien a las 2 de la mañana.

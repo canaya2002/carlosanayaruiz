@@ -103,7 +103,7 @@ Ese último punto merece atención: durante las primeras semanas, el equipo prod
 - Usuarios activos semanales sobre usuarios con licencia
 - Frecuencia de uso por usuario
 
-Esta última es la señal temprana más confiable. Si a los dos meses menos del 40% del equipo con licencia lo usa cada semana, el proyecto va a fallar aunque los números técnicos se vean bien.
+Esta última es la señal temprana más confiable. Si a los dos meses menos del 40% del equipo con licencia lo usa cada semana, el proyecto va a fallar aunque los números técnicos se vean bien. Es la misma señal con la que cierro los diez [errores al implementar IA](/es/blog/errores-al-implementar-ia-empresa): métricas técnicas impecables no salvan un sistema que nadie usa.
 
 ---
 

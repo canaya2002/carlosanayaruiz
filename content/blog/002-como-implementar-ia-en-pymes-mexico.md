@@ -105,6 +105,8 @@ A los tres meses, compara contra los números del paso 2. Solo hay tres desenlac
 
 **5. Ignorar la protección de datos.** Si procesas datos personales de clientes o empleados, la LFPDPPP aplica. Necesitas aviso de privacidad actualizado, finalidades declaradas y un proveedor que no use tus datos para entrenar.
 
+Estos cinco son parte de una lista más larga: los diez [errores al implementar IA](/es/blog/errores-al-implementar-ia-empresa) que he visto repetirse, con el síntoma temprano que delata a cada uno.
+
 ---
 
 ### Presupuesto realista para el primer año

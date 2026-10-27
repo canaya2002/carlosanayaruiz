@@ -49,7 +49,7 @@ La reutilización es el vector de ataque número uno. Con gestor, esta regla dej
 Se cambia cuando hay indicio de compromiso, cuando aparece en una filtración, o cuando fue compartida.
 
 **6. MFA obligatorio donde el servicio lo permita.**
-La contraseña deja de ser el único obstáculo. Esta regla vale más que todas las anteriores juntas.
+La contraseña deja de ser el único obstáculo. Esta regla vale más que todas las anteriores juntas: es lo que protege la cuenta cuando alguien escribe su contraseña en una página falsa. Si tu equipo no tiene claro [qué es el phishing](/es/blog/que-es-phishing-como-protegerte), empieza por ahí.
 
 **7. Prohibido compartir credenciales.**
 Si dos personas necesitan el mismo acceso, se crean dos cuentas o se usa la función de compartir del gestor, que mantiene trazabilidad.

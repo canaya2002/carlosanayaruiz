@@ -104,6 +104,8 @@ Si tu información está en carpetas compartidas sin estructura, con versiones d
 **3. El costo de no cambiar.**
 Es el que nunca aparece y el que más pesa. Si tu competencia responde cotizaciones en 20 minutos y tú en 6 horas, ese diferencial tiene un precio en ventas perdidas.
 
+No presupuestar la operación es uno de los diez [errores al implementar IA](/es/blog/errores-al-implementar-ia-empresa) que he visto repetirse; saltarse la revisión humana y subestimar la preparación de datos son otros dos.
+
 ---
 
 ### Cómo bajar el costo sin bajar la calidad
