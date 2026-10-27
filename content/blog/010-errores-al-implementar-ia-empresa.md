@@ -1,8 +1,7 @@
 ---
 n: 10
-title: "10 errores al implementar IA en tu empresa (y cómo evitarlos)"
+title: "10 errores al implementar IA en empresa (y cómo evitarlos)"
 slug: "errores-al-implementar-ia-empresa"
-seoTitle: "10 errores al implementar IA en tu empresa"
 description: "Los 10 errores que hacen fracasar proyectos de IA en empresas, con el síntoma temprano de cada uno y cómo corregirlo antes de quemar presupuesto."
 category: "Inteligencia Artificial"
 keyword: "errores al implementar inteligencia artificial"
@@ -11,7 +10,22 @@ tags: ["errores comunes","gestión de proyectos","inteligencia artificial","impl
 ---
 
 
-**Los proyectos de IA casi nunca fracasan por la tecnología. Fracasan por decisiones que se tomaron antes de escribir la primera línea de código.** Estos son los diez errores que he visto repetirse, con la señal temprana que los delata.
+**Los proyectos de IA casi nunca fracasan por la tecnología. Fracasan por decisiones que se tomaron antes de escribir la primera línea de código.** Estos son los diez errores al implementar IA en una empresa que he visto repetirse, con la señal temprana que los delata.
+
+En resumen, antes del detalle de cada uno:
+
+| Error | Síntoma temprano | Corrección |
+|---|---|---|
+| 1. Empezar por la herramienta y no por el problema | La conversación arranca con "queremos implementar IA" | Hablar de procesos, volúmenes y costos; la tecnología se elige al final |
+| 2. No medir el punto de partida | Nadie sabe cuánto tarda hoy el proceso ni cuántas veces ocurre | Dos semanas de medición: volumen, tiempo por unidad, tasa de error y costo por hora |
+| 3. Automatizar un proceso roto | Excepciones no escritas y cada persona lo hace distinto | Arreglar y estandarizar primero, automatizar después |
+| 4. Ignorar a quien hace el trabajo hoy | Nadie de la operación en la mesa | Sumar a quien ejecuta el proceso desde el diagnóstico |
+| 5. Subestimar la preparación de datos | "Los documentos están en la carpeta compartida" | Auditar los datos antes de cotizar |
+| 6. Saltarse la fase de revisión humana | Despliegue directo a producción sin validación | Los primeros 60 días, toda salida pasa por aprobación humana registrada |
+| 7. Esperar precisión determinista | El criterio de éxito es "que no falle nunca" | Umbral según el riesgo; reglas deterministas donde se exige exactitud |
+| 8. No presupuestar la operación | Una cifra única de desarrollo y nada mensual | Presupuestar tokens, infraestructura, mantenimiento y soporte |
+| 9. Ignorar el cumplimiento normativo | Nadie preguntó si hay datos personales | LFPDPPP desde el diseño: aviso, base de licitud y proveedor con acuerdo de tratamiento |
+| 10. Arrancar demasiado ancho | Tres departamentos y cinco tipos de documento en la fase uno | Un proceso, un tipo de documento, un equipo |
 
 ---
 

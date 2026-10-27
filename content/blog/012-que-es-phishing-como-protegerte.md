@@ -1,14 +1,16 @@
 ---
 n: 12
-title: "Qué es el phishing y cómo protegerte: 8 señales"
+title: "Qué es el phishing (y el bancario): 8 señales para protegerte"
 slug: "que-es-phishing-como-protegerte"
-description: "Qué es el phishing, los cinco tipos que vas a encontrar, las 8 señales que sí funcionan hoy y qué hacer si ya hiciste clic."
+description: "Qué es el phishing, definición rápida, cómo detectar el phishing bancario con 8 señales y qué hacer en los primeros 15 minutos si ya diste clic."
 category: "Ciberseguridad"
 keyword: "qué es phishing"
 tipo: "satelite"
 tags: ["phishing","fraude digital","correo","seguridad"]
 ---
 
+
+### Qué es el phishing: definición rápida
 
 **El phishing es un fraude en el que alguien se hace pasar por una entidad de confianza para que entregues credenciales, dinero o acceso.** Llega por correo, mensaje, llamada o mensajería instantánea, y hoy está redactado tan bien que los consejos de hace diez años —"fíjate en las faltas de ortografía"— ya no sirven.
 
@@ -47,6 +49,17 @@ Es el punto de entrada de la mayoría de los incidentes graves en empresas. No p
 7. **Archivo adjunto inesperado.** Especialmente si te pide activar contenido, macros o permisos al abrirlo.
 
 8. **Contexto ligeramente fuera de lugar.** El tono no es el de esa persona. El horario es raro. La firma cambió. Esa sensación de "algo no cuadra" es información: hazle caso.
+
+---
+
+### Phishing bancario: cómo protegerte
+
+El phishing bancario es la variante que suplanta a tu banco: un correo, un SMS, un WhatsApp o una llamada que dice venir de él para que entregues tu acceso o autorices un movimiento. Se detecta con las mismas señales, aplicadas así:
+
+- **Tu banco no te pide claves.** Ni contraseña, ni NIP, ni el código de verificación que te llega por SMS. Si alguien te lo pide, por el canal que sea, no es tu banco.
+- **La urgencia es el anzuelo.** "Detectamos un cargo no reconocido", "tu cuenta se bloquea hoy". Es la señal número 1 con el logotipo del banco encima.
+- **No uses el enlace ni el número que vienen en el mensaje.** Entra desde la app oficial o escribiendo tú la dirección, y si llamas, usa el número que viene al reverso de tu tarjeta.
+- **Si ya diste datos o autorizaste un pago,** llama al banco en ese momento: los primeros minutos son los que determinan si se puede detener la transferencia.
 
 ---
 
