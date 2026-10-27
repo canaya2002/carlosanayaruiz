@@ -4796,6 +4796,15 @@
     border-top: 1px solid var(--hairline);
   }
 
+  /* ── Imagen de bloque ────────────────────────────────────────
+     Solo la llevan artículos nuevos (`![alt](/blog/…)` en su propia línea).
+     Mismo respiro que el código y la tabla, y nada más: sin borde, sin
+     radio, sin sombra — como la portada. El ancho lo pone el preflight
+     (`max-width: 100%; height: auto`). */
+  .article .article-figure {
+    margin-top: 1.75rem;
+  }
+
   /* ── PREGUNTA Y RESPUESTA ─────────────────────────────────────
      304 pares en los cien artículos, y son el nodo FAQPage del schema. La
      pregunta se lee como pregunta —tinta plena— y la respuesta como cuerpo.

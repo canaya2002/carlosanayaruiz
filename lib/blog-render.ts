@@ -24,9 +24,16 @@
  * los tres `##` aplanaban la jerarquía del 091. Un censo incompleto es lo que
  * hace que un renderizador propio parezca más seguro de lo que es.
  *
- * No hay enlaces ni imágenes en el cuerpo de ningún artículo, así que este
- * renderizador no los implementa. Si algún día entra uno, `check:blog` lo
- * reporta como sintaxis sin cubrir en vez de imprimirlo crudo.
+ * Los 100 de la serie no llevan enlaces ni imágenes en el cuerpo. Los
+ * artículos nuevos sí pueden, en dos formas y nada más:
+ *
+ *   [texto](/ruta)  [texto](https://…)   → <a>, el externo con rel="noopener"
+ *   ![alt](/blog/archivo.webp)           → <figure class="article-figure">,
+ *                                          sola en su línea
+ *
+ * Cualquier otra —`http://`, `//host`, `mailto:`, una ruta relativa, una
+ * imagen en línea o fuera de /blog/, una imagen sin alt— sigue saliendo en
+ * `uncovered` y `check:blog` falla, en vez de imprimirla cruda.
  *
  * ⚠ Esa última frase FUE FALSA durante una ronda entera. La detección vivía
  * dentro de la rama del párrafo, después de que listas, tablas, encabezados y
@@ -90,6 +97,19 @@ function escapeHtml(s: string): string {
 }
 
 /**
+ * Enlace: `[texto](/ruta)` o `[texto](https://…)`, y nada más.
+ *
+ * `/(?![/\\])` excluye `//host` y `/\host`: los dos son URLs a OTRO dominio
+ * con aspecto de ruta interna, y los navegadores tratan la barra invertida
+ * como una barra. El `(?<!!)` deja fuera la imagen.
+ */
+const LINK_RE =
+  /(?<!!)\[([^\]]+)\]\((\/(?![/\\])[^\s)]*|https:\/\/[^\s)]+)\)/g
+
+/** Imagen de bloque: sola en la línea, con alt y bajo /blog/. */
+const FIGURE_RE = /^!\[([^\]]+)\]\((\/blog\/[^\s)]+)\)$/
+
+/**
  * Marcado en línea: `código` y **negrita**, en ese orden.
  *
  * El código va primero para que un `**` dentro de un fragmento de código no
@@ -101,6 +121,24 @@ function inline(text: string): string {
   let out = escapeHtml(text).replace(/`([^`]+)`/g, (_m, code: string) => {
     codes.push(code)
     return `\u0000C${codes.length - 1}\u0000`
+  })
+
+  /**
+   * ── LOS ENLACES, DESPUÉS DEL CÓDIGO Y ANTES DE LA NEGRITA ──
+   * Después del código para que `[a](b)` dentro de comillas invertidas siga
+   * siendo código. Antes de la negrita para que el texto del enlace pueda
+   * llevarla (`[**x**](/y)`). El `href` se aparta con un marcador: un `*` o
+   * un `_` en una URL no pueden abrir una itálica dentro del atributo.
+   *
+   * El texto ya está escapado, así que un `&` de la URL llega como `&amp;`
+   * —que es lo correcto dentro de un atributo— y una comilla no puede cerrar
+   * el `href`.
+   */
+  const hrefs: string[] = []
+  out = out.replace(LINK_RE, (_m, label: string, href: string) => {
+    hrefs.push(href)
+    const rel = href.startsWith('https://') ? ' rel="noopener"' : ''
+    return `<a class="link-stylus" href="\u0000H${hrefs.length - 1}\u0000"${rel}>${label}</a>`
   })
 
   out = out.replace(/\*\*([^*]+)\*\*/g, '<strong>$1</strong>')
@@ -122,9 +160,11 @@ function inline(text: string): string {
    */
   out = out.replace(/(?<![*\w])\*([^*\n]+)\*(?!\*)/g, '<em>$1</em>')
 
-  return out.replace(/\u0000C(\d+)\u0000/g, (_m, i: string) => {
-    return `<code>${codes[Number(i)]}</code>`
-  })
+  return out
+    .replace(/\u0000H(\d+)\u0000/g, (_m, i: string) => hrefs[Number(i)]!)
+    .replace(/\u0000C(\d+)\u0000/g, (_m, i: string) => {
+      return `<code>${codes[Number(i)]}</code>`
+    })
 }
 
 /** Ancla estable a partir del texto del encabezado. */
@@ -149,6 +189,9 @@ export function plainText(text: string): string {
     // índice, y ahí un asterisco es basura. Hoy no hay ningún caso (0 de 304
     // preguntas y 0 de 812 encabezados), así que es preventivo.
     .replace(/(?<![*\w])\*([^*\n]+)\*(?!\*)/g, '$1')
+    // Un enlace en una pregunta del FAQ o en un encabezado aporta su TEXTO al
+    // schema y al índice, nunca la sintaxis ni la URL.
+    .replace(LINK_RE, '$1')
     .trim()
 }
 
@@ -180,9 +223,14 @@ function barrerSinCubrir(lines: readonly string[]): string[] {
     if (enValla) continue
 
     const donde = `línea ${i + 1}`
-    if (/!\[[^\]]*\]\(/.test(t)) fuera.push(`imagen (${donde}): ${t.slice(0, 70)}`)
-    else if (/\[[^\]]+\]\([^)]+\)/.test(t))
-      fuera.push(`enlace (${donde}): ${t.slice(0, 70)}`)
+    /* Lo cubierto se retira de la línea antes de buscar lo que no: una
+       imagen de bloque válida o un enlace a `/` o `https://` ya no son
+       hallazgo, y lo que quede con forma de enlace o de imagen sí. */
+    const resto = FIGURE_RE.test(t) ? '' : t.replace(LINK_RE, '$1')
+    if (/!\[[^\]]*\]\(/.test(resto))
+      fuera.push(`imagen fuera de forma (${donde}): sola en su línea, con alt y bajo /blog/ · ${t.slice(0, 70)}`)
+    else if (/\[[^\]]+\]\([^)]*\)/.test(resto))
+      fuera.push(`enlace (${donde}): solo /ruta o https:// · ${t.slice(0, 70)}`)
     if (/^#{5,}\s/.test(t)) fuera.push(`encabezado de nivel 5+ (${donde})`)
     if (/~~[^~]+~~/.test(t)) fuera.push(`tachado (${donde})`)
     // Un `##` en el cuerpo aplana la jerarquía: el renderizador mapea
@@ -304,6 +352,21 @@ export function renderArticle(markdown: string): RenderedArticle {
       continue
     }
 
+    /* ── 4b. Imagen de bloque ─────────────────────────────────────
+       Sola en su línea, bajo /blog/ y con alt. `loading="lazy"` porque
+       nunca es la primera pantalla —la portada lo es— y sin dimensiones
+       declaradas: el renderizador no lee disco. Al cargar fuera de la
+       pantalla, el desplazamiento cae donde nadie lo ve y no cuenta para
+       CLS. */
+    const fig = trimmed.match(FIGURE_RE)
+    if (fig) {
+      out.push(
+        `<figure class="article-figure"><img src="${escapeHtml(fig[2]!)}" alt="${escapeHtml(fig[1]!)}" loading="lazy" decoding="async" /></figure>`
+      )
+      i++
+      continue
+    }
+
     /* ── 5. Tabla ────────────────────────────────────────────────
        Va envuelta en un contenedor con scroll propio: una tabla ancha
        nunca puede hacer que el documento se desplace en horizontal, que
@@ -406,7 +469,8 @@ export function renderArticle(markdown: string): RenderedArticle {
         t.startsWith('|') ||
         /^[-*]\s+/.test(t) ||
         /^\d+\.\s+/.test(t) ||
-        t.startsWith('>')
+        t.startsWith('>') ||
+        FIGURE_RE.test(t)
       )
         break
       buf.push(t)

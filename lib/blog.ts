@@ -2,6 +2,12 @@ import { readFile } from 'node:fs/promises'
 import path from 'node:path'
 import { BLOG_POSTS, type BlogPost } from '@/data/blog'
 import { renderArticle, type RenderedArticle } from '@/lib/blog-render'
+import {
+  isPublished as publicadoEn,
+  neighboursIn,
+  nextIn,
+  publishedIn,
+} from '@/lib/blog-order'
 import { SITE_CONFIG, type RouteKey } from '@/lib/constants'
 
 /**
@@ -37,14 +43,12 @@ import { SITE_CONFIG, type RouteKey } from '@/lib/constants'
 
 /** ¿Ya salió? Comparación en UTC, sin excepciones. */
 export function isPublished(post: BlogPost, now: number = Date.now()): boolean {
-  return Date.parse(post.publishedAt) <= now
+  return publicadoEn(post, now)
 }
 
 /** Los publicados, del más reciente al más antiguo. */
 export function getPublishedPosts(now: number = Date.now()): BlogPost[] {
-  return BLOG_POSTS.filter((p) => isPublished(p, now)).sort(
-    (a, b) => Date.parse(b.publishedAt) - Date.parse(a.publishedAt)
-  )
+  return publishedIn(BLOG_POSTS, now)
 }
 
 /** Todos, incluidos los que aún no salen. Para el build y para el cron. */
@@ -63,9 +67,7 @@ export function getPostBySlug(slug: string): BlogPost | undefined {
  * razón para volver, y el dato ya existe — no hay que inventarlo.
  */
 export function getNextPost(now: number = Date.now()): BlogPost | undefined {
-  return BLOG_POSTS.filter((p) => !isPublished(p, now)).sort(
-    (a, b) => Date.parse(a.publishedAt) - Date.parse(b.publishedAt)
-  )[0]
+  return nextIn(BLOG_POSTS, now)
 }
 
 /**
@@ -287,17 +289,13 @@ export function pathForPost(
  *
  * Permite recorrer el archivo sin volver a un índice de cien entradas, y le da
  * al crawler un camino secuencial por todo el corpus.
+ *
+ * Por FECHA y no por número: ordenaba por `n`, que en la serie da lo mismo,
+ * pero un artículo con fecha propia (n > 100, lunes o jueves) cae entre dos de
+ * la serie. Ver `lib/blog-order.ts`.
  */
 export function getNeighbours(post: BlogPost, now: number = Date.now()) {
-  const publicados = BLOG_POSTS.filter((p) => isPublished(p, now)).sort(
-    (a, b) => a.n - b.n
-  )
-  const i = publicados.findIndex((p) => p.n === post.n)
-  if (i < 0) return { anterior: undefined, siguiente: undefined }
-  return {
-    anterior: i > 0 ? publicados[i - 1] : undefined,
-    siguiente: i < publicados.length - 1 ? publicados[i + 1] : undefined,
-  }
+  return neighboursIn(BLOG_POSTS, post, now)
 }
 
 /** URL absoluta del artículo. El blog vive solo en español: ver la nota. */

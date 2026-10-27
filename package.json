@@ -20,7 +20,8 @@
     "check:layout": "node scripts/layout-audit.mjs",
     "blog:data": "node scripts/generate-blog-data.mjs",
     "blog:covers": "node scripts/blog-covers.mjs",
-    "check:blog": "node scripts/blog-check.mjs",
+    "check:blog": "node scripts/blog-check.mjs && node scripts/check-blog-dates.mjs",
+    "check:blog-dates": "node scripts/check-blog-dates.mjs",
     "vercel:env": "node scripts/vercel-env.mjs",
     "credenciales": "node scripts/credenciales.mjs"
   },

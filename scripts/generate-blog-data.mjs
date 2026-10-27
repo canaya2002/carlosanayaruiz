@@ -20,59 +20,38 @@
  * empezar la cuenta desde cero. El calendario es un hecho del contenido,
  * no del deploy.
  *
+ * ── LOS ARTÍCULOS NUEVOS: LUNES Y JUEVES, CON FECHA PROPIA ──
+ * Un artículo con n > 100 no tiene sitio en la serie y DEBE declarar
+ * `publishedAt` en su frontmatter (lunes o jueves, 14:00:00Z, posterior al
+ * 2026-10-27, sin repetir ninguna fecha) y `cluster` (uno de los diez). Los
+ * de la serie NO pueden llevar `publishedAt`: falla. La regla completa está
+ * en `blog-schedule.mjs` y la prueba en `check-blog-dates.mjs`.
+ *
+ *   ---
+ *   n: 101
+ *   publishedAt: "2026-12-03T14:00:00Z"
+ *   cluster: "SEO, GEO y AEO"
+ *   ---
+ *
  * ⚠ NO cambies SCHEDULE_START después de publicar. Movería la fecha de
  *   todos los artículos ya indexados, y una URL que cambia su
  *   `datePublished` le dice a Google que el contenido es otro.
  * ════════════════════════════════════════════════════════════════
  */
 import { readFileSync, writeFileSync, readdirSync } from 'node:fs'
+import {
+  CLUSTERS,
+  SERIES_SIZE,
+  resolveSchedule,
+  slot,
+} from './blog-schedule.mjs'
 
 const DIR = 'content/blog'
 const OUT = 'data/blog.ts'
 
-/** Primer martes de la serie. Ver la advertencia de arriba. */
-const SCHEDULE_START = '2026-08-25'
-/** 14:00 UTC = 08:00 en Ciudad de México (UTC−6). */
-const PUBLISH_HOUR_UTC = 14
-
-/**
- * Los diez clústeres del índice maestro, con el artículo donde empieza cada
- * uno. Los límites son los `tipo: pillar` del propio contenido, así que no
- * hay una lista de rangos escrita a mano que pueda quedar desfasada.
- *
- * El «acento» es el color que el prompt de portada pide para ese clúster. NO
- * entra en la interfaz: este sistema tiene seis materiales y el minio es
- * semántico. El color vive en la imagen y nada más.
- */
-const CLUSTERS = [
-  { from: 1, name: 'IA aplicada a negocios', accent: 'violeta eléctrico' },
-  { from: 11, name: 'Ciberseguridad', accent: 'cian sobre rojo alerta' },
-  { from: 23, name: 'Desarrollo full-stack moderno', accent: 'verde terminal' },
-  { from: 35, name: 'Automatización e IA agéntica', accent: 'ámbar' },
-  { from: 45, name: 'SEO, GEO y AEO', accent: 'naranja' },
-  { from: 55, name: 'Cloud, DevOps y costos', accent: 'azul profundo' },
-  { from: 65, name: 'Construir y monetizar SaaS', accent: 'magenta' },
-  { from: 75, name: 'Privacidad, cumplimiento y regulación', accent: 'dorado' },
-  { from: 83, name: 'El stack del desarrollador independiente', accent: 'verde azulado' },
-  { from: 91, name: 'Tendencias y futuro', accent: 'iridiscente' },
-]
-
-/** Martes y viernes consecutivos desde SCHEDULE_START, en UTC. */
-function slot(index) {
-  const start = new Date(`${SCHEDULE_START}T00:00:00Z`)
-  const week = Math.floor(index / 2)
-  // 0 → martes de esa semana · 1 → viernes (tres días después)
-  const offset = week * 7 + (index % 2 === 0 ? 0 : 3)
-  const d = new Date(start.getTime() + offset * 86400000)
-  d.setUTCHours(PUBLISH_HOUR_UTC, 0, 0, 0)
-  return d.toISOString().replace('.000Z', 'Z')
-}
-
-function clusterOf(n) {
-  let hit = CLUSTERS[0]
-  for (const c of CLUSTERS) if (n >= c.from) hit = c
-  return hit
-}
+/* SCHEDULE_START, el slot de martes y viernes, los diez clústeres y la
+   validación de las fechas propias viven en `blog-schedule.mjs`, para que
+   `check-blog-dates.mjs` ejerza exactamente la misma lógica sin tocar disco. */
 
 const files = readdirSync(DIR)
   .filter((f) => f.endsWith('.md'))
@@ -99,6 +78,11 @@ for (const file of files) {
   posts.push({
     n: Number(fm.n),
     slug: fm.slug,
+    /* Opcionales, y solo para artículos fuera de la serie (n > 100): la fecha
+       propia —lunes o jueves— y el clúster. `resolveSchedule` los valida y
+       rechaza que un artículo de la serie lleve fecha. Ver blog-schedule.mjs. */
+    publishedAt: fm.publishedAt,
+    cluster: fm.cluster,
     /* Opcional: solo lo llevan los 10 títulos que pasan de ~60 caracteres.
        `?? undefined` para que la clave no se emita cuando no existe. */
     seoTitle: fm.seoTitle ?? undefined,
@@ -117,12 +101,14 @@ for (const file of files) {
   })
 }
 
-posts.sort((a, b) => a.n - b.n)
-
-if (posts.length !== 100) {
-  console.error(`se esperaban 100 artículos y hay ${posts.length}`)
+const { posts: resueltos, errors } = resolveSchedule(posts)
+if (errors.length) {
+  console.error(`  blog:data — ${errors.length} problema(s), no se escribe ${OUT}:`)
+  for (const e of errors) console.error('    · ' + e)
   process.exit(1)
 }
+posts.splice(0, posts.length, ...resueltos)
+const extra = posts.filter((p) => p.n > SERIES_SIZE)
 
 /* ── Portadas ────────────────────────────────────────────────────
    `data/blog-covers.json` lo produce el emparejado de imágenes. Mientras un
@@ -157,8 +143,7 @@ function altSinTitulo(alt, titulo) {
   return limpio.charAt(0).toUpperCase() + limpio.slice(1)
 }
 
-const lines = posts.map((p, i) => {
-  const c = clusterOf(p.n)
+const lines = posts.map((p) => {
   const cover = covers[String(p.n)]
   return `  {
     n: ${p.n},
@@ -166,11 +151,11 @@ const lines = posts.map((p, i) => {
     title: ${JSON.stringify(p.title)},
     description: ${JSON.stringify(p.description)},
     category: ${JSON.stringify(p.category)},
-    cluster: ${JSON.stringify(c.name)},
+    cluster: ${JSON.stringify(p.cluster)},
     keyword: ${JSON.stringify(p.keyword)},
     tipo: ${JSON.stringify(p.tipo)},
     tags: ${JSON.stringify(p.tags)},
-    publishedAt: ${JSON.stringify(slot(i))},
+    publishedAt: ${JSON.stringify(p.publishedAt)},
     file: ${JSON.stringify(p.file)},
     words: ${p.words},
     readingMinutes: ${p.readingMinutes},${
@@ -258,6 +243,8 @@ writeFileSync(OUT, header)
 const withCover = posts.filter((p) => covers[String(p.n)]).length
 console.log(`  ${OUT}`)
 console.log(`    artículos:  ${posts.length}`)
-console.log(`    calendario: ${slot(0)} → ${slot(99)}`)
-console.log(`    portadas:   ${withCover}/100`)
+console.log(`    calendario: ${slot(0)} → ${slot(SERIES_SIZE - 1)}`)
+console.log(`    fecha propia (lun/jue): ${extra.length}`)
+for (const p of extra) console.log(`      n=${p.n} ${p.publishedAt} ${p.slug}`)
+console.log(`    portadas:   ${withCover}/${posts.length}`)
 console.log(`    palabras:   ${posts.reduce((s, p) => s + p.words, 0).toLocaleString('es-MX')}`)

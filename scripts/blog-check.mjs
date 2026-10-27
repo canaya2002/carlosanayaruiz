@@ -9,8 +9,9 @@
  *
  * Falla —código de salida 1— si encuentra:
  *
- *   · sintaxis de markdown que el renderizador no cubre (un enlace o una
- *     imagen aparecerían crudos en la página)
+ *   · sintaxis de markdown que el renderizador no cubre (un enlace que no
+ *     sea /ruta ni https://, o una imagen que no sea de bloque bajo /blog/,
+ *     aparecerían crudos en la página)
  *   · etiquetas HTML desbalanceadas
  *   · marcado de markdown que sobrevivió al render (`**`, `###`, `|` suelto)
  *   · un artículo sin bloque de preguntas frecuentes (rompe el FAQPage)
@@ -58,6 +59,9 @@ const PAIRED = [
   'blockquote',
   'div',
   'span',
+  // Solo en artículos nuevos: enlaces e imagen de bloque.
+  'a',
+  'figure',
 ]
 
 for (const file of files) {
