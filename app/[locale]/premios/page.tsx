@@ -1,4 +1,6 @@
 import type { Metadata } from 'next'
+import { hasLocale } from 'next-intl'
+import { notFound } from 'next/navigation'
 import Image from 'next/image'
 import { setRequestLocale, getTranslations } from 'next-intl/server'
 import { Link } from '@/i18n/navigation'
@@ -14,7 +16,7 @@ import {
   generateBreadcrumbSchema,
   type SchemaGraph,
 } from '@/lib/schema'
-import type { StaticPathname } from '@/i18n/routing'
+import { routing, type StaticPathname } from '@/i18n/routing'
 import { Locale } from '@/data/types'
 
 interface Props {
@@ -23,6 +25,7 @@ interface Props {
 
 export async function generateMetadata({ params }: Props): Promise<Metadata> {
   const { locale } = await params
+  if (!hasLocale(routing.locales, locale)) notFound()
   const en = locale === 'en'
 
   return generatePageMetadata({
@@ -56,6 +59,7 @@ const PROJECT_SLUG_BY_AWARD: Partial<Record<AwardId, string>> = {
 
 export default async function AwardsPage({ params }: Props) {
   const { locale: rawLocale } = await params
+  if (!hasLocale(routing.locales, rawLocale)) notFound()
   setRequestLocale(rawLocale)
 
   const locale = rawLocale as Locale

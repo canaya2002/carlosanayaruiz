@@ -1,7 +1,9 @@
 import type { Metadata } from 'next'
+import { hasLocale } from 'next-intl'
+import { notFound } from 'next/navigation'
 import { setRequestLocale, getTranslations } from 'next-intl/server'
 import { Link } from '@/i18n/navigation'
-import type { StaticPathname } from '@/i18n/routing'
+import { routing, type StaticPathname } from '@/i18n/routing'
 import { Rail } from '@/components/instrument/rail'
 import { BlogStrip } from '@/components/sections/blog-strip'
 import { Ribbon } from '@/components/instrument/ribbon'
@@ -50,6 +52,7 @@ const SYMPTOM: Record<ServiceId, Localized<string>> = {
 
 export async function generateMetadata({ params }: Props): Promise<Metadata> {
   const { locale } = await params
+  if (!hasLocale(routing.locales, locale)) notFound()
   const en = locale === 'en'
 
   return generatePageMetadata({
@@ -66,6 +69,7 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
 
 export default async function ServicesHubPage({ params }: Props) {
   const { locale: rawLocale } = await params
+  if (!hasLocale(routing.locales, rawLocale)) notFound()
   setRequestLocale(rawLocale)
 
   const locale = rawLocale as Locale

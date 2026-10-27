@@ -1,4 +1,7 @@
 import { renderOgCard, OG_SIZE, OG_CONTENT_TYPE } from '@/lib/og'
+import { routing } from '@/i18n/routing'
+import { hasLocale } from 'next-intl'
+import { notFound } from 'next/navigation'
 import { getCompanies, countByCountry } from '@/data/companies'
 import { Locale } from '@/data/types'
 
@@ -29,6 +32,7 @@ export async function generateImageMetadata({ params }: Params) {
 
 export default async function Image({ params }: Params) {
   const { locale: rawLocale } = await params
+  if (!hasLocale(routing.locales, rawLocale)) notFound()
   const locale = rawLocale as Locale
   const en = locale === 'en'
 

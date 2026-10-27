@@ -89,6 +89,14 @@ export function generatePageMetadata({
         'en-US': `${SITE_CONFIG.url}/en${paths.en}`,
         'x-default': `${SITE_CONFIG.url}/es${paths.es}`,
       },
+      /* El feed se anuncia aquí y no en el layout: el `alternates` de una
+         página REEMPLAZA entero al del layout, así que puesto allí no
+         llegaría a ninguna. Solo en español, porque el blog solo existe en
+         español. El índice y los artículos lo declaran en su propia
+         metadata, que no pasa por esta función. */
+      ...(locale === 'es' && {
+        types: { 'application/rss+xml': `${SITE_CONFIG.url}/feed.xml` },
+      }),
     },
     openGraph: {
       type: type === 'article' ? 'article' : 'website',

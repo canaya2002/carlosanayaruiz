@@ -1,4 +1,6 @@
 import type { Metadata } from 'next'
+import { routing } from '@/i18n/routing'
+import { hasLocale } from 'next-intl'
 import { notFound, permanentRedirect } from 'next/navigation'
 import Image from 'next/image'
 import { setRequestLocale } from 'next-intl/server'
@@ -61,7 +63,8 @@ export function generateStaticParams() {
 }
 
 export async function generateMetadata({ params }: Props): Promise<Metadata> {
-  const { slug } = await params
+  const { locale, slug } = await params
+  if (!hasLocale(routing.locales, locale)) notFound()
   const post = getPostBySlug(slug)
   if (!post || !isPublished(post)) return { title: 'No encontrado' }
 
@@ -155,6 +158,7 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
 
 export default async function BlogPostPage({ params }: Props) {
   const { locale, slug } = await params
+  if (!hasLocale(routing.locales, locale)) notFound()
 
   /* El blog existe solo en español: /en/blog/... consolida en /es/blog/...
      308 y no 307: un 307 le dice a Google que la URL original sigue siendo la

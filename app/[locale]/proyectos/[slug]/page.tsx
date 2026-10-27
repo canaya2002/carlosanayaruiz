@@ -1,4 +1,5 @@
 import type { Metadata } from 'next'
+import { hasLocale } from 'next-intl'
 import { notFound } from 'next/navigation'
 import { setRequestLocale, getTranslations } from 'next-intl/server'
 import { Link } from '@/i18n/navigation'
@@ -114,6 +115,7 @@ const GALLERY_SLOTS: readonly { file: string; hint: string }[] = [
 
 export async function generateMetadata({ params }: Props): Promise<Metadata> {
   const { locale: rawLocale, slug } = await params
+  if (!hasLocale(routing.locales, rawLocale)) notFound()
   const locale = rawLocale as Locale
   const company = getCompanyBySlug(locale, slug)
 
@@ -251,6 +253,7 @@ function buildGraph(
 
 export default async function ProjectPage({ params }: Props) {
   const { locale: rawLocale, slug } = await params
+  if (!hasLocale(routing.locales, rawLocale)) notFound()
   setRequestLocale(rawLocale)
 
   const locale = rawLocale as Locale

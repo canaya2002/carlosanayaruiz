@@ -52,6 +52,10 @@ export function isEmail(value: string): boolean {
   return dot > 0 && domain.length - dot >= 3
 }
 
+/** Lo que escriben los proveedores cuando el contacto ya está en la lista. */
+const YA_EXISTE =
+  /already (exists|subscribed|a member|in the list|on the list)|duplicate|ya existe|ya est[aá] suscrit/i
+
 export function isNewsletterConfigured(): boolean {
   return envSet(process.env.NEWSLETTER_ENDPOINT)
 }
@@ -86,7 +90,7 @@ export async function subscribe(
       body: JSON.stringify({
         [field]: clean,
         tags: ['sitio', locale],
-        metadata: { locale, origen: 'carlosanayaweb.com' },
+        metadata: { locale, origen: 'carlosanayaruiz.com' },
       }),
       /* Un proveedor lento no puede colgar el envío del formulario. */
       signal: AbortSignal.timeout(8000),
@@ -95,7 +99,16 @@ export async function subscribe(
     if (res.ok) return 'ok'
     /* 409 en casi todos los proveedores es «ya estaba en la lista», y eso
        para quien lo escribe es un éxito, no un error. */
-    if (res.status === 409 || res.status === 422) return 'ya-estaba'
+    if (res.status === 409) return 'ya-estaba'
+    /* 422 NO es «ya estaba» por sí solo: es el código genérico de
+       validación, y un campo mal nombrado o un correo que el proveedor
+       rechaza también lo devuelven. Tratarlo entero como éxito le decía
+       «listo» a un alta que nunca se hizo. Solo cuenta como duplicado si el
+       proveedor lo dice en el cuerpo. */
+    if (res.status === 422) {
+      const cuerpo = await res.text().catch(() => '')
+      return YA_EXISTE.test(cuerpo) ? 'ya-estaba' : 'error'
+    }
     return 'error'
   } catch {
     return 'error'

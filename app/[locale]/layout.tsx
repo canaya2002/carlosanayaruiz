@@ -1,6 +1,6 @@
 import type { Metadata, Viewport } from 'next'
 import { FONT_VARS } from '@/lib/fonts'
-import { NextIntlClientProvider } from 'next-intl'
+import { NextIntlClientProvider, hasLocale } from 'next-intl'
 import { getMessages, setRequestLocale, getTranslations } from 'next-intl/server'
 import { notFound } from 'next/navigation'
 import { Header } from '@/components/layout/header'
@@ -74,6 +74,7 @@ export async function generateMetadata({
   params: Promise<{ locale: string }>
 }): Promise<Metadata> {
   const { locale } = await params
+  if (!hasLocale(routing.locales, locale)) notFound()
   const config = getSiteConfig(locale as Locale)
 
   return {

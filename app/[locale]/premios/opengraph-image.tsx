@@ -1,4 +1,7 @@
 import { renderOgCard, OG_SIZE, OG_CONTENT_TYPE } from '@/lib/og'
+import { routing } from '@/i18n/routing'
+import { hasLocale } from 'next-intl'
+import { notFound } from 'next/navigation'
 import { Locale } from '@/data/types'
 
 export const size = OG_SIZE
@@ -29,6 +32,7 @@ export async function generateImageMetadata({ params }: Params) {
 
 export default async function Image({ params }: Params) {
   const { locale } = await params
+  if (!hasLocale(routing.locales, locale)) notFound()
   const en = locale === 'en'
 
   /**

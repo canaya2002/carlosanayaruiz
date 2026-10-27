@@ -1,5 +1,7 @@
 import type { Metadata } from 'next'
-import { permanentRedirect } from 'next/navigation'
+import { routing } from '@/i18n/routing'
+import { hasLocale } from 'next-intl'
+import { permanentRedirect, notFound } from 'next/navigation'
 import Image from 'next/image'
 import { setRequestLocale } from 'next-intl/server'
 import { Link } from '@/i18n/navigation'
@@ -53,6 +55,7 @@ const DESCRIPTION =
 
 export async function generateMetadata({ params }: Props): Promise<Metadata> {
   const { locale } = await params
+  if (!hasLocale(routing.locales, locale)) notFound()
   if (locale !== 'es') return { title: TITLE }
 
   const url = blogUrl()
@@ -88,6 +91,7 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
 
 export default async function BlogIndexPage({ params }: Props) {
   const { locale } = await params
+  if (!hasLocale(routing.locales, locale)) notFound()
   // 308, no 307: ver la nota de la página del artículo.
   if (locale !== 'es') permanentRedirect('/es/blog')
   setRequestLocale(locale)

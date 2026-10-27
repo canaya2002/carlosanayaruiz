@@ -1,5 +1,6 @@
 import { revalidatePath } from 'next/cache'
 import { envOpt } from '@/lib/env'
+import { secretMatches } from '@/lib/secret'
 import { BLOG_POSTS } from '@/data/blog'
 import { isPublished } from '@/lib/blog'
 import { sendPostBroadcast, isBroadcastConfigured } from '@/lib/broadcast'
@@ -88,7 +89,7 @@ export async function GET(request: Request) {
     )
   }
 
-  if (auth !== `Bearer ${secreto}`) {
+  if (!secretMatches(auth, `Bearer ${secreto}`)) {
     return Response.json({ ok: false, error: 'no autorizado' }, { status: 401 })
   }
 

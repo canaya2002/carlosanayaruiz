@@ -1,4 +1,5 @@
 import { envOpt } from '@/lib/env'
+import { secretMatches } from '@/lib/secret'
 import { BLOG_POSTS } from '@/data/blog'
 import { previewBroadcast, isBroadcastConfigured } from '@/lib/broadcast'
 
@@ -46,7 +47,7 @@ export async function GET(request: Request) {
       { status: 401 }
     )
   }
-  if (auth !== `Bearer ${secreto}`) {
+  if (!secretMatches(auth, `Bearer ${secreto}`)) {
     return Response.json({ ok: false, error: 'no autorizado' }, { status: 401 })
   }
 

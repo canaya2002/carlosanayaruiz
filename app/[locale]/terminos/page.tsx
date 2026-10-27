@@ -49,6 +49,9 @@
  */
 
 import type { Metadata } from 'next'
+import { routing } from '@/i18n/routing'
+import { hasLocale } from 'next-intl'
+import { notFound } from 'next/navigation'
 import type { ReactNode } from 'react'
 import { setRequestLocale, getTranslations } from 'next-intl/server'
 import { Link } from '@/i18n/navigation'
@@ -72,6 +75,7 @@ const DOMAIN = SITE_CONFIG.url.replace(/^https?:\/\//, '')
 
 export async function generateMetadata({ params }: Props): Promise<Metadata> {
   const { locale } = await params
+  if (!hasLocale(routing.locales, locale)) notFound()
   const en = locale === 'en'
 
   return generatePageMetadata({
@@ -125,6 +129,7 @@ interface Highlight {
 
 export default async function TermsPage({ params }: Props) {
   const { locale: rawLocale } = await params
+  if (!hasLocale(routing.locales, rawLocale)) notFound()
   setRequestLocale(rawLocale)
 
   const locale = rawLocale as Locale
