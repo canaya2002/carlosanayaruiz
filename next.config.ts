@@ -200,10 +200,11 @@ const nextConfig: NextConfig = {
    *
    * La coreografía vive en `app/globals.css`, bajo `::view-transition-*`, y
    * entera dentro de `prefers-reduced-motion: no-preference`.
+   *
+   * ⚠ Ya NO lleva `experimental.viewTransition`. Desde Next 16.4 las View
+   * Transitions funcionan en el App Router sin configuración y la bandera
+   * salió del tipo `ExperimentalConfig`: dejarla rompe `tsc`.
    */
-  experimental: {
-    viewTransition: true,
-  },
 
   /**
    * lib/og.tsx reads its fonts from a path built at runtime
