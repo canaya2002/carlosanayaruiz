@@ -257,6 +257,26 @@ export default async function BlogPostPage({ params }: Props) {
                   dangerouslySetInnerHTML={{ __html: html }}
                 />
 
+                {/* ── LA REVISIÓN DE LA FICHA ──
+                    En la plantilla y no en cada markdown, así que la llevan
+                    los cien artículos, también los programados. Es la única
+                    oferta que sirve a cualquier lector sin importar el
+                    clúster: por eso no depende de `routeForPost`, que deja
+                    sin destino a ciberseguridad, privacidad y tendencias.
+                    `.pull-tab`: es un control que te lleva a otra parte. */}
+                <div className="mt-16 border-t border-hairline pt-6">
+                  <p className="stamp">revisión gratis</p>
+                  <p className="mt-2 max-w-[44ch] text-d3 text-ink">
+                    ¿Tu negocio aparece bien en Google?
+                  </p>
+                  <Link
+                    className="pull-tab mt-5"
+                    href="/revision-ficha-google"
+                  >
+                    Pide una revisión gratis de tu ficha
+                  </Link>
+                </div>
+
                 {/* ── LA FIRMA ──
                     Es el nodo Person del grafo, escrito en la página. Un
                     artículo atribuido en el schema pero no a la vista es
