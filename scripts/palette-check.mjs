@@ -143,6 +143,7 @@ const FLOORS = [
   { token: 'cyan-ink', against: 'ground', min: 4.5, use: 'texto cian legible' },
   { token: 'control', against: 'surface', min: 3.0, use: 'borde de input (1.4.11)' },
   { token: 'control', against: 'ground', min: 3.0, use: 'borde de input (1.4.11)' },
+  { token: 'gold', against: 'ground', min: 3.0, use: 'borde de .btn-secondary (1.4.11)' },
   { token: 'sky', against: 'ground', min: 0, use: 'SOLO decorativo (2.7:1)' },
   { token: 'cyan', against: 'ground', min: 0, use: 'SOLO decorativo (1.8:1)' },
 ]
@@ -158,6 +159,8 @@ const FLOORS = [
 const ON_FILL = [
   { fg: 'brand-ink', bg: 'brand', min: 4.5, use: 'tinta sobre relleno' },
   { fg: 'brand-ink', bg: 'brand-strong', min: 4.5, use: 'tinta sobre hover' },
+  { fg: 'soot', bg: 'gold', min: 4.5, use: 'texto del CTA primario' },
+  { fg: 'soot', bg: 'gold-strong', min: 4.5, use: 'CTA primario en hover' },
 ]
 
 /* ── ejecución ───────────────────────────────────────────────────── */

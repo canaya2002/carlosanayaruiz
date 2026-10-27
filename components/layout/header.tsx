@@ -578,15 +578,19 @@ export function Header() {
                 La flecha es el glifo de texto, que es el idioma del resto del
                 sitio —«{t('ctaMain')} →» en las quince páginas— y no un
                 `<svg>` que obliga a traer una librería de iconos al cliente. */}
+            {/* ── Y AHORA ES LATÓN ──
+                Lo de arriba sigue en pie: sin sombra, sin salto, sin blanco
+                puro. Lo que cambió es el relleno: el brief pidió que el CTA
+                guiara el ojo, y en una fila de etiquetas de papel un trazo
+                más no lo hacía. `.btn-primary.btn-compact`, ver globals.css.
+                Sigue oculto por debajo de `sm`: a 360 la fila no tiene sitio
+                y ahí el héroe ya lleva el suyo. */}
             <Link
               href="/contacto"
-              className="group/cta press hidden h-11 items-center gap-2 whitespace-nowrap px-1 text-sm font-semibold text-ink transition-colors sm:inline-flex"
+              className="btn-primary btn-compact press hidden sm:inline-flex"
             >
               {t('hireMe')}
-              <span
-                className="transition-transform duration-300 group-hover/cta:translate-x-1"
-                aria-hidden="true"
-              >
+              <span className="btn-arrow" aria-hidden="true">
                 →
               </span>
             </Link>

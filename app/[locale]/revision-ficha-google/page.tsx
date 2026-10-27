@@ -76,6 +76,15 @@ export default async function RevisionFichaPage({ params }: Props) {
   const copy = getReviewCopy(locale)
   const abierta = isRevisionOpen()
 
+  /* Las dos cifras de la oferta salen de UN solo sitio y se pintan dos
+     veces: junto al botón, arriba, y en el margen. La fecha se deriva de
+     `REVISION_VIGENCIA` —la misma que alimenta el `validThrough` del
+     JSON-LD— en vez de escribirla a mano, así las tres no pueden
+     desmentirse. */
+  const [vy, vm, vd] = REVISION_VIGENCIA.split('-')
+  const vigencia = en ? `${vm}/${vd}/${vy}` : `${vd}/${vm}/${vy}`
+  const plazoDias = 3
+
   const guia = getPostBySlug(REVISION_GUIA_SLUG)
   const guiaPublicada = guia && isPublished(guia) ? guia : undefined
 
@@ -122,10 +131,38 @@ export default async function RevisionFichaPage({ params }: Props) {
                   {copy.subtitle}
                 </p>
 
+                {/* ── EL BOTÓN Y LA LECTURA DE LA OFERTA, JUNTOS ──
+                    La vigencia y el plazo vivían solo en el margen, que por
+                    debajo de 80rem cae DEBAJO del héroe: en un teléfono no
+                    se veían sin hacer scroll. Ahora van en la línea del
+                    botón, que es donde se decide. Sin cupo ni contador: la
+                    oferta no tiene plazas, y una escasez inventada sería
+                    exactamente lo que este sitio no hace. */}
                 {abierta ? (
-                  <a className="pull-tab mt-10" href="#solicitud">
-                    {copy.form.submit}
-                  </a>
+                  <div className="mt-10 flex flex-wrap items-center gap-x-6 gap-y-4">
+                    <a className="btn-primary" href="#solicitud">
+                      {copy.form.submit}
+                      <span className="btn-arrow" aria-hidden="true">
+                        ↓
+                      </span>
+                    </a>
+                    {/* Cada par va entero: a 390 la línea partía en
+                        «Plazo 3 / días hábiles», la cifra lejos de su
+                        unidad. */}
+                    <p className="flex flex-wrap gap-x-3 gap-y-1 font-mono text-[0.75rem] tracking-[0.08em] text-ink-muted tabular-nums">
+                      <span className="whitespace-nowrap">
+                        {copy.validityTitle}{' '}
+                        <span className="text-ink">{vigencia}</span>
+                        <span className="sr-only">,</span>
+                      </span>
+                      <span className="whitespace-nowrap">
+                        {copy.termTitle}{' '}
+                        <span className="text-ink">
+                          {plazoDias} {en ? 'business days' : 'días hábiles'}
+                        </span>
+                      </span>
+                    </p>
+                  </div>
                 ) : (
                   <p className="mt-10 max-w-[54ch] text-ink [overflow-wrap:anywhere]">
                     {copy.closed}
@@ -137,7 +174,7 @@ export default async function RevisionFichaPage({ params }: Props) {
                 <div className="margin-row">
                   <span className="margin-key">{copy.termTitle}</span>
                   <span className="margin-read">
-                    3
+                    {plazoDias}
                     <span className="ml-1.5 text-[0.6875rem] tracking-[0.12em] text-ink-subtle">
                       {en ? 'business days' : 'días hábiles'}
                     </span>
@@ -147,9 +184,7 @@ export default async function RevisionFichaPage({ params }: Props) {
 
                 <div className="margin-row">
                   <span className="margin-key">{copy.validityTitle}</span>
-                  <span className="margin-read">
-                    {en ? '11/30/2026' : '30/11/2026'}
-                  </span>
+                  <span className="margin-read">{vigencia}</span>
                   <span className="margin-prose">{copy.validity}</span>
                 </div>
 

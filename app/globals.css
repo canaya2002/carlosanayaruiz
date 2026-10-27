@@ -54,6 +54,18 @@
   --minium: #ff4e42;    /* minio   · 1.5% · la regla de 2.5 s      */
   --threshold: #0cce6b; /* umbral  · 0.5% · una medición que pasa  */
 
+  /* ── El latón: la PERILLA del registrador ────────────────────
+     Propuesta, y por eso es un token y no un hex suelto: cambiar el
+     tono es cambiar esta línea. Es el único material que se ACCIONA —
+     el mando de bronce de un aparato de medición— y vive solo en el
+     CTA primario (`.btn-primary`), cuatro sitios en todo el sitio. No es
+     semántico como el minio o el umbral, pero tampoco es decoración: si
+     aparece en algo que no se pulsa, deja de señalar dónde se pulsa.
+     Contraste medido: --soot sobre --gold 7.91, sobre --gold-strong
+     9.39; --gold sobre --soot 7.91 (el borde de `.btn-secondary`). */
+  --gold: #c9a24b;
+  --gold-strong: #d6b25e;
+
   /* ── Fondos ────────────────────────────────────────────────── */
   --ground: var(--soot);
   --ground-tint: #171410;
@@ -5152,6 +5164,98 @@
     .pull-tab::after { transition: none; }
     .pull-tab:hover::after,
     .pull-tab:focus-visible::after { translate: none; }
+  }
+
+  /* ── EL CTA PRIMARIO — la perilla de latón ────────────────────
+     El brief pidió un botón con color y se le dio uno, en CUATRO sitios:
+     el héroe de la portada, «Contrátame» del nav, el cierre de la portada
+     y la revisión de ficha. Todo lo demás sigue siendo trazo
+     (`.link-stylus`, `.pull-tab`): si cada enlace fuera dorado, ninguno
+     guiaría el ojo.
+
+     · `min-height: 2.75rem` — 44 px de objetivo táctil, como la pestaña.
+     · Radio de 2 px: una placa troquelada, no una píldora. El resto del
+       sitio no tiene radio, y una píldora sería el botón de cualquier
+       plantilla.
+     · El hover NO levanta nada: aclara el latón y la flecha avanza 3 px.
+       Solo `background-color` y `translate`, sin sombra y sin salto.
+     · El foco es un anillo de PAPEL separado 3 px: sobre latón un anillo
+       pegado no se distingue del canto. */
+  .btn-primary,
+  .btn-secondary {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.625rem;
+    min-height: 2.75rem;
+    padding: 0.875rem 1.375rem;
+    border-radius: 2px;
+    font-family: var(--font-display);
+    font-size: 1rem;
+    font-weight: 600;
+    line-height: 1.1;
+    letter-spacing: -0.005em;
+    text-decoration: none;
+    white-space: nowrap;
+    transition:
+      background-color 160ms var(--ease-stylus),
+      border-color 160ms var(--ease-stylus);
+  }
+
+  .btn-primary {
+    background-color: var(--gold);
+    color: var(--soot);
+  }
+
+  .btn-primary:hover {
+    background-color: var(--gold-strong);
+  }
+
+  /* Secundario: el mismo cuerpo, sin relleno. El borde es latón y no
+     `--hairline`: esto es un control y WCAG 1.4.11 pide 3:1 para su
+     canto — el latón mide 7.91 sobre el hollín, el hairline 1.3. */
+  .btn-secondary {
+    border: 1px solid var(--gold);
+    color: var(--paper);
+  }
+
+  .btn-secondary:hover {
+    border-color: var(--gold-strong);
+  }
+
+  .btn-primary:focus-visible,
+  .btn-secondary:focus-visible {
+    outline: 2px solid var(--paper);
+    outline-offset: 3px;
+  }
+
+  /* Compacto, para la fila del nav: menos relleno y la letra de la fila,
+     pero el MISMO alto mínimo — un control del nav también se toca. */
+  .btn-compact {
+    padding: 0.5rem 1rem;
+    font-size: 0.875rem;
+  }
+
+  .btn-arrow {
+    display: inline-block;
+    transition: translate 160ms var(--ease-stylus);
+  }
+
+  .btn-primary:hover .btn-arrow,
+  .btn-primary:focus-visible .btn-arrow,
+  .btn-secondary:hover .btn-arrow,
+  .btn-secondary:focus-visible .btn-arrow {
+    translate: 0.1875rem 0;
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .btn-primary,
+    .btn-secondary,
+    .btn-arrow { transition: none; }
+    .btn-primary:hover .btn-arrow,
+    .btn-primary:focus-visible .btn-arrow,
+    .btn-secondary:hover .btn-arrow,
+    .btn-secondary:focus-visible .btn-arrow { translate: none; }
   }
 }
 

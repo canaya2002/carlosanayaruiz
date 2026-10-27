@@ -236,12 +236,21 @@ export default async function HomePage({ params }: Props) {
                   {t('lead')}
                 </p>
 
-                <p className="mt-9 flex flex-wrap gap-x-8 gap-y-3">
-                  <Link className="link-stylus" href="/contacto">
-                    {en ? 'ask for a reading' : 'pedir una lectura'} →
+                {/* El primario es latón y el otro solo su canto: con dos
+                    trazos iguales el ojo no sabía cuál de los dos era el
+                    paso siguiente. */}
+                <p className="mt-9 flex flex-wrap items-center gap-x-4 gap-y-3">
+                  <Link className="btn-primary" href="/contacto">
+                    {en ? 'ask for a reading' : 'pedir una lectura'}
+                    <span className="btn-arrow" aria-hidden="true">
+                      →
+                    </span>
                   </Link>
-                  <Link className="link-stylus" href="/servicios">
-                    {en ? 'see the record' : 'ver el registro'} →
+                  <Link className="btn-secondary" href="/servicios">
+                    {en ? 'see the record' : 'ver el registro'}
+                    <span className="btn-arrow" aria-hidden="true">
+                      →
+                    </span>
                   </Link>
                 </p>
 
@@ -740,8 +749,11 @@ export default async function HomePage({ params }: Props) {
                     : 'Las preguntas que salen en cada primer correo. Si la tuya no está, mándala.'}
                 </p>
                 <p className="mt-6">
-                  <Link className="link-stylus" href="/contacto">
-                    {en ? 'write to me' : 'escríbeme'} →
+                  <Link className="btn-primary" href="/contacto">
+                    {en ? 'write to me' : 'escríbeme'}
+                    <span className="btn-arrow" aria-hidden="true">
+                      →
+                    </span>
                   </Link>
                 </p>
               </div>
