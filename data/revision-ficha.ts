@@ -122,7 +122,7 @@ const ES: ReviewCopy = {
   noPromise:
     'Ninguna acción garantiza una posición específica en Google. Lo que sí te doy es una lista clara de qué arreglar primero.',
   privacyShort:
-    'Carlos Anaya Ruiz, con base de operación en Ciudad de México, es responsable del tratamiento de tus datos personales. Uso tu nombre, correo y los datos de tu negocio únicamente para revisar tu ficha de Google, enviarte las recomendaciones y responder sobre esta solicitud. No vendo, rento ni comparto tus datos con terceros con fines comerciales. Puedes ejercer tus derechos ARCO o revocar tu consentimiento escribiendo a carlos@carlosanayaweb.com.',
+    'Carlos Anaya Ruiz es responsable del tratamiento de tus datos personales. Uso tu nombre, correo y los datos de tu negocio únicamente para revisar tu ficha de Google, enviarte las recomendaciones y responder sobre esta solicitud. No vendo, rento ni comparto tus datos con terceros con fines comerciales. Puedes ejercer tus derechos ARCO o revocar tu consentimiento escribiendo a carlos@carlosanayaweb.com.',
   social:
     '¿Prefieres redes? Escribe PERFIL por DM en Instagram o por Messenger en Facebook.',
   doubts: '¿Dudas?',
@@ -228,7 +228,7 @@ const EN: ReviewCopy = {
   noPromise:
     'No action guarantees a specific position on Google. What I do give you is a clear list of what to fix first.',
   privacyShort:
-    'Carlos Anaya Ruiz, based in Mexico City, is the controller of your personal data. I use your name, email and your business details solely to review your Google listing, send you the recommendations and reply about this request. I do not sell, rent or share your data with third parties for commercial purposes. You can exercise your ARCO rights or withdraw your consent by writing to carlos@carlosanayaweb.com.',
+    'Carlos Anaya Ruiz is the controller of your personal data. I use your name, email and your business details solely to review your Google listing, send you the recommendations and reply about this request. I do not sell, rent or share your data with third parties for commercial purposes. You can exercise your ARCO rights or withdraw your consent by writing to carlos@carlosanayaweb.com.',
   social:
     'Prefer social media? Send PERFIL by DM on Instagram or through Messenger on Facebook.',
   doubts: 'Questions?',

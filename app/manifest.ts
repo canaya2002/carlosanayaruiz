@@ -13,7 +13,7 @@ export default function manifest(): MetadataRoute.Manifest {
     name: 'Carlos Anaya Ruiz — Consultor SEO Técnico & Desarrollo Web',
     short_name: 'Carlos Anaya Ruiz',
     description:
-      'Consultor SEO técnico e ingeniero full-stack en Ciudad de México. Auditorías técnicas, datos estructurados, Core Web Vitals y desarrollo Next.js.',
+      'Consultor SEO técnico e ingeniero full-stack. Auditorías técnicas, datos estructurados, Core Web Vitals y desarrollo Next.js.',
     id: '/es',
     start_url: `/${SITE_CONFIG.defaultLocale}`,
     scope: '/',

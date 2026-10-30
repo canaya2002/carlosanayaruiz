@@ -20,7 +20,7 @@ import {
 } from '@/lib/blog'
 import { getServices } from '@/data/services'
 import { generateBlogPostGraph } from '@/lib/blog-schema'
-import { SITE_CONFIG, NAP } from '@/lib/constants'
+import { SITE_CONFIG } from '@/lib/constants'
 
 /**
  * ════════════════════════════════════════════════════════════════
@@ -313,7 +313,7 @@ export default async function BlogPostPage({ params }: Props) {
                   <p className="mt-2 max-w-[58ch] text-sm text-ink-muted">
                     Ingeniero en Tecnologías Computacionales por el Tecnológico
                     de Monterrey. Consultor de SEO técnico e ingeniero
-                    full-stack en {NAP.locality}; antes en Amazon, Master
+                    full-stack; antes en Amazon, Master
                     Loyalty Group y Wan Hai Lines. Trabajo en la intersección
                     entre ingeniería y buscadores: datos estructurados, Core
                     Web Vitals y rendimiento web.

@@ -89,7 +89,7 @@ function buildDocument(): string {
   push(
     `# ${NAP.name}`,
     '',
-    '> Technical SEO consultant and full-stack engineer based in Mexico City,',
+    '> Technical SEO consultant and full-stack engineer working remotely from',
     '> Mexico. Technical SEO audits, structured data (Schema.org / JSON-LD),',
     '> Core Web Vitals, site migrations without traffic loss, Next.js',
     '> application development, AI automation, and reporting dashboards.',
@@ -109,7 +109,7 @@ function buildDocument(): string {
     `- Name: ${NAP.name}`,
     '- Role: Technical SEO consultant and full-stack engineer',
     `- Practice: ${SITE_CONFIG.businessName}`,
-    `- Location: ${NAP.localityEn}, ${NAP.region}, ${NAP.countryNameEn}`,
+    '- Work mode: Remote (GMT-6), Mexico',
     `- Timezone: ${NAP.timeZone} (GMT-6)`,
     `- Email: ${NAP.email}`,
     `- Phone: ${NAP.phoneDisplay}`,

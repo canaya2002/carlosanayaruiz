@@ -36,8 +36,8 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
       ? 'Technical SEO Audits & Consulting'
       : 'Auditoría de SEO técnico en México',
     description: en
-      ? 'Technical SEO audits from Mexico City: indexation, Schema.org JSON-LD, Core Web Vitals, hreflang and Next.js migrations. Findings ranked by impact.'
-      : 'Auditoría de SEO técnico desde Ciudad de México: indexación, Schema.org JSON-LD, Core Web Vitals, hreflang y migraciones a Next.js sin perder tráfico.',
+      ? 'Technical SEO audits: indexation, Schema.org JSON-LD, Core Web Vitals, hreflang and Next.js migrations. Findings ranked by impact.'
+      : 'Auditorías de SEO técnico: indexación, JSON-LD de Schema.org, Core Web Vitals, hreflang y migraciones Next.js. Hallazgos ordenados por impacto.',
   })
 }
 

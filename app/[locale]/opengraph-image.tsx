@@ -20,8 +20,8 @@ export async function generateImageMetadata({ params }: Params) {
       contentType: OG_CONTENT_TYPE,
       alt:
         locale === 'en'
-          ? 'Carlos Anaya Ruiz — technical SEO consultant in Mexico City'
-          : 'Carlos Anaya Ruiz — consultor SEO técnico en Ciudad de México',
+          ? 'Carlos Anaya Ruiz — technical SEO consultant'
+          : 'Carlos Anaya Ruiz — consultor SEO técnico',
     },
   ]
 }

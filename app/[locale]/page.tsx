@@ -37,11 +37,11 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
     route: 'home',
     absoluteTitle: true,
     title: en
-      ? 'Carlos Anaya Ruiz — Technical SEO Consultant'
-      : 'Carlos Anaya Ruiz — Consultor SEO Técnico en CDMX',
+      ? 'Carlos Anaya Ruiz — Technical SEO Consultant & Next.js'
+      : 'Carlos Anaya Ruiz — Consultor SEO Técnico y Next.js',
     description: en
-      ? 'Technical SEO consultant and Next.js engineer in Mexico City. Audits, Core Web Vitals, structured data and migrations that do not lose organic traffic.'
-      : 'Consultor SEO técnico e ingeniero Next.js en Ciudad de México. Auditorías, Core Web Vitals, datos estructurados y migraciones que no tiran el tráfico orgánico.',
+      ? 'Technical SEO consultant and Next.js engineer. Audits, Core Web Vitals, structured data and migrations that do not lose organic traffic.'
+      : 'Consultor SEO técnico e ingeniero Next.js. Auditorías, Core Web Vitals, datos estructurados y migraciones que no tiran el tráfico orgánico.',
   })
 }
 

@@ -303,23 +303,15 @@ function areaServed(locale: Locale): JsonLdNode[] {
       '@type': 'Country',
       name: locale === 'en' ? 'United States' : 'Estados Unidos',
     },
-    {
-      '@type': 'Place',
-      name: locale === 'en' ? 'Worldwide (remote)' : 'Mundial (remoto)',
-    },
   ]
 }
 
-function postalAddress(locale: Locale): JsonLdNode {
-  return {
-    '@type': 'PostalAddress',
-    addressLocality: locale === 'en' ? NAP.localityEn : NAP.locality,
-    addressRegion: NAP.region,
-    addressCountry: NAP.country,
-    // NAP.postalCode is intentionally empty — no street address is published,
-    // so none is claimed here.
-  }
-}
+/* SIN DIRECCIÓN, a propósito (2026-10-30). Ni `address`, ni `geo`, ni
+   `workLocation`/`occupationLocation`, ni `homeLocation` de Carlos o del
+   despacho: el servicio es en línea y el sitio ya no publica ciudad ni
+   coordenadas. El único domicilio del sitio vive dentro del aviso de
+   privacidad, que es donde la LFPDPPP lo pide. La ciudad de empresas,
+   escuelas y proyectos (data/companies|education|engagements) sí se queda. */
 
 /**
  * Los idiomas en que se PRESTA EL SERVICIO. Dos, y es correcto: el sitio y la
@@ -433,13 +425,6 @@ export function generatePersonSchema(locale: Locale): JsonLdNode {
         : 'Ingeniero en Tecnologías Computacionales con +5 años liderando proyectos de software, SEO técnico, desarrollo Next.js y Firebase, automatización con IA y dashboards de datos. Certificado PMP. Antes en Amazon, Master Loyalty Group y Wan Hai Lines.',
     email: `mailto:${NAP.email}`,
     telephone: NAP.phone,
-    address: postalAddress(locale),
-    // Remote-first practice: the work location is the city, not a storefront.
-    workLocation: {
-      '@type': 'Place',
-      name: locale === 'en' ? NAP.localityEn : NAP.locality,
-      address: postalAddress(locale),
-    },
     nationality: { '@type': 'Country', name: 'Mexico' },
     knowsLanguage: KNOWS_LANGUAGE,
     knowsAbout: KNOWS_ABOUT,
@@ -518,10 +503,6 @@ export function generatePersonSchema(locale: Locale): JsonLdNode {
     hasOccupation: {
       '@type': 'Occupation',
       name: jobTitle,
-      occupationLocation: {
-        '@type': 'City',
-        name: locale === 'en' ? NAP.localityEn : NAP.locality,
-      },
     },
     // Both directions of the person ⇄ practice relationship.
     /**
@@ -555,8 +536,8 @@ export function generatePersonSchema(locale: Locale): JsonLdNode {
  * #business — the practice Carlos operates.
  *
  * A first-class graph member, not an inline `worksFor` blob, so "what does he
- * sell and where" resolves to a real node with an address, contact point and
- * offer catalogue.
+ * sell and where" resolves to a real node with a contact point, area served
+ * and offer catalogue.
  *
  * Deliberately absent: `priceRange` (no published pricing), `aggregateRating`
  * and `review` (self-serving review markup is not eligible for stars and we
@@ -573,21 +554,10 @@ export function generateProfessionalServiceSchema(locale: Locale): JsonLdNode {
     image: { '@id': ID.personImage },
     description:
       locale === 'en'
-        ? 'Technical SEO consulting and web engineering practice based in Mexico City: technical audits, structured data, Core Web Vitals, migrations without traffic loss, Next.js and Firebase development, AI automation, and dashboards.'
-        : 'Práctica de consultoría SEO técnico e ingeniería web con base en Ciudad de México: auditorías técnicas, datos estructurados, Core Web Vitals, migraciones sin pérdida de tráfico, desarrollo Next.js y Firebase, automatización con IA y dashboards.',
+        ? 'Technical SEO consulting and web engineering practice: technical audits, structured data, Core Web Vitals, migrations without traffic loss, Next.js and Firebase development, AI automation, and dashboards.'
+        : 'Práctica de consultoría SEO técnico e ingeniería web: auditorías técnicas, datos estructurados, Core Web Vitals, migraciones sin pérdida de tráfico, desarrollo Next.js y Firebase, automatización con IA y dashboards.',
     founder: { '@id': ID.person },
     employee: { '@id': ID.person },
-    address: postalAddress(locale),
-    /* `geo` es una de las propiedades que Google recomienda para
-       `LocalBusiness`, y `ProfessionalService` es un subtipo. El grafo no
-       traía una sola `GeoCoordinates` en las 32 rutas, aunque el par ya
-       está impreso como texto en /sobre-mi y en /cv («19.4326 N / 99.1332
-       W»). Mismo dato, ahora legible por máquina. */
-    geo: {
-      '@type': 'GeoCoordinates',
-      latitude: 19.4326,
-      longitude: -99.1332,
-    },
     telephone: NAP.phone,
     email: `mailto:${NAP.email}`,
     areaServed: areaServed(locale),
@@ -640,8 +610,8 @@ export function generateWebSiteSchema(locale: Locale): JsonLdNode {
     url: BASE_URL,
     description:
       locale === 'en'
-        ? 'Technical SEO consulting, Next.js and Firebase development, AI automation, and dashboards by Carlos Anaya Ruiz, from Mexico City.'
-        : 'Consultoría SEO técnico, desarrollo Next.js y Firebase, automatización con IA y dashboards por Carlos Anaya Ruiz, desde Ciudad de México.',
+        ? 'Technical SEO consulting, Next.js and Firebase development, AI automation, and dashboards by Carlos Anaya Ruiz.'
+        : 'Consultoría SEO técnico, desarrollo Next.js y Firebase, automatización con IA y dashboards por Carlos Anaya Ruiz.',
     inLanguage: langTag(locale),
     publisher: { '@id': ID.person },
     copyrightHolder: { '@id': ID.person },
@@ -876,8 +846,8 @@ export function generateHomeGraph(
           : 'Carlos Anaya Ruiz — Consultor SEO Técnico e Ingeniero Full-Stack',
       description:
         locale === 'en'
-          ? 'Technical SEO consulting, Next.js and Firebase development, AI automation, and dashboards by Carlos Anaya Ruiz, from Mexico City.'
-          : 'Consultoría SEO técnico, desarrollo Next.js y Firebase, automatización con IA y dashboards por Carlos Anaya Ruiz, desde Ciudad de México.',
+          ? 'Technical SEO consulting, Next.js and Firebase development, AI automation, and dashboards by Carlos Anaya Ruiz.'
+          : 'Consultoría SEO técnico, desarrollo Next.js y Firebase, automatización con IA y dashboards por Carlos Anaya Ruiz.',
       mainEntityId: ID.person,
       showsPrimaryImage: true,
       ...dates,

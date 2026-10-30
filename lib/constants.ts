@@ -190,8 +190,8 @@ export const SEO_IMAGES = {
   avatarHeight: 800,
   /** Alt text per locale — describes the person and the role, no stuffing. */
   avatarAlt: {
-    es: 'Carlos Anaya Ruiz, consultor SEO técnico y desarrollador full-stack en Ciudad de México',
-    en: 'Carlos Anaya Ruiz, technical SEO consultant and full-stack developer in Mexico City',
+    es: 'Carlos Anaya Ruiz, consultor SEO técnico y desarrollador full-stack',
+    en: 'Carlos Anaya Ruiz, technical SEO consultant and full-stack developer',
   } as Record<Locale, string>,
   /**
    * El retrato de medio cuerpo. Es un RECORTE con canal alfa —fondo
@@ -308,14 +308,14 @@ export function getSiteConfig(locale: Locale) {
       title:
         'Carlos Anaya Ruiz — Consultor SEO Técnico en México | Next.js, Schema y Core Web Vitals',
       description:
-        'Consultor SEO técnico e ingeniero full-stack en Ciudad de México. Auditorías técnicas, datos estructurados, Core Web Vitals y migraciones sin pérdida de tráfico. Ingeniero por el Tec de Monterrey, certificado PMP, ex-Amazon.',
+        'Consultor SEO técnico e ingeniero full-stack. Auditorías técnicas, datos estructurados, Core Web Vitals y migraciones sin pérdida de tráfico. Ingeniero por el Tec de Monterrey, certificado PMP, ex-Amazon.',
       ogLocale: 'es_MX',
     },
     en: {
       title:
         'Carlos Anaya Ruiz — Technical SEO Consultant in Mexico | Next.js, Schema & Core Web Vitals',
       description:
-        'Technical SEO consultant and full-stack engineer in Mexico City. Technical audits, structured data, Core Web Vitals, and migrations without traffic loss. Tec de Monterrey engineer, PMP certified, ex-Amazon.',
+        'Technical SEO consultant and full-stack engineer. Technical audits, structured data, Core Web Vitals, and migrations without traffic loss. Tec de Monterrey engineer, PMP certified, ex-Amazon.',
       ogLocale: 'en_US',
     },
   }

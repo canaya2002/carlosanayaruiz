@@ -83,7 +83,7 @@ export const MEDIA_SLOTS: readonly MediaSlot[] = [
     page: '/es',
     where: 'Sección «El operador»',
     what: 'Retrato de medio cuerpo sobre fondo liso (papel de fondo gris medio o blanco), luz pareja, sin fondo de oficina. Ropa lisa oscura, sin logotipos ni rayas finas.',
-    alt: 'Carlos Anaya Ruiz, consultor SEO técnico y desarrollador full-stack en Ciudad de México',
+    alt: 'Carlos Anaya Ruiz, consultor SEO técnico y desarrollador full-stack',
     priority: 'alta',
     filled: true,
     notes:

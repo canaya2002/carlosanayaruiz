@@ -20,8 +20,8 @@ export async function generateImageMetadata({ params }: Params) {
       contentType: OG_CONTENT_TYPE,
       alt:
         locale === 'en'
-          ? 'Dashboards and business analytics — Carlos Anaya Ruiz, Mexico City'
-          : 'Dashboards y analítica de negocio — Carlos Anaya Ruiz, Ciudad de México',
+          ? 'Dashboards and business analytics — Carlos Anaya Ruiz'
+          : 'Dashboards y analítica de negocio — Carlos Anaya Ruiz',
     },
   ]
 }

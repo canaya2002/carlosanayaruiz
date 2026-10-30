@@ -20,8 +20,8 @@ export async function generateImageMetadata({ params }: Params) {
       contentType: OG_CONTENT_TYPE,
       alt:
         locale === 'en'
-          ? 'AI automation and LLM chatbots — Carlos Anaya Ruiz, Mexico City'
-          : 'Automatización con IA y chatbots — Carlos Anaya Ruiz, Ciudad de México',
+          ? 'AI automation and LLM chatbots — Carlos Anaya Ruiz'
+          : 'Automatización con IA y chatbots — Carlos Anaya Ruiz',
     },
   ]
 }
