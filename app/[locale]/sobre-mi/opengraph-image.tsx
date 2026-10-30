@@ -32,7 +32,7 @@ export default async function Image({ params }: Params) {
   const en = locale === 'en'
   return renderOgCard({
     locale: locale as Locale,
-    eyebrow: en ? 'About · Mexico City' : 'Sobre mí · Ciudad de México',
+    eyebrow: en ? 'About' : 'Sobre mí',
     // Not the page h1 (which is the name): the card has to say why the
     // profile is worth opening.
     title: en

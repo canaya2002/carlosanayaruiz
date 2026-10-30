@@ -32,11 +32,11 @@
     "label": "Idioma"
   },
   "hero": {
-    "eyebrow": "Consultor SEO técnico · Ciudad de México",
+    "eyebrow": "Consultor SEO técnico · En línea en todo México",
     "lead": "Soy Carlos Anaya Ruiz. Audito, reconstruyo y migro sitios en Next.js. Lo que arreglo es concreto: indexación, datos estructurados, Core Web Vitals y migraciones que no tiran el tráfico orgánico.",
     "ctaPrimary": "Agendar una llamada",
     "ctaTertiary": "Conoce mi trayectoria",
-    "locationNote": "Ciudad de México, GMT-6. Remoto, o presencial en CDMX.",
+    "locationNote": "GMT-6. Trabajo remoto, en línea para todo México.",
     "operatorLead": "Escribo el código y también respondo por el tráfico orgánico que ese código produce. Esa mezcla es el servicio.",
     "operatorNote": "Las correcciones las implemento en tu repositorio, o las entrego especificadas para que las aplique tu equipo y reviso los pull requests. Tú decides quién ejecuta."
   },
@@ -50,7 +50,7 @@
       "pmpIssuer": "Project Management Institute",
       "toeflLabel": "TOEFL iBT",
       "toeflHint": "Inglés C1",
-      "cityLabel": "Ciudad de México",
+      "cityLabel": "Remoto",
       "cityHint": "Remoto a todo el mundo"
     }
   },
@@ -153,7 +153,7 @@
       "relatedTitle": "Servicios relacionados",
       "ctaMain": "Solicitar auditoría",
       "ctaSecondary": "Agendar una llamada",
-      "ctaNote": "Respondo en menos de 24 horas, hora de Ciudad de México."
+      "ctaNote": "Respondo en menos de 24 horas, hora de México (GMT-6)."
     },
     "desarrolloWeb": {
       "title": "Desarrollo Web con Next.js y Firebase",
@@ -294,7 +294,7 @@
     "lastUpdated": "Última actualización"
   },
   "footer": {
-    "description": "Consultoría SEO técnica y desarrollo web desde Ciudad de México. Auditorías, migraciones, Next.js y datos estructurados para que tu sitio sea legible tanto para buscadores como para modelos de lenguaje.",
+    "description": "Consultoría SEO técnica y desarrollo web, en línea para todo México. Auditorías, migraciones, Next.js y datos estructurados para que tu sitio sea legible tanto para buscadores como para modelos de lenguaje.",
     "clientArea": "¿Eres cliente? Zona de clientes",
     "navigation": "Navegación",
     "blog": "Blog",

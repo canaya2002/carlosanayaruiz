@@ -180,8 +180,8 @@ export default async function SeoTecnicoPage({ params }: Props) {
               <div className="min-w-0">
                 <p className="stamp">
                   {en
-                    ? 'Technical SEO · Mexico City'
-                    : 'SEO Técnico · Ciudad de México'}
+                    ? 'Technical SEO'
+                    : 'SEO Técnico'}
                 </p>
 
                 <h1 className="mt-6 max-w-[14ch] text-hero text-ink">
@@ -203,8 +203,8 @@ export default async function SeoTecnicoPage({ params }: Props) {
 
                 <p className="mt-8 max-w-[48ch] text-sm text-ink-subtle">
                   {en
-                    ? `Based in ${NAP.localityEn}. Remote work with teams in any time zone.`
-                    : `Con base en ${NAP.locality}. Trabajo remoto con equipos en cualquier zona horaria.`}
+                    ? 'Remote work with teams in any time zone.'
+                    : 'Trabajo remoto con equipos en cualquier zona horaria.'}
                 </p>
               </div>
 

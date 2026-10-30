@@ -32,7 +32,7 @@ export default async function Image({ params }: Params) {
   const en = locale === 'en'
   return renderOgCard({
     locale: locale as Locale,
-    eyebrow: en ? 'Technical SEO · Mexico City' : 'SEO Técnico · Ciudad de México',
+    eyebrow: en ? 'Technical SEO' : 'SEO Técnico',
     title: en
       ? 'Engineering that Google, ChatGPT and Copilot can actually read'
       : 'Ingeniería que Google, ChatGPT y Copilot sí pueden leer',

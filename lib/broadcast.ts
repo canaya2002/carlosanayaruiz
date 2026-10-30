@@ -261,7 +261,7 @@ function emailHtml(post: BlogPost): string {
 
   <tr><td style="border-top:1px solid #23201c;padding-top:20px;font:400 12px/1.6 -apple-system,BlinkMacSystemFont,'Segoe UI',Helvetica,Arial,sans-serif;color:${ash};">
     Recibes esto porque te suscribiste en ${SITE_CONFIG.url.replace('https://', '')}.<br />
-    ${escapeHtml(SITE_CONFIG.name)} · ${escapeHtml(NAP.locality)}<br />
+    ${escapeHtml(SITE_CONFIG.name)}<br />
     <a href="{{{RESEND_UNSUBSCRIBE_URL}}}" style="color:${ash};text-decoration:underline;">Darse de baja</a>
   </td></tr>
 
@@ -290,7 +290,7 @@ function emailText(post: BlogPost): string {
     '',
     '—',
     `Recibes esto porque te suscribiste en ${SITE_CONFIG.url.replace('https://', '')}.`,
-    `${SITE_CONFIG.name} · ${NAP.locality}`,
+    SITE_CONFIG.name,
     'Darse de baja: {{{RESEND_UNSUBSCRIBE_URL}}}',
   ].join('\n')
 }

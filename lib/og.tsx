@@ -324,7 +324,7 @@ export async function renderOgCard({
                 color: C.inkMuted,
               }}
             >
-              {locale === 'en' ? 'Mexico City' : 'Ciudad de México'}
+              {locale === 'en' ? 'Remote · Mexico' : 'En línea · México'}
             </div>
           </div>
         </div>

@@ -212,8 +212,7 @@ export default async function TermsPage({ params }: Props) {
               <p>
                 These terms govern the use of <code>{DOMAIN}</code>, a site
                 operated by <strong>Carlos Anaya Ruiz</strong>, an independent
-                technical SEO and software development consultant based in
-                Mexico City. Browsing the site, reading its content or using its
+                technical SEO and software development consultant. Browsing the site, reading its content or using its
                 contact form means you accept them; if you do not agree with
                 something here, the reasonable course is not to use the site.
               </p>
@@ -467,8 +466,7 @@ export default async function TermsPage({ params }: Props) {
               <p>
                 Estos términos rigen el uso de <code>{DOMAIN}</code>, sitio
                 operado por <strong>Carlos Anaya Ruiz</strong>, consultor
-                independiente de SEO técnico y desarrollo de software con base
-                en Ciudad de México. Navegar el sitio, leer su contenido o usar
+                independiente de SEO técnico y desarrollo de software. Navegar el sitio, leer su contenido o usar
                 su formulario de contacto implica aceptarlos; si algo aquí no te
                 parece, lo razonable es no usar el sitio.
               </p>

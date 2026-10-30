@@ -193,8 +193,8 @@ export default async function AiAutomationPage({ params }: Props) {
 
                 <p className="stamp mt-8">
                   {en
-                    ? `Based in ${NAP.localityEn}. Available remotely.`
-                    : `Desde ${NAP.locality}. Disponible en remoto.`}
+                    ? 'Available remotely.'
+                    : 'Disponible en remoto.'}
                 </p>
               </div>
 

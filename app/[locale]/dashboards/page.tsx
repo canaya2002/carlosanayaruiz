@@ -174,7 +174,7 @@ export default async function DashboardsPage({ params }: Props) {
             <div className="ledger">
               <div className="min-w-0">
                 <p className="stamp">
-                  {en ? 'Service · Mexico City' : 'Servicio · Ciudad de México'}
+                  {en ? 'Service' : 'Servicio'}
                 </p>
 
                 <h1 className="mt-6 max-w-[14ch] text-hero text-ink">
@@ -198,8 +198,8 @@ export default async function DashboardsPage({ params }: Props) {
 
                 <p className="stamp mt-8">
                   {en
-                    ? `Remote consulting from ${NAP.localityEn}.`
-                    : `Consultoría remota desde ${NAP.locality}.`}
+                    ? 'Remote consulting.'
+                    : 'Consultoría remota, en línea para todo México.'}
                 </p>
               </div>
 
@@ -643,8 +643,8 @@ export default async function DashboardsPage({ params }: Props) {
 
             <p className="mt-8 max-w-[56ch] text-sm text-ink-subtle">
               {en
-                ? 'I reply in under 24 hours, from Mexico City — or write straight to '
-                : 'Respondo en menos de 24 horas, desde Ciudad de México — o escríbeme directo a '}
+                ? 'I reply in under 24 hours — or write straight to '
+                : 'Respondo en menos de 24 horas — o escríbeme directo a '}
               <a className="link-stylus" href={`mailto:${NAP.email}`}>
                 {NAP.email}
               </a>

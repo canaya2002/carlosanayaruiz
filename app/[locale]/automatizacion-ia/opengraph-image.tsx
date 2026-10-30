@@ -33,8 +33,8 @@ export default async function Image({ params }: Params) {
   return renderOgCard({
     locale: locale as Locale,
     eyebrow: en
-      ? 'AI Automation · Mexico City'
-      : 'Automatización con IA · Ciudad de México',
+      ? 'AI Automation'
+      : 'Automatización con IA',
     title: en
       ? 'AI automation that never improvises with your data'
       : 'Automatización con IA que no improvisa con tus datos',

@@ -239,8 +239,8 @@ export default async function DesarrolloWebPage({ params }: Props) {
                 PerformanceObserver. */}
                 <p className="mt-8 max-w-[52ch] text-sm text-ink-muted">
                   {en
-                    ? `From ${NAP.localityEn}, for teams in any time zone. Spanish or English.`
-                    : `Desde ${NAP.locality}, para equipos en cualquier zona horaria. En español o inglés.`}
+                    ? 'Remote, for teams in any time zone. Spanish or English.'
+                    : 'En remoto, para equipos en cualquier zona horaria. En español o inglés.'}
                 </p>
               </div>
 

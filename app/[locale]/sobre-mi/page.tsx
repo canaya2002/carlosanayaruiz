@@ -175,7 +175,7 @@ export default async function AboutPage({ params }: Props) {
   // que esta migración retira, y el término ya dice de qué habla la fila.
   const facts = [
     { term: en ? 'Role' : 'Rol', detail: personal.title },
-    { term: en ? 'Based in' : 'Base', detail: personal.location },
+    { term: en ? 'Mode' : 'Modalidad', detail: personal.location },
     ...(degree && degreeLine
       ? [
           {
@@ -341,9 +341,6 @@ export default async function AboutPage({ params }: Props) {
                     loading="eager"
                   />
                 </span>
-                <figcaption className="stamp mt-4 tabular-nums">
-                  {NAP.locality} · 19.4326 N / 99.1332 W
-                </figcaption>
               </figure>
 
               {/* EL TRAMO, debajo del retrato. Esta cabecera ya repartía

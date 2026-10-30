@@ -238,7 +238,7 @@ export default async function ContactPage({ params }: Props) {
             <div className="ledger">
               <div className="min-w-0">
                 <p className="stamp">
-                  {en ? 'contact · mexico city' : 'contacto · ciudad de méxico'}
+                  {en ? 'contact' : 'contacto'}
                 </p>
 
                 {/* El espacio entre los dos `span` de bloque es deliberado: sin él
@@ -339,7 +339,7 @@ export default async function ContactPage({ params }: Props) {
                     {en ? 'time zone' : 'zona horaria'}
                   </span>
                   <span className="margin-val !text-ink">
-                    UTC−6 · {NAP.locality}
+                    UTC−6
                   </span>
                 </div>
               </aside>
@@ -455,11 +455,9 @@ export default async function ContactPage({ params }: Props) {
                   </div>
 
                   <div className="band">
-                    <dt className="stamp">{t('location')}</dt>
+                    <dt className="stamp">{en ? 'Mode' : 'Modalidad'}</dt>
                     <dd className="mt-2 text-ink">
-                      {en ? NAP.localityEn : NAP.locality}
-                      {', '}
-                      {en ? NAP.countryNameEn : NAP.countryName}
+                      {en ? 'Remote' : 'Remoto, en línea para todo México'}
                       <span className="mt-2 block text-sm text-ink-muted">
                         {en
                           ? 'Remote with clients across Latin America and the United States.'
@@ -478,8 +476,8 @@ export default async function ContactPage({ params }: Props) {
                       {t('responseTime')}
                       <span className="mt-2 block text-sm text-ink-muted">
                         {en
-                          ? 'I work from Mexico City, GMT-6 — an overlap with nearly the whole working day in the United States and Latin America.'
-                          : 'Trabajo desde Ciudad de México, GMT-6: se traslapa con casi todo el horario laboral de Estados Unidos y Latinoamérica.'}
+                          ? 'I work remotely in GMT-6 — an overlap with nearly the whole working day in the United States and Latin America.'
+                          : 'Trabajo remoto en GMT-6: se traslapa con casi todo el horario laboral de Estados Unidos y Latinoamérica.'}
                       </span>
                     </dd>
                   </div>

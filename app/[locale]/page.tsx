@@ -18,7 +18,7 @@ import { getSkillCategories } from '@/data/skills'
 import { getExperiences, type Experience } from '@/data/experience'
 import { getSiteFaq } from '@/data/faq'
 import { getEducation } from '@/data/education'
-import { SEO_IMAGES, NAP } from '@/lib/constants'
+import { SEO_IMAGES } from '@/lib/constants'
 import { generatePageMetadata } from '@/lib/seo'
 import { generateHomeGraph } from '@/lib/schema'
 import { Locale } from '@/data/types'
@@ -661,7 +661,7 @@ export default async function HomePage({ params }: Props) {
                 <div className="plaque">
                   <dt className="plaque-key">{en ? 'base' : 'base'}</dt>
                   <dd className="plaque-val m-0">
-                    {en ? NAP.localityEn : NAP.locality}
+                    {en ? 'Remote' : 'En línea, todo México'}
                     <span className="block tabular-nums text-ink-muted">
                       GMT−6
                     </span>

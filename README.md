@@ -1,7 +1,7 @@
 # carlosanayaruiz.com
 
 Sitio de consultoría de Carlos Anaya Ruiz — consultor SEO técnico e ingeniero
-full-stack, Ciudad de México. Bilingüe (español principal, inglés), estático,
+full-stack, en línea para todo México. Bilingüe (español principal, inglés), estático,
 sin CMS y **sin base de datos**.
 
 Next.js 16 App Router · React 19 · TypeScript strict · Tailwind CSS v4 ·

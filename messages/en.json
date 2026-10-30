@@ -32,11 +32,11 @@
     "label": "Language"
   },
   "hero": {
-    "eyebrow": "Technical SEO consultant · Mexico City",
+    "eyebrow": "Technical SEO consultant · Remote",
     "lead": "I'm Carlos Anaya Ruiz. I audit, rebuild, and migrate Next.js sites. What I fix is concrete: indexation, structured data, Core Web Vitals, and migrations that don't drop organic traffic.",
     "ctaPrimary": "Book a call",
     "ctaTertiary": "See my background",
-    "locationNote": "Mexico City, GMT-6. Remote, or in person in CDMX.",
+    "locationNote": "GMT-6. Remote work.",
     "operatorLead": "I write the code and I also answer for the organic traffic that code produces. That mix is the service.",
     "operatorNote": "I implement the fixes in your repository, or hand them over specified for your team to apply and review the pull requests. You decide who executes."
   },
@@ -50,7 +50,7 @@
       "pmpIssuer": "Project Management Institute",
       "toeflLabel": "TOEFL iBT",
       "toeflHint": "English C1",
-      "cityLabel": "Mexico City",
+      "cityLabel": "Remote",
       "cityHint": "Remote worldwide"
     }
   },
@@ -153,7 +153,7 @@
       "relatedTitle": "Related services",
       "ctaMain": "Request an audit",
       "ctaSecondary": "Book a call",
-      "ctaNote": "I reply in under 24 hours, Mexico City time."
+      "ctaNote": "I reply in under 24 hours, Mexico time (GMT-6)."
     },
     "desarrolloWeb": {
       "title": "Web Development with Next.js and Firebase",
@@ -294,7 +294,7 @@
     "lastUpdated": "Last updated"
   },
   "footer": {
-    "description": "Technical SEO consulting and web development from Mexico City. Audits, migrations, Next.js, and structured data, so your site is legible to search engines and to language models alike.",
+    "description": "Remote technical SEO consulting and web development. Audits, migrations, Next.js, and structured data, so your site is legible to search engines and to language models alike.",
     "clientArea": "Already a client? Client area",
     "navigation": "Navigation",
     "blog": "Blog",

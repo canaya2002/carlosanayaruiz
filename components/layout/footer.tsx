@@ -101,9 +101,12 @@ export async function Footer() {
     { href: '/contacto', label: tn('contact') },
   ]
 
+  /* Sin ciudad ni coordenadas, a propósito (2026-10-30): el servicio es en
+     línea para todo el país. El único domicilio del sitio vive dentro del
+     aviso de privacidad, que es donde la LFPDPPP lo pide. */
   const cityLine = en
-    ? `${NAP.localityEn}, ${NAP.countryNameEn}`
-    : `${NAP.locality}, ${NAP.countryName}`
+    ? `Remote · ${NAP.countryNameEn}`
+    : `En línea · ${NAP.countryName}`
 
   /**
    * Un enlace del pie es una FILA, no una píldora: alto táctil de 40 px y la
@@ -259,7 +262,6 @@ export async function Footer() {
               <p className="flex min-h-10 items-center text-sm text-ink-muted">
                 {cityLine}
               </p>
-              <p className="stamp mt-2 tabular-nums">19.4326 N / 99.1332 W</p>
             </address>
           </div>
 

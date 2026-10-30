@@ -32,7 +32,7 @@ export default async function Image({ params }: Params) {
   const en = locale === 'en'
   return renderOgCard({
     locale: locale as Locale,
-    eyebrow: en ? 'Dashboards · Mexico City' : 'Dashboards · Ciudad de México',
+    eyebrow: 'Dashboards',
     title: en
       ? 'A dashboard leadership reads without a walkthrough'
       : 'Un tablero que la dirección lee sin que se lo expliquen',

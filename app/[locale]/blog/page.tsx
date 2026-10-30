@@ -165,7 +165,7 @@ export default async function BlogIndexPage({ params }: Props) {
                   <span className="margin-val !text-ink">
                     cada semana
                   </span>
-                  <span className="margin-val">08:00, Ciudad de México</span>
+                  <span className="margin-val">08:00, hora de México</span>
                 </div>
 
                 {/* El siguiente en salir. Es un dato que ya existe, y decirlo
