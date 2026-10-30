@@ -46,9 +46,9 @@ export const NAP = {
   name: 'Carlos Anaya Ruiz',
   email: 'carlos@carlosanayaweb.com',
   /** E.164, for tel: hrefs and schema. */
-  phone: '+525544167974',
+  phone: '+525569201203',
   /** Human-readable, for display. */
-  phoneDisplay: '+52 55 4416 7974',
+  phoneDisplay: '+52 55 6920 1203',
   postalCode: '',
   country: 'MX',
   countryName: 'México',
@@ -60,8 +60,8 @@ export const NAP = {
 /**
  * El WhatsApp de los CTA-botón de /sobre-mi y /cv. Es el ÚNICO número de
  * contacto vigente (55 6920 1203, solo WhatsApp) y va escrito tal cual: NAP
- * todavía lleva el número anterior hasta que corra el cambio de teléfono, y
- * este enlace no puede esperar a ese commit para mandar al número correcto.
+ * ya lleva este mismo número (2026-10-30); este enlace queda fijo y
+ * apunta al mismo WhatsApp.
  */
 export const WHATSAPP_URL = 'https://wa.me/525569201203'
 

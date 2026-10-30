@@ -36,7 +36,7 @@ Objetivo: Google Knowledge Panel.
 | jobTitle | "Technical SEO Consultant & Full-Stack Engineer" (en) / "Consultor SEO Técnico & Ingeniero Full-Stack" (es) |
 | description | Computer Science Engineer with 4+ years... PMP certified. Amazon, Master Loyalty Group, Wan Hai Lines. (localizado) |
 | email | `mailto:carlosaremployment@hotmail.com` |
-| telephone | `+525544167974` |
+| telephone | `+525569201203` |
 | address | PostalAddress: Ciudad de México, CDMX, MX |
 | knowsAbout | 28 temas: Technical SEO, SEO Técnico, Next.js, React, TypeScript, Firebase, Node.js, Python, Artificial Intelligence, LLM Integration, GPT, Gemini, Dashboards, Power BI, Project Management, Scrum, PMBOK, Core Web Vitals, Schema.org, JSON-LD, Web Performance, CI/CD, AWS, Docker, Kubernetes, Web Security, Full-Stack Development, Information Architecture |
 | hasCredential | 4 credenciales: PMP (Professional Certification), TOEFL iBT Score 92 (Language Certification), B.Sc. Computer Science & Technology / ITC (degree, recognizedBy: Tec de Monterrey), Specialization in Advanced AI for Data Science (certificate, recognizedBy: Tec de Monterrey) |

@@ -252,7 +252,7 @@ export async function Footer() {
                 {/* Forma legible para las personas, E.164 en el href para que
                     marque el teléfono. */}
                 <a
-                  href={`tel:${NAP.phone}`}
+                  href={`https://wa.me/${NAP.phone.slice(1)}`}
                   className={`${linkClass} tabular-nums`}
                   data-numeric=""
                 >

@@ -418,7 +418,7 @@ export default async function CvPage({ params }: Props) {
       id: 'phone',
       label: t('contact.phone'),
       node: (
-        <a href={`tel:${NAP.phone}`} className="link-stylus">
+        <a href={`https://wa.me/${NAP.phone.slice(1)}`} className="link-stylus">
           {NAP.phoneDisplay}
         </a>
       ),

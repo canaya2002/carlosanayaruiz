@@ -272,7 +272,7 @@ export default async function ContactPage({ params }: Props) {
                   </a>
                   <a
                     className="link-stylus inline-flex min-h-11 items-center"
-                    href={`tel:${NAP.phone}`}
+                    href={`https://wa.me/${NAP.phone.slice(1)}`}
                     data-numeric=""
                   >
                     {NAP.phoneDisplay} →
@@ -446,7 +446,7 @@ export default async function ContactPage({ params }: Props) {
                     <dt className="stamp">{en ? 'Phone' : 'Teléfono'}</dt>
                     <dd className="mt-2">
                       <a
-                        href={`tel:${NAP.phone}`}
+                        href={`https://wa.me/${NAP.phone.slice(1)}`}
                         data-numeric=""
                         className="link-stylus inline-flex min-h-11 items-center"
                       >

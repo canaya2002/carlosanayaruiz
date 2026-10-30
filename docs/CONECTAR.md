@@ -186,7 +186,7 @@ hay un hueco ni una caja vacía— pero si la generas, ponla en
 ## 6 · WhatsApp — ya funciona
 
 **No necesito nada.** El número sale de `NAP` en `lib/constants.ts`
-(+52 55 4416 7974) y el enlace se abre **con el mensaje ya escrito, distinto en
+(+52 55 6920 1203) y el enlace se abre **con el mensaje ya escrito, distinto en
 cada página**: quien escribe desde `/dashboards` llega diciendo que viene de ahí.
 
 Solo si tu número de negocio es otro:

@@ -51,7 +51,7 @@ Carlos Anaya Ruiz ofrece servicios profesionales desde Ciudad de Mexico. Aunque 
    - **Categorias secundarias:** "Servicio de desarrollo de software", "Servicio de SEO"
    - **Area de servicio:** Ciudad de Mexico, Estado de Mexico, Mexico (nacional), Estados Unidos (remoto)
    - **Sitio web:** `https://carlosanayaruiz.com`
-   - **Telefono:** +52 55 4416 7974
+   - **Telefono:** +52 55 6920 1203
    - **Email:** Usar el email profesional (ver seccion 6 sobre email)
    - **Descripcion:** Usar el `shortBio` de `data/personal.ts`:
      > "Ingeniero de software y consultor SEO tecnico en Mexico. Construyo sitios web rapidos, indexables y que convierten — con Next.js, Firebase, IA y datos estructurados."
