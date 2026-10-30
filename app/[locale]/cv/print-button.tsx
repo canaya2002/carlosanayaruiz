@@ -38,7 +38,14 @@ export function PrintButton({ label }: PrintButtonProps) {
        ponerla otra vez daba «DESCARGAR EN PDF → →». Se vio en captura. Los
        otros dos consumidores de la clase —/contacto y el pie— nunca la
        pusieron: la flecha es parte de la pestaña, no del texto. */
-    <button type="button" className="pull-tab press" onClick={() => window.print()}>
+    /* Ahora `.btn-primary`: la descarga es LA acción de esta página y se
+       leía como una etiqueta mono de 11 px con una regla encima. Mismo
+       `onClick`; se oculta al imprimir con el resto de los botones. */
+    <button
+      type="button"
+      className="btn-primary press"
+      onClick={() => window.print()}
+    >
       {label}
     </button>
   )

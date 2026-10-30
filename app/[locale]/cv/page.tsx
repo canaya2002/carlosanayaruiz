@@ -14,7 +14,13 @@ import { getEducation } from '@/data/education'
 import { getSkillCategories } from '@/data/skills'
 import { getAwards } from '@/data/awards'
 import { getCompanies } from '@/data/companies'
-import { NAP, SEO_IMAGES, SOCIAL_LINKS, routeUrl } from '@/lib/constants'
+import {
+  NAP,
+  SEO_IMAGES,
+  SOCIAL_LINKS,
+  WHATSAPP_URL,
+  routeUrl,
+} from '@/lib/constants'
 import { generatePageMetadata } from '@/lib/seo'
 import {
   generateWebPageSchema,
@@ -149,6 +155,16 @@ const PRINT_STYLES = `
      se convertiría en una foto de tamaño postal. */
   .cv-doc figure {
     max-width: 38mm !important;
+    width: auto !important;
+  }
+
+  /* La columna del retrato se disuelve en pantallas angostas para subir el
+     avatar; la hoja impresa también es angosta, así que aquí se rehace. */
+  .cv-doc [data-hero-col] {
+    display: block !important;
+  }
+  .cv-doc figcaption {
+    display: block !important;
   }
 
   /* El duotono necesita su papel debajo: la foto va en "multiply", y sin un
@@ -523,11 +539,25 @@ export default async function CvPage({ params }: Props) {
                     {t('lead')}
                   </p>
 
-                  <p className="mt-10 flex flex-wrap items-center gap-x-8 gap-y-4">
+                  {/* Las dos acciones de la página, ahora con cuerpo de botón:
+                      la descarga en latón y el WhatsApp con su canto. Se van
+                      las dos al imprimir — en papel no se hace clic. */}
+                  <p
+                    data-print-hide=""
+                    className="mt-10 flex flex-wrap items-center gap-x-4 gap-y-3"
+                  >
                     <PrintButton label={t('download')} />
-                    <Link className="link-stylus" href="/contacto">
-                      {t('ctaLink')} →
-                    </Link>
+                    <a
+                      className="btn-secondary"
+                      href={WHATSAPP_URL}
+                      target="_blank"
+                      rel="noopener"
+                    >
+                      {en ? 'Message me on WhatsApp' : 'Escríbeme por WhatsApp'}
+                      <span className="btn-arrow" aria-hidden="true">
+                        →
+                      </span>
+                    </a>
                   </p>
 
                   <p
@@ -557,11 +587,16 @@ export default async function CvPage({ params }: Props) {
                   </dl>
                 </div>
 
-                <div className="min-w-0">
+                {/* En móvil la columna se DISUELVE (`contents`) y el retrato
+                    sube al primer lugar de la rejilla a tamaño de avatar, para
+                    que se vea en la primera pantalla. Solo en pantalla: la
+                    hoja impresa (≈680 px, por debajo de md) la devuelve a
+                    bloque en PRINT_STYLES y conserva su orden. */}
+                <div data-hero-col="" className="min-w-0 max-md:contents">
                   {/* El retrato es la única foto del documento. El obturador
                       la «imprime» al entrar a pantalla y se va al imprimir en
                       papel, donde quedaría congelado tapándola. */}
-                  <figure className="m-0">
+                  <figure className="m-0 order-first w-[7.5rem] md:order-none md:w-auto">
                     <span className="figure-bw">
                       <span className="portrait-shutter" aria-hidden="true" />
                       <Image
@@ -569,7 +604,7 @@ export default async function CvPage({ params }: Props) {
                         alt={SEO_IMAGES.portraitBwAlt[locale]}
                         width={SEO_IMAGES.portraitBwSize}
                         height={SEO_IMAGES.portraitBwSize}
-                        sizes="(min-width: 768px) 15rem, 60vw"
+                        sizes="(min-width: 768px) 15rem, 7.5rem"
                         /* `loading="eager"` y NO `priority`. La foto se pinta a 15rem
                            dentro del héroe, así que tiene que pedirse de inmediato — pero
                            el candidato a LCP de esta ruta es el `<h1>`, no ella, y
@@ -578,7 +613,9 @@ export default async function CvPage({ params }: Props) {
                         loading="eager"
                       />
                     </span>
-                    <figcaption className="stamp mt-4">
+                    {/* La ubicación ya es una fila del contacto; junto a un
+                        avatar de 7.5rem partiría en tres renglones. */}
+                    <figcaption className="stamp mt-4 max-md:hidden print:block">
                       {personal.location}
                     </figcaption>
                   </figure>

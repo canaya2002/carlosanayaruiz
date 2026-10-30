@@ -13,7 +13,7 @@ import { getExperiences } from '@/data/experience'
 import { getEducation } from '@/data/education'
 import { getSkillCategories } from '@/data/skills'
 import { getAwards } from '@/data/awards'
-import { NAP, SEO_IMAGES, SOCIAL_LINKS } from '@/lib/constants'
+import { NAP, SEO_IMAGES, SOCIAL_LINKS, WHATSAPP_URL } from '@/lib/constants'
 import { generatePageMetadata } from '@/lib/seo'
 import { generateProfilePageGraph } from '@/lib/schema'
 import { formatShortDate } from '@/lib/utils'
@@ -280,9 +280,10 @@ export default async function AboutPage({ params }: Props) {
               {personal.name}
             </h1>
 
-            {/* El retrato va DESPUÉS del texto en el DOM: en móvil, una foto
-                de este tamaño arriba se come la primera pantalla y deja el h1
-                bajo el pliegue. En desktop el grid lo manda a su columna. */}
+            {/* El retrato va DESPUÉS del texto en el DOM, pero en móvil sube
+                al primer lugar de la rejilla A TAMAÑO DE AVATAR (7.5rem): así
+                se ve en la primera pantalla sin comérsela. A partir de md
+                vuelve a su columna y a sus 15rem. */}
             <div className="mt-12 grid gap-10 md:grid-cols-[minmax(0,1fr)_minmax(0,17rem)] md:gap-14">
               <div>
                 <p className="max-w-[40ch] text-lead text-ink">
@@ -293,6 +294,32 @@ export default async function AboutPage({ params }: Props) {
                     serif tiene permiso. */}
                 <p className="mt-8 max-w-[52ch] font-human text-lead text-ink-muted">
                   {t('lead')}
+                </p>
+
+                {/* Los dos pasos siguientes, en latón. Antes la página no
+                    tenía un solo CTA fuera del nav: lo único en la primera
+                    pantalla eran cuatro enlaces de perfil. `whitespace-normal`
+                    en el secundario porque a 390 px no cabe en una línea. */}
+                <p className="mt-10 flex flex-wrap items-center gap-x-4 gap-y-3">
+                  <a
+                    className="btn-primary"
+                    href={WHATSAPP_URL}
+                    target="_blank"
+                    rel="noopener"
+                  >
+                    {en ? 'Message me on WhatsApp' : 'Escríbeme por WhatsApp'}
+                    <span className="btn-arrow" aria-hidden="true">
+                      →
+                    </span>
+                  </a>
+                  <Link
+                    className="btn-secondary whitespace-normal text-left"
+                    href="/revision-ficha-google"
+                  >
+                    {en
+                      ? 'Free review of your Google Business Profile'
+                      : 'Pide una revisión gratis de tu ficha'}
+                  </Link>
                 </p>
 
                 <ul className="mt-10 flex flex-wrap gap-x-8 gap-y-3">
@@ -323,7 +350,7 @@ export default async function AboutPage({ params }: Props) {
                   fondo de oficina. Llegó una de estudio en blanco y negro, así
                   que la muleta se fue y lo que queda es la regla del sistema —
                   la foto se disuelve en el material. */}
-              <figure className="m-0">
+              <figure className="m-0 order-first w-[7.5rem] md:order-none md:w-auto">
                 <span className="figure-bw">
                   <span className="portrait-shutter" aria-hidden="true" />
                   <Image
@@ -331,7 +358,7 @@ export default async function AboutPage({ params }: Props) {
                     alt={SEO_IMAGES.portraitBwAlt[locale]}
                     width={SEO_IMAGES.portraitBwSize}
                     height={SEO_IMAGES.portraitBwSize}
-                    sizes="(min-width: 768px) 15rem, 60vw"
+                    sizes="(min-width: 768px) 15rem, 7.5rem"
                     /* Esta foto está DENTRO del héroe: a 1 335 caracteres del
                        `<h1>`, en la misma rejilla que el titular, el sumario y
                        los cuatro enlaces de contacto. Sin `priority` no se
@@ -677,18 +704,24 @@ export default async function AboutPage({ params }: Props) {
 
             <dl className="mt-12">
               {personal.languages.map((language) => (
-                <div key={language.name} className="band">
-                  <div className="flex flex-wrap items-baseline justify-between gap-x-6 gap-y-1">
-                    <dt className="text-d3 text-ink">{language.name}</dt>
-                    <dd className="stamp m-0 tabular-nums">{language.level}</dd>
-                  </div>
-                  <span
-                    className="mt-3 block"
-                    style={{ width: `${language.proficiency}%` }}
-                    aria-hidden="true"
-                  >
-                    <span className="band-fill" />
-                  </span>
+                /* Solo `dt` y `dd` dentro del grupo: el `div` intermedio y la
+                   barra suelta eran lo que reprobaba `definition-list` y
+                   `dlitem` en Lighthouse. La barra es un segundo `dd` del
+                   mismo término, oculto al lector: repite el nivel. */
+                <div
+                  key={language.name}
+                  className="band flex flex-wrap items-baseline justify-between gap-x-6 gap-y-1"
+                >
+                  <dt className="text-d3 text-ink">{language.name}</dt>
+                  <dd className="stamp m-0 tabular-nums">{language.level}</dd>
+                  <dd className="m-0 mt-2 basis-full" aria-hidden="true">
+                    <span
+                      className="block"
+                      style={{ width: `${language.proficiency}%` }}
+                    >
+                      <span className="band-fill" />
+                    </span>
+                  </dd>
                 </div>
               ))}
             </dl>

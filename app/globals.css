@@ -2810,6 +2810,14 @@
        lado, así que un fondo de humo se vería COMO UN HALO a través de esos
        píxeles semitransparentes. */
     max-width: 15rem;
+    /* La persiana (`.portrait-shutter`) termina ENCIMA del encuadre, en
+       `translateY(-100%)`: hollín opaco con su filo de papel. Sin recorte se
+       quedaba ahí para siempre, tapando lo que hubiera arriba — en escritorio
+       se leía como una caja vacía sobre el retrato y en móvil se comía los
+       enlaces de contacto (el «fragmento suelto» que se reportó). `clip-path`
+       la limita al marco sin ser `overflow: hidden`, que es lo que este
+       bloque pide no usar, y no pinta fondo, así que no hay halo. */
+    clip-path: inset(0);
   }
 
   .figure-bw img {
