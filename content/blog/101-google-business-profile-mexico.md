@@ -208,7 +208,7 @@ No hay atajos ni garantías de posición, pero sí una ruta clara: ficha reclama
 - Google. "Cómo administrar las opiniones de los clientes". https://support.google.com/business/answer/3474050?hl=es-419
 - Google Maps. "Contenido prohibido y restringido" (política de contenido aportado por usuarios). https://support.google.com/contributionpolicy/answer/7400114?hl=es-419
 
-*Carlos Anaya Ruiz es consultor de SEO técnico, Next.js y automatización con IA en la Ciudad de México.*
+*Carlos Anaya Ruiz es consultor de SEO técnico, Next.js y automatización con IA; trabaja en línea con negocios de todo México.*
 
 ---
 
