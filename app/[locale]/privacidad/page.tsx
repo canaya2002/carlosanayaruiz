@@ -9,10 +9,17 @@
  * lib/contact.ts, lib/forward.ts, lib/newsletter.ts, lib/broadcast.ts y la
  * política de seguridad de next.config.ts. NO es asesoría legal y NO lo ha
  * revisado un abogado. Que lo revise un abogado mexicano en materia de
- * protección de datos antes de confiar en él; en particular: el domicilio que
- * la LFPDPPP pide publicar (aquí solo se publica un canal de correo), los
- * plazos exactos de respuesta a una solicitud ARCO y qué autoridad es hoy la
- * competente para recibir quejas.
+ * protección de datos antes de confiar en él; en particular: los plazos de
+ * respuesta a una solicitud ARCO (hábiles o naturales) y qué autoridad es hoy
+ * la competente para recibir quejas.
+ *
+ * ── 2026-10-30: DOMICILIO Y SIN CIUDAD ──
+ * El domicilio del responsable (LFPDPPP) vive AQUÍ DENTRO, en §01, ES y EN, y
+ * en ningún otro archivo del sitio: es la única mención de ciudad que se queda
+ * a propósito. La cláusula 07 con Google Analytics y banner está redactada por
+ * Legal (prompt 01, sección C) pero NO se publicó: GA4 y el banner (prompts
+ * 02/03) todavía no existen en el código, y la 07 no puede describir algo que
+ * no ocurre. Va en el mismo commit que los monte.
  *
  * ── LA CORRECCIÓN DEL 2026-08-24, Y POR QUÉ IMPORTA ──
  * Ocho cláusulas de este documento describían un formulario `mailto:` que se
@@ -88,7 +95,7 @@ interface Props {
 }
 
 /** Fecha real de la última edición de fondo. También alimenta el JSON-LD. */
-const LAST_UPDATED = '2026-10-27'
+const LAST_UPDATED = '2026-10-30'
 
 export async function generateMetadata({ params }: Props): Promise<Metadata> {
   const { locale } = await params
@@ -231,8 +238,11 @@ export default async function PrivacyPage({ params }: Props) {
               <p>
                 The party responsible for the personal data that reaches me
                 through this site is <strong>Carlos Anaya Ruiz</strong>, an
-                independent technical SEO and software development consultant
-                operating from Mexico City, Mexico.
+                independent technical SEO and software development consultant.
+                For the purposes of this notice, the data controller is Carlos
+                Anaya Ruiz, RFC (tax ID) AARC02050492A, with address at Calle
+                Salvador Alvarado 84, interior 13, Colonia Escandón I Sección,
+                Miguel Hidalgo, Mexico City, C.P. 11800.
               </p>
               <p>
                 One person runs this site. There is no team, no agency and no
@@ -286,7 +296,7 @@ export default async function PrivacyPage({ params }: Props) {
                 these pages from pointing at an outside host.
               </p>
               <p>
-                My address is also written out in full on the contact page, if
+                My email address is also written out in full on the contact page, if
                 you would rather write to me directly from your own account
                 without going through the form at all.
               </p>
@@ -451,12 +461,34 @@ export default async function PrivacyPage({ params }: Props) {
               </p>
               <p>
                 <strong>What I never do with your data:</strong> I do not sell
-                it, transfer it, trade it, or enrich it against third-party
-                databases. I build no profiles and make no automated decisions
+                it, transfer it or trade it. I do not enrich the data you give me
+                through this site with third-party databases. If I contacted you
+                first by email to offer a service, that processing is governed
+                by the prospecting notice at{' '}
+                <a
+                  className="link-stylus"
+                  href="https://carlosanayaweb.com/aviso-de-privacidad"
+                >
+                  https://carlosanayaweb.com/aviso-de-privacidad
+                </a>
+                . I build no profiles and make no automated decisions
                 that affect you. Writing to me does not subscribe you to the
                 newsletter: that sign-up is separate and you make it yourself.
                 Your message is recorded so it can be followed up; where it
                 ends up is set out above.
+              </p>
+              <p>
+                <strong>If I wrote to you without you contacting me.</strong>{' '}
+                Sometimes I write once, with up to two follow-ups, to businesses
+                to offer the free review of their Google listing. I only use
+                professional contact details that the business itself publishes
+                (its website or its Google listing): business name, email and,
+                if shown there, the name of whoever runs it. The purpose is to
+                offer you that service. If you reply &ldquo;baja&rdquo;
+                (unsubscribe) or ask me at {emailLink}, I add you to an
+                exclusion list and never write again; I keep that record (only
+                your email and the date) to honour your choice. Your ARCO rights
+                apply (clause 10).
               </p>
             </>
           ),
@@ -554,6 +586,12 @@ export default async function PrivacyPage({ params }: Props) {
                 You can ask me for the current detail of any provider by
                 writing to {emailLink}.
               </p>
+              <p>
+                If you use WhatsApp or the Cal.com scheduler from the contact
+                page, you go directly to those services and their own privacy
+                notices apply; what you write or book there I use for the same
+                purposes as this notice.
+              </p>
             </>
           ),
         },
@@ -586,10 +624,15 @@ export default async function PrivacyPage({ params }: Props) {
                 notice will say so first.
               </p>
               <p>
-                Nothing is kept in your browser either: the site writes neither
-                to <code>localStorage</code> nor to <code>sessionStorage</code>.
-                It has a single visual theme, so there is not even a preference
-                to remember.
+                The only cookie of mine is <code>NEXT_LOCALE</code>, which
+                remembers your language; it is technical and is not used to
+                track you.
+              </p>
+              <p>
+                Beyond that cookie, nothing is kept in your browser: the site
+                writes neither to <code>localStorage</code> nor to{' '}
+                <code>sessionStorage</code>. It has a single visual theme, so
+                there is no other preference to remember.
               </p>
             </>
           ),
@@ -733,10 +776,13 @@ export default async function PrivacyPage({ params }: Props) {
                 the list.
               </p>
               <p>
-                The process is free and I will answer within the deadlines the
-                LFPDPPP sets. If you believe your request was not handled
-                properly, you can escalate to the competent Mexican federal data
-                protection authority.
+                I reply within 20 business days of receiving your request and,
+                if it proceeds, carry it out within the following 15 days; these
+                periods may be extended once for an equal period, with notice of
+                the reason. I may ask for a document proving your identity or
+                that of your representative. The process is free. If you are not
+                satisfied with the response, you may go to Mexico&rsquo;s
+                Secretaría Anticorrupción y Buen Gobierno.
               </p>
             </>
           ),
@@ -771,8 +817,11 @@ export default async function PrivacyPage({ params }: Props) {
                 El responsable del tratamiento de los datos personales que me
                 llegan a través de este sitio es{' '}
                 <strong>Carlos Anaya Ruiz</strong>, consultor independiente de
-                SEO técnico y desarrollo de software, con base de operación en
-                Ciudad de México, México.
+                SEO técnico y desarrollo de software. Para efectos de este
+                aviso, el responsable es Carlos Anaya Ruiz, con RFC
+                AARC02050492A y domicilio en Calle Salvador Alvarado 84,
+                interior 13, colonia Escandón I Sección, alcaldía Miguel
+                Hidalgo, Ciudad de México, C.P. 11800.
               </p>
               <p>
                 Este sitio lo opera una sola persona. No hay equipo, ni agencia,
@@ -992,12 +1041,34 @@ export default async function PrivacyPage({ params }: Props) {
               </p>
               <p>
                 <strong>Lo que nunca hago con tus datos:</strong> no los vendo,
-                no los cedo, no los intercambio y no los enriquezco con bases de
-                terceros. No construyo perfiles ni tomo decisiones automatizadas
+                no los cedo y no los intercambio. Los datos que me das por este
+                sitio no los enriquezco con bases de terceros. Si yo te contacté
+                primero por correo para ofrecerte un servicio, ese tratamiento
+                se rige por el aviso de prospección en{' '}
+                <a
+                  className="link-stylus"
+                  href="https://carlosanayaweb.com/aviso-de-privacidad"
+                >
+                  https://carlosanayaweb.com/aviso-de-privacidad
+                </a>
+                . No construyo perfiles ni tomo decisiones automatizadas
                 que te afecten. Escribirme no te da de alta en el boletín:
                 esa alta es aparte y la haces tú. Tu mensaje sí queda
                 registrado para darle seguimiento; dónde queda lo dice la
                 sección de arriba.
+              </p>
+              <p>
+                <strong>Si te escribí sin que me contactaras.</strong> A veces
+                escribo una sola vez, con hasta dos seguimientos, a negocios
+                para ofrecer la revisión gratis de su ficha de Google. Uso solo
+                datos de contacto profesionales que el propio negocio publica
+                (su sitio web o su ficha de Google): nombre del negocio, correo
+                y, si aparece ahí, el nombre de quien lo dirige. La finalidad es
+                ofrecerte ese servicio. Si respondes &laquo;baja&raquo; o me lo
+                pides en {emailLink}, te agrego a una lista de exclusión y no
+                vuelvo a escribirte; ese registro (solo tu correo y la fecha) lo
+                conservo para cumplir tu decisión. Aplican tus derechos ARCO
+                (cláusula 10).
               </p>
             </>
           ),
@@ -1094,6 +1165,12 @@ export default async function PrivacyPage({ params }: Props) {
                 Puedes pedirme el detalle vigente de cualquier proveedor
                 escribiendo a {emailLink}.
               </p>
+              <p>
+                Si usas WhatsApp o la agenda de Cal.com desde la página de
+                contacto, entras directamente a esos servicios y aplican sus
+                propios avisos de privacidad; lo que me escribas o agendes ahí
+                lo uso para las mismas finalidades de este aviso.
+              </p>
             </>
           ),
         },
@@ -1127,10 +1204,14 @@ export default async function PrivacyPage({ params }: Props) {
                 y este aviso lo dirá antes.
               </p>
               <p>
-                Tampoco queda nada guardado en tu navegador: el sitio no escribe
-                en <code>localStorage</code> ni en <code>sessionStorage</code>.
-                Tiene un solo tema visual, así que no hay ni una preferencia que
-                recordar.
+                La única cookie es <code>NEXT_LOCALE</code>, que recuerda el
+                idioma; es técnica y no sirve para rastrearte.
+              </p>
+              <p>
+                Fuera de esa cookie, no queda nada guardado en tu navegador: el
+                sitio no escribe en <code>localStorage</code> ni en{' '}
+                <code>sessionStorage</code>. Tiene un solo tema visual, así que
+                no hay otra preferencia que recordar.
               </p>
             </>
           ),
@@ -1270,10 +1351,13 @@ export default async function PrivacyPage({ params }: Props) {
                 retiro tu dirección de la lista.
               </p>
               <p>
-                El trámite es gratuito y responderé dentro de los plazos que
-                marca la LFPDPPP. Si consideras que tu solicitud no fue atendida
-                como debía, puedes acudir a la autoridad federal mexicana
-                competente en materia de protección de datos personales.
+                Te respondo en un máximo de 20 días hábiles desde que recibo tu
+                solicitud y, si procede, la hago efectiva dentro de los 15 días
+                siguientes; estos plazos pueden ampliarse una vez por un periodo
+                igual, con aviso del motivo. Puedo pedirte un documento que
+                acredite tu identidad o la de tu representante. El trámite es
+                gratuito. Si no estás conforme con la respuesta, puedes acudir a
+                la Secretaría Anticorrupción y Buen Gobierno.
               </p>
             </>
           ),

@@ -2,6 +2,7 @@
 
 import { useActionState } from 'react'
 import { enviarMensaje, type EnvioEstado } from '@/app/[locale]/lead-action'
+import { Link } from '@/i18n/navigation'
 
 /**
  * ════════════════════════════════════════════════════════════════
@@ -49,6 +50,9 @@ export interface LeadCopy {
   submit: string
   enviando: string
   nota: string
+  /** El enlace al aviso, junto al botón: se pone a disposición ANTES de que
+   *  alguien mande sus datos, no después. */
+  aviso: string
   ok: string
   invalido: string
   sinConfigurar: string
@@ -197,7 +201,14 @@ export function LeadForm({
           role="status"
           aria-live="polite"
         >
-          {mensaje ?? copy.nota}
+          {mensaje ?? (
+            <>
+              {copy.nota}{' '}
+              <Link className="link-stylus" href="/privacidad">
+                {copy.aviso}
+              </Link>
+            </>
+          )}
         </p>
       </div>
     </form>

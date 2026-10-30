@@ -400,6 +400,7 @@ export default async function ContactPage({ params }: Props) {
                     submit: tl('submit'),
                     enviando: tl('enviando'),
                     nota: tl('nota'),
+                    aviso: tl('aviso'),
                     ok: tl('ok'),
                     invalido: tl('invalido'),
                     sinConfigurar: tl('sinConfigurar'),
