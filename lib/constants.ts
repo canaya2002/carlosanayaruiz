@@ -49,9 +49,6 @@ export const NAP = {
   phone: '+525544167974',
   /** Human-readable, for display. */
   phoneDisplay: '+52 55 4416 7974',
-  locality: 'Ciudad de México',
-  localityEn: 'Mexico City',
-  region: 'CDMX',
   postalCode: '',
   country: 'MX',
   countryName: 'México',

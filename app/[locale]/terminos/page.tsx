@@ -180,7 +180,7 @@ export default async function TermsPage({ params }: Props) {
         },
         {
           title: 'Mexican law applies',
-          text: 'These terms are governed by Mexican federal law, with venue in the courts of Mexico City.',
+          text: 'These terms are governed by the federal laws of the United Mexican States. Any dispute will be resolved before the competent courts of Mexico.',
         },
       ]
     : [
@@ -194,7 +194,7 @@ export default async function TermsPage({ params }: Props) {
         },
         {
           title: 'Ley aplicable: México',
-          text: 'Estos términos se rigen por la legislación federal mexicana, con jurisdicción en los tribunales de la Ciudad de México.',
+          text: 'Estos términos se rigen por la legislación federal de los Estados Unidos Mexicanos. Cualquier controversia se resolverá ante los tribunales competentes de México.',
         },
       ]
 
@@ -448,11 +448,9 @@ export default async function TermsPage({ params }: Props) {
           title: 'Governing law and jurisdiction',
           body: (
             <p>
-              These terms are governed by the federal law of the United Mexican
-              States. Any dispute over their interpretation or performance is
-              submitted to the competent courts of Mexico City, waiving any
-              other venue that might apply by reason of present or future
-              domicile.
+              These terms are governed by the federal laws of the United
+              Mexican States. Any dispute will be resolved before the competent
+              courts of Mexico.
             </p>
           ),
         },
@@ -708,10 +706,8 @@ export default async function TermsPage({ params }: Props) {
           body: (
             <p>
               Estos términos se rigen por la legislación federal de los Estados
-              Unidos Mexicanos. Cualquier controversia sobre su interpretación o
-              cumplimiento se somete a los tribunales competentes de la Ciudad
-              de México, renunciando a cualquier otro fuero que pudiera
-              corresponder por razón de domicilio presente o futuro.
+              Unidos Mexicanos. Cualquier controversia se resolverá ante los
+              tribunales competentes de México.
             </p>
           ),
         },
