@@ -67,7 +67,7 @@ interface Props {
 }
 
 /** Fecha real de la última edición de fondo. También alimenta el JSON-LD. */
-const LAST_UPDATED = '2026-08-24'
+const LAST_UPDATED = '2026-10-30'
 
 /** Dominio pelado, para el texto. Derivado para que un cambio de dominio
  *  actualice también el copy. */
