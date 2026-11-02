@@ -1,5 +1,6 @@
 import Link from 'next/link'
 import { FONT_VARS } from '@/lib/fonts'
+import { isRevisionOpen } from '@/data/revision-ficha'
 
 // Importado por precaución: app/layout.tsx ya trae globals.css, pero este es
 // el único archivo que renderiza un documento completo por su cuenta, y un 404
@@ -22,9 +23,9 @@ import './globals.css'
  *
  *  2. Sin next-intl. Aquí no hay idioma resuelto, así que `useTranslations` y
  *     el `Link` localizado de `@/i18n/navigation` lanzarían excepción. El copy
- *     es bilingüe en línea, con `lang` marcado en el bloque en inglés para que
- *     un lector de pantalla cambie de voz, y los enlaces son `next/link`
- *     normales con los dos prefijos escritos completos.
+ *     va solo en español —el idioma por omisión del sitio— y los enlaces son
+ *     `next/link` normales con el prefijo /es escrito completo. Antes era
+ *     bilingüe en la misma vista y se leía roto en los dos idiomas.
  *
  * Ya no hay script de arranque de tema. Este archivo tenía una copia del que
  * vivía en el layout, y como Next inyecta el markup de esta frontera en el
@@ -49,6 +50,10 @@ import './globals.css'
  * El código de estado 404 sigue siendo la señal principal.
  */
 export default function NotFound() {
+  // Nunca un botón hacia una oferta vencida: cerrada la revisión, el inicio
+  // sube a primario.
+  const review = isRevisionOpen()
+
   return (
     <html
       lang="es"
@@ -71,14 +76,14 @@ export default function NotFound() {
             </h1>
 
             {/* El trazo plano: la aguja no encontró nada. Es lo contrario de
-                `.trace`, que en el resto del sitio nunca para, y es la misma
-                idea que en la 404 localizada. */}
+                `.drum-trace`, que en el resto del sitio nunca para, y es la
+                misma idea que en la 404 localizada. */}
             <div
               className="mt-12 flex items-center gap-4"
               role="img"
-              aria-label="Sin señal / No signal"
+              aria-label="Sin señal"
             >
-              <span className="stamp shrink-0">sin señal · no signal</span>
+              <span className="stamp shrink-0">sin señal</span>
               <span
                 className="h-px flex-1 bg-hairline-strong"
                 aria-hidden="true"
@@ -91,32 +96,29 @@ export default function NotFound() {
                 sitio. Puede que el enlace esté mal escrito, o que la página
                 haya cambiado de ruta.
               </p>
-              <p lang="en" className="mt-4 text-base text-ink-subtle">
-                This page doesn’t exist. The link may be mistyped, or the page
-                may have moved.
-              </p>
             </div>
 
-            <nav
-              aria-label="Enlaces principales / Primary links"
-              className="mt-10 flex flex-wrap gap-x-8 gap-y-3"
-            >
+            <div className="mt-10 flex flex-col gap-3 sm:flex-row sm:flex-wrap sm:items-center">
+              {review ? (
+                <Link className="btn-primary" href="/es/revision-ficha-google">
+                  Pide tu revisión gratis
+                  <span className="btn-arrow" aria-hidden="true">
+                    →
+                  </span>
+                </Link>
+              ) : null}
               <Link
+                className={review ? 'btn-secondary' : 'btn-primary'}
                 href="/es"
-                className="link-stylus inline-flex min-h-[44px] items-center text-sm"
               >
                 Ir al inicio
               </Link>
-              <Link
-                href="/en"
-                lang="en"
-                className="link-stylus inline-flex min-h-[44px] items-center text-sm"
-              >
-                Go to homepage
-              </Link>
-            </nav>
+            </div>
 
-            <div className="mt-8 flex flex-wrap items-center gap-x-8 gap-y-1 text-sm">
+            <nav
+              aria-label="Otras páginas"
+              className="mt-6 flex flex-wrap gap-x-8"
+            >
               <Link
                 href="/es/servicios"
                 className="link-stylus inline-flex min-h-[44px] items-center"
@@ -124,19 +126,18 @@ export default function NotFound() {
                 Servicios
               </Link>
               <Link
+                href="/es/blog"
+                className="link-stylus inline-flex min-h-[44px] items-center"
+              >
+                Blog
+              </Link>
+              <Link
                 href="/es/contacto"
                 className="link-stylus inline-flex min-h-[44px] items-center"
               >
                 Contacto
               </Link>
-              <Link
-                href="/en/contact"
-                lang="en"
-                className="link-stylus inline-flex min-h-[44px] items-center"
-              >
-                Contact
-              </Link>
-            </div>
+            </nav>
           </main>
         </div>
       </body>

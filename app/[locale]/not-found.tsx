@@ -3,18 +3,20 @@ import { getLocale, getTranslations } from 'next-intl/server'
 import { Link } from '@/i18n/navigation'
 import { Rail } from '@/components/instrument/rail'
 import { NAP } from '@/lib/constants'
+import { isRevisionOpen } from '@/data/revision-ficha'
 import type { StaticPathname } from '@/i18n/routing'
 
 /**
  * ════════════════════════════════════════════════════════════════
  * 404 LOCALIZADA — «sin señal»
  *
- * La alcanza cualquier URL que sí resolvió un segmento de idioma válido pero
- * ninguna página: /es/servicios-antiguos, /en/blog, un enlace profundo viejo,
- * un slug renombrado. Las rutas que no resuelven idioma caen en
- * app/not-found.tsx, que al no tener contexto de i18n es bilingüe por
- * necesidad — esta no lo es, y no debe serlo: una página que dice
- * "Page not found / Página no encontrada" se ve rota en los dos idiomas.
+ * La alcanza cualquier URL bajo /es o /en que no resolvió ninguna página: el
+ * catch-all `app/[locale]/[...rest]/page.tsx` lanza `notFound()` dentro del
+ * segmento, así que esta frontera se pinta DENTRO del layout, con header,
+ * pie e idioma. Las rutas que no resuelven idioma caen en app/not-found.tsx.
+ *
+ * Un solo idioma por vista: una página que dice "Page not found / Página no
+ * encontrada" se ve rota en los dos.
  *
  * ── LA IDEA ──
  * En «Papel Ahumado» todo se lee por lo que la aguja escribió. Aquí la aguja
@@ -22,8 +24,12 @@ import type { StaticPathname } from '@/i18n/routing'
  * con la etiqueta «sin señal». Es la única página del sitio donde la línea de
  * base no se mueve, y por eso significa algo.
  *
- * El layout (`app/[locale]/layout.tsx`) sigue siendo dueño del header, el
- * footer y el idioma; aquí no se rehace nada de eso.
+ * ── LAS SALIDAS ──
+ * Quien cae en un enlace roto se iba porque todas las salidas eran trazo de
+ * 14 px. Ahora hay dos botones de latón —los mismos `.btn-primary` y
+ * `.btn-secondary` del resto del sitio— y debajo los enlaces de texto con
+ * 44 px de alto. En español el primario es la revisión gratis mientras la
+ * oferta esté abierta; /en no tiene revisión, así que no se enlaza.
  * ════════════════════════════════════════════════════════════════
  */
 
@@ -33,6 +39,8 @@ export const metadata: Metadata = {
   alternates: {},
 }
 
+type Exit = { href: StaticPathname; label: string }
+
 export default async function LocaleNotFound() {
   const en = (await getLocale()) === 'en'
 
@@ -40,39 +48,30 @@ export default async function LocaleNotFound() {
   const tn = await getTranslations('nav')
 
   /**
-   * Las salidas, en el orden en que es más probable que sean lo que el
-   * visitante buscaba. Las pistas van en línea y no como claves nuevas: una
-   * 404 no vale un conflicto de merge en el catálogo de copy.
+   * Los dos botones. Con la revisión cerrada, el inicio sube a primario y el
+   * contacto ocupa el secundario: nunca un botón hacia una oferta vencida.
    */
-  const exits: {
-    href: StaticPathname
-    label: string
-    hint: string
-  }[] = [
-    {
-      href: '/servicios',
-      label: tn('services'),
-      hint: en
-        ? 'Technical SEO, web development, AI automation and dashboards.'
-        : 'SEO técnico, desarrollo web, automatización con IA y dashboards.',
-    },
-    {
-      href: '/sobre-mi',
-      label: tn('about'),
-      hint: en
-        ? 'Who I am and the stack I actually work in.'
-        : 'Quién soy y con qué stack trabajo de verdad.',
-    },
-    {
-      href: '/contacto',
-      label: tn('contact'),
-      hint: en
-        ? 'Tell me which link sent you here and I will point you to the right page.'
-        : 'Dime qué enlace te trajo aquí y te apunto a la página correcta.',
-    },
-  ]
+  const review = !en && isRevisionOpen()
+  const primary: Exit = en
+    ? { href: '/', label: 'Go to homepage' }
+    : review
+      ? { href: '/revision-ficha-google', label: 'Pide tu revisión gratis' }
+      : { href: '/', label: 'Ir al inicio' }
+  const secondary: Exit = en
+    ? { href: '/contacto', label: tn('contact') }
+    : review
+      ? { href: '/', label: 'Ir al inicio' }
+      : { href: '/contacto', label: tn('contact') }
 
-  const channelId = (i: number) => String.fromCharCode(97 + i)
+  const links: Exit[] = en
+    ? [{ href: '/servicios', label: tn('services') }]
+    : [
+        { href: '/servicios', label: tn('services') },
+        { href: '/blog', label: tn('blog') },
+        ...(review
+          ? [{ href: '/contacto' as const, label: tn('contact') }]
+          : []),
+      ]
 
   return (
     <div
@@ -82,61 +81,70 @@ export default async function LocaleNotFound() {
       <Rail />
 
       <div className="min-w-0">
-        <section className="px-5 pt-16 pb-20 sm:px-10">
+        {/* Centrado entre el header y el pliegue a partir de 64rem: la
+            sección ocupa la pantalla menos el nav (4.5rem) y el bloque cae
+            a la mitad, sin el vacío de abajo. En móvil va arriba, para que
+            el botón quede antes del pliegue. */}
+        <section className="hero-in flex flex-col px-5 pt-12 pb-16 sm:px-10 sm:pt-16 lg:min-h-[calc(100svh-4.5rem)] lg:justify-center lg:py-16">
           <p className="stamp">{t('title')}</p>
 
           <h1 className="mt-6 max-w-[18ch] text-hero text-ink">
             {t('heading')}
           </h1>
 
-          {/* El trazo plano. Es lo contrario de `.trace`, que en el resto del
-              sitio nunca para: aquí no hay nada que medir, así que la línea
-              es recta y quieta. No lleva animación a propósito. */}
+          {/* El trazo plano. Es lo contrario de `.drum-trace`, que en el
+              resto del sitio nunca para: aquí no hay nada que medir, así que
+              la línea es recta y quieta. No lleva animación a propósito. */}
           <div
-            className="mt-12 flex items-center gap-4"
+            className="mt-8 flex max-w-[54rem] items-center gap-4 sm:mt-12"
             role="img"
             aria-label={en ? 'No signal' : 'Sin señal'}
           >
             <span className="stamp shrink-0">
               {en ? 'no signal' : 'sin señal'}
             </span>
-            <span className="h-px flex-1 bg-hairline-strong" aria-hidden="true" />
+            <span
+              className="h-px flex-1 bg-hairline-strong"
+              aria-hidden="true"
+            />
           </div>
 
-          <p className="mt-10 max-w-[52ch] font-human text-lead text-ink-muted">
+          <p className="mt-8 max-w-[52ch] font-human text-lead text-ink-muted sm:mt-10">
             {t('lead')}
           </p>
 
-          <p className="mt-10 flex flex-wrap gap-x-8 gap-y-3">
-            <Link className="link-stylus" href="/">
-              {t('goHome')} →
+          <div className="mt-8 flex flex-col gap-3 sm:mt-10 sm:flex-row sm:flex-wrap sm:items-center">
+            <Link className="btn-primary" href={primary.href}>
+              {primary.label}
+              <span className="btn-arrow" aria-hidden="true">
+                →
+              </span>
             </Link>
-            <a className="link-stylus" href={`mailto:${NAP.email}`}>
-              {en ? 'report the broken link' : 'reportar el enlace roto'} →
-            </a>
-          </p>
-        </section>
+            <Link className="btn-secondary" href={secondary.href}>
+              {secondary.label}
+            </Link>
+          </div>
 
-        <section className="border-t border-hairline px-5 pb-24 pt-14 sm:px-10">
-          <p className="stamp">{t('orTry')}</p>
-
-          <ul className="reveal-stagger mt-10">
-            {exits.map((exit, i) => (
-              <li key={exit.href}>
-                <Link href={exit.href} className="channel">
-                  <span className="channel-id">ch {channelId(i)}</span>
-                  <span>
-                    <span className="text-d3 text-ink">{exit.label}</span>
-                    <span className="mt-1 block max-w-[52ch] text-sm text-ink-muted">
-                      {exit.hint}
-                    </span>
-                    <span className="channel-pen mt-3" aria-hidden="true" />
-                  </span>
-                  <span aria-hidden="true">→</span>
-                </Link>
-              </li>
+          <nav
+            aria-label={en ? 'Other pages' : 'Otras páginas'}
+            className="mt-6 flex flex-wrap gap-x-8"
+          >
+            {links.map((link) => (
+              <Link
+                key={link.href}
+                className="link-stylus inline-flex min-h-11 items-center"
+                href={link.href}
+              >
+                {link.label}
+              </Link>
             ))}
-          </ul>
+            <a
+              className="link-stylus inline-flex min-h-11 items-center"
+              href={`mailto:${NAP.email}`}
+            >
+              {en ? 'report the broken link' : 'reportar el enlace roto'}
+            </a>
+          </nav>
         </section>
       </div>
     </div>
