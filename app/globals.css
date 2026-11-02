@@ -2947,6 +2947,72 @@
     color: var(--minium);
   }
 
+  /* ── EL CAMPO DEL BOLETÍN: la única caja de escritura ─────────
+     El renglón (`.field-line`) no se reconocía en el pie como un sitio
+     donde escribir, así que el boletín lleva caja. Canto en `--control`
+     (5.30 sobre hollín: WCAG 1.4.11 pide 3:1), el mismo radio de 2 px que
+     `.btn-primary` para que campo y botón se lean como una sola pieza, y
+     44 px de alto: el mismo objetivo táctil. El foco es un anillo de latón
+     separado 2 px, porque el latón es el material de lo que se acciona. */
+  .field-box {
+    flex: 1 1 auto;
+    min-width: 0;
+    min-height: 2.75rem;
+    padding: 0.75rem 1rem;
+    background: var(--ground);
+    border: 1px solid var(--control);
+    border-radius: 2px;
+    color: var(--ink);
+    font-family: var(--font-mono);
+    font-size: 0.9375rem;
+    letter-spacing: 0.02em;
+    transition: border-color 160ms var(--ease-stylus);
+  }
+
+  .field-box::placeholder {
+    color: var(--ink-subtle);
+  }
+
+  .field-box:hover {
+    border-color: var(--ink-muted);
+  }
+
+  .field-box:focus-visible {
+    border-color: var(--gold);
+    outline: 2px solid var(--gold);
+    outline-offset: 2px;
+  }
+
+  .field-box:disabled {
+    color: var(--ink-subtle);
+  }
+
+  /* La nota del boletín se lee, no se rotula: 13 px y tinta media (8.57
+     sobre hollín). Los estados pass/fail de abajo siguen ganando. */
+  .field-note-lg {
+    font-size: 0.8125rem;
+    letter-spacing: 0.02em;
+    color: var(--ink-muted);
+  }
+
+  .btn-primary:disabled {
+    cursor: default;
+    background-color: var(--gold);
+  }
+
+  /* El cebo anti-bots: fuera de pantalla, no `display: none`. */
+  .trap {
+    position: absolute;
+    left: -9999px;
+    width: 1px;
+    height: 1px;
+    overflow: hidden;
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .field-box { transition: none; }
+  }
+
   /* ── EL FORMULARIO: CINCO RENGLONES ───────────────────────────
      Un campo de este sistema no es una caja: es un renglón con su rótulo
      mono encima y su regla debajo, como la casilla de un formulario

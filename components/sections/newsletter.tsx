@@ -1,6 +1,6 @@
 'use client'
 
-import { useActionState } from 'react'
+import { useActionState, useId } from 'react'
 import { altaBoletin, type AltaEstado } from '@/app/[locale]/newsletter-action'
 
 /**
@@ -64,6 +64,7 @@ export function Newsletter({
     altaBoletin,
     null
   )
+  const campo = useId()
 
   const mensaje = estado
     ? {
@@ -92,37 +93,61 @@ export function Newsletter({
         {copy.lead}
       </p>
 
-      {/* La fila es un RENGLÓN, no una caja: regla abajo, el campo encima y
-          el botón al final de la misma línea de escritura — como la casilla
-          de un formulario impreso, donde lo que te dice dónde escribir es la
-          raya y no un rectángulo. */}
-      <form action={action} className="mt-8 max-w-[34rem]">
+      {/* El campo SÍ es una caja, y es la excepción documentada: en el pie
+          el renglón sobre hollín no se reconocía como un sitio donde
+          escribir, y el envío se leía como un enlace más. El canto va en
+          `--control` (5.30 sobre hollín, WCAG 1.4.11) y el envío es el
+          mismo `.btn-primary` de latón del resto del sitio. En línea a
+          partir de 40rem; debajo, el botón a todo el ancho. */}
+      <form
+        action={action}
+        className="relative mt-8 max-w-[36rem]"
+        aria-busy={enviando}
+      >
         <input type="hidden" name="locale" value={locale} />
 
-        <label className="field-line">
-          <span className="sr-only">{copy.label}</span>
+        <div className="flex flex-col gap-3 sm:flex-row sm:items-stretch">
+          <label htmlFor={campo} className="sr-only">
+            {copy.label}
+          </label>
           <input
+            id={campo}
             type="email"
             name="email"
             required
             autoComplete="email"
             inputMode="email"
             placeholder={copy.placeholder}
-            className="field-input"
+            className="field-box"
             disabled={listo}
           />
-          <button type="submit" className="field-send" disabled={enviando || listo}>
-            {enviando ? '···' : `${copy.submit} →`}
+          <button
+            type="submit"
+            className="btn-primary w-full sm:w-auto"
+            disabled={enviando || listo}
+          >
+            {enviando ? (
+              '···'
+            ) : (
+              <>
+                {copy.submit}{' '}
+                <span className="btn-arrow" aria-hidden="true">
+                  →
+                </span>
+              </>
+            )}
           </button>
-        </label>
+        </div>
 
-        {/* El cebo. `aria-hidden` + `tabIndex={-1}` lo saca del lector de
-            pantalla y del tabulado; `.sr-only` no serviría, porque eso SÍ lo
-            lee un lector de pantalla. */}
-        <div className="hidden" aria-hidden="true">
-          <label htmlFor="organizacion">Organización</label>
+        {/* El cebo. Fuera de pantalla y no `display: none`: hay bots que se
+            saltan los campos ocultos con CSS y rellenan los que existen en
+            la caja. `aria-hidden` + `tabIndex={-1}` lo sacan del lector de
+            pantalla y del tabulado; `.sr-only` no serviría, porque eso SÍ
+            lo lee un lector de pantalla. */}
+        <div className="trap" aria-hidden="true">
+          <label htmlFor={`${campo}-organizacion`}>Organización</label>
           <input
-            id="organizacion"
+            id={`${campo}-organizacion`}
             name="organizacion"
             type="text"
             tabIndex={-1}
@@ -133,7 +158,7 @@ export function Newsletter({
         {/* `aria-live` porque la página no recarga: sin esto, un lector de
             pantalla no anunciaría el resultado. */}
         <p
-          className="field-note mt-4"
+          className="field-note field-note-lg mt-4"
           data-state={estado ? (paso ? 'pass' : 'fail') : undefined}
           role="status"
           aria-live="polite"
