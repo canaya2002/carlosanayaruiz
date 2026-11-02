@@ -1,4 +1,5 @@
 import type { Metadata } from 'next'
+import { Fragment } from 'react'
 import { routing } from '@/i18n/routing'
 import { hasLocale } from 'next-intl'
 import { permanentRedirect, notFound } from 'next/navigation'
@@ -6,6 +7,7 @@ import Image from 'next/image'
 import { setRequestLocale } from 'next-intl/server'
 import { Link } from '@/i18n/navigation'
 import { Rail } from '@/components/instrument/rail'
+import { ReviewCta } from '@/components/sections/review-cta'
 import { BLOG_POSTS, BLOG_CLUSTERS } from '@/data/blog'
 import {
   getPublishedPosts,
@@ -162,9 +164,7 @@ export default async function BlogIndexPage({ params }: Props) {
 
                 <div className="margin-row">
                   <span className="margin-key">cadencia</span>
-                  <span className="margin-val !text-ink">
-                    cada semana
-                  </span>
+                  <span className="margin-val !text-ink">cada semana</span>
                   <span className="margin-val">08:00, hora de México</span>
                 </div>
 
@@ -184,8 +184,10 @@ export default async function BlogIndexPage({ params }: Props) {
 
                 <div className="margin-row">
                   <span className="margin-key">rss</span>
+                  {/* 14 px y 44 de alto: a 11 px el enlace medía 15 px de
+                      caja, por debajo de los 24 que pide un objetivo táctil. */}
                   <a
-                    className="link-stylus font-mono text-[length:var(--text-grad)] tracking-[0.04em]"
+                    className="link-stylus inline-flex min-h-11 items-center font-mono text-sm tracking-[0.04em]"
                     href="/feed.xml"
                   >
                     /feed.xml →
@@ -207,13 +209,23 @@ export default async function BlogIndexPage({ params }: Props) {
                       tipo de `locale` ya está estrechado a 'es' aquí— así que
                       comparar con 'en' no compila. */}
                   <span className="margin-key">también escribo</span>
-                  <Link className="link-stylus" href="/libros">
-                    el libro →
+                  <Link className="btn-secondary mt-3" href="/libros">
+                    el libro{' '}
+                    <span className="btn-arrow" aria-hidden="true">
+                      →
+                    </span>
                   </Link>
                 </div>
               </aside>
             </div>
           </section>
+
+          {/* ═══ LA REVISIÓN GRATIS ══════════════════════════════
+              Antes del primer clúster y, si hay más de dos, otra vez
+              después del segundo: con el listado largo, quien llega a media
+              página no vuelve arriba a buscarla. Solo con artículos: sin
+              ninguno, la sección «todavía nada» va sola. */}
+          {posts.length > 0 ? <ReviewCta id="revision-cta-1" /> : null}
 
           {/* ═══ LAS ENTRADAS, POR CLÚSTER ═══════════════════════
               Agrupadas por clúster y no en una sola lista cronológica: el
@@ -228,93 +240,99 @@ export default async function BlogIndexPage({ params }: Props) {
                 {siguiente ? formatPostDate(siguiente.publishedAt) : 'martes'}
               </h2>
               <p className="mt-6 max-w-[54ch] text-lead text-ink-muted">
-                Esta página no
-                lista ninguno todavía porque ninguno ha salido — y una fecha
-                falsa para parecer activo es exactamente lo que este sitio no
-                hace.
+                Esta página no lista ninguno todavía porque ninguno ha salido —
+                y una fecha falsa para parecer activo es exactamente lo que este
+                sitio no hace.
               </p>
             </section>
           ) : (
-            conContenido.map((cluster) => {
+            conContenido.map((cluster, i) => {
               const delCluster = posts.filter((p) => p.cluster === cluster)
               return (
-                <section
-                  key={cluster}
-                  className="border-t border-hairline px-5 pb-20 pt-11 sm:px-10"
-                  aria-labelledby={`c-${cluster.replace(/\s+/g, '-')}`}
-                >
-                  <p className="stamp">
-                    {delCluster.length}{' '}
-                    {delCluster.length === 1 ? 'artículo' : 'artículos'}
-                  </p>
-                  <h2
-                    id={`c-${cluster.replace(/\s+/g, '-')}`}
-                    className="mt-4 max-w-[22ch] text-d2 text-ink"
+                <Fragment key={cluster}>
+                  <section
+                    className="border-t border-hairline px-5 pb-20 pt-11 sm:px-10"
+                    aria-labelledby={`c-${cluster.replace(/\s+/g, '-')}`}
                   >
-                    {cluster}
-                  </h2>
+                    <p className="stamp">
+                      {delCluster.length}{' '}
+                      {delCluster.length === 1 ? 'artículo' : 'artículos'}
+                    </p>
+                    <h2
+                      id={`c-${cluster.replace(/\s+/g, '-')}`}
+                      className="mt-4 max-w-[22ch] text-d2 text-ink"
+                    >
+                      {cluster}
+                    </h2>
 
-                  <div className="reveal-stagger mt-10 max-w-[62rem]">
-                    {delCluster.map((post) => (
-                      <Link
-                        key={post.slug}
-                        href={{
-                          pathname: '/blog/[slug]',
-                          params: { slug: post.slug },
-                        }}
-                        className="entry group"
-                      >
-                        {post.cover ? (
-                          <span className="cover cover-thumb">
-                            <Image
-                              src={post.cover}
-                              alt={post.coverAlt ?? post.title}
-                              width={1600}
-                              height={900}
-                              sizes="(min-width: 40rem) 15rem, 100vw"
-                            />
-                          </span>
-                        ) : (
-                          /* Sin portada no se dibuja una caja vacía: la
+                    <div className="reveal-stagger mt-10 max-w-[62rem]">
+                      {delCluster.map((post) => (
+                        <Link
+                          key={post.slug}
+                          href={{
+                            pathname: '/blog/[slug]',
+                            params: { slug: post.slug },
+                          }}
+                          className="entry group"
+                        >
+                          {post.cover ? (
+                            <span className="cover cover-thumb">
+                              <Image
+                                src={post.cover}
+                                alt={post.coverAlt ?? post.title}
+                                width={1600}
+                                height={900}
+                                sizes="(min-width: 40rem) 15rem, 100vw"
+                              />
+                            </span>
+                          ) : (
+                            /* Sin portada no se dibuja una caja vacía: la
                              celda simplemente no existe y el texto ocupa el
                              ancho. Es la misma regla que los huecos de
                              medio del resto del sitio. */
-                          <span className="hidden sm:block" aria-hidden="true" />
-                        )}
+                            <span
+                              className="hidden sm:block"
+                              aria-hidden="true"
+                            />
+                          )}
 
-                        <span className="min-w-0">
-                          <span className="stamp block">
-                            <time dateTime={post.publishedAt}>
-                              {formatPostDate(post.publishedAt)}
-                            </time>
-                            {post.tipo === 'pillar'
-                              ? ' · guía principal'
-                              : ''}
-                          </span>
+                          <span className="min-w-0">
+                            <span className="stamp block">
+                              <time dateTime={post.publishedAt}>
+                                {formatPostDate(post.publishedAt)}
+                              </time>
+                              {post.tipo === 'pillar'
+                                ? ' · guía principal'
+                                : ''}
+                            </span>
 
-                          {/* `h3` y no `span`. Los títulos de artículo no eran
+                            {/* `h3` y no `span`. Los títulos de artículo no eran
                               encabezados en ninguna parte, así que el índice del
                               blog servía un árbol de dos nodos: el h1 «Blog
                               técnico» y UN h2 por clúster, con las veinte
                               entradas como texto suelto. La sección del clúster
                               ya es un `<section aria-labelledby>` con su h2, así
                               que h2 → h3 no salta nivel. */}
-                          <h3 className="entry-title mt-2.5 block">
-                            {post.title}
-                          </h3>
+                            <h3 className="entry-title mt-2.5 block">
+                              {post.title}
+                            </h3>
 
-                          <span className="mt-2.5 block max-w-[62ch] text-sm leading-relaxed text-ink-muted">
-                            {post.description}
-                          </span>
+                            <span className="mt-2.5 block max-w-[62ch] text-sm leading-relaxed text-ink-muted">
+                              {post.description}
+                            </span>
 
-                          <span className="stamp mt-3 block">
-                            {post.readingMinutes} min de lectura
+                            <span className="stamp mt-3 block">
+                              {post.readingMinutes} min de lectura
+                            </span>
                           </span>
-                        </span>
-                      </Link>
-                    ))}
-                  </div>
-                </section>
+                        </Link>
+                      ))}
+                    </div>
+                  </section>
+                  {i === 1 && conContenido.length > 2 ? (
+                    <ReviewCta id="revision-cta-2" />
+                  ) : null}
+                </Fragment>
               )
             })
           )}
