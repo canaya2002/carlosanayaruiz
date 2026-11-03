@@ -19,6 +19,7 @@ import { generateBreadcrumbSchema, type JsonLdNode } from '@/lib/schema'
 import { generatePageMetadata } from '@/lib/seo'
 import { formatShortDate } from '@/lib/utils'
 import { Locale } from '@/data/types'
+import { PreFooterCta } from '@/components/sections/pre-footer-cta'
 
 interface Props {
   params: Promise<{ locale: string; slug: string }>
@@ -731,6 +732,7 @@ export default async function ProjectPage({ params }: Props) {
           </section>
         </div>
       </div>
+      <PreFooterCta />
     </>
   )
 }

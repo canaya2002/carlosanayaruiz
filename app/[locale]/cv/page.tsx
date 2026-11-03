@@ -29,6 +29,7 @@ import {
 } from '@/lib/schema'
 import { formatShortDate } from '@/lib/utils'
 import { Locale } from '@/data/types'
+import { PreFooterCta } from '@/components/sections/pre-footer-cta'
 
 /**
  * ════════════════════════════════════════════════════════════════
@@ -1029,6 +1030,7 @@ export default async function CvPage({ params }: Props) {
           </div>
         </div>
       </div>
+      <PreFooterCta />
     </>
   )
 }

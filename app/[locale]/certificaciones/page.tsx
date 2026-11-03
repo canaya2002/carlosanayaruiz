@@ -26,6 +26,7 @@ import {
 } from '@/lib/schema'
 import { formatShortDate } from '@/lib/utils'
 import { routing, type StaticPathname } from '@/i18n/routing'
+import { PreFooterCta } from '@/components/sections/pre-footer-cta'
 
 interface Props {
   params: Promise<{ locale: string }>
@@ -774,6 +775,7 @@ export default async function CertificationsPage({ params }: Props) {
           </section>
         </div>
       </div>
+      <PreFooterCta />
     </>
   )
 }

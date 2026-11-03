@@ -18,6 +18,7 @@ import { generatePageMetadata } from '@/lib/seo'
 import { generateProfilePageGraph } from '@/lib/schema'
 import { formatShortDate } from '@/lib/utils'
 import { Locale } from '@/data/types'
+import { PreFooterCta } from '@/components/sections/pre-footer-cta'
 
 /**
  * ════════════════════════════════════════════════════════════════
@@ -808,6 +809,7 @@ export default async function AboutPage({ params }: Props) {
           </section>
         </div>
       </div>
+      <PreFooterCta />
     </>
   )
 }

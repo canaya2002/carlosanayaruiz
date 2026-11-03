@@ -34,6 +34,7 @@ import {
   type SchemaGraph,
 } from '@/lib/schema'
 import { Locale } from '@/data/types'
+import { PreFooterCta } from '@/components/sections/pre-footer-cta'
 
 interface Props {
   params: Promise<{ locale: string }>
@@ -802,6 +803,7 @@ export default async function ProyectosPage({ params }: Props) {
           </section>
         </div>
       </div>
+      <PreFooterCta />
     </>
   )
 }

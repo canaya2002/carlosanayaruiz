@@ -13,6 +13,7 @@ import { NAP } from '@/lib/constants'
 import { generatePageMetadata } from '@/lib/seo'
 import { generateServicesHubGraph } from '@/lib/schema'
 import type { Locale, Localized } from '@/data/types'
+import { PreFooterCta } from '@/components/sections/pre-footer-cta'
 
 interface Props {
   params: Promise<{ locale: string }>
@@ -589,6 +590,7 @@ export default async function ServicesHubPage({ params }: Props) {
           </section>
         </div>
       </div>
+      <PreFooterCta />
     </>
   )
 }

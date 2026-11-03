@@ -5252,6 +5252,36 @@
     background-color: var(--surface);
   }
 
+  /* ── LA FRANJA ANTES DEL PIE ──────────────────────────────────
+     La misma superficie que `.review-cta`, a sangre de canto a canto; el
+     contenido entra por `.sheet`, el margen del pie. Ver
+     components/sections/pre-footer-cta.tsx.
+
+     · 48 px de alto y no 44: es el último control antes del colofón y en
+       móvil va a ancho completo, con el pulgar.
+     · El foco es LATÓN aquí, no papel: sobre el humo el anillo de papel
+       compite con el rótulo del botón secundario. Latón sobre humo mide
+       más de 6:1.
+     · 120 ms en vez de los 160 del botón: el brief de esta franja pide
+       ≤ 150. La caída en reduced-motion ya la da la regla del botón. */
+  .pre-footer-cta {
+    border-top: 1px solid var(--gold);
+    background-color: var(--surface);
+  }
+
+  .pre-footer-cta :is(.btn-primary, .btn-secondary) {
+    min-height: 3rem;
+    transition-duration: 120ms;
+  }
+
+  .pre-footer-cta .btn-arrow {
+    transition-duration: 120ms;
+  }
+
+  .pre-footer-cta :is(.btn-primary, .btn-secondary):focus-visible {
+    outline-color: var(--gold);
+  }
+
   /* ── LA PESTAÑA DE ARRASTRE ───────────────────────────────────
      El brief pidió un botón y este sistema no tiene botones: no queda un
      borde de cuatro lados en el sitio. Pero un registrador SÍ tiene un

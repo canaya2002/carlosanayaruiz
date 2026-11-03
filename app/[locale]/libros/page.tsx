@@ -11,6 +11,7 @@ import { generatePageMetadata } from '@/lib/seo'
 import { generateBooksPageGraph } from '@/lib/schema'
 import { routing, type StaticPathname } from '@/i18n/routing'
 import { Locale } from '@/data/types'
+import { PreFooterCta } from '@/components/sections/pre-footer-cta'
 
 interface Props {
   params: Promise<{ locale: string }>
@@ -434,6 +435,7 @@ export default async function BooksPage({ params }: Props) {
           </section>
         </div>
       </div>
+      <PreFooterCta />
     </>
   )
 }

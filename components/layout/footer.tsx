@@ -116,6 +116,7 @@ export async function Footer() {
    */
   const linkClass =
     'press inline-flex min-h-10 items-center text-sm text-ink-muted hover:text-ink'
+  const contactLinkClass = linkClass.replace('min-h-10', 'min-h-11')
 
   /* Sin `bg-ground`: es el mismo color que el body, así que lo único que hacía
      era tapar la hoja viva del fondo. La separación la da la regla. */
@@ -236,9 +237,15 @@ export async function Footer() {
               alias de azul heredado. */}
           <div className="border-t border-hairline pt-4">
             <FooterHeading>{t('contactTitle')}</FooterHeading>
-            <address className="mt-3 not-italic">
+            {/* Correo y teléfono a 44 px (`min-h-11`) y no a los 40 del resto
+                del pie: en móvil son los dos únicos enlaces de esta columna
+                que se tocan para escribir, y van uno encima del otro. */}
+            <address className="mt-3 space-y-1 not-italic">
               <p>
-                <a href={`mailto:${NAP.email}`} className={linkClass}>
+                <a
+                  href={`mailto:${NAP.email}`}
+                  className={contactLinkClass}
+                >
                   {/* El correo no tiene espacios, así que su min-content es la
                       cadena completa y desbordaba la columna del pie por más
                       que la rejilla usara minmax(0,1fr). `min-w-0` deja que el
@@ -253,7 +260,7 @@ export async function Footer() {
                     marque el teléfono. */}
                 <a
                   href={`https://wa.me/${NAP.phone.slice(1)}`}
-                  className={`${linkClass} tabular-nums`}
+                  className={`${contactLinkClass} tabular-nums`}
                   data-numeric=""
                 >
                   {NAP.phoneDisplay}
