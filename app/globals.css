@@ -3289,14 +3289,20 @@
 
      El `<h1>` NO entra en esto, y no es un olvido: es el candidato a
      LCP. Retrasar su pintado por un efecto es exactamente la regresión
-     que este sitio vende arreglar. */
+     que este sitio vende arreglar.
+
+     Y la entrada es SOLO el desplazamiento, en todos los anchos: nada
+     del héroe arranca en `opacity: 0`. Un elemento invisible no cuenta
+     para LCP hasta que termina de aparecer, y cualquier párrafo de aquí
+     puede ser el más grande según la ruta y el ancho — en la portada a
+     390 px lo es el de entrada. El texto está pintado desde el primer
+     frame y lo único que llega, escalonado, es su posición; por eso los
+     retrasos de abajo no atrasan ningún pintado. */
   @keyframes hero-rise {
     from {
-      opacity: 0;
       transform: translate3d(0, 0.875rem, 0);
     }
     to {
-      opacity: 1;
       transform: none;
     }
   }
@@ -3346,29 +3352,6 @@
   }
   .hero-in :has(h1) > :nth-child(n + 5) {
     animation-delay: 440ms;
-  }
-
-  /* ── EN UN TELÉFONO LA ENTRADA NO OCULTA NADA ─────────────────
-     Medido con Lighthouse móvil y red real (devtools, Slow 4G): en la
-     portada el elemento LCP no es el titular sino el PÁRRAFO de entrada —
-     a 390 px ocupa más área que cualquier renglón del `<h1>`— y ese
-     párrafo arrancaba en `opacity: 0`, así que el LCP esperaba a la
-     animación. Aquí la entrada es solo el desplazamiento: el texto está
-     pintado desde el primer frame y lo único que llega es su posición. */
-  @keyframes hero-nudge {
-    from {
-      transform: translate3d(0, 0.875rem, 0);
-    }
-    to {
-      transform: none;
-    }
-  }
-
-  @media (max-width: 48rem) {
-    .hero-in > :not(h1, :has(h1)),
-    .hero-in :has(h1) > :not(h1, :has(h1)) {
-      animation-name: hero-nudge;
-    }
   }
 
   .hero-in > *:nth-child(1) {
