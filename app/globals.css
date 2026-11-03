@@ -3037,14 +3037,25 @@
     border-color: var(--paper);
   }
 
+  /* Foco de teclado: la regla pasa a latón y gana un segundo píxel con
+     una sombra, no con el borde, para que la fila no crezca y no empuje
+     nada (CLS). Latón porque es el material de lo que se acciona. */
+  .field-row:has(.field-input:focus-visible) {
+    border-color: var(--gold);
+    box-shadow: 0 1px 0 var(--gold);
+  }
+
+  /* 12 px fijos y `--ink-muted` (8.57), no la graduación de 11 px en
+     ceniza: es el rótulo de lo que hay que escribir, no una marca de la
+     cinta, y en el formulario de la revisión se leía como letra chica. */
   .field-label {
     display: block;
     margin-bottom: 0.4375rem;
     font-family: var(--font-mono);
-    font-size: var(--text-grad);
+    font-size: 0.75rem;
     letter-spacing: 0.16em;
     text-transform: uppercase;
-    color: var(--ink-subtle);
+    color: var(--ink-muted);
   }
 
   /* La pista va en la MISMA línea que el rótulo y sin versalitas: es una
@@ -3053,7 +3064,7 @@
     margin-left: 0.75rem;
     letter-spacing: 0.04em;
     text-transform: none;
-    color: var(--ink-subtle);
+    color: var(--ink-muted);
   }
 
   .field-row .field-input {
@@ -3107,15 +3118,15 @@
 
   .field-check input {
     flex: none;
-    width: 1.125rem;
-    height: 1.125rem;
-    margin-top: 0.125rem;
+    width: 1.25rem;
+    height: 1.25rem;
+    margin-top: 0.0625rem;
     accent-color: var(--paper);
     cursor: pointer;
   }
 
   .field-check input:focus-visible {
-    outline: 1px solid var(--paper);
+    outline: 2px solid var(--gold);
     outline-offset: 3px;
   }
 
@@ -3475,14 +3486,19 @@
 
        Un rango, una curva, un solo comportamiento en todo el sitio:
        tambien resuelve la queja de que las animaciones no eran
-       consistentes entre paginas. */
+       consistentes entre paginas.
+
+       SOLO `transform`, sin opacidad. Con el fundido, todo lo que cae
+       al canto inferior de la pantalla está a media entrada, y
+       Lighthouse lo mide así: `--ink-muted` (8.57) se componía en
+       #6e6a62 (3.52) en /revision-ficha-google y en #46433d (1.92) en
+       /proyectos. Ningún estado intermedio de un texto puede bajar de
+       4.5, así que la entrada es el renglón que sube, no el que aparece. */
     @keyframes line-rise {
       from {
-        opacity: 0;
         transform: translate3d(0, 1.25rem, 0);
       }
       to {
-        opacity: 1;
         transform: none;
       }
     }

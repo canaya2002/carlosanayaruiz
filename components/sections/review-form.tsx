@@ -225,13 +225,26 @@ export function ReviewForm({
         />
       </div>
 
-      <div className="mt-9 flex flex-wrap items-baseline gap-x-8 gap-y-4">
+      {/* El envío es el `.btn-primary` de latón, no el rótulo mono de
+          `.field-send`: es LA acción de la página y como texto no se leía
+          como botón. A todo el ancho en móvil y 48 px de alto. El estado
+          va DEBAJO, no al lado: al lado partía la línea del botón. */}
+      <div className="mt-9 flex flex-col items-stretch gap-4 sm:items-start">
         <button
           type="submit"
-          className="field-send min-h-11"
+          className="btn-primary min-h-12 w-full sm:w-auto"
           disabled={enviando || listo}
         >
-          {enviando || listo ? copy.enviando : `${copy.submit} →`}
+          {enviando || listo ? (
+            copy.enviando
+          ) : (
+            <>
+              {copy.submit}{' '}
+              <span className="btn-arrow" aria-hidden="true">
+                →
+              </span>
+            </>
+          )}
         </button>
 
         <p
