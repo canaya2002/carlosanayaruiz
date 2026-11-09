@@ -339,7 +339,7 @@ export default async function ProyectosPage({ params }: Props) {
               Sin instrumento en vivo: el que mide la página abierta vive
               en la home y duplicarlo aquí lo volvería decoración. Lo que
               esta página mide son duraciones, y eso se ve más abajo. */}
-          <section className="hero-in relative px-5 pt-16 sm:px-10">
+          <section className="hero-in relative px-(--gutter) pt-16 sm:px-10">
             {/* ── LA HOJA TIENE DOS MÁRGENES ── */}
             <div className="ledger">
               <div className="min-w-0">
@@ -387,7 +387,7 @@ export default async function ProyectosPage({ params }: Props) {
               decorativo de un continente. Cada pin es un enlace de verdad
               a la ficha de esa empresa. */}
           <section
-            className="border-t border-hairline px-5 pb-24 pt-14 sm:px-10"
+            className="border-t border-hairline px-(--gutter) pb-24 pt-14 sm:px-10"
             aria-labelledby="mapa-heading"
           >
             <h2 id="mapa-heading" className="sr-only">
@@ -430,7 +430,7 @@ export default async function ProyectosPage({ params }: Props) {
           {/* ═══ EL REGISTRO POR PAÍS ════════════════════════════
               Una lista de filas medidas, no una rejilla de tarjetas. Los
               id de país son el destino de los enlaces del mapa. */}
-          <section className="border-t border-hairline px-5 pb-24 pt-14 sm:px-10">
+          <section className="border-t border-hairline px-(--gutter) pb-24 pt-14 sm:px-10">
             <p className="stamp">{t('byCountry')}</p>
 
             {groups.map((group, groupIndex) => (
@@ -601,7 +601,7 @@ export default async function ProyectosPage({ params }: Props) {
               sí: si todos tuvieran cifra, ninguna valdría. */}
           <section
             id="encargos"
-            className="border-t border-hairline px-5 pb-24 pt-14 sm:px-10"
+            className="border-t border-hairline px-(--gutter) pb-24 pt-14 sm:px-10"
           >
             <div className="ledger">
               <div className="min-w-0">
@@ -777,7 +777,7 @@ export default async function ProyectosPage({ params }: Props) {
               Ojo: dentro de la placa NO va `.link-stylus` —su color es
               papel y sobre papel desaparece—; los enlaces heredan hollín
               y se subrayan con currentColor. */}
-          <section className="plate px-5 py-20 sm:px-10">
+          <section className="plate px-(--gutter) py-20 sm:px-10">
             <p className="stamp">{en ? 'next entry' : 'siguiente registro'}</p>
 
             <h2 className="mt-5 max-w-[20ch] text-d1">{t('ctaTitle')}</h2>

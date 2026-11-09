@@ -163,7 +163,7 @@ export default async function BooksPage({ params }: Props) {
               ese archivo no existe, y un hueco de imagen dibujado a tres
               capas era el envoltorio más grande de la página. Lo que decía
               —el estado y los temas— sigue abajo, en la fila del libro. */}
-          <section className="hero-in relative px-5 pt-16 pb-20 sm:px-10">
+          <section className="hero-in relative px-(--gutter) pt-16 pb-20 sm:px-10">
             {/* ── LA HOJA TIENE DOS MÁRGENES, Y AQUÍ NO HAY INSTRUMENTO ──
                 Hay UN libro. Un eje de tiempo con una sola marca no es una
                 medición, y este proyecto ya tiene la regla escrita: un
@@ -236,7 +236,7 @@ export default async function BooksPage({ params }: Props) {
           </section>
 
           {/* ═══ EN ESCRITURA ════════════════════════════════════ */}
-          <section className="border-t border-hairline px-5 pb-24 pt-14 sm:px-10">
+          <section className="border-t border-hairline px-(--gutter) pb-24 pt-14 sm:px-10">
             <p className="stamp">{t('upcoming')}</p>
             <h2 className="mt-5 max-w-[16ch] text-d1 text-ink">
               {en ? 'What I am writing' : 'Lo que estoy escribiendo'}
@@ -373,7 +373,7 @@ export default async function BooksPage({ params }: Props) {
               La placa despejada, una sola vez en la página. Seis canales:
               la fila entera es el enlace, sin tarjeta, sin portada
               inventada y sin flechas de carrusel. */}
-          <section className="plate px-5 py-20 sm:px-10">
+          <section className="plate px-(--gutter) py-20 sm:px-10">
             <p className="stamp">{en ? 'Meanwhile' : 'Mientras tanto'}</p>
             <h2 className="mt-5 max-w-[18ch] text-d1">{t('freeResources')}</h2>
             <p className="mt-5 max-w-[58ch] text-lead">
@@ -413,7 +413,7 @@ export default async function BooksPage({ params }: Props) {
               veces por semana; esto es un aviso único sobre el libro, escrito a
               mano. Decir «sin lista de correo» a secas era falso —el pie de
               esta página monta el alta— así que se dice de qué no hay lista. */}
-          <section className="border-t border-hairline px-5 pb-28 pt-16 sm:px-10">
+          <section className="border-t border-hairline px-(--gutter) pb-28 pt-16 sm:px-10">
             <h2 className="max-w-[20ch] text-d1 text-ink">
               {en
                 ? 'Want to know the day the book exists?'

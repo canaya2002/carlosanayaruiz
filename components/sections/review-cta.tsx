@@ -34,7 +34,7 @@ export function ReviewCta({ id }: { id: string }) {
   const [vy, vm, vd] = REVISION_VIGENCIA.split('-')
 
   return (
-    <section aria-labelledby={id} className="review-cta px-5 py-10 sm:px-10">
+    <section aria-labelledby={id} className="review-cta px-(--gutter) py-10 sm:px-10">
       <div className="flex max-w-[62rem] flex-col gap-6 sm:flex-row sm:items-end sm:justify-between sm:gap-10">
         <div className="min-w-0">
           <p className="stamp">revisión gratis</p>

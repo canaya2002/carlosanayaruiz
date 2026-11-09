@@ -1412,7 +1412,7 @@ export default async function PrivacyPage({ params }: Props) {
           {/* ═══ CABECERA ════════════════════════════════════════
               Sin aguja y sin marcas: el instrumento en vivo es de la home.
               Aquí el eje de la izquierda solo da continuidad de material. */}
-          <section className="hero-in px-5 pt-16 pb-16 sm:px-10">
+          <section className="hero-in px-(--gutter) pt-16 pb-16 sm:px-10">
             {/* ── LA HOJA TIENE DOS MÁRGENES ── */}
             <div className="ledger">
               <div className="min-w-0">
@@ -1480,7 +1480,7 @@ export default async function PrivacyPage({ params }: Props) {
               tarjetas de cristal inclinables con un icono en un cuadro
               redondeado; ahora son tres filas de registro, que es lo que
               siempre fueron: una lista de tres afirmaciones. */}
-          <section className="border-t border-hairline px-5 pb-20 pt-11 sm:px-10">
+          <section className="border-t border-hairline px-(--gutter) pb-20 pt-11 sm:px-10">
             <p className="stamp">{en ? 'Summary' : 'Resumen'}</p>
 
             <ul className="reveal-stagger mt-8">
@@ -1504,7 +1504,7 @@ export default async function PrivacyPage({ params }: Props) {
               El numeral SÍ se queda: en un documento legal la secuencia es
               real y se cita por número, así que el índice y el cuerpo tienen
               que coincidir. */}
-          <section className="border-t border-hairline px-5 pb-24 pt-14 sm:px-10">
+          <section className="border-t border-hairline px-(--gutter) pb-24 pt-14 sm:px-10">
             <div className="grid gap-14 lg:grid-cols-[minmax(0,15rem)_minmax(0,1fr)] lg:gap-16">
               <nav
                 aria-label={en ? 'Contents' : 'Contenido'}
@@ -1552,7 +1552,7 @@ export default async function PrivacyPage({ params }: Props) {
           </section>
 
           {/* ═══ CIERRE ══════════════════════════════════════════ */}
-          <section className="border-t border-hairline px-5 pb-24 pt-14 sm:px-10">
+          <section className="border-t border-hairline px-(--gutter) pb-24 pt-14 sm:px-10">
             <h2 className="max-w-[20ch] text-d1 text-ink">
               {en
                 ? 'Questions about how your data is handled?'

@@ -207,7 +207,7 @@ export default async function AwardsPage({ params }: Props) {
               Sin aurora, sin cristal y sin las tres tarjetas flotando:
               el titular va directo sobre el hollín y las cifras son tres
               filas de un registro, leídas de arriba abajo. */}
-          <section className="hero-in relative px-5 pt-16 pb-20 sm:px-10">
+          <section className="hero-in relative px-(--gutter) pt-16 pb-20 sm:px-10">
             {/* ── LA HOJA TIENE DOS MÁRGENES ──
                 Las tres cifras vivían en bandas a todo el ancho: a 1440 el
                 número acababa a mil píxeles de su etiqueta, con la hoja
@@ -269,7 +269,7 @@ export default async function AwardsPage({ params }: Props) {
               mismos tres registros con menos datos. Aquí está todo: la
               clase, la fecha, el emisor, la descripción y el resultado
               tal como está escrito en el archivo de datos. */}
-          <section className="border-t border-hairline px-5 pb-24 pt-14 sm:px-10">
+          <section className="border-t border-hairline px-(--gutter) pb-24 pt-14 sm:px-10">
             <p className="stamp">{t('listEyebrow')}</p>
             <h2 className="mt-5 max-w-[18ch] text-d1 text-ink">
               {t('listTitle')}
@@ -400,7 +400,7 @@ export default async function AwardsPage({ params }: Props) {
               La placa despejada, una sola vez en la página: el material se
               invierte entero y las dos vías de verificación se leen como
               canales del mismo registro. */}
-          <section className="plate px-5 py-20 sm:px-10">
+          <section className="plate px-(--gutter) py-20 sm:px-10">
             <p className="stamp">{t('moreEyebrow')}</p>
             <h2 className="mt-5 max-w-[18ch] text-d1">{t('moreTitle')}</h2>
             <p className="mt-5 max-w-[58ch] text-lead">{t('moreLead')}</p>
@@ -433,7 +433,7 @@ export default async function AwardsPage({ params }: Props) {
           </section>
 
           {/* ═══ CIERRE ══════════════════════════════════════════ */}
-          <section className="border-t border-hairline px-5 pb-28 pt-16 sm:px-10">
+          <section className="border-t border-hairline px-(--gutter) pb-28 pt-16 sm:px-10">
             <h2 className="max-w-[18ch] text-d1 text-ink">{t('ctaTitle')}</h2>
             <p className="mt-6 max-w-[52ch] font-human text-lead text-ink-muted">
               {t('ctaLead')}

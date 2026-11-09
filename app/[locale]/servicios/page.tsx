@@ -147,7 +147,7 @@ export default async function ServicesHubPage({ params }: Props) {
           {/* ═══ CABECERA ════════════════════════════════════════
               El h1 es texto del servidor y es el LCP: no espera a ninguna
               secuencia de entrada ni a que se resuelva una imagen. */}
-          <section className="hero-in relative px-5 pt-16 pb-20 sm:px-10">
+          <section className="hero-in relative px-(--gutter) pt-16 pb-20 sm:px-10">
             {/* ── LA HOJA TIENE DOS MÁRGENES ──
                 Sin instrumento nuevo: el dial ya vive en la placa de abajo y
                 un segundo aparato en la misma página lo volvería adorno. El
@@ -244,7 +244,7 @@ export default async function ServicesHubPage({ params }: Props) {
               que la página vino a hacer: repartir a los cuatro servicios.
               Cada fila es un canal del registrador —a–d, paralelos—, no un
               paso de una secuencia. */}
-          <section className="plate px-5 py-20 sm:px-10">
+          <section className="plate px-(--gutter) py-20 sm:px-10">
             {/* Sin `style` inline: `.plate .stamp` ya lleva la tinta medida
                 para superficie clara. Ver --ink-plate en globals.css. */}
             <p className="stamp">
@@ -330,7 +330,7 @@ export default async function ServicesHubPage({ params }: Props) {
 
               El `name` compartido es lo que lo hace EXCLUSIVO —abrir uno
               cierra el anterior—, también nativo y también sin JS. */}
-          <section className="border-t border-hairline px-5 pb-24 pt-14 sm:px-10">
+          <section className="border-t border-hairline px-(--gutter) pb-24 pt-14 sm:px-10">
             <p className="stamp">
               {en ? 'where to start' : 'por dónde empezar'}
             </p>
@@ -394,7 +394,7 @@ export default async function ServicesHubPage({ params }: Props) {
               completo —resultados, encaje y LÍMITES— en filas, para que esta
               página se sostenga sola en lugar de ser una lista de enlaces.
               Los `id` se conservan: hay enlaces internos que apuntan a ellos. */}
-          <section className="border-t border-hairline px-5 pb-24 pt-14 sm:px-10">
+          <section className="border-t border-hairline px-(--gutter) pb-24 pt-14 sm:px-10">
             <p className="stamp">
               {en ? 'what each one covers' : 'qué incluye cada uno'}
             </p>
@@ -522,7 +522,7 @@ export default async function ServicesHubPage({ params }: Props) {
               Las mismas cuatro fases para los cuatro servicios. Aquí la
               numeración sí es legítima: es una secuencia real, y el orden es
               parte del dato. */}
-          <section className="border-t border-hairline px-5 pb-24 pt-14 sm:px-10">
+          <section className="border-t border-hairline px-(--gutter) pb-24 pt-14 sm:px-10">
             <p className="stamp">{en ? 'method' : 'método'}</p>
             {/* NO ts('process') aquí: «Cómo trabajo» es el stamp de las
                 cuatro páginas de servicio, donde encabeza CINCO fases
@@ -564,7 +564,7 @@ export default async function ServicesHubPage({ params }: Props) {
           <BlogStrip route="services" locale={locale} title="Escrito sobre todo esto" />
 
           {/* ═══ CIERRE ══════════════════════════════════════════ */}
-          <section className="border-t border-hairline px-5 pb-28 pt-16 sm:px-10">
+          <section className="border-t border-hairline px-(--gutter) pb-28 pt-16 sm:px-10">
             <h2 className="max-w-[20ch] text-d1 text-ink">
               {en
                 ? 'Not sure which one applies? Describe the problem.'

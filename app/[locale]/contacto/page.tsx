@@ -227,7 +227,7 @@ export default async function ContactPage({ params }: Props) {
               titular se pinta desde el servidor y los dos canales directos
               están a un renglón de él, sin hacer scroll y sin un botón que
               los encierre. */}
-          <section className="hero-in px-5 pt-16 pb-20 sm:px-10">
+          <section className="hero-in px-(--gutter) pt-16 pb-20 sm:px-10">
             {/* ── LA HOJA TIENE DOS MÁRGENES ──
                 Y en esta página el margen hace un trabajo que no es
                 decorativo: SEPARA LAS DOS INTENCIONES. A la izquierda,
@@ -360,7 +360,7 @@ export default async function ContactPage({ params }: Props) {
               Cada canal degrada solo: si no está configurado, su fila no
               existe. Un botón que lleva a un 404 es peor que uno que no está.
               Ver components/sections/contact-channels.tsx. */}
-          <section className="border-t border-hairline px-5 pb-24 pt-14 sm:px-10">
+          <section className="border-t border-hairline px-(--gutter) pb-24 pt-14 sm:px-10">
             <ContactChannels
               locale={locale}
               waMessage={
@@ -371,7 +371,7 @@ export default async function ContactPage({ params }: Props) {
             />
           </section>
 
-          <section className="border-t border-hairline px-5 pb-24 pt-14 sm:px-10">
+          <section className="border-t border-hairline px-(--gutter) pb-24 pt-14 sm:px-10">
             <p className="stamp">
               {en
                 ? 'the message · direct channels'
@@ -523,7 +523,7 @@ export default async function ContactPage({ params }: Props) {
               placa, `.stamp` y `.channel` ya llevan su propia tinta medida
               (--ink-plate); escribir `text-ink` aquí sería papel sobre papel. */}
           <div className="plate">
-            <section className="px-5 py-20 sm:px-10">
+            <section className="px-(--gutter) py-20 sm:px-10">
               <p className="stamp">
                 {en
                   ? 'after send · real sequence'
@@ -553,7 +553,7 @@ export default async function ContactPage({ params }: Props) {
               </ol>
             </section>
 
-            <section className="px-5 pb-20 sm:px-10">
+            <section className="px-(--gutter) pb-20 sm:px-10">
               <p className="stamp">
                 {en
                   ? `scope · channels a–${channelId(services.length - 1)}`
@@ -595,7 +595,7 @@ export default async function ContactPage({ params }: Props) {
               <details> nativo: sin JS, y el contenido va en el HTML del
               servidor, así que un crawler lee las cinco respuestas completas —
               que son exactamente las que declara el FAQPage de arriba. */}
-          <section className="border-t border-hairline px-5 pb-24 pt-14 sm:px-10">
+          <section className="border-t border-hairline px-(--gutter) pb-24 pt-14 sm:px-10">
             <p className="stamp">
               {en ? 'index · before you write' : 'índice · antes de escribir'}
             </p>

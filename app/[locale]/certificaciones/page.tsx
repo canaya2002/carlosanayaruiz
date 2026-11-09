@@ -383,7 +383,7 @@ export default async function CertificationsPage({ params }: Props) {
               Tres cifras, y las tres se cuentan del mismo arreglo que se
               imprime más abajo. No hay un número escrito a mano en esta
               página. */}
-          <section className="hero-in relative px-5 pt-16 sm:px-10">
+          <section className="hero-in relative px-(--gutter) pt-16 sm:px-10">
             {/* ── LA HOJA TIENE DOS MÁRGENES ──
                 Las tres cifras iban en `sm:grid-cols-3` a todo el ancho: a
                 1440 eran tres islas con trescientos píxeles de nada entre
@@ -428,7 +428,7 @@ export default async function CertificationsPage({ params }: Props) {
               Primero corren, después se leen. Las cintas dan el movimiento
               que el brief pidió; la lista de abajo es donde alguien se
               detiene a comprobar el emisor y la fecha. */}
-          <section className="mt-20 border-t border-hairline px-5 pb-24 pt-14 sm:px-10">
+          <section className="mt-20 border-t border-hairline px-(--gutter) pb-24 pt-14 sm:px-10">
             <p className="stamp">{t('gridEyebrow')}</p>
             <h2 className="mt-5 max-w-[18ch] text-d1 text-ink">
               {t('gridTitle')}
@@ -442,7 +442,7 @@ export default async function CertificationsPage({ params }: Props) {
                 `.ribbon` la desvanece en los cantos.
 
                 UNA, no dos. Ver la nota de `ribbonItems`. */}
-            <div className="-mx-5 mt-14 overflow-hidden sm:-mx-10">
+            <div className="-mx-(--gutter) mt-14 overflow-hidden sm:-mx-10">
               <Ribbon items={ribbonItems} label={tl('certsRail')} large />
             </div>
 
@@ -493,7 +493,7 @@ export default async function CertificationsPage({ params }: Props) {
               documento sí. Dentro de la placa no va `.link-stylus` —su color
               es papel y sobre papel desaparecería—, así que el enlace se
               escribe con la tinta heredada. */}
-          <section className="plate relative px-5 py-20 sm:px-10">
+          <section className="plate relative px-(--gutter) py-20 sm:px-10">
             <p className="stamp">{t('verifyEyebrow')}</p>
             <h2 className="mt-5 max-w-[18ch] text-d1">{t('verifyTitle')}</h2>
             <p className="mt-8 max-w-[56ch] text-lead">{t('verifyLead')}</p>
@@ -531,7 +531,7 @@ export default async function CertificationsPage({ params }: Props) {
               del archivo, nunca escritas a mano. */}
           <section
             id="cursos"
-            className="border-t border-hairline px-5 pb-24 pt-14 sm:px-10"
+            className="border-t border-hairline px-(--gutter) pb-24 pt-14 sm:px-10"
           >
             <p className="stamp">
               {en ? 'training · the documents' : 'formación · los documentos'}
@@ -657,7 +657,7 @@ export default async function CertificationsPage({ params }: Props) {
               código existe para el día que haya archivos en `public/pdf/`;
               fingir una descarga que no existe sería peor que no tenerla. */}
           {certificatePdfs.length > 0 ? (
-            <section className="border-t border-hairline px-5 pb-24 pt-14 sm:px-10">
+            <section className="border-t border-hairline px-(--gutter) pb-24 pt-14 sm:px-10">
               <p className="stamp">{t('pdfEyebrow')}</p>
               <h2 className="mt-5 max-w-[18ch] text-d1 text-ink">
                 {t('pdfTitle')}
@@ -690,7 +690,7 @@ export default async function CertificationsPage({ params }: Props) {
           {/* ═══ IDIOMAS ═════════════════════════════════════════
               La barra no es adorno: su largo se calcula desde el mismo nivel
               MCER que está impreso al lado, así que no puede contradecirlo. */}
-          <section className="border-t border-hairline px-5 pb-24 pt-14 sm:px-10">
+          <section className="border-t border-hairline px-(--gutter) pb-24 pt-14 sm:px-10">
             <p className="stamp">{t('languagesEyebrow')}</p>
             <h2 className="mt-5 max-w-[18ch] text-d1 text-ink">
               {t('languagesTitle')}
@@ -735,7 +735,7 @@ export default async function CertificationsPage({ params }: Props) {
           </section>
 
           {/* ═══ LO DEMÁS QUE SE PUEDE REVISAR ═══════════════════ */}
-          <section className="border-t border-hairline px-5 pb-24 pt-14 sm:px-10">
+          <section className="border-t border-hairline px-(--gutter) pb-24 pt-14 sm:px-10">
             <p className="stamp">{t('moreEyebrow')}</p>
             <h2 className="mt-5 max-w-[18ch] text-d1 text-ink">
               {t('moreTitle')}
@@ -759,7 +759,7 @@ export default async function CertificationsPage({ params }: Props) {
           </section>
 
           {/* ═══ CIERRE ══════════════════════════════════════════ */}
-          <section className="border-t border-hairline px-5 pb-28 pt-16 sm:px-10">
+          <section className="border-t border-hairline px-(--gutter) pb-28 pt-16 sm:px-10">
             <h2 className="max-w-[18ch] text-d1 text-ink">{t('ctaTitle')}</h2>
             <p className="mt-6 max-w-[52ch] font-human text-lead text-ink-muted">
               {t('ctaLead')}

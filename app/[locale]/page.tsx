@@ -198,7 +198,7 @@ export default async function HomePage({ params }: Props) {
               `overflow-hidden` es obligatorio: el sangrado sale de un margen
               negativo y sin recorte se escaparía al documento. Lo verifica
               `check:overflow`. */}
-          <section className="relative flex flex-col overflow-hidden px-5 pt-16 pb-16 sm:px-10 lg:pb-28">
+          <section className="relative flex flex-col overflow-hidden px-(--gutter) pt-16 pb-16 sm:px-10 lg:pb-28">
             {/* `relative z-[1]`: en un teléfono el retrato sale del flujo y
                 se compone detrás de la esquina derecha del titular. Sin esto
                 la figura absoluta, que va después en el DOM, se pintaría
@@ -306,7 +306,7 @@ export default async function HomePage({ params }: Props) {
                   máscara de `.figure-hero` difumina su canto superior — el
                   texto pasa por encima de píxeles ya desvanecidos y no por
                   encima de su pelo. Solo a partir de 1920 hay holgura real. */}
-              <figure className="figure-hero m-0 -mr-5 sm:-mr-10 lg:-mb-28 lg:-mt-24 2xl:-mt-40">
+              <figure className="figure-hero m-0 -mr-(--gutter) sm:-mr-10 lg:-mb-28 lg:-mt-24 2xl:-mt-40">
                 <Image
                   src={SEO_IMAGES.portrait}
                   alt={SEO_IMAGES.avatarAlt[lc]}
@@ -333,7 +333,7 @@ export default async function HomePage({ params }: Props) {
           {/* ═══ EL REGISTRO ═════════════════════════════════════
               Cambio de escala: aquí el eje ya no mide segundos, mide
               años. El cambio se anuncia; no se disimula. */}
-          <section className="border-t border-hairline px-5 pb-24 pt-14 sm:px-10">
+          <section className="border-t border-hairline px-(--gutter) pb-24 pt-14 sm:px-10">
             <p className="stamp">
               {en
                 ? 'scale change · 1 s ───▸ 1 year'
@@ -427,7 +427,7 @@ export default async function HomePage({ params }: Props) {
                   ? 'the documents, as issued'
                   : 'los documentos, tal como se emitieron'}
               </p>
-              <div className="reveal -mx-5 mt-6 sm:-mx-10">
+              <div className="reveal -mx-(--gutter) mt-6 sm:-mx-10">
                 <DocStrip
                   label={
                     en
@@ -486,7 +486,7 @@ export default async function HomePage({ params }: Props) {
           {/* `relative` + `overflow-hidden` son para la cara del tambor: se
               sangra 5rem fuera del canto derecho y sin recorte se escaparía al
               documento. Lo verifica `check:overflow`. */}
-          <section className="plate relative px-5 py-20 sm:px-10">
+          <section className="plate relative px-(--gutter) py-20 sm:px-10">
             {/* Sin `style` inline: `.plate .stamp` ya lleva la tinta medida
                 para superficie clara. Ver --ink-plate en globals.css. */}
             {/* El rótulo sale de los DATOS. Decía «a–e» con cuatro canales:
@@ -564,7 +564,7 @@ export default async function HomePage({ params }: Props) {
           </section>
 
           {/* ═══ EL OPERADOR ═════════════════════════════════════ */}
-          <section className="border-t border-hairline px-5 pb-24 pt-14 sm:px-10">
+          <section className="border-t border-hairline px-(--gutter) pb-24 pt-14 sm:px-10">
             <p className="stamp">{en ? 'the operator' : 'el operador'}</p>
 
             {/* ── QUÉ CAMBIÓ Y POR QUÉ ──
@@ -742,7 +742,7 @@ export default async function HomePage({ params }: Props) {
               cada regla mide la mitad, así que la pregunta la llena y su «+»
               queda a un palmo. Abrir una no reflúa la otra columna porque son
               dos contenedores independientes, no una sola columna partida. */}
-          <section className="border-t border-hairline px-5 pb-24 pt-14 sm:px-10">
+          <section className="border-t border-hairline px-(--gutter) pb-24 pt-14 sm:px-10">
             <div className="grid gap-x-14 gap-y-8 lg:grid-cols-[minmax(0,1fr)_minmax(0,26rem)] lg:items-end">
               <div>
                 <p className="stamp">{en ? 'index' : 'índice del registro'}</p>
@@ -799,7 +799,7 @@ export default async function HomePage({ params }: Props) {
               cien píxeles de nada debajo del enlace. Ahora el enlace se va al
               otro extremo de la hoja, alineado por su base con el párrafo —
               el gesto de firmar al pie— y el campo del tambor ocupa el fondo. */}
-          <section className="border-t border-hairline px-5 pb-24 pt-14 sm:px-10">
+          <section className="border-t border-hairline px-(--gutter) pb-24 pt-14 sm:px-10">
             <div className="grid items-end gap-x-14 gap-y-10 lg:grid-cols-[minmax(0,1fr)_minmax(0,20rem)]">
               <div>
                 <h2 className="max-w-[18ch] text-d1 text-ink">{tc('title')}</h2>

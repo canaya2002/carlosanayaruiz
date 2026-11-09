@@ -116,7 +116,7 @@ export default async function RevisionFichaPage({ params }: Props) {
               deciden si vale la pena pedirla: cuánto tarda, hasta cuándo y
               qué llega. Son la LECTURA de la oferta, así que van donde una
               gráfica de registrador pone la lectura. */}
-          <section className="hero-in px-5 pt-16 pb-20 sm:px-10">
+          <section className="hero-in px-(--gutter) pt-16 pb-20 sm:px-10">
             <div className="ledger">
               <div className="min-w-0">
                 <p className="stamp">
@@ -197,7 +197,7 @@ export default async function RevisionFichaPage({ params }: Props) {
           </section>
 
           {/* ═══ POR QUÉ VALE LA PENA ════════════════════════════ */}
-          <section className="border-t border-hairline px-5 pb-24 pt-14 sm:px-10">
+          <section className="border-t border-hairline px-(--gutter) pb-24 pt-14 sm:px-10">
             <h2 className="max-w-[18ch] text-d1 text-ink">{copy.whyTitle}</h2>
             <ul className="reveal-stagger mt-10 max-w-[54rem]">
               {copy.why.map((item) => (
@@ -212,7 +212,7 @@ export default async function RevisionFichaPage({ params }: Props) {
               Siete puntos y sin numerar: no es una secuencia, es una lista de
               verificación — se revisan todos y en cualquier orden. */}
           <div className="plate">
-            <section className="px-5 py-20 sm:px-10">
+            <section className="px-(--gutter) py-20 sm:px-10">
               <h2 className="max-w-[18ch] text-d1">{copy.checksTitle}</h2>
               <ul className="reveal-stagger mt-10 max-w-[54rem]">
                 {copy.checks.map((item) => (
@@ -233,7 +233,7 @@ export default async function RevisionFichaPage({ params }: Props) {
               no después. Cerrada la vigencia, el formulario no se pinta. */}
           <section
             id="solicitud"
-            className="scroll-mt-24 border-t border-hairline px-5 pb-24 pt-14 sm:px-10"
+            className="scroll-mt-24 border-t border-hairline px-(--gutter) pb-24 pt-14 sm:px-10"
           >
             <div className="grid gap-14 lg:grid-cols-[minmax(0,1fr)_minmax(0,20rem)] lg:gap-20">
               <div className="min-w-0">
@@ -283,7 +283,7 @@ export default async function RevisionFichaPage({ params }: Props) {
           </section>
 
           {/* ═══ LO QUE NO PROMETO ═══════════════════════════════ */}
-          <section className="border-t border-hairline px-5 pb-24 pt-14 sm:px-10">
+          <section className="border-t border-hairline px-(--gutter) pb-24 pt-14 sm:px-10">
             <h2 className="max-w-[18ch] text-d1 text-ink">
               {copy.noPromiseTitle}
             </h2>
@@ -311,7 +311,7 @@ export default async function RevisionFichaPage({ params }: Props) {
 
           {/* ═══ ÍNDICE ══════════════════════════════════════════
               Las mismas seis preguntas que declara el FAQPage del grafo. */}
-          <section className="border-t border-hairline px-5 pb-24 pt-14 sm:px-10">
+          <section className="border-t border-hairline px-(--gutter) pb-24 pt-14 sm:px-10">
             <h2 className="max-w-[18ch] text-d1 text-ink">{copy.faqTitle}</h2>
             <div className="mt-12">
               {copy.faqs.map((faq) => (

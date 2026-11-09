@@ -66,7 +66,7 @@ export default async function RevisionFichaGraciasPage({ params }: Props) {
       <Rail />
 
       <div className="min-w-0">
-        <section className="hero-in px-5 pt-16 pb-24 sm:px-10">
+        <section className="hero-in px-(--gutter) pt-16 pb-24 sm:px-10">
           <p className="stamp">{copy.h1}</p>
 
           <h1 className="mt-6 max-w-[18ch] text-hero text-ink">

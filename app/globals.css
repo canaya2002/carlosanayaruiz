@@ -182,6 +182,13 @@
      20 × 1rem = 320 px en 24 s ≈ 13 px/s, el arrastre de un tambor. */
   --rail-run: 20rem;
 
+  /* El MARGEN DE LA HOJA en un teléfono: lo que separa el texto del canto
+     del riel y del canto de la pantalla. Lo leen `.sheet` (nav, pie) y las
+     secciones de las 15 páginas (`px-(--gutter)`), así que el nav y el
+     titular arrancan en el mismo x por construcción y no por coincidencia.
+     A partir de 40rem manda `sm:px-10` y este token ya no se lee. */
+  --gutter: 1.25rem;
+
   /* Ancho del MARGEN DE ANOTACIÓN, la segunda columna de la hoja. Ver
      «El segundo margen» más abajo. 18rem es lo que pide una cifra mono
      de lectura (1.375rem) con su rótulo encima sin partirse. */
@@ -210,7 +217,10 @@
    320 px/s darían un héroe de 960 px de alto. */
 @media (max-width: 40rem) {
   :root {
-    --tape-w: 2.25rem;   /* 36 px */
+    /* 36 px. Ya solo rige a 640 EXACTOS: `max-width` incluye el borde y la
+       regla de abajo cubre todo lo que queda por debajo. Se conserva para
+       que de 640 en adelante no cambie un píxel. */
+    --tape-w: 2.25rem;
     --rail-tick: 0.5rem;
     /* La graduación sube a 12 px en un teléfono. A 11 px, en mono, en
        mayúsculas y con tracking abierto, los rótulos de la hoja se leían
@@ -220,16 +230,26 @@
   }
 }
 
-/* A 320 px —iPhone SE de primera generación, y todavía hay— la fila del nav
-   pedía 326 px: 36 de riel más 20+20 de margen dejaban 244 para la marca, el
-   selector de idioma y el botón del menú. Seis píxeles de desborde horizontal,
-   que es el defecto que ningún chequeo veía porque check:overflow empieza a
-   probar en 360.
-   El riel baja a 28 px y el margen a 16: son 16 px recuperados. La marca del
-   riel sigue midiendo 8 px, así que se ve igual. */
-@media (max-width: 22.5rem) {
+/* ── EL TELÉFONO: la hoja recupera su ancho ─────────────────────
+   Medido a 390 px: 36 de riel más 20 + 20 de margen dejaban el párrafo en
+   314 px, el 80.5% de la pantalla. Líneas cortas, más scroll y una página
+   que se leía apretada.
+
+   20 px de riel y 12 de margen a cada lado: 346 px, el 88.7%. Es la misma
+   composición a escala —el hueco sigue midiendo seis décimas del riel— y
+   no una distinta. La marca del riel se queda en 8 px, así que el rollo se
+   lee igual; lo que se fue es hollín vacío a la izquierda de la marca.
+
+   Reemplaza al tramo de 22.5rem (riel de 28 px y margen de 16), que existía
+   porque a 320 la fila del nav desbordaba 6 px. Con 44 px de cromo en vez de
+   60 a ese ancho sobran 16 más, y `check:overflow` lo prueba desde 320.
+
+   `width <` y no `max-width`: 640 exactos ya es territorio de `sm:` y tiene
+   que quedarse como estaba. */
+@media (width < 40rem) {
   :root {
-    --tape-w: 1.75rem;   /* 28 px */
+    --tape-w: 1.25rem;   /* 20 px */
+    --gutter: 0.75rem;   /* 12 px */
   }
 }
 
@@ -1577,14 +1597,10 @@
      `padding-inline` con dos valores es start / end. */
   .sheet {
     width: 100%;
-    padding-inline: calc(var(--tape-w) + 1.25rem) 1.25rem;
-  }
-
-  /* Ver el bloque de tokens: a 320 px la fila del nav desbordaba 6 px. */
-  @media (max-width: 22.5rem) {
-    .sheet {
-      padding-inline: calc(var(--tape-w) + 1rem) 1rem;
-    }
+    /* `--gutter` y no una cifra: es el mismo token que llevan las secciones
+       (`px-(--gutter)`). Con dos cifras escritas en dos sitios, a 360 la
+       marca del nav caía 4 px a la izquierda del titular. */
+    padding-inline: calc(var(--tape-w) + var(--gutter)) var(--gutter);
   }
 
   @media (min-width: 40rem) {
@@ -2407,13 +2423,14 @@
 
      Se disuelve por la izquierda —por ahí pasa «que tu sitio»— y por
      abajo, por la misma razón que en escritorio: sin canto, sin caja. El
-     `right` compensa el `-mr-5` de la figura: con él el retrato toca el
-     canto de la pantalla. */
+     `right` compensa el `-mr-(--gutter)` de la figura: con él el retrato
+     toca el canto de la pantalla. Es el mismo token en los dos lados, así
+     que no se pueden desacompasar. */
   @media (max-width: 40rem) {
     .figure-hero {
       position: absolute;
       top: 0.75rem;
-      right: 1.25rem;
+      right: var(--gutter);
       width: min(10.5rem, 44vw);
       height: min(13rem, 38svh);
       min-height: 0;
@@ -5528,8 +5545,10 @@
    Fuera de toda capa por la misma razón que lo de arriba: `text-hero` es
    una utilidad y una regla de `@layer components` nunca le gana.
 
-   La columna de un teléfono mide `100vw − 4.75rem` (riel de 2.25rem más
-   1.25rem de margen a cada lado; a 22.5rem el riel baja y sobra holgura).
+   La columna de un teléfono mide `100vw − riel − 2 × margen`, y se calcula
+   con los mismos tokens que la dibujan: con la cifra escrita a mano
+   (4.75rem) el titular seguía encogiéndose para una columna que ya no
+   existía.
    `--fit` es cuántas veces el tamaño de letra mide la palabra más larga
    del titular, MEDIDO en el navegador con Archivo cargada, más un 2–3% de
    holgura: «Automatización» 7.03 → 7.2, «reconocimientos» 7.58 → 7.8,
@@ -5543,7 +5562,7 @@
   .hero-fit {
     font-size: min(
       clamp(2.75rem, 1.35rem + 6.2vw, 7.5rem),
-      calc((100vw - 4.75rem) / var(--fit, 7.2))
+      calc((100vw - var(--tape-w) - 2 * var(--gutter)) / var(--fit, 7.2))
     );
   }
 }

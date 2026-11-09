@@ -171,7 +171,7 @@ export default async function SeoTecnicoPage({ params }: Props) {
               El titular es el LCP y se pinta del servidor: ni una capa
               decorativa por delante, ni una secuencia de entrada que
               esperar. */}
-          <section className="hero-in relative px-5 pb-16 pt-16 sm:px-10">
+          <section className="hero-in relative px-(--gutter) pb-16 pt-16 sm:px-10">
             {/* ── LA HOJA TIENE DOS MÁRGENES ──
                 El texto a la izquierda, la lectura del operador a la
                 derecha. Por debajo de 80rem el margen cae al flujo y su
@@ -258,7 +258,7 @@ export default async function SeoTecnicoPage({ params }: Props) {
           </section>
 
           {/* ═══ EL PROBLEMA ═════════════════════════════════════ */}
-          <section className="border-t border-hairline px-5 pb-24 pt-14 sm:px-10">
+          <section className="border-t border-hairline px-(--gutter) pb-24 pt-14 sm:px-10">
             <p className="stamp">{en ? 'the problem' : 'el problema'}</p>
             <h2 className="mt-5 max-w-[16ch] text-d1 text-ink">
               {t('whyTitle')}
@@ -289,7 +289,7 @@ export default async function SeoTecnicoPage({ params }: Props) {
               Lo que antes era un riel de tarjetas con inclinación 3D es una
               lista de bandas: un alcance es un registro de renglones, no una
               baraja que hay que arrastrar para leer completa. */}
-          <section className="border-t border-hairline px-5 pb-24 pt-14 sm:px-10">
+          <section className="border-t border-hairline px-(--gutter) pb-24 pt-14 sm:px-10">
             <p className="stamp">{en ? 'scope' : 'alcance'}</p>
             <h2 className="mt-5 max-w-[16ch] text-d1 text-ink">
               {t('whatTitle')}
@@ -323,7 +323,7 @@ export default async function SeoTecnicoPage({ params }: Props) {
               Aquí la numeración SÍ es legítima: cuatro fases en orden, y la
               tercera no puede correr antes que la segunda. La cifra va en
               mono, seca, sin píldora y sin gradiente. */}
-          <section className="border-t border-hairline px-5 pb-24 pt-14 sm:px-10">
+          <section className="border-t border-hairline px-(--gutter) pb-24 pt-14 sm:px-10">
             <p className="stamp">{ts('process')}</p>
             <h2 className="mt-5 max-w-[18ch] text-d1 text-ink">
               {en ? 'How the work runs' : 'Cómo se ejecuta el trabajo'}
@@ -355,7 +355,7 @@ export default async function SeoTecnicoPage({ params }: Props) {
               esta página: degradarlas visualmente o suavizarlas en línea de
               venta anula el motivo por el que están escritas. Lo que separa
               las dos listas es la ETIQUETA, nunca el color. */}
-          <section className="border-t border-hairline px-5 pb-24 pt-14 sm:px-10">
+          <section className="border-t border-hairline px-(--gutter) pb-24 pt-14 sm:px-10">
             <p className="stamp">
               {en ? 'good fit · not a fit' : 'sí encaja · no encaja'}
             </p>
@@ -409,7 +409,7 @@ export default async function SeoTecnicoPage({ params }: Props) {
               `text-ink-plate`, que es el token medido para superficie clara.
               Y las reglas de las bandas se corren a `border-soot/20`, porque
               `--hairline` es una línea clara pensada para fondo oscuro. */}
-          <section className="plate relative px-5 py-20 sm:px-10">
+          <section className="plate relative px-(--gutter) py-20 sm:px-10">
             <p className="stamp">{ts('includes')}</p>
             <h2 className="mt-5 max-w-[16ch] text-d1">
               {t('deliverablesTitle')}
@@ -437,7 +437,7 @@ export default async function SeoTecnicoPage({ params }: Props) {
             className="overflow-hidden border-t border-hairline px-0 pb-20 pt-11"
             aria-labelledby="tools-heading"
           >
-            <div className="px-5 sm:px-10">
+            <div className="px-(--gutter) sm:px-10">
               <p className="stamp">reproducible</p>
               <h2
                 id="tools-heading"
@@ -469,7 +469,7 @@ export default async function SeoTecnicoPage({ params }: Props) {
               </div>
             </div>
 
-            <p className="mt-10 max-w-[68ch] px-5 text-ink-muted sm:px-10">
+            <p className="mt-10 max-w-[68ch] px-(--gutter) text-ink-muted sm:px-10">
               {en
                 ? 'Standard tooling, named on purpose: every finding in the report can be reproduced by your team with the same tools, without taking my word for it.'
                 : 'Herramientas estándar, y las nombro a propósito: cualquier hallazgo del reporte lo puede reproducir tu equipo con las mismas herramientas, sin tener que creerme.'}
@@ -481,7 +481,7 @@ export default async function SeoTecnicoPage({ params }: Props) {
               servidor abierta o cerrada, así que un crawler la lee completa.
               Se renderiza del MISMO arreglo con el que se construye el nodo
               FAQPage de arriba. */}
-          <section className="border-t border-hairline px-5 pb-24 pt-14 sm:px-10">
+          <section className="border-t border-hairline px-(--gutter) pb-24 pt-14 sm:px-10">
             <p className="stamp">FAQ</p>
             <h2 className="mt-5 max-w-[16ch] text-d1 text-ink">
               {t('faqTitle')}
@@ -512,7 +512,7 @@ export default async function SeoTecnicoPage({ params }: Props) {
               pluma bajo la fila. `border-hairline` es obligatorio aquí —
               `.channel` hereda `currentColor` en el borde, y eso solo está
               resuelto dentro de la placa. */}
-          <section className="border-t border-hairline px-5 pb-24 pt-14 sm:px-10">
+          <section className="border-t border-hairline px-(--gutter) pb-24 pt-14 sm:px-10">
             <p className="stamp">{ts('eyebrow')}</p>
             <h2 className="mt-5 max-w-[16ch] text-d1 text-ink">
               {t('relatedTitle')}
@@ -578,7 +578,7 @@ export default async function SeoTecnicoPage({ params }: Props) {
               su padre; `anySlotFilled` sí. Cuando llegue una captura real, la
               sección reaparece sola. */}
           {anySlotFilled('seo-tecnico-proceso', 'seo-tecnico-schema') ? (
-            <section className="border-t border-hairline px-5 pb-20 pt-11 sm:px-10">
+            <section className="border-t border-hairline px-(--gutter) pb-20 pt-11 sm:px-10">
               <p className="stamp">
                 {en
                   ? 'the proof · file pending'
@@ -609,7 +609,7 @@ export default async function SeoTecnicoPage({ params }: Props) {
               solo si hay algo publicado que encaje. */}
           <BlogStrip route="seoTecnico" locale={locale} title="Escrito sobre SEO técnico" />
 
-          <section className="border-t border-hairline px-5 pb-24 pt-14 sm:px-10">
+          <section className="border-t border-hairline px-(--gutter) pb-24 pt-14 sm:px-10">
             <ContactChannels
               locale={locale}
               waMessage={
@@ -621,7 +621,7 @@ export default async function SeoTecnicoPage({ params }: Props) {
           </section>
 
           {/* ═══ CIERRE ══════════════════════════════════════════ */}
-          <section className="border-t border-hairline px-5 pb-28 pt-16 sm:px-10">
+          <section className="border-t border-hairline px-(--gutter) pb-28 pt-16 sm:px-10">
             <h2 className="max-w-[18ch] text-d1 text-ink">
               {en
                 ? 'Send me the URL and what changed.'

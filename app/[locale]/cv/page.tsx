@@ -523,7 +523,7 @@ export default async function CvPage({ params }: Props) {
                 Un CV empieza por quién lo firma. El nombre es el h1 —no el
                 cargo, no una frase de venta— y todo lo demás son filas de
                 registro colgando de él. */}
-            <section className="hero-in relative px-5 pt-16 sm:px-10">
+            <section className="hero-in relative px-(--gutter) pt-16 sm:px-10">
               <p className="stamp">{t('eyebrow')}</p>
 
               <h1 className="mt-6 max-w-[14ch] text-hero text-ink">
@@ -673,7 +673,7 @@ export default async function CvPage({ params }: Props) {
                 el único bloque que se invierte entero. */}
             <section
               id="resumen"
-              className="plate relative mt-16 px-5 py-20 sm:px-10"
+              className="plate relative mt-16 px-(--gutter) py-20 sm:px-10"
             >
               <p className="stamp">{tt('engineerLabel')}</p>
               <h2 className="mt-5 max-w-[18ch] text-d1">{t('summary')}</h2>
@@ -688,7 +688,7 @@ export default async function CvPage({ params }: Props) {
             {/* ═══ EXPERIENCIA ═══════════════════════════════════════ */}
             <section
               id="experiencia"
-              className="border-t border-hairline px-5 pb-24 pt-14 sm:px-10"
+              className="border-t border-hairline px-(--gutter) pb-24 pt-14 sm:px-10"
             >
               <p className="stamp">
                 {tt('companiesLabel')} ·{' '}
@@ -796,7 +796,7 @@ export default async function CvPage({ params }: Props) {
             {/* ═══ FORMACIÓN ═════════════════════════════════════════ */}
             <section
               id="formacion"
-              className="border-t border-hairline px-5 pb-24 pt-14 sm:px-10"
+              className="border-t border-hairline px-(--gutter) pb-24 pt-14 sm:px-10"
             >
               <h2 className="max-w-[16ch] text-d1 text-ink">
                 {t('education')}
@@ -827,7 +827,7 @@ export default async function CvPage({ params }: Props) {
             {/* ═══ CERTIFICACIONES ═══════════════════════════════════ */}
             <section
               id="certificaciones"
-              className="border-t border-hairline px-5 pb-24 pt-14 sm:px-10"
+              className="border-t border-hairline px-(--gutter) pb-24 pt-14 sm:px-10"
             >
               <h2 className="max-w-[16ch] text-d1 text-ink">
                 {t('certifications')}
@@ -881,7 +881,7 @@ export default async function CvPage({ params }: Props) {
             {/* ═══ PREMIOS ═══════════════════════════════════════════ */}
             <section
               id="premios"
-              className="border-t border-hairline px-5 pb-24 pt-14 sm:px-10"
+              className="border-t border-hairline px-(--gutter) pb-24 pt-14 sm:px-10"
             >
               <h2 className="max-w-[16ch] text-d1 text-ink">{t('awards')}</h2>
               <p className="mt-5 max-w-[58ch] text-ink-muted">
@@ -936,7 +936,7 @@ export default async function CvPage({ params }: Props) {
                 un documento y se lee como un documento. */}
             <section
               id="stack"
-              className="border-t border-hairline px-5 pb-24 pt-14 sm:px-10"
+              className="border-t border-hairline px-(--gutter) pb-24 pt-14 sm:px-10"
             >
               <h2 className="max-w-[16ch] text-d1 text-ink">{t('stack')}</h2>
               <p className="mt-5 max-w-[58ch] text-ink-muted">
@@ -967,7 +967,7 @@ export default async function CvPage({ params }: Props) {
                 que no puede contradecirlo. */}
             <section
               id="idiomas"
-              className="border-t border-hairline px-5 pb-24 pt-14 sm:px-10"
+              className="border-t border-hairline px-(--gutter) pb-24 pt-14 sm:px-10"
             >
               <h2 className="max-w-[16ch] text-d1 text-ink">
                 {t('languages')}
@@ -1012,7 +1012,7 @@ export default async function CvPage({ params }: Props) {
                 impreso. */}
             <section
               data-print-hide=""
-              className="border-t border-hairline px-5 pb-28 pt-16 sm:px-10"
+              className="border-t border-hairline px-(--gutter) pb-28 pt-16 sm:px-10"
             >
               <h2 className="max-w-[18ch] text-d1 text-ink">{t('ctaTitle')}</h2>
               <p className="mt-6 max-w-[52ch] font-human text-lead text-ink-muted">

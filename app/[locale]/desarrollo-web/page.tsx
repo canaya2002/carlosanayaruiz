@@ -201,7 +201,7 @@ export default async function DesarrolloWebPage({ params }: Props) {
           {/* ═══ CABECERA ════════════════════════════════════════
               El titular es el LCP y se pinta desde el servidor: no espera a
               ninguna secuencia de entrada, ninguna imagen y ningún script. */}
-          <section className="hero-in relative px-5 pt-16 pb-20 sm:px-10">
+          <section className="hero-in relative px-(--gutter) pt-16 pb-20 sm:px-10">
             {/* ── LA HOJA TIENE DOS MÁRGENES ──
                 El texto a la izquierda, la lectura del operador a la
                 derecha. Por debajo de 80rem el margen cae al flujo y su
@@ -297,7 +297,7 @@ export default async function DesarrolloWebPage({ params }: Props) {
               El único bloque de la página escrito en primera persona, y por
               eso el único en serif. Es ~3% del tipo del sitio; gastarlo en
               otra parte lo devaluaría. */}
-          <section className="border-t border-hairline px-5 pb-24 pt-14 sm:px-10">
+          <section className="border-t border-hairline px-(--gutter) pb-24 pt-14 sm:px-10">
             <p className="stamp">{en ? 'context' : 'contexto'}</p>
             <h2 className="mt-5 max-w-[16ch] text-d1 text-ink">
               {t('whyTitle')}
@@ -326,7 +326,7 @@ export default async function DesarrolloWebPage({ params }: Props) {
               Antes: carrusel con flechas, puntos y tarjetas numeradas 01–03.
               Ahora: filas. Lo que se construye no es una secuencia, así que
               no lleva número. */}
-          <section className="border-t border-hairline px-5 pb-24 pt-14 sm:px-10">
+          <section className="border-t border-hairline px-(--gutter) pb-24 pt-14 sm:px-10">
             <p className="stamp">{ts('benefits')}</p>
             <h2 className="mt-5 max-w-[18ch] text-d1 text-ink">
               {t('whatTitle')}
@@ -369,7 +369,7 @@ export default async function DesarrolloWebPage({ params }: Props) {
               Esto SÍ es una secuencia real —una fase no puede correr antes
               que la anterior—, así que aquí el número es un dato y no un
               adorno. Se imprime como posición sobre el total. */}
-          <section className="border-t border-hairline px-5 pb-24 pt-14 sm:px-10">
+          <section className="border-t border-hairline px-(--gutter) pb-24 pt-14 sm:px-10">
             <p className="stamp">{ts('process')}</p>
             <h2 className="mt-5 max-w-[20ch] text-d1 text-ink">
               {en
@@ -403,7 +403,7 @@ export default async function DesarrolloWebPage({ params }: Props) {
               tipo, mismo ritmo, misma fila. Una limitación degradada
               visualmente deja de ser una limitación. Lo que separa las dos
               listas es la ETIQUETA, no un color ni un ícono. */}
-          <section className="border-t border-hairline px-5 pb-24 pt-14 sm:px-10">
+          <section className="border-t border-hairline px-(--gutter) pb-24 pt-14 sm:px-10">
             <p className="stamp">{en ? 'fit' : 'encaje'}</p>
             <h2 className="mt-5 max-w-[18ch] text-d1 text-ink">
               {en
@@ -448,7 +448,7 @@ export default async function DesarrolloWebPage({ params }: Props) {
           </section>
 
           {/* ═══ ENTREGABLES ═════════════════════════════════════ */}
-          <section className="border-t border-hairline px-5 pb-24 pt-14 sm:px-10">
+          <section className="border-t border-hairline px-(--gutter) pb-24 pt-14 sm:px-10">
             <p className="stamp">{ts('includes')}</p>
             <h2 className="mt-5 max-w-[16ch] text-d1 text-ink">
               {t('deliverablesTitle')}
@@ -477,7 +477,7 @@ export default async function DesarrolloWebPage({ params }: Props) {
             className="overflow-hidden border-t border-hairline pb-20 pt-11"
             aria-labelledby="stack-heading"
           >
-            <div className="px-5 sm:px-10">
+            <div className="px-(--gutter) sm:px-10">
               <p className="stamp">{t('toolsTitle')}</p>
               <h2
                 id="stack-heading"
@@ -509,7 +509,7 @@ export default async function DesarrolloWebPage({ params }: Props) {
               </div>
             </div>
 
-            <p className="stamp mt-8 px-5 sm:px-10">
+            <p className="stamp mt-8 px-(--gutter) sm:px-10">
               {en ? 'in order · ' : 'en orden · '}
               {stackLegend}
             </p>
@@ -519,7 +519,7 @@ export default async function DesarrolloWebPage({ params }: Props) {
               <details> nativo: las respuestas están en el HTML del servidor,
               que es exactamente lo que declara el markup FAQPage de arriba.
               Sin JavaScript y sin panel. */}
-          <section className="border-t border-hairline px-5 pb-24 pt-14 sm:px-10">
+          <section className="border-t border-hairline px-(--gutter) pb-24 pt-14 sm:px-10">
             <p className="stamp">FAQ</p>
             <h2 className="mt-5 max-w-[16ch] text-d1 text-ink">
               {t('faqTitle')}
@@ -555,7 +555,7 @@ export default async function DesarrolloWebPage({ params }: Props) {
               entero para el paso a los otros servicios. Los servicios son
               canales PARALELOS del registrador —a–d salen del catálogo—, no
               una secuencia 01/02/03. */}
-          <section className="plate px-5 py-20 sm:px-10">
+          <section className="plate px-(--gutter) py-20 sm:px-10">
             <p className="stamp">{ts('eyebrow')}</p>
             <h2 className="mt-5 max-w-[18ch] text-d1">{t('relatedTitle')}</h2>
             <p className="mt-6 max-w-[52ch] text-lead">
@@ -626,7 +626,7 @@ export default async function DesarrolloWebPage({ params }: Props) {
               su padre; `anySlotFilled` sí. Cuando llegue una captura real, la
               sección reaparece sola. */}
           {anySlotFilled('desarrollo-web-lighthouse', 'desarrollo-web-codigo') ? (
-            <section className="border-t border-hairline px-5 pb-20 pt-11 sm:px-10">
+            <section className="border-t border-hairline px-(--gutter) pb-20 pt-11 sm:px-10">
               <p className="stamp">
                 {en
                   ? 'the proof · file pending'
@@ -657,7 +657,7 @@ export default async function DesarrolloWebPage({ params }: Props) {
               solo si hay algo publicado que encaje. */}
           <BlogStrip route="desarrolloWeb" locale={locale} title="Escrito sobre desarrollo" />
 
-          <section className="border-t border-hairline px-5 pb-24 pt-14 sm:px-10">
+          <section className="border-t border-hairline px-(--gutter) pb-24 pt-14 sm:px-10">
             <ContactChannels
               locale={locale}
               waMessage={
@@ -669,7 +669,7 @@ export default async function DesarrolloWebPage({ params }: Props) {
           </section>
 
           {/* ═══ CIERRE ══════════════════════════════════════════ */}
-          <section className="border-t border-hairline px-5 pb-28 pt-16 sm:px-10">
+          <section className="border-t border-hairline px-(--gutter) pb-28 pt-16 sm:px-10">
             <h2 className="max-w-[18ch] text-d1 text-ink">
               {en
                 ? 'Tell me what you need to build.'

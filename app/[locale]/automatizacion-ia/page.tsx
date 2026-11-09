@@ -157,7 +157,7 @@ export default async function AiAutomationPage({ params }: Props) {
               Sin aguja ni marcas: el instrumento en vivo es de la home.
               Aquí la cinta corre por el margen y el titular es lo único
               que pesa. */}
-          <section className="hero-in relative px-5 pt-16 pb-20 sm:px-10">
+          <section className="hero-in relative px-(--gutter) pt-16 pb-20 sm:px-10">
             {/* ── LA HOJA TIENE DOS MÁRGENES ──
                 El texto a la izquierda, la lectura del operador a la
                 derecha. Por debajo de 80rem el margen cae al flujo y su
@@ -251,7 +251,7 @@ export default async function AiAutomationPage({ params }: Props) {
               La única zona serif de la página. Cuatro párrafos en primera
               persona: es el operador argumentando, no el catálogo
               describiéndose. */}
-          <section className="border-t border-hairline px-5 pb-24 pt-14 sm:px-10">
+          <section className="border-t border-hairline px-(--gutter) pb-24 pt-14 sm:px-10">
             <p className="stamp">{en ? 'context' : 'contexto'}</p>
             <h2 className="mt-5 max-w-[18ch] text-d1 text-ink">
               {t('whyTitle')}
@@ -282,7 +282,7 @@ export default async function AiAutomationPage({ params }: Props) {
           </section>
 
           {/* ═══ ALCANCE ═════════════════════════════════════════ */}
-          <section className="border-t border-hairline px-5 pb-24 pt-14 sm:px-10">
+          <section className="border-t border-hairline px-(--gutter) pb-24 pt-14 sm:px-10">
             <p className="stamp">{en ? 'scope' : 'alcance'}</p>
             <h2 className="mt-5 max-w-[18ch] text-d1 text-ink">
               {t('whatTitle')}
@@ -321,7 +321,7 @@ export default async function AiAutomationPage({ params }: Props) {
               Aquí el número SÍ manda: son cuatro pasos en un orden que no se
               puede alterar, que es la única condición bajo la que este
               sistema acepta una numeración. */}
-          <section className="border-t border-hairline px-5 pb-24 pt-14 sm:px-10">
+          <section className="border-t border-hairline px-(--gutter) pb-24 pt-14 sm:px-10">
             <p className="stamp">{ts('process')}</p>
             <h2 className="mt-5 max-w-[16ch] text-d1 text-ink">
               {en ? 'How the work runs' : 'Cómo corre el trabajo'}
@@ -356,7 +356,7 @@ export default async function AiAutomationPage({ params }: Props) {
               Mismo peso visual en las dos columnas, a propósito. La segunda
               no se suaviza ni se esconde: es la mitad que hace creíble a la
               primera. El estado lo dice el encabezado, nunca un color. */}
-          <section className="border-t border-hairline px-5 pb-24 pt-14 sm:px-10">
+          <section className="border-t border-hairline px-(--gutter) pb-24 pt-14 sm:px-10">
             <p className="stamp">{en ? 'fit' : 'encaje'}</p>
             <h2 className="mt-5 max-w-[20ch] text-d1 text-ink">
               {en
@@ -398,7 +398,7 @@ export default async function AiAutomationPage({ params }: Props) {
               cliente de verdad compra. Dentro no se escribe una sola clase
               de tinta: `.plate` ya invierte el material y `.stamp` tiene su
               propio token medido para papel. */}
-          <section className="plate px-5 py-20 sm:px-10">
+          <section className="plate px-(--gutter) py-20 sm:px-10">
             <p className="stamp">{ts('includes')}</p>
             <h2 className="mt-5 max-w-[16ch] text-d1">
               {t('deliverablesTitle')}
@@ -421,7 +421,7 @@ export default async function AiAutomationPage({ params }: Props) {
             className="overflow-hidden border-t border-hairline pb-20 pt-11"
             aria-labelledby="stack-heading"
           >
-            <div className="px-5 sm:px-10">
+            <div className="px-(--gutter) sm:px-10">
               <p className="stamp">Stack</p>
               <h2
                 id="stack-heading"
@@ -438,7 +438,7 @@ export default async function AiAutomationPage({ params }: Props) {
               </div>
             </div>
 
-            <dl className="reveal-stagger mt-12 px-5 sm:px-10">
+            <dl className="reveal-stagger mt-12 px-(--gutter) sm:px-10">
               {stack.map((group) => (
                 <div
                   key={group.label}
@@ -458,7 +458,7 @@ export default async function AiAutomationPage({ params }: Props) {
               servidor, que es el mismo texto que emite el FAQPage de arriba.
               El `name` compartido da el acordeón exclusivo sin una línea de
               JavaScript. */}
-          <section className="border-t border-hairline px-5 pb-24 pt-14 sm:px-10">
+          <section className="border-t border-hairline px-(--gutter) pb-24 pt-14 sm:px-10">
             <p className="stamp">FAQ</p>
             <h2 className="mt-5 max-w-[16ch] text-d1 text-ink">
               {t('faqTitle')}
@@ -497,7 +497,7 @@ export default async function AiAutomationPage({ params }: Props) {
               Los otros dos canales del mismo registrador, con la letra que
               les toca en la home. Al pasar el puntero no se enciende una
               caja: avanza el trazo. */}
-          <section className="border-t border-hairline px-5 pb-24 pt-14 sm:px-10">
+          <section className="border-t border-hairline px-(--gutter) pb-24 pt-14 sm:px-10">
             <p className="stamp">{en ? 'keep reading' : 'sigue leyendo'}</p>
             <h2 className="mt-5 max-w-[16ch] text-d1 text-ink">
               {t('relatedTitle')}
@@ -561,7 +561,7 @@ export default async function AiAutomationPage({ params }: Props) {
               su padre; `anySlotFilled` sí. Cuando llegue una captura real, la
               sección reaparece sola. */}
           {anySlotFilled('automatizacion-ia-chat') ? (
-            <section className="border-t border-hairline px-5 pb-20 pt-11 sm:px-10">
+            <section className="border-t border-hairline px-(--gutter) pb-20 pt-11 sm:px-10">
               <p className="stamp">
                 {en
                   ? 'the proof · file pending'
@@ -592,7 +592,7 @@ export default async function AiAutomationPage({ params }: Props) {
               solo si hay algo publicado que encaje. */}
           <BlogStrip route="automatizacionIa" locale={locale} title="Escrito sobre IA aplicada" />
 
-          <section className="border-t border-hairline px-5 pb-24 pt-14 sm:px-10">
+          <section className="border-t border-hairline px-(--gutter) pb-24 pt-14 sm:px-10">
             <ContactChannels
               locale={locale}
               waMessage={
@@ -604,7 +604,7 @@ export default async function AiAutomationPage({ params }: Props) {
           </section>
 
           {/* ═══ CIERRE ══════════════════════════════════════════ */}
-          <section className="border-t border-hairline px-5 pb-28 pt-16 sm:px-10">
+          <section className="border-t border-hairline px-(--gutter) pb-28 pt-16 sm:px-10">
             <h2 className="max-w-[16ch] text-d1 text-ink">{t('ctaMain')}</h2>
             <p className="mt-6 max-w-[56ch] text-lead text-ink-muted">
               {en

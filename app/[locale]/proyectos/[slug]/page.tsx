@@ -348,7 +348,7 @@ export default async function ProjectPage({ params }: Props) {
               portada generada delante de él ni una composición que espere
               a nada. El hueco del logo se conserva —marca dónde va el
               archivo, con su ruta exacta— pero sin marco y sin sombra. */}
-          <section className="hero-in relative px-5 pt-16 sm:px-10">
+          <section className="hero-in relative px-(--gutter) pt-16 sm:px-10">
             {/* ── LA HOJA TIENE DOS MÁRGENES ── */}
             <div className="ledger">
               <div className="min-w-0">
@@ -479,7 +479,7 @@ export default async function ProjectPage({ params }: Props) {
           {/* ═══ DATOS DEL TRABAJO ═══════════════════════════════
               Una tabla de registro. Rol, tipo, país, ciudad y periodo, cada
               uno en su fila con su regla. */}
-          <section className="border-t border-hairline px-5 pb-24 pt-14 sm:px-10">
+          <section className="border-t border-hairline px-(--gutter) pb-24 pt-14 sm:px-10">
             <p className="stamp">{en ? 'record' : 'registro'}</p>
 
             <h2 className="mt-5 text-d1 text-ink">{t('factsTitle')}</h2>
@@ -529,7 +529,7 @@ export default async function ProjectPage({ params }: Props) {
               de corrido. Una sola placa por página, y en una ficha le toca
               al relato. Dentro no va `.link-stylus`: su color es papel y
               sobre papel desaparecería. */}
-          <section className="plate relative px-5 py-20 sm:px-10">
+          <section className="plate relative px-(--gutter) py-20 sm:px-10">
             <p className="stamp">{en ? 'the work' : 'el trabajo'}</p>
 
             <h2 className="mt-5 max-w-[18ch] text-d1">{t('bodyTitle')}</h2>
@@ -565,7 +565,7 @@ export default async function ProjectPage({ params }: Props) {
               Qué falta y dónde va sigue estando en `docs/MEDIA.md`, que se
               genera del MISMO dato — que es donde esa instrucción sirve, porque
               es el documento que lee el dueño y no el prospecto. */}
-          <section className="border-t border-hairline px-5 pb-24 pt-14 sm:px-10">
+          <section className="border-t border-hairline px-(--gutter) pb-24 pt-14 sm:px-10">
             <p className="stamp">{company.name}</p>
 
             <h2 className="mt-5 text-d1 text-ink">{t('galleryTitle')}</h2>
@@ -608,7 +608,7 @@ export default async function ProjectPage({ params }: Props) {
               404, mientras que un hueco de imagen etiquetado es una
               instrucción. */}
           {company.docs.length > 0 ? (
-            <section className="border-t border-hairline px-5 pb-24 pt-14 sm:px-10">
+            <section className="border-t border-hairline px-(--gutter) pb-24 pt-14 sm:px-10">
               <p className="stamp">{en ? 'attached' : 'anexos'}</p>
 
               <h2 className="mt-5 text-d1 text-ink">{t('docsTitle')}</h2>
@@ -636,7 +636,7 @@ export default async function ProjectPage({ params }: Props) {
 
           {/* ═══ SEGUIR VIENDO ═══════════════════════════════════
               Dos filas del mismo registro, no dos tarjetas enfrentadas. */}
-          <section className="border-t border-hairline px-5 pb-24 pt-14 sm:px-10">
+          <section className="border-t border-hairline px-(--gutter) pb-24 pt-14 sm:px-10">
             <h2 className="text-d1 text-ink">{t('navTitle')}</h2>
 
             <ul className="reveal-stagger mt-8 max-w-3xl">
@@ -705,7 +705,7 @@ export default async function ProjectPage({ params }: Props) {
           </section>
 
           {/* ═══ CIERRE ══════════════════════════════════════════ */}
-          <section className="border-t border-hairline px-5 pb-28 pt-16 sm:px-10">
+          <section className="border-t border-hairline px-(--gutter) pb-28 pt-16 sm:px-10">
             <h2 className="max-w-[18ch] text-d1 text-ink">{t('ctaTitle')}</h2>
 
             <p className="mt-6 max-w-[52ch] font-human text-lead text-ink-muted">

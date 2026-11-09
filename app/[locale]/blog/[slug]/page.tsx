@@ -208,7 +208,7 @@ export default async function BlogPostPage({ params }: Props) {
               El h1 queda FUERA de cualquier entrada escalonada: es el
               candidato a LCP de esta página y retrasar su pintado es la
               regresión que este sitio vende arreglar. */}
-          <article className="px-5 pt-16 pb-20 sm:px-10">
+          <article className="px-(--gutter) pt-16 pb-20 sm:px-10">
             <div className="ledger">
               <div className="min-w-0">
                 <p className="stamp">
@@ -234,7 +234,7 @@ export default async function BlogPostPage({ params }: Props) {
                     sin precargar es exactamente el defecto que este sitio
                     audita en otros. */}
                 {post.cover ? (
-                  <figure className="cover mt-12 -mx-5 sm:-mx-10 lg:mx-0">
+                  <figure className="cover mt-12 -mx-(--gutter) sm:-mx-10 lg:mx-0">
                     <Image
                       src={post.cover}
                       alt={post.coverAlt ?? post.title}
@@ -242,11 +242,12 @@ export default async function BlogPostPage({ params }: Props) {
                       height={900}
                       /* El ancho REAL de la figura en cada tramo: sangra
                          hasta el riel por debajo de 64rem (100vw menos
-                         `--tape-w`, que vale 2.25rem en teléfono y 3.5rem
+                         `--tape-w`, que vale 1.25rem en teléfono y 3.5rem
                          arriba) y vuelve a la columna después. Con `100vw`
                          a secas pedía la variante del ancho de la pantalla
-                         entera. */
-                      sizes="(min-width: 80rem) 54rem, (min-width: 64rem) calc(100vw - 8.5rem), (min-width: 40rem) calc(100vw - 3.5rem), calc(100vw - 2.25rem)"
+                         entera. `sizes` no lee variables de CSS: si cambia
+                         el token, esta cifra cambia con él. */
+                      sizes="(min-width: 80rem) 54rem, (min-width: 64rem) calc(100vw - 8.5rem), (min-width: 40rem) calc(100vw - 3.5rem), calc(100vw - 1.25rem)"
                       priority
                       fetchPriority="high"
                     />
@@ -382,7 +383,7 @@ export default async function BlogPostPage({ params }: Props) {
               apunta a un 404 — que es lo que pasaría si los enlaces fueran
               texto escrito a mano dentro del artículo. */}
           {related.all.length ? (
-            <section className="plate px-5 py-20 sm:px-10">
+            <section className="plate px-(--gutter) py-20 sm:px-10">
               <p className="stamp">seguir leyendo</p>
               <h2 className="mt-5 max-w-[18ch] text-d1">
                 Del mismo registro
@@ -466,7 +467,7 @@ export default async function BlogPostPage({ params }: Props) {
               sin volver a un índice de cien entradas, y un crawler tiene por
               dónde seguir sin depender del índice. Solo entre publicados, así
               que nunca apunta a un 404. */}
-          <section className="border-t border-hairline px-5 pb-20 pt-11 sm:px-10">
+          <section className="border-t border-hairline px-(--gutter) pb-20 pt-11 sm:px-10">
             <div className="grid gap-8 sm:grid-cols-2">
               <div className="min-w-0">
                 {vecinos.anterior ? (
