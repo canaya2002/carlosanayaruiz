@@ -53,7 +53,7 @@ interface Props {
  */
 const TITLE = 'Blog técnico: IA, código y SEO'
 const DESCRIPTION =
-  'Artículos técnicos sobre IA aplicada, ciberseguridad, desarrollo full-stack, SEO y cloud. Sin humo y con lo que sí funciona en producción. Nuevos cada semana.'
+  'Artículos técnicos de IA aplicada, ciberseguridad, desarrollo full-stack, SEO y cloud. Sin humo, con lo que sí funciona en producción. Nuevos cada semana.'
 
 export async function generateMetadata({ params }: Props): Promise<Metadata> {
   const { locale } = await params
