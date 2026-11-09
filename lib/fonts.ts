@@ -3,7 +3,7 @@
  * LAS TRES CARAS, DECLARADAS UNA SOLA VEZ
  *
  * Archivo (display y cuerpo), Chivo Mono (toda cifra y etiqueta) y Fraunces
- * itálica (la voz en primera persona, ~3% del tipo). Las tres son de foundry y
+ * (la voz en primera persona, ~3% del tipo). Las tres son de foundry y
  * gratuitas, y las tres se declaran AQUÍ y en ningún otro sitio.
  *
  * ── POR QUÉ ESTE ARCHIVO EXISTE ──
@@ -76,26 +76,58 @@ export const chivoMono = Chivo_Mono({
  * nunca datos, nunca un titular. Alrededor del 3% del tipo del sitio — la
  * oposición es el concepto, así que si crece deja de significar.
  *
- * Solo la itálica. Una serifa recta aquí competiría con el display; inclinada
- * se lee como algo escrito a mano al margen, que es el registro que se busca.
+ * ── RECTA E ITÁLICA, PORQUE EL MARCADO PIDE LAS DOS ──
+ * Aquí iba solo `style: ['italic']`, pero ~35 párrafos llevan `font-human`
+ * SIN `italic` —el lead de cada héroe, entre ellos el de la portada, que es
+ * el elemento LCP móvil—. Una familia sin cara recta no deja a ese texto en
+ * Fraunces recta: lo deja en la reserva (Times New Roman) mientras carga y
+ * después en la ITÁLICA, que el navegador toma prestada porque es la única
+ * cara que hay. Medido con `CSS.getPlatformFontsForNode`: el lead pintaba
+ * con la cara itálica. Era un accidente de la coincidencia de fuentes, no
+ * una decisión, y el destello Times → itálica en el LCP lo hacía visible.
+ * Lo que va en itálica a propósito lleva la clase `italic` y no cambia.
+ *
+ * ── `axes: ['opsz']`, Y POR ESO LA CARA RECTA NO CUESTA BYTES ──
+ * Antes iban también SOFT y WONK, y ninguna regla del sitio los toca: no
+ * hay un solo `font-variation-settings` con ellos. Sin el eje, Google fija
+ * su valor por omisión, que es lo mismo que el navegador usaba con el eje
+ * puesto y sin ajustar, así que la itálica no cambia de forma. Lo que sí
+ * cambia es el archivo. woff2 `latin`, medidos en fonts.gstatic.com:
+ *
+ *   antes  itálica opsz+wght+SOFT+WONK ...... 149 512 B
+ *   ahora  itálica opsz+wght ................  81 704 B
+ *          recta   opsz+wght ................  67 388 B
+ *          las dos ........................... 149 092 B  (−420 B)
+ *
+ * Una página que solo usa la recta baja 67 KB en vez de 149. `opsz` se
+ * queda: con él la cara ajusta el contraste al tamaño real (los leads van a
+ * 18–23 px) en lugar de dibujarse con el corte de titular.
  *
  * ── `preload: false`, Y ES LA MAYOR PALANCA DEL LCP MÓVIL ──
- * Es el woff2 más pesado de los tres (149 512 B con SOFT, WONK y opsz, más
+ * Era el woff2 más pesado de los tres (149 512 B con SOFT, WONK y opsz, más
  * que Archivo y Chivo Mono juntos) y pinta el ~3% del tipo, nunca el
  * titular. Precargado, se bajaba con prioridad alta ANTES del primer pintado
  * y competía por el ancho de banda con la hoja de estilos y con la cara del
  * `<h1>`. Medido con Lighthouse móvil en local, mediana de 3: ver el commit
  * «perf: quitar retraso de render del LCP móvil». Sin precarga se pide
  * cuando una regla la usa de verdad, y `swap` + `adjustFontFallback` pintan
- * mientras tanto la itálica de reserva con las métricas ajustadas.
+ * mientras tanto la reserva con las métricas ajustadas.
+ *
+ * Con la cara recta se volvió a medir, y sigue sin precarga: el lead de la
+ * portada —el LCP móvil— ahora espera 67 KB en vez de 149. Lighthouse móvil
+ * local, mediana de 3, antes → después:
+ *
+ *   /es          simulado 4 585 → 4 262 ms · devtools 1 812 → 1 812 ms
+ *   /es/sobre-mi simulado 4 058 → 3 605 ms · devtools 1 675 → 1 695 ms
+ *   CLS 0.0004 y 0 sin cambio en las dos.
  */
 export const fraunces = Fraunces({
   subsets: ['latin'],
   variable: '--font-fraunces',
   display: 'swap',
   preload: false,
-  style: ['italic'],
-  axes: ['SOFT', 'WONK', 'opsz'],
+  style: ['normal', 'italic'],
+  axes: ['opsz'],
   adjustFontFallback: true,
 })
 
