@@ -54,6 +54,41 @@ export function generateStaticParams() {
   return routing.locales.map((locale) => ({ locale }))
 }
 
+/**
+ * EL CLIENTE SOLO RECIBE CADENAS PLANAS — y si no, el build falla.
+ *
+ * En el navegador, `use-intl/format-message` está sustituido por `format-only`
+ * (ver `turbopack.resolveAlias` en next.config.ts): así el parser de ICU no
+ * viaja a las quince páginas. `format-only` devuelve una cadena tal cual, igual
+ * que el formateador completo con una cadena sin sintaxis; pero NO interpola.
+ * Una cadena de cliente con `{nombre}` saldría con las llaves literales, en
+ * silencio y solo en el navegador.
+ *
+ * La expresión es la misma con la que use-intl decide si una cadena necesita
+ * compilarse (`getPlainMessage`). Si alguna de un namespace de cliente la
+ * cumple, se lanza durante el prerender: el error sale en `next build`, no en
+ * producción. El arreglo es pasar ese texto ya resuelto como prop desde un
+ * componente de servidor, como hace el boletín.
+ */
+const NEEDS_ICU = /'[{}<#|']|[<{]/
+
+function assertPlainClientMessages(value: unknown, path: string): void {
+  if (typeof value === 'string') {
+    if (NEEDS_ICU.test(value)) {
+      throw new Error(
+        `La cadena de cliente «${path}» usa sintaxis ICU (${JSON.stringify(value)}). ` +
+          'En el navegador no se interpola: ver assertPlainClientMessages en app/[locale]/layout.tsx.'
+      )
+    }
+    return
+  }
+  if (value && typeof value === 'object') {
+    for (const [key, child] of Object.entries(value)) {
+      assertPlainClientMessages(child, `${path}.${key}`)
+    }
+  }
+}
+
 export const viewport: Viewport = {
   width: 'device-width',
   initialScale: 1,
@@ -185,6 +220,7 @@ export default async function LocaleLayout({
    * ⚠ Si un componente de cliente nuevo pide otro namespace, hay que añadirlo
    * aquí o `useTranslations` lanzará en el navegador. Es el precio de no
    * mandar el diccionario entero, y es un fallo ruidoso y no silencioso.
+   * Y sus cadenas tienen que ser planas: ver `assertPlainClientMessages`.
    */
   const CLIENT_NAMESPACES = [
     'nav',
@@ -199,6 +235,9 @@ export default async function LocaleLayout({
       messages[ns],
     ])
   )
+  for (const [ns, value] of Object.entries(clientMessages)) {
+    assertPlainClientMessages(value, `${locale}.${ns}`)
+  }
   const t = await getTranslations({ locale, namespace: 'a11y' })
 
   return (

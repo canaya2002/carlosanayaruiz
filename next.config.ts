@@ -190,6 +190,70 @@ const nextConfig: NextConfig = {
   distDir: process.env.NEXT_DIST_DIR ?? '.next',
 
   /**
+   * DOS MÓDULOS QUE EL NAVEGADOR DESCARGABA Y NO USABA. Los dos alias valen
+   * SOLO para el bundle del navegador (`browser`); el servidor no cambia.
+   *
+   * Medido con Lighthouse móvil en /es (2026-11): `legacy-javascript` marcaba
+   * 14 KiB y `unused-javascript` 26 KiB, todo en el chunk de React DOM.
+   */
+  turbopack: {
+    resolveAlias: {
+      /**
+       * ── LOS POLYFILLS QUE NINGÚN NAVEGADOR OBJETIVO NECESITA ──
+       * `next/dist/client/app-globals.js` importa SIEMPRE
+       * `../build/polyfills/polyfill-module` (trimStart/End,
+       * Symbol#description, flat, flatMap, Promise#finally, fromEntries, at,
+       * hasOwn, URL.canParse), sin mirar el `browserslist`. Por eso fijar un
+       * browserslist moderno NO los quitaba: el objetivo por defecto de Next 16
+       * ya es Chrome/Edge/Firefox 111 y Safari 16.4, y aun así viajaban.
+       * `false` resuelve el import a un módulo vacío.
+       *
+       * Y por eso NO hay `browserslist` en package.json. Se midió con
+       * `chrome/edge/firefox >= 111, safari/ios_saf >= 16.4`: la hoja de estilos
+       * sale idéntica y los chunks de JS del mismo tamaño, con la única
+       * diferencia de los ids de las Server Actions, que cambian en cada build.
+       * Declararlo no hace nada aquí y daría a entender que gobierna los
+       * polyfills, que es justo lo que no hace.
+       *
+       * Es seguro porque todos esos métodos existen en ese objetivo por
+       * defecto de Next, salvo `URL.canParse` (Chrome 120, Safari 17), y ningún
+       * código de cliente lo llama: el único uso dentro de Next es el
+       * hot-reloader de desarrollo. Si algún día uno lo necesita, el arreglo es
+       * `new URL` dentro de un try, no devolver todos los polyfills.
+       *
+       * La clave es la petición RELATIVA tal como la escribe Next. Si una
+       * versión nueva la renombra, el alias deja de casar EN SILENCIO y los
+       * polyfills vuelven (no se rompe nada: solo regresa el aviso). Se
+       * comprueba después de un build con
+       *   grep -l 'Array.prototype.flatMap' .next/static/chunks/*.js
+       * que no debe devolver nada. Antes del alias devolvía el chunk de React
+       * DOM.
+       */
+      '../build/polyfills/polyfill-module': { browser: false },
+
+      /**
+       * ── EL PARSER DE ICU NO VIAJA AL CLIENTE ──
+       * `NextIntlClientProvider` y el `Link` de next-intl importan `use-intl`,
+       * que importa `intl-messageformat` y sus dos parsers: ~31 kB sin
+       * comprimir en las quince páginas. En el cliente no se usaba NUNCA:
+       * `formatMessage` devuelve tal cual una cadena sin argumentos ni sintaxis
+       * ICU, y las cinco del cliente (`nav`, `a11y`, `services`, `footer`,
+       * `language`) lo son todas.
+       *
+       * `format-only` es la variante que el propio next-intl usa con
+       * `messages.precompile`, y con una cadena hace exactamente lo mismo:
+       * devolverla. La diferencia es que NO sabe interpolar `{valor}`.
+       * `assertPlainClientMessages` en `app/[locale]/layout.tsx` hace que el
+       * build falle si un namespace de cliente gana una cadena con sintaxis ICU,
+       * en vez de pintar las llaves literales en producción.
+       */
+      'use-intl/format-message': {
+        browser: 'use-intl/format-message/format-only',
+      },
+    },
+  },
+
+  /**
    * Transiciones de ruta con la View Transitions API nativa.
    *
    * Es la pieza que hace que navegar se sienta continuo en vez de un corte

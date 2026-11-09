@@ -2,8 +2,8 @@
 
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react'
 import { useTranslations } from 'next-intl'
+import { clsx } from 'clsx'
 import { Link, usePathname } from '@/i18n/navigation'
-import { cn } from '@/lib/utils'
 import { LanguageSwitcher } from '@/components/language-switcher'
 import type { Pathname, StaticPathname } from '@/i18n/routing'
 
@@ -163,8 +163,21 @@ const TRAJECTORY_HREFS: readonly Pathname[] = TRAJECTORY_ITEMS.map(
  * las dos cosas competían por decir lo mismo: una marca el estado, la otra el
  * puntero.
  */
+/**
+ * ── SIN COLOR DE TINTA, Y ES A PROPÓSITO: LO PONE EL ESTADO ──
+ * Este archivo es el único componente de cliente que usaba `cn()`, y `cn()`
+ * arrastraba `tailwind-merge` a las quince páginas: ~24 kB sin comprimir que se
+ * ejecutan al hidratar el nav solo para resolver UN conflicto, `text-ink-muted`
+ * contra `text-ink`. Ahora cada clase de color se elige en el sitio de uso
+ * —activo `text-ink`, en reposo `text-ink-muted`— y la lista nunca lleva dos.
+ *
+ * ⚠ Con `clsx` no hay quien resuelva conflictos: si una lista llevara dos
+ * colores de texto, ganaría el que el CSS generado declare después, no el que
+ * se escribió al final. No vuelvas a meter `cn()` en un componente de cliente;
+ * en uno de servidor no cuesta un byte al navegador.
+ */
 const NAV_LINK_BASE =
-  'group press relative inline-flex h-11 items-center whitespace-nowrap px-1 text-sm text-ink-muted transition-colors hover:text-ink'
+  'group press relative inline-flex h-11 items-center whitespace-nowrap px-1 text-sm transition-colors hover:text-ink'
 
 /**
  * Con la gota. Los grupos con desplegable NO la usan aquí: ahí la gota va en
@@ -487,7 +500,7 @@ export function Header() {
               de la página que hay detrás. */}
           <nav
             aria-label={ta('mainNav')}
-            className={cn(
+            className={clsx(
               // El nav conmuta en xl, NO en lg, y tiene que coincidir con el
               // `xl:hidden` de la hamburguesa: si difieren, entre 1024 y 1279px
               // se dibujan LOS DOS. Medido a 1024px con ambos visibles:
@@ -501,11 +514,9 @@ export function Header() {
             <Link
               href="/"
               aria-current={isCurrent('/') ? 'page' : undefined}
-              className={cn(
+              className={clsx(
                 NAV_LINK,
-                isCurrent('/')
-                  ? 'font-semibold text-ink'
-                  : 'text-ink-muted hover:text-ink'
+                isCurrent('/') ? 'font-semibold text-ink' : 'text-ink-muted'
               )}
             >
               {t('home')}
@@ -530,11 +541,9 @@ export function Header() {
                 href={item.href}
                 locale={item.soloEs ? 'es' : undefined}
                 aria-current={isCurrent(item.href) ? 'page' : undefined}
-                className={cn(
+                className={clsx(
                   NAV_LINK,
-                  isCurrent(item.href)
-                    ? 'font-semibold text-ink'
-                    : 'text-ink-muted hover:text-ink'
+                  isCurrent(item.href) ? 'font-semibold text-ink' : 'text-ink-muted'
                 )}
               >
                 {t(item.key)}
@@ -602,9 +611,9 @@ export function Header() {
               aria-expanded={menuOpen}
               aria-controls={MOBILE_PANEL_ID}
               aria-label={menuOpen ? t('closeMenu') : t('openMenu')}
-              className={cn(
-                'press inline-flex size-11 items-center justify-center text-ink-muted transition-colors hover:text-ink xl:hidden',
-                menuOpen && 'text-ink'
+              className={clsx(
+                'press inline-flex size-11 items-center justify-center transition-colors hover:text-ink xl:hidden',
+                menuOpen ? 'text-ink' : 'text-ink-muted'
               )}
             >
               {/* Tres reglas de 1 px —el vocabulario del riel— que se
@@ -932,12 +941,10 @@ function NavDropdown({
            solo por tener sus siete enlaces visibles. El enlace navega igual. */
         prefetch={false}
         aria-current={isCurrent(group.hub) ? 'page' : undefined}
-        className={cn(
+        className={clsx(
           NAV_LINK_BASE,
           'pr-0.5',
-          group.active
-            ? 'font-semibold text-ink'
-            : 'text-ink-muted hover:text-ink'
+          group.active ? 'font-semibold text-ink' : 'text-ink-muted'
         )}
       >
         {group.label}
@@ -959,7 +966,7 @@ function NavDropdown({
         aria-expanded={open}
         aria-controls={group.panelId}
         aria-label={`${group.label}: ${submenuLabel}`}
-        className={cn(
+        className={clsx(
           /* El chevron es parte de SU etiqueta, no un control suelto.
              Medido: como botón de 44px pegado al enlace, el hueco óptico
              entre textos era 28 · 76 · 76 · 28 · 28 — los dos grupos con
@@ -981,9 +988,9 @@ function NavDropdown({
              elemento posicionado se pinta encima de uno que no lo está. Sin
              esto la etiqueta tapaba los 4 px que se solapan y axe medía un
              objetivo de 20 px «parcialmente oculto». */
-          'press relative -ml-1 -mr-1.5 inline-flex h-11 w-6 items-center justify-center text-ink-subtle transition-colors hover:text-ink',
+          'press relative -ml-1 -mr-1.5 inline-flex h-11 w-6 items-center justify-center transition-colors hover:text-ink',
           'group-hover/nav:text-ink',
-          open && 'text-ink'
+          open ? 'text-ink' : 'text-ink-subtle'
         )}
       >
         {/* Una punta de pluma: dos reglas de 1 px que se encuentran en un
@@ -1031,7 +1038,7 @@ function NavDropdown({
            del nav, así que su línea de luz superior continúa el menisco del
            cristal en vez de flotar dos píxeles por debajo como un objeto
            aparte. */
-        className={cn(
+        className={clsx(
           'drop-unroll drop-panel absolute left-0 top-full z-10 origin-top py-1',
           group.width
         )}
@@ -1104,7 +1111,7 @@ function NavUnderline({
   return (
     <span
       aria-hidden="true"
-      className={cn(
+      className={clsx(
         'pointer-events-none absolute inset-x-1 bottom-2 h-px origin-left bg-paper transition-transform duration-300',
         active ? 'scale-x-100' : 'scale-x-0',
         className
@@ -1132,7 +1139,7 @@ function MobileLink({
         locale={soloEs ? 'es' : undefined}
       onClick={onNavigate}
       aria-current={current ? 'page' : undefined}
-      className={cn(
+      className={clsx(
         'press flex min-h-12 items-center justify-between gap-3 rounded-xl px-2 text-base',
         current
           ? 'font-semibold text-ink'
