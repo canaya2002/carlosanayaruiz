@@ -3169,6 +3169,71 @@
     text-decoration-thickness: 2px;
     text-underline-offset: 0.17em;
   }
+
+  /* CTA de texto y mailto de cierre. El glifo no cambia: el área táctil
+     crece a 44 px y el margen negativo devuelve ese alto al flujo, así que
+     la línea de base de alrededor no se mueve. `inline-block` y no flex,
+     porque el enlace tiene que poder partirse. */
+  .link-stylus.text-d3,
+  .hit-44 {
+    display: inline-block;
+    max-width: 100%;
+    min-height: 2.75rem;
+    padding-block: max(0px, calc((2.75rem - 1lh) / 2));
+    margin-block: calc((1lh - 2.75rem) / 2);
+  }
+
+  .link-stylus.text-d3:focus-visible,
+  .hit-44:focus-visible {
+    outline: 2px solid var(--gold);
+    outline-offset: 2px;
+  }
+
+  /* El pin del mapa. 44 px en píxeles de pantalla: el viewBox no sirve,
+     porque un radio fijo se encoge con el mapa. El anillo es el dorado
+     de marca. La etiqueta va sobre papel para que el contraste no
+     dependa de si cae encima del país o del océano. */
+  .map-pin {
+    position: absolute;
+    z-index: 2;
+    width: 2.75rem;
+    height: 2.75rem;
+    transform: translate(-50%, -50%);
+    border-radius: 999px;
+  }
+
+  .map-pin:focus-visible {
+    outline: 2px solid var(--gold);
+    outline-offset: 2px;
+  }
+
+  .map-pin-label {
+    position: absolute;
+    left: calc(100% + 0.35rem);
+    top: 50%;
+    transform: translateY(-50%);
+    opacity: 0;
+    white-space: nowrap;
+    pointer-events: none;
+    padding-inline: 0.3rem;
+    background-color: var(--paper);
+    color: var(--soot);
+    font-family: var(--face-display);
+    font-size: 0.875rem;
+    font-weight: 600;
+    line-height: 1.4;
+  }
+
+  .map-pin:hover .map-pin-label,
+  .map-pin:focus-visible .map-pin-label {
+    opacity: 1;
+  }
+}
+
+@media (hover: none) {
+  .map-pin-label {
+    opacity: 1;
+  }
 }
 
 /* ═══════════════════════════════════════════════════════════════

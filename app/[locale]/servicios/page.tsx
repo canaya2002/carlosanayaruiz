@@ -581,7 +581,7 @@ export default async function ServicesHubPage({ params }: Props) {
                 {t('ctaPrimary')} →
               </Link>
               <a
-                className="link-stylus font-mono text-sm"
+                className="link-stylus hit-44 font-mono text-sm"
                 href={`mailto:${NAP.email}`}
               >
                 {NAP.email}
