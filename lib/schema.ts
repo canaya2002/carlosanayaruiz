@@ -586,7 +586,6 @@ export function generateProfessionalServiceSchema(locale: Locale): JsonLdNode {
         '@type': 'ContactPoint',
         contactType: locale === 'en' ? 'Instant messaging' : 'Mensajería',
         telephone: NAP.phone,
-        url: `https://wa.me/${NAP.phone.replace(/\D/g, '')}`,
         availableLanguage: AVAILABLE_LANGUAGES,
       },
     ],

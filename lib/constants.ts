@@ -58,14 +58,6 @@ export const NAP = {
 } as const
 
 /**
- * El WhatsApp de los CTA-botón de /sobre-mi y /cv. Es el ÚNICO número de
- * contacto vigente (55 6920 1203, solo WhatsApp) y va escrito tal cual: NAP
- * ya lleva este mismo número (2026-10-30); este enlace queda fijo y
- * apunta al mismo WhatsApp.
- */
-export const WHATSAPP_URL = 'https://wa.me/525569201203'
-
-/**
  * Identity links. `rel="me"` on these plus `sameAs` in the Person schema is
  * what lets Google reconcile the profiles into one entity.
  *

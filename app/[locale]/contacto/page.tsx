@@ -270,13 +270,9 @@ export default async function ContactPage({ params }: Props) {
                   >
                     {NAP.email} →
                   </a>
-                  <a
-                    className="link-stylus inline-flex min-h-11 items-center"
-                    href={`https://wa.me/${NAP.phone.slice(1)}`}
-                    data-numeric=""
-                  >
-                    {NAP.phoneDisplay} →
-                  </a>
+                  <span className="inline-flex min-h-11 items-center">
+                    WhatsApp 55 6920 1203
+                  </span>
                 </p>
 
                 <p className="stamp mt-8">{t('responseTime')}</p>
@@ -445,13 +441,9 @@ export default async function ContactPage({ params }: Props) {
                   <div className="band">
                     <dt className="stamp">{en ? 'Phone' : 'Teléfono'}</dt>
                     <dd className="mt-2">
-                      <a
-                        href={`https://wa.me/${NAP.phone.slice(1)}`}
-                        data-numeric=""
-                        className="link-stylus inline-flex min-h-11 items-center"
-                      >
-                        {NAP.phoneDisplay}
-                      </a>
+                      <span className="inline-flex min-h-11 items-center">
+                        WhatsApp 55 6920 1203
+                      </span>
                     </dd>
                   </div>
 

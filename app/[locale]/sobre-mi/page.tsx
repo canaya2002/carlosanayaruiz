@@ -13,7 +13,7 @@ import { getExperiences } from '@/data/experience'
 import { getEducation } from '@/data/education'
 import { getSkillCategories } from '@/data/skills'
 import { getAwards } from '@/data/awards'
-import { NAP, SEO_IMAGES, SOCIAL_LINKS, WHATSAPP_URL } from '@/lib/constants'
+import { NAP, SEO_IMAGES, SOCIAL_LINKS } from '@/lib/constants'
 import { generatePageMetadata } from '@/lib/seo'
 import { generateProfilePageGraph } from '@/lib/schema'
 import { formatShortDate } from '@/lib/utils'
@@ -302,17 +302,7 @@ export default async function AboutPage({ params }: Props) {
                     pantalla eran cuatro enlaces de perfil. `whitespace-normal`
                     en el secundario porque a 390 px no cabe en una línea. */}
                 <p className="mt-10 flex flex-wrap items-center gap-x-4 gap-y-3">
-                  <a
-                    className="btn-primary"
-                    href={WHATSAPP_URL}
-                    target="_blank"
-                    rel="noopener"
-                  >
-                    {en ? 'Message me on WhatsApp' : 'Escríbeme por WhatsApp'}
-                    <span className="btn-arrow" aria-hidden="true">
-                      →
-                    </span>
-                  </a>
+                  <span>WhatsApp 55 6920 1203</span>
                   <Link
                     className="btn-secondary whitespace-normal text-left"
                     href="/revision-ficha-google"
