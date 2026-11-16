@@ -1,3 +1,4 @@
+import { NextRequest } from 'next/server'
 import createMiddleware from 'next-intl/middleware'
 import { routing } from './i18n/routing'
 
@@ -13,7 +14,21 @@ import { routing } from './i18n/routing'
  * from the routing config the navigation helpers use.
  * ════════════════════════════════════════════════════════════════
  */
-export default createMiddleware(routing)
+const handleI18n = createMiddleware(routing)
+
+export default function middleware(request: NextRequest) {
+  const response = handleI18n(request)
+  /* El 404 raíz no tiene segmento `[locale]`. next-intl ya deja el idioma
+     en la petición; el path es el respaldo para elegir el idioma del
+     documento cuando esa cabecera no llega. Solo se añade a la lista de
+     override que next-intl ya creó: no se reemplaza. */
+  const override = response.headers.get('x-middleware-override-headers')
+  if (override && !override.split(',').some((key) => key.trim() === 'x-pathname')) {
+    response.headers.set('x-middleware-request-x-pathname', request.nextUrl.pathname)
+    response.headers.set('x-middleware-override-headers', `${override},x-pathname`)
+  }
+  return response
+}
 
 export const config = {
   /**

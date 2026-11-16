@@ -13,20 +13,20 @@ import type { Locale } from '@/data/types'
  *
  * ── 1. CERO CLS ──
  * Las cinco frases viven en LA MISMA celda de grid, todas presentes a la
- * vez, y solo cambia la opacidad. La celda mide lo que la frase más
- * larga, así que nada refluye nunca. Rotar el texto de un titular de
- * 120 px con un reflujo sería una regresión de CLS medible — en la
- * portada de alguien que vende Core Web Vitals.
+ * vez, y solo cambia `visibility` — nunca la opacidad, porque un cruce a
+ * media tinta cae por debajo de 4.5:1 y Lighthouse lo cuenta. La celda
+ * mide lo que la frase más larga, así que nada refluye nunca. Rotar el
+ * texto de un titular de 120 px con un reflujo sería una regresión de
+ * CLS medible — en la portada de alguien que vende Core Web Vitals.
  *
  * ── 2. UN SOLO h1 INDEXABLE ──
- * Solo la frase canónica es un nodo de texto. Las otras cuatro viajan en
- * `data-w` y las pinta CSS con `content: attr()`. El contenido generado
- * no entra en `innerText` ni se indexa, así que el `<h1>` sigue siendo
+ * Solo la frase canónica es un nodo de texto, en un `span` para lectores
+ * (`sr-only`). Las cinco frases visibles viajan en `data-w` y las pinta
+ * CSS con `content: attr()`, y van `aria-hidden`: el nombre accesible del
+ * h1 no cambia cuando el ciclo avanza. El contenido generado no entra en
+ * `innerText` ni se indexa, así que el `<h1>` sigue siendo
  * «Hola. Mido lo que tu sitio tarda en existir.» y no las cinco frases
  * pegadas una detrás de otra.
- *
- * `aria-hidden` arreglaría el lector de pantalla y no arreglaría nada
- * para un crawler. Ya se aprendió con el saludo.
  *
  * Coste: 0 KB de JavaScript. Sin timers, sin estado, sin hidratación.
  * ════════════════════════════════════════════════════════════════
@@ -76,9 +76,14 @@ export function Morph({ locale }: { locale: Locale }) {
          una tanda de keyframes por frase. */
       style={{ '--n': cycle.length + 1 } as React.CSSProperties}
     >
-      {/* La que importa: texto real, visible desde el primer frame, y el
-          estado al que vuelve el ciclo. */}
-      <span data-home>{home}</span>
+      {/* Nombre accesible estable. No entra en el ciclo: si la frase
+          visible pasara a `visibility: hidden`, algunos navegadores la
+          sacarían del árbol y el h1 se quedaría sin cierre. */}
+      <span className="sr-only">{home}</span>
+
+      {/* Visible desde el primer frame, opaca, y el estado al que vuelve
+          el ciclo. `aria-hidden` porque el nombre ya está en el sr-only. */}
+      <span aria-hidden="true" data-home data-w={home} />
 
       {cycle.map((phrase, i) => (
         <span

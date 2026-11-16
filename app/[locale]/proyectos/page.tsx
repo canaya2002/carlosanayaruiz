@@ -789,13 +789,13 @@ export default async function ProyectosPage({ params }: Props) {
             <p className="mt-10 flex flex-wrap items-baseline gap-x-8 gap-y-3">
               <Link
                 href="/contacto"
-                className="text-d3 underline decoration-1 underline-offset-[0.3em] transition-opacity hover:opacity-80"
+                className="hit-44 text-d3 underline decoration-1 underline-offset-[0.3em] transition-opacity hover:opacity-80"
               >
                 {en ? 'Start a project' : 'Empezar un proyecto'} →
               </Link>
               <a
                 href={`mailto:${NAP.email}`}
-                className="font-mono text-sm underline decoration-1 underline-offset-[0.3em] transition-opacity hover:opacity-80"
+                className="hit-44 font-mono text-sm underline decoration-1 underline-offset-[0.3em] transition-opacity hover:opacity-80"
               >
                 {NAP.email}
               </a>

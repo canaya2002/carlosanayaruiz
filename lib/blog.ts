@@ -308,6 +308,19 @@ export function blogUrl(): string {
 }
 
 /**
+ * Tarjeta del índice (`app/[locale]/blog/opengraph-image.tsx`, id `card`).
+ * La usa un artículo que no tiene portada: el 010 no trae archivo y sin
+ * esto la página declara `summary_large_image` sin ninguna imagen.
+ * No se inventa una portada; es la misma tarjeta que ya sirve `/es/blog`.
+ */
+export const BLOG_OG_FALLBACK = {
+  url: `${SITE_CONFIG.url}/es/blog/opengraph-image/card`,
+  width: 1200,
+  height: 630,
+  alt: 'Carlos Anaya Ruiz — blog técnico sobre IA, seguridad, desarrollo y SEO',
+} as const
+
+/**
  * ── POR QUÉ EL BLOG ES SOLO EN ESPAÑOL ──
  * Los 100 artículos están escritos en español para el mercado de México y
  * LATAM. Servir el mismo texto español bajo `/en/blog` y declararlo como

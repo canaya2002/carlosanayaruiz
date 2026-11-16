@@ -72,6 +72,53 @@ const VENTANA_MS = 8 * 24 * 60 * 60 * 1000
  */
 const MAX_CORREOS = 2
 
+function origenDelSitio(): string {
+  return (
+    envOpt(process.env.NEXT_PUBLIC_SITE_URL) ??
+    (envOpt(process.env.VERCEL_PROJECT_PRODUCTION_URL)
+      ? `https://${process.env.VERCEL_PROJECT_PRODUCTION_URL}`
+      : SITE_CONFIG.url)
+  )
+}
+
+/**
+ * Pide `/sitemap.xml` hasta que el XML traiga los slugs de la ventana.
+ * El primer GET después de `revalidatePath` puede ser el documento viejo:
+ * esa petición es la que arranca la regeneración, igual que en los artículos.
+ */
+async function calentarSitemap(base: string, slugs: readonly string[]) {
+  const url = `${base}/sitemap.xml`
+  const INTENTOS = 3
+  const ESPERA_MS = 800
+  let status: number | string = 'sin intentos'
+  let cuerpo = ''
+
+  for (let intento = 1; intento <= INTENTOS; intento++) {
+    try {
+      const r = await fetch(url, {
+        cache: 'no-store',
+        headers: { 'user-agent': 'carlosanayaruiz.com/cron-warmup' },
+        signal: AbortSignal.timeout(5000),
+      })
+      status = r.status
+      cuerpo = r.ok ? await r.text() : ''
+      const faltan = slugs.filter((slug) => !cuerpo.includes(`/es/blog/${slug}`))
+      if (r.status === 200 && faltan.length === 0) {
+        return { ok: true as const, status, intentos: intento, faltan }
+      }
+    } catch (e) {
+      status = e instanceof Error ? e.name : 'error'
+      console.error(`[cron] fallo al calentar ${url} (intento ${intento})`, e)
+    }
+    if (intento < INTENTOS) {
+      await new Promise((res) => setTimeout(res, ESPERA_MS))
+    }
+  }
+
+  const faltan = slugs.filter((slug) => !cuerpo.includes(`/es/blog/${slug}`))
+  return { ok: false as const, status, intentos: INTENTOS, faltan }
+}
+
 export async function GET(request: Request) {
   // envOpt: un CRON_SECRET en blanco no puede considerarse configurado, o
   // el 401 se convertiría en «Bearer  » y cualquiera podría dispararlo.
@@ -123,6 +170,22 @@ export async function GET(request: Request) {
     }
   }
 
+  /* El sitemap es un route handler (`app/sitemap.xml/route.ts`).
+     `revalidatePath('/sitemap.xml')` purga su caché, pero el primer GET
+     puede servir el XML viejo mientras regenera — el mismo mecanismo que
+     el 404 obsoleto de un artículo. Se calienta aquí, antes del correo, y
+     solo se da por bueno cuando los slugs de la ventana ya están en el
+     cuerpo. Sin slugs en la ventana basta un 200. */
+  const base = origenDelSitio()
+  const slugsSitemap = recientes.map((post) => post.slug)
+  const sitemapCalentado = await calentarSitemap(base, slugsSitemap)
+  if (!sitemapCalentado.ok) {
+    console.error(
+      '[cron] el sitemap no incluye los artículos de la ventana',
+      sitemapCalentado
+    )
+  }
+
   /* 2. CALENTAR la página antes de anunciarla.
         Las 100 rutas están prerenderizadas como 404 y una entrada vencida
         dentro de su `expire` se sirve obsoleta mientras regenera. Pedirla
@@ -135,11 +198,6 @@ export async function GET(request: Request) {
   /** Techo de tiempo para TODO el calentado, no por artículo: con varios
    *  pendientes, cuatro intentos cada uno se comerían la invocación. */
   const PRESUPUESTO_MS = 45000
-  const base =
-    envOpt(process.env.NEXT_PUBLIC_SITE_URL) ??
-    (envOpt(process.env.VERCEL_PROJECT_PRODUCTION_URL)
-      ? `https://${process.env.VERCEL_PROJECT_PRODUCTION_URL}`
-      : SITE_CONFIG.url)
 
   const t0Calentado = Date.now()
 
@@ -226,6 +284,13 @@ export async function GET(request: Request) {
      una correcta — y eso es cómo se tarda una semana en enterarse. */
   const problemas = [
     ...falloRevalidacion.map((r) => `revalidación falló: ${r}`),
+    ...(sitemapCalentado.ok
+      ? []
+      : [
+          `el sitemap responde ${sitemapCalentado.status} y le faltan: ${
+            sitemapCalentado.faltan.join(', ') || '(sin cuerpo)'
+          }`,
+        ]),
     ...calentadas
       .filter((c) => c.status !== 200)
       .map((c) => `la página de ${c.slug} responde ${c.status}`),
@@ -239,6 +304,7 @@ export async function GET(request: Request) {
       ok: problemas.length === 0,
       momento: new Date(ahora).toISOString(),
       revalidadas: rutas,
+      sitemap: sitemapCalentado,
       enVentana: recientes.map((p) => p.slug),
       calentadas,
       omitidos: omitidos.length ? omitidos : undefined,

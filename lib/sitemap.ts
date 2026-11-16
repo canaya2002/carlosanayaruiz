@@ -49,13 +49,10 @@ const CONTENT_UPDATED = '2026-08-24'
  * ── POR QUÉ ESTE SITEMAP SE REVALIDA ──
  * El blog publica un artículo cada martes y cada viernes, y una URL que no
  * está en el sitemap el día que se publica pierde justo la ventana en la que
- * el descubrimiento es más rápido. Con esto, el sitemap se regenera y la URL
- * nueva entra sin necesidad de un despliegue.
- *
- * 1800 s es media hora: el calendario publica a las 14:00 UTC, así que en el
- * peor caso la URL entra al sitemap a las 14:30 del mismo día.
+ * el descubrimiento es más rápido. `revalidate` vive en
+ * `app/sitemap.xml/route.ts` (1800 s): esta función solo arma las entradas,
+ * y recibe `now` para que un artículo futuro no pueda colarse en una prueba.
  */
-export const revalidate = 1800
 
 type ChangeFrequency = NonNullable<
   MetadataRoute.Sitemap[number]['changeFrequency']
@@ -157,7 +154,9 @@ function alternates(key: RouteKey) {
   }
 }
 
-export default function sitemap(): MetadataRoute.Sitemap {
+export function buildSitemapEntries(
+  now: number = Date.now()
+): MetadataRoute.Sitemap {
   // Iterating ROUTES (not PAGE_META) keeps the emitted order tied to the
   // declaration order in the single source of truth.
   const keys = Object.keys(ROUTES) as RouteKey[]
@@ -190,7 +189,7 @@ export default function sitemap(): MetadataRoute.Sitemap {
   /* Los publicados se calculan UNA vez: los usan el índice y la lista de
      artículos, y llamar dos veces a `getPublishedPosts()` era pagar el filtro
      de cien entradas por duplicado. */
-  const publicados = getPublishedPosts()
+  const publicados = getPublishedPosts(now)
 
   const indiceBlog = {
     url: url('blog', 'es'),
@@ -272,4 +271,58 @@ export default function sitemap(): MetadataRoute.Sitemap {
   }))
 
   return [...paginas, ...fichas, indiceBlog, ...articulos]
+}
+
+/**
+ * El mismo documento que emitía el metadata route de Next
+ * (`resolveSitemap`): `loc`, luego los `xhtml:link`, luego `lastmod`,
+ * `changefreq` y `priority`. Un `&` suelto invalidaría el XML; las URLs de
+ * este sitio no lo traen, y escaparlo no cambia el texto cuando no está.
+ */
+function xml(s: string): string {
+  return s
+    .replace(/&/g, '&amp;')
+    .replace(/</g, '&lt;')
+    .replace(/>/g, '&gt;')
+    .replace(/"/g, '&quot;')
+}
+
+export function renderSitemapXml(entries: MetadataRoute.Sitemap): string {
+  const hasAlternates = entries.some(
+    (item) => Object.keys(item.alternates ?? {}).length > 0
+  )
+  let content = '<?xml version="1.0" encoding="UTF-8"?>\n'
+  content += '<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9"'
+  content += hasAlternates
+    ? ' xmlns:xhtml="http://www.w3.org/1999/xhtml">\n'
+    : '>\n'
+
+  for (const item of entries) {
+    content += '<url>\n'
+    content += `<loc>${xml(item.url)}</loc>\n`
+    const languages = item.alternates?.languages
+    if (languages) {
+      for (const [language, href] of Object.entries(languages)) {
+        if (typeof href === 'string') {
+          content += `<xhtml:link rel="alternate" hreflang="${xml(language)}" href="${xml(href)}" />\n`
+        }
+      }
+    }
+    if (item.lastModified) {
+      const serialized =
+        item.lastModified instanceof Date
+          ? item.lastModified.toISOString()
+          : String(item.lastModified)
+      content += `<lastmod>${xml(serialized)}</lastmod>\n`
+    }
+    if (item.changeFrequency) {
+      content += `<changefreq>${item.changeFrequency}</changefreq>\n`
+    }
+    if (typeof item.priority === 'number') {
+      content += `<priority>${item.priority}</priority>\n`
+    }
+    content += '</url>\n'
+  }
+  content += '</urlset>\n'
+  return content
 }

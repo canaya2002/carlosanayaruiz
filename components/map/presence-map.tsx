@@ -217,32 +217,21 @@ export function PresenceMap({ locale }: Props) {
           )
         })}
 
-        {/* Pines exactos: solo donde la ciudad se conoce. */}
+        {/* El punto visible. El enlace de verdad es el `<a>` de 44 px que
+            va encima del SVG: un círculo de r=4.5 en este viewBox mide unos
+            6 px en un teléfono. El dibujo no recibe el puntero. */}
         {pinned.map((company) => {
           const { x, y } = projectLatLon(company.coords)
           return (
-            <Link
-              key={company.slug}
-              href={{ pathname: '/proyectos/[slug]', params: { slug: company.slug } }}
-              className="group outline-none"
-              aria-label={`${company.name} — ${company.city}`}
-            >
-              {/* Halo. `pointer-events: none` para que no agrande el objetivo
-                  de clic más allá del punto visible. */}
+            <g key={company.slug} aria-hidden="true" className="pointer-events-none">
               <circle
                 cx={x}
                 cy={y}
                 r={9}
                 fill="var(--ash)"
                 opacity={0.22}
-                /* `transform-box: fill-box` ancla el escalado al centro del
-                   propio círculo; sin esto el origen sería el (0,0) del
-                   viewBox y el halo se desplazaría al crecer. */
                 style={{ transformBox: 'fill-box', transformOrigin: 'center' }}
-                className="pointer-events-none transition-[opacity,transform] duration-300 group-hover:scale-125 group-hover:opacity-40"
               />
-              {/* El punto. r=5 sobre un viewBox de 1000 escala a un objetivo
-                  cómodo en cualquier ancho. */}
               <circle
                 cx={x}
                 cy={y}
@@ -250,41 +239,40 @@ export function PresenceMap({ locale }: Props) {
                 fill="var(--paper)"
                 stroke="var(--soot)"
                 strokeWidth={1.8}
-                /* Solo `fill`. Transicionar «todo» habría incluido la geometría
-                   (`r`, `cx`, `cy`), que no se compone.
-                   El nombre de esa utilidad prohibida NO se escribe aquí a
-                   propósito: Tailwind v4 escanea el texto crudo de los
-                   archivos, así que mencionarla —aunque sea en un comentario—
-                   hacía que generara la clase de verdad en la hoja servida, y
-                   quedaba disponible para que alguien la usara sin darse
-                   cuenta. Verificado: la clase desapareció del CSS servido al
-                   reescribir esta línea. */
-                /* Sin transición de `fill`, y es un arreglo: iba a
-                   `--cyan-ink`, que está puenteado a `--ink-muted` (#b3aea0).
-                   El punto en reposo es PAPEL (#ebe6d9), así que al pasar el
-                   puntero se APAGABA — el hover iba al revés. La respuesta la
-                   da el halo, que crece y sube de opacidad, más la etiqueta con
-                   el nombre que aparece al lado. El punto no necesita cambiar:
-                   ya es el tono más claro que este sistema tiene. */
               />
-              {/* Etiqueta al pasar el mouse o al enfocar con teclado. */}
-              <text
-                x={x + 9}
-                y={y + 3}
-                className="pointer-events-none fill-[var(--ink)] font-sans opacity-0 transition-opacity duration-200 group-hover:opacity-100 group-focus-visible:opacity-100"
-                fontSize={14}
-                fontWeight={600}
-                stroke="var(--soot)"
-                strokeWidth={3}
-                paintOrder="stroke"
-              >
-                {company.name}
-              </text>
-            </Link>
+            </g>
           )
         })}
         </g>
       </svg>
+      {/* Un enlace por pin, en píxeles de pantalla y no en unidades del
+          viewBox, para que el objetivo mida 44×44 en 390 y en 1440. Si dos
+          fichas comparten coordenada, el segundo baja un objetivo entero:
+          si no, el de encima se queda con los dos toques. */}
+      {pinned.map((company, index) => {
+        const { x, y } = projectLatLon(company.coords)
+        const sameBefore = pinned
+          .slice(0, index)
+          .filter(
+            (other) =>
+              other.coords[0] === company.coords[0] &&
+              other.coords[1] === company.coords[1]
+          ).length
+        return (
+          <Link
+            key={company.slug}
+            href={{ pathname: '/proyectos/[slug]', params: { slug: company.slug } }}
+            className="map-pin"
+            aria-label={`${company.name} — ${company.city}`}
+            style={{
+              left: `${(x / MAP_VIEWBOX.width) * 100}%`,
+              top: `calc(${(y / MAP_VIEWBOX.height) * 100}% + ${sameBefore * 48}px)`,
+            }}
+          >
+            <span className="map-pin-label">{company.name}</span>
+          </Link>
+        )
+      })}
       </div>
 
       {/* Leyenda. Es el contenido accesible de verdad: los registros sin
