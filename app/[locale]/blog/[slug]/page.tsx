@@ -17,6 +17,7 @@ import {
   pathForPost,
   postUrl,
   formatPostDate,
+  BLOG_OG_FALLBACK,
 } from '@/lib/blog'
 import { getServices } from '@/data/services'
 import { generateBlogPostGraph } from '@/lib/blog-schema'
@@ -129,29 +130,26 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
       authors: [SITE_CONFIG.url],
       section: post.cluster,
       tags: [...post.tags],
-      ...(post.cover
-        ? {
-            images: [
-              {
-                url: `${SITE_CONFIG.url}${post.cover}`,
-                width: 1600,
-                height: 900,
-                alt: post.coverAlt ?? post.title,
-              },
-            ],
-          }
-        : {}),
+      images: post.cover
+        ? [
+            {
+              url: `${SITE_CONFIG.url}${post.cover}`,
+              width: 1600,
+              height: 900,
+              alt: post.coverAlt ?? post.title,
+            },
+          ]
+        : [BLOG_OG_FALLBACK],
     },
     twitter: {
       card: 'summary_large_image',
       title: post.seoTitle ?? post.title,
       description: post.description,
-      /* Sin `images` propio, a propósito. Declarado como cadena suelta se
-         perdía el `alt`, y los artículos eran las ÚNICAS páginas del sitio
-         sin `twitter:image:alt`. Las 16 rutas sí lo llevan porque
-         `lib/seo.ts` no declara `twitter.images` y Next hereda el objeto
-         completo de `openGraph.images`, que trae url, width, height y alt.
-         Aquí ocurre lo mismo ahora. */
+      /* Con portada no se declara `images`: Next hereda el objeto completo
+         de `openGraph.images` (url, width, height y alt). Sin portada sí se
+         declara, con la tarjeta del índice, para que twitter:image no
+         dependa de esa herencia. */
+      ...(post.cover ? {} : { images: [BLOG_OG_FALLBACK] }),
     },
   }
 }

@@ -1,6 +1,6 @@
 import type { BlogPost } from '@/data/blog'
 import type { FaqPair } from '@/lib/blog-render'
-import { postUrl, blogUrl } from '@/lib/blog'
+import { postUrl, blogUrl, BLOG_OG_FALLBACK } from '@/lib/blog'
 import { SITE_CONFIG, SEO_IMAGES } from '@/lib/constants'
 import {
   generateBreadcrumbSchema,
@@ -60,17 +60,20 @@ function articleNode(post: BlogPost, faq: readonly FaqPair[]): JsonLdNode {
     keywords: [post.keyword, ...post.tags].join(', '),
     wordCount: post.words,
     timeRequired: `PT${post.readingMinutes}M`,
-    ...(post.cover
+    image: post.cover
       ? {
-          image: {
-            '@type': 'ImageObject',
-            url: `${SITE_CONFIG.url}${post.cover}`,
-            width: 1600,
-            height: 900,
-            ...(post.coverAlt ? { caption: post.coverAlt } : {}),
-          },
+          '@type': 'ImageObject',
+          url: `${SITE_CONFIG.url}${post.cover}`,
+          width: 1600,
+          height: 900,
+          ...(post.coverAlt ? { caption: post.coverAlt } : {}),
         }
-      : {}),
+      : {
+          '@type': 'ImageObject',
+          url: BLOG_OG_FALLBACK.url,
+          width: BLOG_OG_FALLBACK.width,
+          height: BLOG_OG_FALLBACK.height,
+        },
     ...(faq.length
       ? { mainEntity: { '@id': `${url}#faq` } }
       : {}),
