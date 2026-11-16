@@ -33,12 +33,12 @@ import { getAwards } from '@/data/awards'
  * de leerse como cinta.
  *
  * ── EL BUCLE ──
- * Igual que `<Ribbon>`: el contenido va duplicado y la pista se desplaza el
- * 50% exacto, así que al terminar la segunda copia está donde estaba la
- * primera. Para que el empalme no entre en cuadro, UNA copia tiene que ser
- * más ancha que la pantalla; con ocho documentos no lo es, así que la lista
- * se repite hasta pasar de `MIN_COPY_PX`. El ancho se estima del alto de la
- * cinta y de la proporción REAL de cada archivo, que ya vive en los datos.
+ * Dos copias y `translateX(-50%)`. Con las dos listas iguales, el salto
+ * del ciclo cae exactamente donde empezó la segunda: no hace falta un
+ * tercer juego. Repetir hasta `MIN_COPY_PX` pintaba cuatro copias —32
+ * `<img>`— y el `sizes` fijo en 352 px pedía la variante de 640 para un
+ * documento que se muestra a ~262 px. Una copia de los ocho ya pasa de
+ * 2 000 px, más ancha que el escritorio en el que se lee.
  * ════════════════════════════════════════════════════════════════
  */
 
@@ -46,12 +46,6 @@ import { getAwards } from '@/data/awards'
 const STRIP_H = 176
 /** Separación entre documentos, en px. Coincide con el `gap` del CSS. */
 const GAP_PX = 24
-/**
- * Una copia tiene que superar el viewport más ancho que nos importa con
- * holgura. 2400 px cubre 1920 y deja margen para que el empalme nunca
- * aparezca.
- */
-const MIN_COPY_PX = 2400
 /**
  * Píxeles por segundo. Más lento que la cinta de nombres (38) a propósito:
  * aquí lo que pasa no son etiquetas de once píxeles sino documentos de
@@ -108,9 +102,9 @@ export async function DocStrip({ label }: { label: string }) {
     (w, d) => w + (STRIP_H * d.width) / d.height + GAP_PX,
     0
   )
-  const repeats = Math.max(1, Math.ceil(MIN_COPY_PX / Math.max(unitPx, 1)))
-  const copy = Array.from({ length: repeats }, () => docs).flat()
-  const seconds = Math.round((unitPx * repeats) / SPEED_PX_S)
+  /* Una sola copia en cada lista. La segunda `<ul>` es el duplicado del
+     bucle; repetir dentro de la primera volvía a duplicar los `<img>`. */
+  const seconds = Math.round(unitPx / SPEED_PX_S)
 
   return (
     <div
@@ -119,16 +113,18 @@ export async function DocStrip({ label }: { label: string }) {
     >
       <div className="doc-track">
         <ul className="doc-copy" aria-label={label}>
-          {copy.map((d, i) => (
-            <li key={`a-${i}-${d.key}`} className="doc-item">
+          {docs.map((d) => (
+            <li key={d.key} className="doc-item">
               <Image
                 src={d.image}
                 alt={d.alt}
                 width={d.width}
                 height={d.height}
-                /* El alto lo fija la cinta y el ancho sale de la proporción,
-                   así que basta con servir el doble del alto de la tira. */
-                sizes="352px"
+                /* `--doc-h` es 11rem (176 px) en todos los anchos. El
+                   certificado más ancho, el de NASA, sale a 262 px. Por
+                   debajo de 640 px se pide 219 px de layout para que un
+                   DPR 1.75 elija 384 y no 640. */
+                sizes="(max-width: 640px) 219px, 262px"
                 loading="lazy"
               />
             </li>
@@ -137,14 +133,14 @@ export async function DocStrip({ label }: { label: string }) {
         {/* La segunda copia es lo que hace el bucle. No existe para nadie que
             no la esté mirando, así que va sin `alt` y oculta al árbol. */}
         <ul className="doc-copy" aria-hidden="true">
-          {copy.map((d, i) => (
-            <li key={`b-${i}-${d.key}`} className="doc-item">
+          {docs.map((d) => (
+            <li key={`b-${d.key}`} className="doc-item">
               <Image
                 src={d.image}
                 alt=""
                 width={d.width}
                 height={d.height}
-                sizes="352px"
+                sizes="(max-width: 640px) 219px, 262px"
                 loading="lazy"
               />
             </li>

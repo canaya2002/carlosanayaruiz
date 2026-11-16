@@ -3883,7 +3883,10 @@
     align-items: center;
     gap: 1.5rem;
     margin: 0;
-    padding: 0 0.75rem 0 0;
+    /* El padding del final es el gap: si no, el empalme entre las dos
+       copias se ve más corto que la separación entre documentos y el
+       bucle salta. */
+    padding: 0 1.5rem 0 0;
     list-style: none;
     flex: none;
   }
@@ -4077,9 +4080,9 @@
     }
   }
 
-  /* La cinta de documentos comparte el keyframe: la pista lleva el
-     contenido duplicado, así que el 50% exacto devuelve al punto de
-     partida sin medir nada. */
+  /* La cinta de documentos comparte el keyframe. Son DOS copias, así
+     que el 50% exacto devuelve al punto de partida. Con más copias el
+     porcentaje tendría que ser 100/n; con dos, no. */
   .doc-track {
     animation: ribbon-run var(--doc-dur, 96s) linear infinite;
   }
