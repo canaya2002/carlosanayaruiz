@@ -10,10 +10,12 @@ import type { StaticPathname } from '@/i18n/routing'
  * ════════════════════════════════════════════════════════════════
  * 404 LOCALIZADA — «sin señal»
  *
- * La alcanza cualquier URL bajo /es o /en que no resolvió ninguna página: el
- * catch-all `app/[locale]/[...rest]/page.tsx` lanza `notFound()` dentro del
- * segmento, así que esta frontera se pinta DENTRO del layout, con header,
- * pie e idioma. Las rutas que no resuelven idioma caen en app/not-found.tsx.
+ * La alcanza un `notFound()` lanzado DENTRO de un segmento que sí casó
+ * (un slug de blog que aún no se publica, una ficha que no existe). El
+ * header y el pie los pone el layout. Una URL que no casa con ninguna
+ * página no llega aquí: la sirve `app/not-found.tsx`, que es el documento
+ * que Next escribe en el HTML del 404. Un catch-all que llamara
+ * `notFound()` devolvería el shell vacío `__next_error__`.
  *
  * Un solo idioma por vista: una página que dice "Page not found / Página no
  * encontrada" se ve rota en los dos.
@@ -33,10 +35,18 @@ import type { StaticPathname } from '@/i18n/routing'
  * ════════════════════════════════════════════════════════════════
  */
 
-export const metadata: Metadata = {
-  title: '404',
-  robots: { index: false, follow: false },
-  alternates: {},
+export async function generateMetadata(): Promise<Metadata> {
+  const en = (await getLocale()) === 'en'
+  const t = await getTranslations('notFound')
+  const title = en ? '404 — Page not found' : '404 — Página no encontrada'
+  return {
+    title: { absolute: `${title} | Carlos Anaya Ruiz` },
+    description: t('lead'),
+    robots: { index: false, follow: false },
+    alternates: {},
+    openGraph: { title, description: t('lead') },
+    twitter: { title, description: t('lead'), card: 'summary' },
+  }
 }
 
 type Exit = { href: StaticPathname; label: string }
