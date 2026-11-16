@@ -1302,14 +1302,20 @@
   .sheet-field::before,
   .dial-sweep,
   .dial-bezel,
-  .morph > span {
+  .morph > span[data-w] {
     animation: none !important;
     will-change: auto;
   }
 
-  /* Sin el ciclo, el titular se queda en su frase canónica. */
-  .morph > span:not([data-home]) {
-    opacity: 0 !important;
+  /* Sin el ciclo, el titular se queda en su frase canónica, opaca.
+     Las de paso no se atenúan: se ocultan. Una opacidad intermedia es
+     lo que Lighthouse medía como contraste 1.09:1. */
+  .morph > span[data-w] {
+    visibility: hidden !important;
+    opacity: 1 !important;
+  }
+  .morph > span[data-home] {
+    visibility: visible !important;
   }
   .figure-scan {
     display: none;
@@ -1378,25 +1384,20 @@
 
   /* ── EL TITULAR QUE MUTA ──────────────────────────────────────
      «Mido lo que tu sitio …» y el final va cambiando: cinco frases que
-     todas se sostienen solas. Es el mismo mecanismo del saludo, y por las
-     mismas dos razones:
+     todas se sostienen solas.
 
-     1. CERO CLS. Las cinco frases viven en LA MISMA celda de grid, todas
-        presentes a la vez, y solo cambia la opacidad. La celda mide lo que
-        la frase más larga, así que nada refluye nunca. Cambiar el texto de
-        un titular de 120 px con un reflujo sería una regresión de CLS
-        medible en la portada de alguien que vende Core Web Vitals.
-     2. UN SOLO h1 INDEXABLE. Solo la frase canónica es un nodo de texto;
-        las otras cuatro viajan en `data-w` y las pinta `content: attr()`.
-        El contenido generado no entra en el texto indexable, así que el
-        `<h1>` sigue siendo una sola frase y no cinco pegadas.
+     1. CERO CLS. Las cinco frases viven en LA MISMA celda de grid. La
+        celda mide lo que la frase más larga, así que nada refluye.
+     2. UN SOLO NOMBRE. La frase canónica es el único nodo de texto (un
+        sr-only). Las cinco visibles viajan en `data-w`, `aria-hidden`,
+        y las pinta `content: attr()`.
+     3. SIN OPACIDAD INTERMEDIA. El ciclo cambia `visibility` de golpe
+        (`steps(1, end)`). Un crossfade dejaba el texto a 1.09:1 y
+        Lighthouse lo contaba en el escritorio de /es.
 
-     El desfase sale de `--i` y de una sola tanda de keyframes: cada frase
-     corre la MISMA animación con un retardo negativo de `(i − n)/n` del
-     ciclo, así que su ventana visible cae donde toca sin escribir cinco
-     tandas. Y `will-change: opacity` las promueve: cinco capas pequeñas
-     animando solo opacidad son compositor puro, cero recálculos en reposo.
-     Sin la promoción, cinco animaciones infinitas se comían el presupuesto. */
+     El desfase sale de `--i` y de una sola tanda de keyframes, con
+     retardo negativo de `(i − n)/n` del ciclo. `prefers-reduced-motion`
+     apaga la animación y deja solo `[data-home]`. */
   .morph {
     display: inline-grid;
     vertical-align: baseline;
@@ -1433,9 +1434,13 @@
 
      ⚠ Si añades una frase, mide su PALABRA más larga contra 252 px, no la
      frase entera. La frase ya puede partir; una palabra no. */
-  .morph > span {
+  .morph > span[data-w] {
     grid-area: 1 / 1;
-    opacity: 0;
+    /* Opacidad plena siempre. Lo que entra y sale es `visibility`, que
+       no tiene estado intermedio: o se lee al contraste del papel o no
+       está. El cruce por opacidad era el 1.09:1 de Lighthouse. */
+    opacity: 1;
+    visibility: hidden;
     text-align: left;
     text-wrap: balance;
   }
@@ -1445,10 +1450,10 @@
   }
 
   /* Estado por defecto y estado final son el MISMO: la frase canónica,
-     visible. Sin animaciones —reduced-motion, navegador sin soporte— esto
-     es lo que queda, y es exactamente el titular de siempre. */
+     visible y opaca desde el HTML del servidor. Sin animaciones
+     —reduced-motion, navegador sin soporte— esto es lo que queda. */
   .morph > span[data-home] {
-    opacity: 1;
+    visibility: visible;
   }
 
   /* ── EL RIEL, EN UNA SOLA PIEZA ───────────────────────────────
@@ -3289,39 +3294,27 @@
   }
 
   /* ── EL CICLO DEL TITULAR ─────────────────────────────────────
-     17.5 s ÷ 5 frases = 3.5 s por frase. La ventana visible ocupa el 20%
-     del ciclo con 350 ms de entrada y 350 ms de salida, y la salida de una
-     acaba justo donde empieza la entrada de la siguiente: nunca hay dos
-     frases legibles a la vez sobre la misma celda —eso se ve como texto
-     sucio— y sí hay un pestañeo corto entre las dos, que es exactamente lo
-     que hace un contador mecánico. */
+     17.5 s ÷ 5 frases = 3.5 s por frase. `steps(1, end)` no interpola:
+     la frase está visible al 100% de opacidad durante su 20% del ciclo
+     y `visibility: hidden` en el resto. No hay fotograma con texto a
+     media tinta, que es lo que tumbaba el contraste. El retardo negativo
+     reparte las ventanas; con retardo positivo el relleno hacia atrás
+     dejaría las cinco frases visibles durante la espera. */
   @keyframes morph-slot {
     0% {
-      opacity: 0;
+      visibility: visible;
     }
-    2% {
-      opacity: 1;
-    }
-    18% {
-      opacity: 1;
-    }
-    20% {
-      opacity: 0;
-    }
+    20%,
     100% {
-      opacity: 0;
+      visibility: hidden;
     }
   }
 
-  .morph > span {
-    animation: morph-slot var(--morph-dur, 17.5s) linear infinite;
-    /* Retardo NEGATIVO: adelanta la animación hasta la fase que le toca.
-       Con retardo positivo, el relleno hacia atrás dejaría las cinco
-       frases visibles a la vez durante la espera. */
+  .morph > span[data-w] {
+    animation: morph-slot var(--morph-dur, 17.5s) steps(1, end) infinite;
     animation-delay: calc(
       (var(--i, 0) - var(--n, 5)) * var(--morph-dur, 17.5s) / var(--n, 5)
     );
-    will-change: opacity;
   }
 
   /* ── La escritura de una marca ─────────────────────────────────
