@@ -1199,7 +1199,7 @@ La misma forma estaba en cuatro sitios más, todos en el camino de producción:
 
 | Archivo | Con la variable vacía |
 |---|---|
-| `lib/channels.ts` | el enlace de WhatsApp apuntaba a `wa.me/` sin número — el canal que «ya funciona» |
+| `lib/channels.ts` | el canal de WhatsApp quedaba sin número — el canal que «ya funciona» |
 | `lib/broadcast.ts` | la difusión se creaba con `from: ''` |
 | `lib/newsletter.ts` | el alta mandaba el campo `''` |
 | `lib/contact.ts` | Supabase recibía la tabla `''` |
@@ -1289,7 +1289,7 @@ variables, en `.env.example`.
 
 | Archivo | Qué es |
 |---|---|
-| `lib/channels.ts` | Las URLs. `whatsappUrl(mensaje)`, `calUrl()`, `mailtoUrl()` y los tres `is*Configured()` |
+| `lib/channels.ts` | Las URLs de calendario y correo. `calUrl()`, `mailtoUrl()` y los `is*Configured()` que quedan |
 | `lib/contact.ts` | El envío: Resend por `fetch`, y Supabase **después** y opcional |
 | `app/[locale]/lead-action.ts` | La Server Action, en su propio archivo porque la consume un cliente |
 | `components/sections/lead-form.tsx` | Cinco renglones, cebo antibot, acuse con `aria-live` |

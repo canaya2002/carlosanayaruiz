@@ -1,6 +1,5 @@
 import { getLocale } from 'next-intl/server'
 import { Link } from '@/i18n/navigation'
-import { WHATSAPP_URL } from '@/lib/constants'
 import { isRevisionOpen } from '@/data/revision-ficha'
 
 /**
@@ -45,22 +44,7 @@ export async function PreFooterCta() {
         </h2>
 
         <p className="mt-6 flex flex-col gap-3 sm:flex-row sm:flex-wrap sm:items-center sm:gap-4">
-          <a
-            className="btn-primary"
-            href={WHATSAPP_URL}
-            target="_blank"
-            rel="noopener noreferrer"
-            aria-label={
-              en
-                ? 'Message me on WhatsApp (opens in a new tab)'
-                : 'Escríbeme por WhatsApp (se abre en una pestaña nueva)'
-            }
-          >
-            {en ? 'Message me on WhatsApp' : 'Escríbeme por WhatsApp'}
-            <span className="btn-arrow" aria-hidden="true">
-              →
-            </span>
-          </a>
+          <span>WhatsApp 55 6920 1203</span>
           {isRevisionOpen() && (
             <Link
               className="btn-secondary whitespace-normal"

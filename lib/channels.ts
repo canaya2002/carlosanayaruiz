@@ -1,5 +1,5 @@
 import { NAP } from './constants'
-import { envOr, envSet } from './env'
+import { envSet } from './env'
 
 /**
  * ════════════════════════════════════════════════════════════════
@@ -12,8 +12,8 @@ import { envOr, envSet } from './env'
  *
  * ── QUÉ NECESITA CADA UNO ──
  *   · Formulario  → RESEND_API_KEY + CONTACT_FROM. Ver lib/contact.ts.
- *   · WhatsApp    → NADA. El número ya vive en NAP. Opcionalmente
- *                   NEXT_PUBLIC_WHATSAPP si el de negocio es otro.
+ *   · WhatsApp    → no hay enlace. El número se imprime como texto:
+ *                   «WhatsApp 55 6920 1203».
  *   · Cal.com     → NEXT_PUBLIC_CAL_LINK, p. ej. `carlosanaya/30min`.
  *
  * ── POR QUÉ CAL.COM VA COMO ENLACE Y NO COMO EMBED ──
@@ -28,32 +28,6 @@ import { envOr, envSet } from './env'
  * `frame-src` y `script-src`. Ese cambio se hace a conciencia, no de paso.
  * ════════════════════════════════════════════════════════════════
  */
-
-/** El número de WhatsApp en dígitos, como lo quiere wa.me (sin `+`). */
-function whatsappDigits(): string {
-  /* `envOr`: con la variable declarada y vacía, `??` dejaba `raw` en ''
-     y el enlace de WhatsApp —el canal que «ya funciona sin configurar
-     nada»— apuntaba a wa.me/ sin número. */
-  const raw = envOr(process.env.NEXT_PUBLIC_WHATSAPP, NAP.phone)
-  return raw.replace(/\D/g, '')
-}
-
-/**
- * Un enlace de WhatsApp con el mensaje ya escrito.
- *
- * El texto prellenado no es un detalle: alguien que abre WhatsApp con
- * «Hola» escribe «info?». Alguien que lo abre con la URL de su sitio y la
- * pregunta ya planteada manda un mensaje con el que se puede trabajar. Por
- * eso cada página pasa el suyo.
- */
-export function whatsappUrl(message: string): string {
-  const digits = whatsappDigits()
-  return `https://wa.me/${digits}?text=${encodeURIComponent(message)}`
-}
-
-export function isWhatsappConfigured(): boolean {
-  return whatsappDigits().length >= 10
-}
 
 /**
  * El calendario. `NEXT_PUBLIC_CAL_LINK` es lo que va después de cal.com/ —

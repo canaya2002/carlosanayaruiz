@@ -255,16 +255,8 @@ export async function Footer() {
                   </span>
                 </a>
               </p>
-              <p>
-                {/* Forma legible para las personas, E.164 en el href para que
-                    marque el teléfono. */}
-                <a
-                  href={`https://wa.me/${NAP.phone.slice(1)}`}
-                  className={`${contactLinkClass} tabular-nums`}
-                  data-numeric=""
-                >
-                  {NAP.phoneDisplay}
-                </a>
+              <p className="flex min-h-11 items-center text-sm text-ink-muted">
+                WhatsApp 55 6920 1203
               </p>
               <p className="flex min-h-10 items-center text-sm text-ink-muted">
                 {cityLine}

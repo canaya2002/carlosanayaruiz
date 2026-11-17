@@ -18,7 +18,6 @@ import {
   NAP,
   SEO_IMAGES,
   SOCIAL_LINKS,
-  WHATSAPP_URL,
   routeUrl,
 } from '@/lib/constants'
 import { generatePageMetadata } from '@/lib/seo'
@@ -419,9 +418,7 @@ export default async function CvPage({ params }: Props) {
       id: 'phone',
       label: t('contact.phone'),
       node: (
-        <a href={`https://wa.me/${NAP.phone.slice(1)}`} className="link-stylus">
-          {NAP.phoneDisplay}
-        </a>
+        <span>WhatsApp 55 6920 1203</span>
       ),
     },
     {
@@ -548,17 +545,7 @@ export default async function CvPage({ params }: Props) {
                     className="mt-10 flex flex-wrap items-center gap-x-4 gap-y-3"
                   >
                     <PrintButton label={t('download')} />
-                    <a
-                      className="btn-secondary"
-                      href={WHATSAPP_URL}
-                      target="_blank"
-                      rel="noopener"
-                    >
-                      {en ? 'Message me on WhatsApp' : 'Escríbeme por WhatsApp'}
-                      <span className="btn-arrow" aria-hidden="true">
-                        →
-                      </span>
-                    </a>
+                    <span>WhatsApp 55 6920 1203</span>
                   </p>
 
                   <p

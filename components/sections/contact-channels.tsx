@@ -1,12 +1,7 @@
 import { getTranslations } from 'next-intl/server'
 import { Link } from '@/i18n/navigation'
 import { NAP } from '@/lib/constants'
-import {
-  calUrl,
-  isCalConfigured,
-  isWhatsappConfigured,
-  whatsappUrl,
-} from '@/lib/channels'
+import { calUrl, isCalConfigured } from '@/lib/channels'
 import type { Locale } from '@/data/types'
 
 /**
@@ -36,8 +31,6 @@ import type { Locale } from '@/data/types'
 
 export async function ContactChannels({
   locale,
-  /** El texto con el que se abre WhatsApp. Lo pone cada página. */
-  waMessage,
   /** Título de la banda. Si no se pasa, el genérico. */
   title,
   /** Una línea de contexto encima del título. */
@@ -81,32 +74,18 @@ export async function ContactChannels({
         </li>
 
         {/* ── 2. WhatsApp ── */}
-        {isWhatsappConfigured() ? (
-          <li>
-            <a
-              href={whatsappUrl(waMessage)}
-              target="_blank"
-              rel="noopener noreferrer"
-              className="channel group"
-              data-ch="b"
-            >
-              <span className="channel-id">ch b</span>
-              <span>
-                <span className="text-d3">{t('waTitle')}</span>
-                <span className="channel-note mt-1 block text-sm">
-                  {t('waNote')}
-                </span>
-                <span className="channel-pen mt-3" aria-hidden="true" />
+        <li>
+          <div className="channel" data-ch="b">
+            <span className="channel-id">ch b</span>
+            <span>
+              <span className="text-d3">WhatsApp 55 6920 1203</span>
+              <span className="channel-note mt-1 block text-sm">
+                {t('waNote')}
               </span>
-              <span
-                aria-hidden="true"
-                className="transition-transform duration-150 group-hover:translate-x-1"
-              >
-                →
-              </span>
-            </a>
-          </li>
-        ) : null}
+              <span className="channel-pen mt-3" aria-hidden="true" />
+            </span>
+          </div>
+        </li>
 
         {/* ── 3. Agendar ──
             Solo si hay calendario. Sin `NEXT_PUBLIC_CAL_LINK` esta fila no
@@ -147,7 +126,7 @@ export async function ContactChannels({
           {NAP.email}
         </a>
         {' · '}
-        <span className="tabular-nums">{NAP.phoneDisplay}</span>
+        <span>WhatsApp 55 6920 1203</span>
       </p>
     </div>
   )
