@@ -1,111 +1,85 @@
-import { headers } from 'next/headers'
-import { NextIntlClientProvider } from 'next-intl'
-import { getMessages, getTranslations, setRequestLocale } from 'next-intl/server'
-import { Analytics } from '@vercel/analytics/react'
-import { SpeedInsights } from '@vercel/speed-insights/next'
-import { Header } from '@/components/layout/header'
-import { Footer } from '@/components/layout/footer'
-import { Drum, SheetField } from '@/components/instrument/rail'
+import Link from 'next/link'
 import { FONT_VARS } from '@/lib/fonts'
-import { generateLayoutGraph } from '@/lib/schema'
-import type { Locale } from '@/data/types'
-import LocaleNotFound from './[locale]/not-found'
+import { isRevisionOpen } from '@/data/revision-ficha'
 
 import './globals.css'
 
 /**
- * ════════════════════════════════════════════════════════════════
- * 404 DE UNA RUTA QUE NO CASA CON NINGUNA PÁGINA
+ * 404 de una ruta que ni siquiera entra en `[locale]`.
  *
- * En Next 16.4, `notFound()` lanzado desde una página que SÍ hizo match
- * (el catch-all `app/[locale]/[...rest]`) responde 404 con
- * `<html id="__next_error__">` y un `<body>` vacío: el H1, el header y el
- * pie viajan solo en el payload RSC y se pintan al hidratar
- * (vercel/next.js#100596). Sin JavaScript la pantalla queda en blanco.
+ * No llama a `headers()`, `cookies()` ni a `getLocale()`: cualquiera de esas
+ * APIs, al vivir en esta frontera, se evalúa también cuando Next prepara el
+ * árbol de las páginas reales y las vuelve dinámicas. El documento es
+ * estático y en español, el idioma por omisión.
  *
- * Una URL que no casa con ningún segmento no pasa por ese throw. Next
- * renderiza ESTE archivo en el HTML de la respuesta, con status 404. Por
- * eso no hay catch-all: `/es/esta-pagina-no-existe` y
- * `/en/this-page-does-not-exist` tienen que llegar aquí.
- *
- * El layout de `[locale]` no envuelve esta frontera —el segmento no
- * llegó a montarse— así que el header, el pie, el riel y la hoja se
- * montan aquí, con un solo idioma. El cuerpo es el mismo componente que
- * atiende los `notFound()` de dentro del segmento.
- *
- * El `<title>` y la description van escritos en el `<head>`. `robots` no:
- * con status 404 Next inyecta un solo `<meta name="robots" content="noindex">`,
- * y un segundo meta lo contradecía. Un `metadata` exportado en esta
- * frontera no es fiable: depende del árbol que no hizo match, y era como
- * el 404 heredaba el título corto y la description del inicio.
- * ════════════════════════════════════════════════════════════════
+ * `/es/…` y `/en/…` que no casan con una página no llegan aquí. Las responde
+ * el route handler `app/[locale]/[...rest]/route.ts`, con status 404 y el
+ * idioma de la URL, sin meter una API dinámica en el layout.
  */
 
-async function localeFromRequest(): Promise<Locale> {
-  const h = await headers()
-  const explicit = h.get('x-next-intl-locale')
-  if (explicit === 'en' || explicit === 'es') return explicit
-  const path = h.get('x-pathname') ?? ''
-  return path === '/en' || path.startsWith('/en/') ? 'en' : 'es'
-}
-
-const CLIENT_NAMESPACES = [
-  'nav',
-  'a11y',
-  'services',
-  'footer',
-  'language',
-] as const
-
-export default async function NotFound() {
-  const locale = await localeFromRequest()
-  setRequestLocale(locale)
-  const en = locale === 'en'
-  const t = await getTranslations('notFound')
-  const ta = await getTranslations('a11y')
-  const messages = await getMessages()
-  const clientMessages = Object.fromEntries(
-    CLIENT_NAMESPACES.filter((ns) => ns in messages).map((ns) => [
-      ns,
-      messages[ns],
-    ])
-  )
-  const title = en
-    ? '404 — Page not found | Carlos Anaya Ruiz'
-    : '404 — Página no encontrada | Carlos Anaya Ruiz'
+export default function NotFound() {
+  const review = isRevisionOpen()
 
   return (
-    <html lang={locale} className={FONT_VARS}>
+    <html lang="es" className={FONT_VARS}>
       <head>
-        {/* `robots` no se escribe aquí. Con status 404 Next ya inyecta
-            `<meta name="robots" content="noindex">`. Un segundo meta
-            (`noindex, nofollow`) era el par contradictorio. */}
-        <title>{title}</title>
-        <meta name="description" content={t('lead')} />
-        <script
-          type="application/ld+json"
-          dangerouslySetInnerHTML={{
-            __html: JSON.stringify(generateLayoutGraph(locale)),
-          }}
+        <title>404 — Página no encontrada | Carlos Anaya Ruiz</title>
+        <meta
+          name="description"
+          content="El enlace está roto o la URL cambió de lugar. Si llegaste desde Google, avísame y la redirijo: una 404 indexada es un error mío, no tuyo."
         />
       </head>
       <body className="min-h-screen bg-ground font-sans text-ink antialiased">
-        <NextIntlClientProvider messages={clientMessages}>
-          <a href="#main-content" className="skip-to-content">
-            {ta('skipToContent')}
-          </a>
-          <Drum />
-          <SheetField />
-          <div className="flex min-h-screen flex-col">
-            <Header />
-            <main id="main-content" className="flex-1">
-              <LocaleNotFound />
-            </main>
-            <Footer />
+        <main
+          id="main-content"
+          className="mx-auto flex min-h-screen w-full max-w-6xl flex-col justify-center px-5 py-20 sm:px-8"
+        >
+          <p className="stamp">404</p>
+          <h1 className="mt-6 max-w-[16ch] text-hero text-ink">
+            Esta página no existe
+          </h1>
+          <p className="mt-10 max-w-[56ch] text-lead text-ink-muted">
+            El enlace está roto o la URL cambió de lugar. Si llegaste desde
+            Google, avísame y la redirijo: una 404 indexada es un error mío, no
+            tuyo.
+          </p>
+          <div className="mt-10 flex flex-col gap-3 sm:flex-row sm:flex-wrap sm:items-center">
+            {review ? (
+              <Link className="btn-primary" href="/es/revision-ficha-google">
+                Pide tu revisión gratis
+                <span className="btn-arrow" aria-hidden="true">
+                  →
+                </span>
+              </Link>
+            ) : null}
+            <Link
+              className={review ? 'btn-secondary' : 'btn-primary'}
+              href="/es"
+            >
+              Ir al inicio
+            </Link>
           </div>
-        </NextIntlClientProvider>
-        <SpeedInsights />
-        <Analytics />
+          <nav aria-label="Otras páginas" className="mt-6 flex flex-wrap gap-x-8">
+            <Link
+              href="/es/servicios"
+              className="link-stylus inline-flex min-h-11 items-center"
+            >
+              Servicios
+            </Link>
+            <Link
+              href="/es/blog"
+              className="link-stylus inline-flex min-h-11 items-center"
+            >
+              Blog
+            </Link>
+            <Link
+              href="/es/contacto"
+              className="link-stylus inline-flex min-h-11 items-center"
+            >
+              Contacto
+            </Link>
+          </nav>
+        </main>
       </body>
     </html>
   )
