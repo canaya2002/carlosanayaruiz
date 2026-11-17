@@ -82,7 +82,7 @@ export default function LocaleNotFound() {
     >
       <Rail />
       <div className="min-w-0">
-        <section className="hero-in flex flex-col px-5 pt-12 pb-16 sm:px-10 sm:pt-16 lg:min-h-[calc(100svh-4.5rem)] lg:justify-center lg:py-16">
+        <section className="hero-in flex flex-col px-(--gutter) pt-12 pb-16 sm:px-10 sm:pt-16 lg:min-h-[calc(100svh-4.5rem)] lg:justify-center lg:py-16">
           <p className="stamp">{t.title}</p>
           <h1 className="mt-6 max-w-[18ch] text-hero text-ink">{t.heading}</h1>
           <div
